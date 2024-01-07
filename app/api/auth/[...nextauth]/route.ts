@@ -4,6 +4,7 @@ import { compare } from 'bcryptjs'
 import NextAuth, { type NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 
+
 export const authOptions: NextAuthOptions = {
   session: {
     strategy: 'jwt'
@@ -19,58 +20,93 @@ export const authOptions: NextAuthOptions = {
         },
         password: { label: 'Password', type: 'password' }
       },
-      async authorize(credentials) {
+      async authorize(credentials, req) {
         if (!credentials?.email || !credentials.password) {
-          return null
+          return null;
         }
-
-        const user = await db.profile.findUnique({
+      
+        const user = await db.user.findUnique({
           where: {
-            email: credentials.email
-          }
-        })
-
+            email: credentials.email,
+          },
+        });
+      
         if (!user) {
-          return null
+          return null;
         }
-
-        const isPasswordValid = await compare(
-          credentials.password,
-          user.password
-        )
-
+      
+        const isPasswordValid = await compare(credentials.password, user.password);
+      
         if (!isPasswordValid) {
-          return null
+          return null;
         }
-
+      
+        // Modify the return object to match the extended User type
         return {
-          id: user.id + '',
+          id: user.id.toString(),
           email: user.email,
-          isAdmin: user.isAdmin,
-          randomKey: 'Hey cool'
-        }
+          role: user.role,
+          contactNumber: user.contactNumber,
+          schoolName: user.schoolName,
+          schoolId: user.schoolId || null,
+        };
       }
+      
+      // async authorize(credentials, req) {
+      //   if (!credentials?.email || !credentials.password) {
+      //     return null
+      //   }
+
+      //   const user = await db.user.findUnique({
+      //     where: {
+      //       email: credentials.email
+      //     }
+      //   })
+
+      //   if (!user) {
+      //     return null
+      //   }
+
+      //   const isPasswordValid = await compare(
+      //     credentials.password,
+      //     user.password
+      //   )
+
+      //   if (!isPasswordValid) {
+      //     return null
+      //   }
+
+      //   return {
+      //     id: user.id + '',
+      //     email: user.email,
+      //     role: user.role,
+      //     contactNumber: user.contactNumber,
+      //     schoolName: user.schoolName,
+      //     schoolId: user.schoolId || null,
+      //   };
+        
+      // }
     })
   ],
   callbacks: {
     session: ({ session, token }) => {
-      console.log('Session Callback', { session, token })
       return {
         ...session,
         user: {
           ...session.user,
           id: token.id,
+          role: token.role,
           randomKey: token.randomKey
         }
       }
     },
     jwt: ({ token, user }) => {
-      console.log('JWT Callback', { token, user })
       if (user) {
         const u = user as unknown as any
         return {
           ...token,
           id: u.id,
+          role: u.role,
           randomKey: u.randomKey
         }
       }

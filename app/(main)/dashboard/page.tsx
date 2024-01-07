@@ -1,18 +1,15 @@
-"use client";
-import { Button } from "@/components/ui/button";
-import { signOut, useSession } from "next-auth/react";
 
-const Dashboard = () => {
-  //   const { data: session, status } = useSession();
-  const handleLogout = () => {
-    signOut();
-  };
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+const Dashboard = async () => {
+  const session = await getServerSession(authOptions);
+  const mysession = JSON.stringify(session);
+
   return (
     <div>
-      {/* Hi {session?.user?.email} */}
-      <Button variant="default" onClick={handleLogout}>
-        Sign Out
-      </Button>
+      Hi
+      <pre>{mysession}</pre>
+      
     </div>
   );
 };

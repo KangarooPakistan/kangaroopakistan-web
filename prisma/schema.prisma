@@ -7,14 +7,14 @@ datasource db {
 generator client {
   provider = "prisma-client-js"
 }
-model Profile {
-  id           Int      @id @default(autoincrement())
-  email        String   @unique
-  password     String
-  isAdmin      Boolean   @default(true) // 'admin', 'user', etc.
-  schoolId     Int?     // Optional: only for non-admin users
-  schoolName   String?  // Optional: only for non-admin users
+model User {
+  id            Int      @id @default(autoincrement())
+  email         String   @unique
+  password      String
+  role          String   @default("Admin") // 'admin', 'user', etc.
+  schoolId      Int?     // Optional: only for non-admin users
+  schoolName    String?  // Optional: only for non-admin users
   contactNumber String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }

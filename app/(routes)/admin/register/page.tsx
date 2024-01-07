@@ -31,7 +31,7 @@ const formSchema = z.object({
       "Password must contain at least one special character"
     ), // At least one special character
 });
-const Register = () => {
+const UserRegister = () => {
   const router = useRouter();
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -42,14 +42,16 @@ const Register = () => {
   });
   const isLoading = form.formState.isSubmitting;
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const payload = {
-      ...values, // Spread the form values
-      role: "Admin", // Add the additional string
-    };
+    console.log(values);
     try {
+      const payload = {
+        ...values, // Spread the form values
+        role: "User", // Add the additional string
+      };
+
       await axios.post("/api/users/signup", payload);
       form.reset();
-      router.push("/login");
+      router.push("/dashboard");
     } catch (error) {
       console.log(error);
     }
@@ -111,4 +113,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default UserRegister;

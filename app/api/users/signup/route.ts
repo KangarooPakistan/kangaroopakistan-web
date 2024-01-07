@@ -5,9 +5,9 @@ import bcrypt from 'bcryptjs';
 export async function POST(request: NextRequest){
     try {
         const reqBody = await request.json();
-        const {email , password} = reqBody;
+        const {email , password, role} = reqBody;
         console.log(reqBody)
-        const userExists = await db.profile.findUnique({
+        const userExists = await db.user.findUnique({
             where: {
                 email: reqBody.email
             }
@@ -19,12 +19,12 @@ export async function POST(request: NextRequest){
         
             const salt  = await bcrypt.genSalt(10)
             const hashedPassword  = await bcrypt.hash(password, salt)
-        
-            const user = await db.profile.create({
+            
+            const user = await db.user.create({
                 data: {
                     email,
                     password: hashedPassword,
-                    isAdmin: true
+                    role
                 }
         });
         return NextResponse.json(user)
