@@ -47,18 +47,18 @@ export const Login = () => {
         // Handle any errors that occur during the signIn process
         console.error("Sign in error:", error);
       });
-    // const result = await signIn("credentials", {
-    //   ...values,
-    //   redirect: false,
-    // });
+    const result = await signIn("credentials", {
+      ...values,
+      redirect: false,
+    });
 
-    // if (result?.error) {
-    //   console.log(result?.error);
-    //   setError(result?.error);
-    // } else {
-    //   router.push("/dashboard");
-    //   router.refresh();
-    // }
+    if (result?.error) {
+      console.log(result?.error);
+      setError(result?.error);
+    } else {
+      router.push("/dashboard");
+      router.refresh();
+    }
   };
   useEffect(() => {
     if (session) {
@@ -75,7 +75,11 @@ export const Login = () => {
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
               Sign in to your account
             </h1>
-
+            {error && (
+              <span className="flex justify-center text-sm text-red-700">
+                {error}
+              </span>
+            )}
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
@@ -95,6 +99,7 @@ export const Login = () => {
                           {...field}
                         />
                       </FormControl>
+
                       <FormMessage />
                     </FormItem>
                   )}
@@ -118,6 +123,7 @@ export const Login = () => {
                     </FormItem>
                   )}
                 />
+
                 <div className="flex items-center justify-center mt-6">
                   <Button type="submit" disabled={isLoading} variant="default">
                     Sign In
