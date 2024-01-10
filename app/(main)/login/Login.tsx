@@ -107,6 +107,7 @@ export const Login = () => {
                       <FormLabel className="label">Password</FormLabel>
                       <FormControl>
                         <Input
+                          type="password"
                           disabled={isLoading}
                           className="input"
                           placeholder="Enter your password"

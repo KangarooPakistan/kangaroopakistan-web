@@ -94,6 +94,7 @@ const Register = () => {
                       <FormLabel className="label mt-5">Password</FormLabel>
                       <FormControl>
                         <Input
+                          type="password"
                           disabled={isLoading}
                           className="input"
                           placeholder="Enter your password"
