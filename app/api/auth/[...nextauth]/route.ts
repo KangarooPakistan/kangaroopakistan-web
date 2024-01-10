@@ -32,13 +32,15 @@ export const authOptions: NextAuthOptions = {
         });
       
         if (!user) {
-          return null;
+          throw new Error('Email not found ')
         }
-      
+        // if(user?.password != credentials.password ) {
+        //     throw new Error('Invalid password ')
+        // }
         const isPasswordValid = await compare(credentials.password, user.password);
       
         if (!isPasswordValid) {
-          return null;
+          throw new Error('Invalid password ')
         }
       
         // Modify the return object to match the extended User type

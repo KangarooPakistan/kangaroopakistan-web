@@ -30,16 +30,35 @@ export const Login = () => {
   });
   const isLoading = form.formState.isSubmitting;
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const result = await signIn("credentials", {
+    signIn("credentials", {
       ...values,
       redirect: false,
-    });
+    })
+      .then((result) => {
+        if (result?.error) {
+          console.log(result?.error);
+          setError(result?.error);
+        } else {
+          router.push("/dashboard");
+          router.refresh();
+        }
+      })
+      .catch((error) => {
+        // Handle any errors that occur during the signIn process
+        console.error("Sign in error:", error);
+      });
+    // const result = await signIn("credentials", {
+    //   ...values,
+    //   redirect: false,
+    // });
 
-    if (result?.error) {
-      setError(result?.error);
-    } else {
-      router.push("/dashboard");
-    }
+    // if (result?.error) {
+    //   console.log(result?.error);
+    //   setError(result?.error);
+    // } else {
+    //   router.push("/dashboard");
+    //   router.refresh();
+    // }
   };
   useEffect(() => {
     if (session) {
