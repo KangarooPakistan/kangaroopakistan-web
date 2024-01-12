@@ -15,6 +15,7 @@ import {
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -60,11 +61,11 @@ const UserRegister = () => {
     }
   };
   return (
-    <section className="bg-gray-100">
-      <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto h-screen lg:py-0">
-        <div className="w-full bg-white rounded-lg shadow-xl md:mt-0 sm:max-w-md xl:p-0">
-          <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-            <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+    <section className="bg-white mb-12">
+      <div className=" pt-10 h-screen grid grid-cols-1 md:grid-cols-2 gap-2 xl:gap-0">
+        <div className="w-full rounded-lg shadow-2xl md:mt-0 sm:max-w-md xl:p-0 mx-auto">
+          <div className="p-6 space-y-3 md:space-y-6 sm:p-8">
+            <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl ">
               Create account
             </h1>
 
@@ -110,13 +111,85 @@ const UserRegister = () => {
                     </FormItem>
                   )}
                 />
+                <FormField
+                  control={form.control}
+                  name="school-id"
+                  render={({ field }) => (
+                    <FormItem className="">
+                      <FormLabel className="label mt-5">School ID</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          disabled={isLoading}
+                          className="input"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="school-name"
+                  render={({ field }) => (
+                    <FormItem className="">
+                      <FormLabel className="label mt-5">School Name</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          disabled={isLoading}
+                          className="input"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="contact-number"
+                  render={({ field }) => (
+                    <FormItem className="">
+                      <FormLabel className="label mt-5">
+                        Contact Number
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          disabled={isLoading}
+                          className="input"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <div className="flex items-center justify-center mt-16">
-                  <Button disabled={isLoading} variant="default">
+                  <Button
+                    disabled={isLoading}
+                    variant="default"
+                    className="px-10"
+                  >
                     Create
                   </Button>
                 </div>
               </form>
             </Form>
+          </div>
+        </div>
+        <div className="xl:w-3/4 mt-20">
+      <div className="bg-gray-100 py-2 px-5 rounded text-xs md:text-base mx-2 xl:mx-0">
+          <h2 className="font-bold">Instructions</h2>
+          <ul className="list-disc mt-4 list-inside">
+            <li>Password must be at least 8 characters long.</li>
+            <li>Password must contain at least one uppercase letter.</li>
+            <li>Password must contain at least one lowercase letter.</li>
+            <li>Password must contain at least one number.</li>
+            <li>Password must contain at least one special character.</li>
+          </ul>
           </div>
         </div>
       </div>
