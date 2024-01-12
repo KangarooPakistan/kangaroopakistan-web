@@ -20,6 +20,8 @@ const UserNavbar = () => {
   };
 
   const goToProfile = () => {
+    console.log("session.user.id");
+
     if (session && session.user && session.user.id) {
       router.push(`/user/profile/${session.user.id}`); // Use session.user.id directly
     }
@@ -28,10 +30,7 @@ const UserNavbar = () => {
   return (
     <nav className="bg-white">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-        <Link
-          href="https://flowbite.com/"
-          className="flex items-center space-x-3"
-        >
+        <Link href="" className="flex items-center space-x-3">
           <span className="self-center text-2xl font-semibold whitespace-nowrap ">
             KangarooPakistan
           </span>
