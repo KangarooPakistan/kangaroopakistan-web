@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { signOut, useSession } from "next-auth/react";
-import { Button } from "./button";
+import { Button } from "../../components/ui/button";
 import { useRouter } from "next/navigation";
 
 const AdminNavbar = () => {
@@ -71,21 +71,15 @@ const AdminNavbar = () => {
                 <Button
                   onClick={goToProfile}
                   variant="outline"
-                  className=" justify-start w-full my-1"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full border-0 text-left"
                 >
                   Profile
                 </Button>
               </li>
               <li>
-<<<<<<< HEAD
-                <Link
-                  href="#"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 "
-=======
                 <Button
                   variant="outline"
-                  className="justify-start w-full my-1"
->>>>>>> 704f8aea5b4a42f1ce6b9d83a680b0e17900b33d
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full border-0 text-left"
                   onClick={() => signOut()}
                 >
                   Sign out
