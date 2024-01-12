@@ -21,7 +21,7 @@ const UserNavbar = () => {
 
   const goToProfile = () => {
     if (session && session.user && session.user.id) {
-      router.push(`/admin/profile/${session.user.id}`); // Use session.user.id directly
+      router.push(`/user/profile/${session.user.id}`); // Use session.user.id directly
     }
   };
 
