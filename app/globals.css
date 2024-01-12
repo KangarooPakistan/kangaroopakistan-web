@@ -86,3 +86,8 @@
 .text-smallest {
   font-size: 0.725rem;
 }
+
+
+.register-height-style {
+  height: 103vh;
+}

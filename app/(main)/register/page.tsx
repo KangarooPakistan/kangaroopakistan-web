@@ -15,7 +15,7 @@ import {
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-
+import Link from "next/link";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -56,11 +56,11 @@ const Register = () => {
     }
   };
   return (
-    <section className="bg-gray-100">
+    <section className="bg-white">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto h-screen lg:py-0">
-        <div className="w-full bg-white rounded-lg shadow-xl md:mt-0 sm:max-w-md xl:p-0">
+        <div className="w-full bg-white rounded-lg shadow-2xl md:mt-0 sm:max-w-md xl:p-0">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-            <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+            <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
               Create account
             </h1>
 
@@ -123,10 +123,19 @@ const Register = () => {
                   </ul>
                 </div>
                 <div className="flex items-center justify-center mt-16">
-                  <Button disabled={isLoading} variant="default">
+                  <Button disabled={isLoading} variant="default" className="px-4">
                     Create
                   </Button>
                 </div>
+                <p className="text-sm font-light text-gray-500 w-full text-center">
+                  Already have an account?{" "}
+                  <Link
+                    className="font-medium text-blue-600 hover:underline"
+                    href="/login"
+                  >
+                    Sign in here
+                  </Link>
+                </p>
               </form>
             </Form>
           </div>
