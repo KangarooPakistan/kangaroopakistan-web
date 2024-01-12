@@ -47,7 +47,7 @@ function UserProfile({ params }: UserProfileProps) {
     <div>
       <h1>User Profile</h1>
       {/* <p>Name: {userData.name}</p> */}
-      <p>Email: {userData.email}</p>
+      <p>Email: {userData?.email}</p>
       {/* Render other user profile information */}
     </div>
   );
