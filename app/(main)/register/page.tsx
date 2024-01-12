@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
+
 const formSchema = z.object({
   email: z.string().email({
     message: "Email is required",
@@ -105,6 +106,22 @@ const Register = () => {
                     </FormItem>
                   )}
                 />
+                <div className="bg-gray-100 py-2 px-5 rounded text-smallest">
+                  <h2 className="font-bold">Instructions</h2>
+                  <ul className="list-disc mt-4 list-inside">
+                    <li>Password must be at least 8 characters long.</li>
+                    <li>
+                      Password must contain at least one uppercase letter.
+                    </li>
+                    <li>
+                      Password must contain at least one lowercase letter.
+                    </li>
+                    <li>Password must contain at least one number.</li>
+                    <li>
+                      Password must contain at least one special character.
+                    </li>
+                  </ul>
+                </div>
                 <div className="flex items-center justify-center mt-16">
                   <Button disabled={isLoading} variant="default">
                     Create

@@ -82,3 +82,7 @@
 .input {
   @apply bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 !important;
 }
+
+.text-smallest {
+  font-size: 0.725rem;
+}
