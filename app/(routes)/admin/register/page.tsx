@@ -30,7 +30,8 @@ const formSchema = z.object({
     .regex(
       /[^A-Za-z0-9]/,
       "Password must contain at least one special character"
-    ), // At least one special character
+    ),
+     // At least one special character
 });
 const UserRegister = () => {
   const router = useRouter();
@@ -39,6 +40,9 @@ const UserRegister = () => {
     defaultValues: {
       email: "",
       password: "",
+      schoolId: "",
+      schoolName: "",
+      contactNumber: "",
     },
   });
   const isLoading = form.formState.isSubmitting;
@@ -113,7 +117,7 @@ const UserRegister = () => {
                 />
                 <FormField
                   control={form.control}
-                  name="school-id"
+                  name="schoolId"
                   render={({ field }) => (
                     <FormItem className="">
                       <FormLabel className="label mt-5">School ID</FormLabel>
@@ -131,7 +135,7 @@ const UserRegister = () => {
                 />
                 <FormField
                   control={form.control}
-                  name="school-name"
+                  name="schoolName"
                   render={({ field }) => (
                     <FormItem className="">
                       <FormLabel className="label mt-5">School Name</FormLabel>
@@ -149,7 +153,7 @@ const UserRegister = () => {
                 />
                 <FormField
                   control={form.control}
-                  name="contact-number"
+                  name="contactNumber"
                   render={({ field }) => (
                     <FormItem className="">
                       <FormLabel className="label mt-5">
@@ -181,15 +185,15 @@ const UserRegister = () => {
           </div>
         </div>
         <div className="xl:w-3/4 mt-20">
-      <div className="bg-gray-100 py-2 px-5 rounded text-xs md:text-base mx-2 xl:mx-0">
-          <h2 className="font-bold">Instructions</h2>
-          <ul className="list-disc mt-4 list-inside">
-            <li>Password must be at least 8 characters long.</li>
-            <li>Password must contain at least one uppercase letter.</li>
-            <li>Password must contain at least one lowercase letter.</li>
-            <li>Password must contain at least one number.</li>
-            <li>Password must contain at least one special character.</li>
-          </ul>
+          <div className="bg-gray-100 py-2 px-5 rounded text-xs md:text-base mx-2 xl:mx-0">
+            <h2 className="font-bold">Instructions</h2>
+            <ul className="list-disc mt-4 list-inside">
+              <li>Password must be at least 8 characters long.</li>
+              <li>Password must contain at least one uppercase letter.</li>
+              <li>Password must contain at least one lowercase letter.</li>
+              <li>Password must contain at least one number.</li>
+              <li>Password must contain at least one special character.</li>
+            </ul>
           </div>
         </div>
       </div>
