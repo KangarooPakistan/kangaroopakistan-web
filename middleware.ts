@@ -86,7 +86,7 @@ export async function middleware(request: NextRequest) {
     };
 
     if (!token && !publicRoutes.includes(pathname)) {
-      return NextResponse.redirect(new URL("/login?error=Please login first to access this route", request.url));
+      return NextResponse.redirect(new URL("/login", request.url));
     }
 
     if (token && userRole) {

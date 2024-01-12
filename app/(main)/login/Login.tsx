@@ -39,6 +39,8 @@ export const Login = () => {
           console.log(result?.error);
           setError(result?.error);
         } else {
+          setError("");
+          router.refresh();
           router.push("/dashboard");
           router.refresh();
         }
@@ -47,18 +49,6 @@ export const Login = () => {
         // Handle any errors that occur during the signIn process
         console.error("Sign in error:", error);
       });
-    const result = await signIn("credentials", {
-      ...values,
-      redirect: false,
-    });
-
-    if (result?.error) {
-      console.log(result?.error);
-      setError(result?.error);
-    } else {
-      router.push("/dashboard");
-      router.refresh();
-    }
   };
   useEffect(() => {
     if (session) {
