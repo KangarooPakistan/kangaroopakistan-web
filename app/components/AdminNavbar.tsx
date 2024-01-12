@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 const AdminNavbar = () => {
   const [isProfileOpen, setProfileOpen] = useState(false);
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { data: session } = useSession();
 
   const router = useRouter();
@@ -25,13 +26,14 @@ const AdminNavbar = () => {
     setMobileMenuOpen(!isMobileMenuOpen);
   };
 
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
   return (
     <nav className="bg-white">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-        <Link
-          href="https://flowbite.com/"
-          className="flex items-center space-x-3"
-        >
+        <Link href="/dashboard" className="flex items-center space-x-3">
           <span className="self-center text-2xl font-semibold whitespace-nowrap ">
             KangarooPakistan
           </span>
@@ -145,6 +147,63 @@ const AdminNavbar = () => {
               >
                 Contest
               </Link>
+            </li>
+            <li className="relative">
+              <button
+                id="dropdownNavbarLink"
+                onClick={toggleDropdown}
+                className={
+                  "flex items-center justify-between w-full py-2 px-3 text-gray-900 hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 md:w-auto"
+                }
+              >
+                Manage Users
+                <svg
+                  className="w-2.5 h-2.5 ms-2.5"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 10 6"
+                >
+                  <path
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="m1 1 4 4 4-4"
+                  />
+                </svg>
+              </button>
+
+              <div
+                id="dropdownNavbar"
+                className={`z-10 ${
+                  isDropdownOpen ? "block" : "hidden"
+                } font-normal bg-white divide-y divide-gray-100 rounded-lg shadow w-44 absolute top-8 -left-8`}
+              >
+                <ul
+                  className="py-2 text-sm text-gray-700 "
+                  aria-labelledby="dropdownLargeButton"
+                >
+                  <li>
+                    <Button
+                      variant="outline"
+                      className="block px-4 py-2 hover:bg-gray-100 rounded w-full text-left border-0"
+                      onClick={toggleDropdown}
+                    >
+                      Register User
+                    </Button>
+                  </li>
+                  <li>
+                    <Button
+                      variant="outline"
+                      className="block px-4 py-2 hover:bg-gray-100 rounded w-full text-left border-0"
+                      onClick={toggleDropdown}
+                    >
+                      View All Users
+                    </Button>
+                  </li>
+                </ul>
+              </div>
             </li>
             <li>
               <Link
