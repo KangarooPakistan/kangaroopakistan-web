@@ -1,11 +1,15 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
+import { Button } from "./button";
+import { useRouter } from "next/navigation";
 
 const UserNavbar = () => {
   const [isProfileOpen, setProfileOpen] = useState(false);
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { data: session } = useSession();
+  const router = useRouter();
 
   const toggleProfile = () => {
     setProfileOpen(!isProfileOpen);
@@ -13,6 +17,12 @@ const UserNavbar = () => {
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const goToProfile = () => {
+    if (session && session.user && session.user.id) {
+      router.push(`/admin/profile/${session.user.id}`); // Use session.user.id directly
+    }
   };
 
   return (
@@ -65,21 +75,22 @@ const UserNavbar = () => {
             </div>
             <ul className="py-2" aria-labelledby="user-menu-button">
               <li>
-                <Link
-                  href="#"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                <Button
+                  onClick={goToProfile}
+                  variant="outline"
+                  className=" justify-start w-full my-1"
                 >
-                  Settings
-                </Link>
+                  Profile
+                </Button>
               </li>
               <li>
-                <Link
-                  href="#"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                <Button
+                  variant="outline"
+                  className="justify-start w-full my-1"
                   onClick={() => signOut()}
                 >
                   Sign out
-                </Link>
+                </Button>
               </li>
             </ul>
           </div>

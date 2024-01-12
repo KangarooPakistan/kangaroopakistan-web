@@ -86,12 +86,7 @@ export async function middleware(request: NextRequest) {
     };
 
     if (!token && !publicRoutes.includes(pathname)) {
-      const response = NextResponse.redirect(new URL('/login', request.url));
-      response.cookies.set('error', 'Please login first to access this route', { 
-        httpOnly: true,
-        sameSite: 'strict'
-      });
-      return response;
+      return NextResponse.redirect(new URL("/login", request.url));
     }
 
     if (token && userRole) {
