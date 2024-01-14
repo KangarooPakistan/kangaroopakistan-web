@@ -1,9 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import { db } from "@/app/lib/prisma";
 
-console.log('kainat')
 export async function GET(request: NextRequest) {
-    console.log('kainat')
     try {
         const url = new URL(request.url);
         const id = url.searchParams.get('id'); // Assuming the ID is passed as a query parameter

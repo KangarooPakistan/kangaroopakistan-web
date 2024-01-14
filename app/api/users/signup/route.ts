@@ -14,7 +14,7 @@ export async function POST(request: NextRequest){
     try {
         const reqBody = await request.json();
         const {email , password, role, schoolId, schoolName, contactNumber} = reqBody;
-        console.log(reqBody)
+        
         const userExists = await db.user.findUnique({
             where: {
                 email: reqBody.email
@@ -36,9 +36,6 @@ export async function POST(request: NextRequest){
             }
         }
         
-        
-
-        // hash password
         
             const salt  = await bcrypt.genSalt(10)
             const hashedPassword  = await bcrypt.hash(password, salt)

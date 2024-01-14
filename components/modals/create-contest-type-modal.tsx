@@ -25,6 +25,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { getSignedURL } from "@/app/api/s3-upload/actions";
+import { useModal } from "@/hooks/use-modal-store";
 
 const formSchema = z.object({
   name: z.string().min(1, {
@@ -35,19 +36,13 @@ const formSchema = z.object({
   }),
 });
 
-const InitialModal = () => {
-  const [isMounted, setIsMounted] = useState(false);
+const CreateContestTypeModal = () => {
   const [file, setFile] = useState<File | undefined>(undefined);
-  const [statusMessage, setStatusMessage] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { isOpen, onClose, type } = useModal();
 
   const [fileUrl, setFileUrl] = useState<string | undefined>(undefined);
-  const [content, setContent] = useState("");
   const router = useRouter();
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -56,6 +51,7 @@ const InitialModal = () => {
       hasFile: false,
     },
   });
+  const isModalOpen = isOpen && type === "createContest";
 
   const handleChange = (e: any) => {
     const selectedFile = e.target.files?.[0];
@@ -122,13 +118,13 @@ const InitialModal = () => {
       console.error(error);
     }
   };
-
-  if (!isMounted) {
-    return null;
-  }
+  const handleClose = () => {
+    form.reset();
+    onClose();
+  };
 
   return (
-    <Dialog open={false}>
+    <Dialog open={isModalOpen} onOpenChange={handleClose}>
       <DialogContent className="bg-white text-black p-0 overflow-hidden">
         <DialogHeader className="pt-8 px-6">
           <DialogTitle className="text-2xl text-center font-bold">
@@ -201,4 +197,4 @@ const InitialModal = () => {
   );
 };
 
-export default InitialModal;
+export default CreateContestTypeModal;

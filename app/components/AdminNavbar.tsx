@@ -166,7 +166,7 @@ const AdminNavbar = () => {
                 >
                   <path
                     stroke="currentColor"
-                    stroke-linecap="round"
+                    strokeLinecap="round"
                     stroke-linejoin="round"
                     stroke-width="2"
                     d="m1 1 4 4 4-4"

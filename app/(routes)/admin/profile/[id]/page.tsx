@@ -21,7 +21,6 @@ function UserProfile({ params }: UserProfileProps) {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        console.log(params.id);
         // Fetch user profile data when the component mounts or when params.id changes
         const response = await axios.get(`/api/users/profile/${params.id}`);
         setUserData(response.data as UserData); // Set the fetched data to state

@@ -20,8 +20,6 @@ const UserNavbar = () => {
   };
 
   const goToProfile = () => {
-    console.log("session.user.id");
-
     if (session && session.user && session.user.id) {
       router.push(`/user/profile/${session.user.id}`); // Use session.user.id directly
     }

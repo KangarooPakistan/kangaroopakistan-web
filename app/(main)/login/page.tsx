@@ -42,7 +42,6 @@ const Login = () => {
     })
       .then((result) => {
         if (result?.error) {
-          console.log(result?.error);
           setError(result?.error);
         } else {
           setError("");
