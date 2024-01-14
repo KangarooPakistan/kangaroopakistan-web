@@ -113,6 +113,7 @@ const CreateContestTypeModal = () => {
         fileInputRef.current.value = "";
         setFileUrl("");
       }
+      onClose();
       router.refresh(); // Use 'router.reload()' to refresh the page.
     } catch (error) {
       console.error(error);
