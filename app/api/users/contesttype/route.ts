@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
     try {
       // Fetch all rows from the contestType table
       const contestTypes = await db.contestType.findMany();
-    console.log(contestTypes)
+      console.log(contestTypes)
       // Return the contestTypes as JSON response
       return NextResponse.json(contestTypes);
     } catch (error: any) {
@@ -56,3 +56,40 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
   }
+
+
+export async function PUT(request: NextRequest) {
+  try {
+    // Extract the id and updated data from the request body
+    const { id, contestName, imageUrl } = await request.json();
+
+    // Check if the contest type with the given id exists
+    const existingContest = await db.contestType.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!existingContest) {
+      return NextResponse.json({ error: "Contest type not found" }, { status: 404 });
+    }
+
+    // Update the contest type with the new data
+    const updatedContest = await db.contestType.update({
+      where: {
+        id,
+      },
+      data: {
+        contestName,
+        imageUrl,
+      },
+    });
+
+    // Return the updated contest type as a JSON response
+    return NextResponse.json(updatedContest);
+  } catch (error: any) {
+    // Handle errors and return an appropriate response
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
