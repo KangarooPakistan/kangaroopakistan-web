@@ -107,7 +107,7 @@ const CreateContestTypeModal = () => {
         const signedURLResult = await getSignedURL(
           file.type,
           checksum,
-          fileName
+          
         );
 
         if (signedURLResult.failure !== undefined) {
