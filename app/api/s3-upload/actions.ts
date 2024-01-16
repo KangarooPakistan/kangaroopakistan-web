@@ -4,8 +4,6 @@ import { authOptions } from "@/app/lib/authOptions";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import crypto from "crypto"
-const generateFileName = (bytes = 32) => crypto.randomBytes(bytes).toString("hex")
-
 
 const region = process.env.AWS_BUCKET_REGION ?? "";
 const accessKeyId = process.env.AWS_ACCESS_KEY ?? "";
@@ -28,7 +26,7 @@ const acceptedTypes = [
 
 
 ]
-export async function getSignedURL(type: string, checksum: string){
+export async function getSignedURL(type: string, checksum: string, fileName: string){
     const session = await getServerSession(authOptions)
     if(!session){
         return {failure: "Not authenticated"}
@@ -36,9 +34,11 @@ export async function getSignedURL(type: string, checksum: string){
     if(!acceptedTypes.includes(type)){
         return {failure: "invalid file type"}
     }
+   
+
     const putObjectCommand = new PutObjectCommand({
         Bucket: process.env.AWS_BUCKET_NAME!,
-        Key: generateFileName(),
+        Key: fileName,
         ContentType: type,
         ChecksumSHA256: checksum,
         Metadata:{
@@ -51,6 +51,6 @@ export async function getSignedURL(type: string, checksum: string){
         putObjectCommand,
         { expiresIn: 60 } // 60 seconds
       )
-      
+   
     return {success: {url}}
 }

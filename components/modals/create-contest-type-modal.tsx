@@ -26,6 +26,7 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { getSignedURL } from "@/app/api/s3-upload/actions";
 import { useModal } from "@/hooks/use-modal-store";
+import { X, UploadCloud, Upload } from "lucide-react";
 
 const formSchema = z.object({
   name: z.string().min(1, {
@@ -40,6 +41,23 @@ const CreateContestTypeModal = () => {
   const [file, setFile] = useState<File | undefined>(undefined);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { isOpen, onClose, type } = useModal();
+  const [uploadedFileUrl, setUploadedFileUrl] = useState<string | undefined>(
+    undefined
+  );
+  const s3BucketUrl =
+    process.env.AWS_BUCKET_NAME ??
+    "https://kangaroo-pakistan-local-kainat.s3.us-east-1.amazonaws.com/";
+
+  const generateUniqueFileName = (fileNameString: string) => {
+    const timestamp = Date.now();
+    const extension = fileNameString.split(".").pop();
+    const fileNameWithoutExtension = fileNameString.replace(/\.[^/.]+$/, "");
+    const fileName = `${fileNameWithoutExtension}_${timestamp}.${extension}`;
+    return fileName;
+  };
+  const handleFileButtonClick = () => {
+    fileInputRef.current?.click(); // Trigger the file input when the button is clicked
+  };
 
   const [fileUrl, setFileUrl] = useState<string | undefined>(undefined);
   const router = useRouter();
@@ -80,13 +98,17 @@ const CreateContestTypeModal = () => {
       .join("");
     return hashHex;
   };
-
-  const onSubmit = async (values: z.infer<typeof formSchema>, e: any) => {
-    e.preventDefault();
+  const submitImage = async () => {
     try {
       if (file) {
+        const fileName = generateUniqueFileName(file.name);
         const checksum = await computeSHA256(file);
-        const signedURLResult = await getSignedURL(file.type, checksum);
+
+        const signedURLResult = await getSignedURL(
+          file.type,
+          checksum,
+          fileName
+        );
 
         if (signedURLResult.failure !== undefined) {
           throw new Error(signedURLResult.failure);
@@ -94,19 +116,32 @@ const CreateContestTypeModal = () => {
 
         const { url } = signedURLResult.success;
 
-        await fetch(url, {
-          method: "PUT",
-          headers: {
-            "Content-Type": file.type,
-          },
-          body: file,
-        });
-        const payload = {
-          contestName: values.name, // Spread the form values
-          imageUrl: url,
-        };
-        await axios.post("/api/users/contesttype", payload);
+        await axios
+          .put(url, file, {
+            headers: {
+              "Content-Type": file.type,
+            },
+          })
+          .then((resp) => {});
+
+        setFileUrl(`${s3BucketUrl}${fileName}`);
       }
+    } catch (error) {
+      console.log(error);
+    }
+    // Use 'router.reload()' to refresh the page.
+  };
+
+  const onSubmit = async (values: z.infer<typeof formSchema>, e: any) => {
+    e.preventDefault();
+    try {
+      console.log("kainat");
+      console.log(fileUrl);
+      const payload = {
+        contestName: values.name, // Spread the form values
+        imageUrl: fileUrl,
+      };
+      await axios.post("/api/users/contesttype", payload);
 
       form.reset();
       if (fileInputRef.current) {
@@ -139,31 +174,101 @@ const CreateContestTypeModal = () => {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <div className="space-y-8 px-6">
-              <div className="flex items-center justify-center text-center">
-                <div className="flex gap-4 items-start pb-4 w-full">
-                  <div className="">
-                    <img src={fileUrl} />
+              <div className="flex flex-col items-center justify-center text-center space-y-4">
+                <div className="relative    overflow-hidden">
+                  <div className="h-40 w-40 rounded-full">
+                    {fileUrl && (
+                      <Image
+                        src={fileUrl}
+                        alt="Uploaded Image"
+                        className="rounded-full"
+                        layout="fill"
+                        objectFit="contain"
+                      />
+                    )}
                   </div>
-                </div>
-                <FormField
-                  control={form.control}
-                  name="hasFile"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input
-                          type="file"
-                          ref={fileInputRef} // Attach the ref here
-                          className="bg-transparent flex-1 border-none outline-none"
-                          name="imageUrl"
-                          accept="image/jpeg, image/png, image/webp, image/gif" // Add ',' between file types
-                          onChange={handleChange}
-                        />
-                      </FormControl>
-                    </FormItem>
+                  {fileUrl && (
+                    <button
+                      onClick={() => setFileUrl("")}
+                      className="absolute z-20 top-2 right-2 bg-red-500 text-white p-2 rounded-full shadow-md hover:bg-red-600 transition duration-300"
+                      type="button"
+                    >
+                      <X className="h-6 w-6" />
+                    </button>
                   )}
-                />
+                </div>
+                <div className="flex justify-between items-center w-full">
+                  <FormField
+                    control={form.control}
+                    name="hasFile"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <label
+                            htmlFor="fileInput"
+                            className="bg-transparent flex-1 border-none outline-none cursor-pointer"
+                          >
+                            {/* Style the label to look like a button */}
+                            <div className="bg-blue-500 text-white py-2 px-4 rounded-full shadow-md hover:bg-blue-600 transition duration-300 flex items-center  space-x-2">
+                              <Upload className="h-6 w-6" />
+                              <span>Select Image</span>
+                            </div>
+                            <input
+                              type="file"
+                              id="fileInput"
+                              ref={fileInputRef}
+                              name="imageUrl"
+                              accept="image/jpeg, image/png, image/webp, image/gif"
+                              onChange={handleChange}
+                              className="hidden"
+                            />
+                          </label>
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <button
+                    onClick={submitImage}
+                    className="bg-blue-500 text-white py-2 px-4 rounded-full shadow-md hover:bg-blue-600 transition duration-300 flex items-center space-x-2"
+                    type="button"
+                  >
+                    <Upload className="h-6 w-6" />
+                    <span>Upload </span>
+                  </button>
+                </div>
               </div>
+
+              {/* <div className="flex items-center justify-center text-center">
+                <div className="flex flex-col justify-center">
+                  
+                  <div className="flex gap-4 items-start pb-4 w-full">
+                    <div className="">
+                      <img src={fileUrl} />
+                    </div>
+                  </div>
+                  <FormField
+                    control={form.control}
+                    name="hasFile"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            type="file"
+                            ref={fileInputRef} // Attach the ref here
+                            className="bg-transparent flex-1 border-none outline-none"
+                            name="imageUrl"
+                            accept="image/jpeg, image/png, image/webp, image/gif" // Add ',' between file types
+                            onChange={handleChange}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <Button type="button" onClick={submitImage} variant="default">
+                  Upload Image
+                </Button>
+              </div> */}
 
               <FormField
                 control={form.control}
