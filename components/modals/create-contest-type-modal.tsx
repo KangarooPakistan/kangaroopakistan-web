@@ -135,21 +135,45 @@ const CreateContestTypeModal = () => {
   const onSubmit = async (values: z.infer<typeof formSchema>, e: any) => {
     e.preventDefault();
     try {
-      console.log("kainat");
-      console.log(fileUrl);
-      const payload = {
-        contestName: values.name, // Spread the form values
-        imageUrl: fileUrl,
-      };
-      await axios.post("/api/users/contesttype", payload);
+      if (file) {
+        const fileName = generateUniqueFileName(file.name);
+        const checksum = await computeSHA256(file);
+        let awsUrl;
 
-      form.reset();
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-        setFileUrl("");
+        const signedURLResult = await getSignedURL(
+          file.type,
+          checksum,
+          fileName
+        );
+
+        if (signedURLResult.failure !== undefined) {
+          throw new Error(signedURLResult.failure);
+        }
+
+        const { url } = signedURLResult.success;
+
+        await axios
+          .put(url, file, {
+            headers: {
+              "Content-Type": file.type,
+            },
+          })
+          .then((resp) => {});
+        awsUrl = `${s3BucketUrl}${fileName}`;
+        const payload = {
+          contestName: values.name, // Spread the form values
+          imageUrl: awsUrl,
+        };
+        await axios.post("/api/users/contesttype", payload);
+        form.reset();
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+          setFileUrl("");
+        }
+        onClose();
+        router.refresh();
       }
-      onClose();
-      router.refresh(); // Use 'router.reload()' to refresh the page.
+      // Use 'router.reload()' to refresh the page.
     } catch (error) {
       console.error(error);
     }
