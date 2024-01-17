@@ -14,7 +14,6 @@ const Dashboard = async () => {
       <pre>{mysession}</pre>
       <Frontend />
       <InitialModal />
-
       {/* <ProfileButton /> */}
     </div>
   );

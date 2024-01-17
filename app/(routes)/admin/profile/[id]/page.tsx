@@ -11,6 +11,7 @@ interface UserProfileProps {
 interface UserData {
   // name: string;
   email: string;
+  role: string;
   // Add other properties from your user data here
 }
 
@@ -23,7 +24,8 @@ function UserProfile({ params }: UserProfileProps) {
       try {
         // Fetch user profile data when the component mounts or when params.id changes
         const response = await axios.get(`/api/users/profile/${params.id}`);
-        setUserData(response.data as UserData); // Set the fetched data to state
+        setUserData(response.data as UserData);
+        console; // Set the fetched data to state
         setLoading(false);
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -43,11 +45,36 @@ function UserProfile({ params }: UserProfileProps) {
 
   // Render the user profile using the userData state variable
   return (
-    <div>
-      <h1>User Profile</h1>
-      {/* <p>Name: {userData.name}</p> */}
-      <p>Email: {userData?.email}</p>
-      {/* Render other user profile information */}
+    <div className="flex h-screen w-full justify-center mt-20">
+      <div className="max-w-4xl">
+        <div className="bg-white shadow-xl rounded-lg py-4 px-40">
+          <div>
+            <img
+              className="w-32 h-32 rounded-full mx-auto"
+              src="https://img.freepik.com/premium-vector/account-icon-user-icon-vector-graphics_292645-552.jpg?w=740"
+              alt="profile"
+            />
+          </div>
+          <div>
+            <h3 className="text-center text-xl text-gray-900 font-medium leading-8">
+              User Profile
+            </h3>
+            <div className="text-center text-gray-400 text-xs font-semibold">
+              <p>{userData.role}</p>
+            </div>
+            <table className="text-xs my-3">
+              <tbody>
+                <tr>
+                  <td className="px-2 py-2 text-gray-500 font-semibold">
+                    Email
+                  </td>
+                  <td className="px-2 py-2">{userData.email}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
