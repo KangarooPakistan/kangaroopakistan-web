@@ -11,6 +11,7 @@ import Image from "next/image";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useModal } from "@/hooks/use-modal-store";
 
 interface ContestType {
   id: string;
@@ -19,6 +20,7 @@ interface ContestType {
 }
 const Page = () => {
   const [contestTypes, setContestTypes] = useState<ContestType[]>([]);
+  const { onOpen } = useModal();
 
   useEffect(() => {
     async function fetchContestTypes() {
@@ -36,34 +38,41 @@ const Page = () => {
   }, []);
 
   return (
-    <section className="w-fit mx-auto grid grid-cols-2 lg:grid-cols-4 md:grid-cols-3 justify-items-center justify-center gap-y-20 gap-x-6 mt-10 mb-5">
-      {contestTypes?.length > 0 &&
-        contestTypes.map((contestType) => (
-          <div
-            className="w-64 bg-white shadow-xl rounded-xl duration-500 hover:scale-105 hover:shadow-2xl"
-            key={contestType.id}
-          >
-            <img
-              src={contestType.imageUrl}
-              alt="contest image"
-              className="h-72 w-64 object-cover rounded-t-xl"
-            />
-            <div className="px-4 py-3 w-64">
-              <p className="text-lg font-bold text-black truncate block capitalize">
-                {contestType.contestName}
-              </p>
-              <div className="flex items-center mt-3 justify-between">
-                <button className="py-2 px-3 bg-black text-white rounded-md">
-                  Edit
-                </button>
-                <button className="py-2 px-3 bg-black text-white rounded-md ">
-                  Add Contest
-                </button>
+    <>
+      <div className="d-block mx-auto">
+        <Button variant="default" onClick={() => onOpen("createContest")}>
+          Create Contest
+        </Button>
+      </div>
+      <section className="w-fit mx-auto grid grid-cols-2 lg:grid-cols-4 md:grid-cols-3 justify-items-center justify-center gap-y-20 gap-x-6 mt-10 mb-5">
+        {contestTypes?.length > 0 &&
+          contestTypes.map((contestType) => (
+            <div
+              className="w-64 bg-white shadow-xl rounded-xl duration-500 hover:scale-105 hover:shadow-2xl"
+              key={contestType.id}
+            >
+              <img
+                src={contestType.imageUrl}
+                alt="contest image"
+                className="h-72 w-64 object-cover rounded-t-xl"
+              />
+              <div className="px-4 py-3 w-64">
+                <p className="text-lg font-bold text-black truncate block capitalize">
+                  {contestType.contestName}
+                </p>
+                <div className="flex items-center mt-3 justify-between">
+                  <button className="py-2 px-3 bg-black text-white rounded-md">
+                    Edit
+                  </button>
+                  <button className="py-2 px-3 bg-black text-white rounded-md ">
+                    Add Contest
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-    </section>
+          ))}
+      </section>
+    </>
   );
 };
 

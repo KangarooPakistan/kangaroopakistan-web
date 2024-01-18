@@ -194,13 +194,13 @@ const AdminNavbar = () => {
                     </Button>
                   </li>
                   <li>
-                    <Button
-                      variant="outline"
+                    <Link
+                      href="/admin/users"
                       className="block px-4 py-2 hover:bg-gray-100 rounded w-full text-left border-0"
-                      onClick={toggleDropdown}
+                      // onClick={toggleDropdown}
                     >
                       View All Users
-                    </Button>
+                    </Link>
                   </li>
                 </ul>
               </div>
