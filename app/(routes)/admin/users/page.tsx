@@ -27,4 +27,4 @@ const Users = () => {
   );
 };
 
-export default page;
+export default Users;
