@@ -25,6 +25,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { getSignedURL } from "@/app/api/s3-upload/actions";
+import { useModal } from "@/hooks/use-modal-store";
 
 const formSchema = z.object({
   name: z.string().min(1, {
@@ -40,6 +41,11 @@ const InitialModal = () => {
   const [file, setFile] = useState<File | undefined>(undefined);
   const [statusMessage, setStatusMessage] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { isOpen, onClose, type } = useModal();
+
+  const s3BucketUrl =
+    process.env.AWS_BUCKET_NAME ??
+    "https://kangaroo-pakistan-local-kainat.s3.us-east-1.amazonaws.com/";
 
   const [fileUrl, setFileUrl] = useState<string | undefined>(undefined);
   const [content, setContent] = useState("");
@@ -84,13 +90,26 @@ const InitialModal = () => {
       .join("");
     return hashHex;
   };
-
+  const generateUniqueFileName = (fileNameString: string) => {
+    const timestamp = Date.now();
+    const extension = fileNameString.split(".").pop();
+    const fileNameWithoutExtension = fileNameString.replace(/\.[^/.]+$/, "");
+    const fileName = `${fileNameWithoutExtension}_${timestamp}.${extension}`;
+    return fileName;
+  };
   const onSubmit = async (values: z.infer<typeof formSchema>, e: any) => {
     e.preventDefault();
     try {
       if (file) {
+        const fileName = generateUniqueFileName(file.name);
         const checksum = await computeSHA256(file);
-        const signedURLResult = await getSignedURL(file.type, checksum);
+        let awsUrl;
+
+        const signedURLResult = await getSignedURL(
+          file.type,
+          checksum,
+          fileName
+        );
 
         if (signedURLResult.failure !== undefined) {
           throw new Error(signedURLResult.failure);
@@ -98,29 +117,35 @@ const InitialModal = () => {
 
         const { url } = signedURLResult.success;
 
-        await fetch(url, {
-          method: "PUT",
-          headers: {
-            "Content-Type": file.type,
-          },
-          body: file,
-        });
+        await axios
+          .put(url, file, {
+            headers: {
+              "Content-Type": file.type,
+            },
+          })
+          .then((resp) => {});
+        awsUrl = `${s3BucketUrl}${fileName}`;
         const payload = {
           contestName: values.name, // Spread the form values
-          imageUrl: url,
+          imageUrl: awsUrl,
         };
         await axios.post("/api/users/contesttype", payload);
+        form.reset();
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+          setFileUrl("");
+        }
+        onClose();
+        router.refresh();
       }
-
-      form.reset();
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-        setFileUrl("");
-      }
-      router.refresh(); // Use 'router.reload()' to refresh the page.
+      // Use 'router.reload()' to refresh the page.
     } catch (error) {
       console.error(error);
     }
+  };
+  const handleClose = () => {
+    form.reset();
+    onClose();
   };
 
   if (!isMounted) {
