@@ -30,7 +30,7 @@ import { X, UploadCloud, Upload } from "lucide-react";
 
 const formSchema = z.object({
   name: z.string().min(1, {
-    message: "Server name is required.",
+    message: "ContestType is required.",
   }),
   hasFile: z.boolean().refine((val) => val, {
     message: "A file is required.",
@@ -300,13 +300,13 @@ const CreateContestTypeModal = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
-                      Server name
+                      Contest Type
                     </FormLabel>
                     <FormControl>
                       <Input
                         disabled={isLoading}
                         className="bg-zinc-300/50 border-0 focus-visible:ring-0 text-black focus-visible:ring-offset-0"
-                        placeholder="Enter server name"
+                        placeholder="Enter Contest Type"
                         {...field}
                       />
                     </FormControl>
