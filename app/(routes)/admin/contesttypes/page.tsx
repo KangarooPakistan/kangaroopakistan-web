@@ -39,7 +39,7 @@ const Page = () => {
 
   return (
     <>
-      <div className="flex justify-end mr-5">
+      <div className="flex justify-end mr-16">
         <Button variant="default" onClick={() => onOpen("createContest")}>
           Create Contest Type
         </Button>
