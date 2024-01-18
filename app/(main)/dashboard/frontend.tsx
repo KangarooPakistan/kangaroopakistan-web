@@ -39,7 +39,7 @@ const Frontend = () => {
         Register
       </Button>
       <Button variant="ghost" onClick={() => onOpen("createContest")}>
-        Create Contest
+        Create Contest Type
       </Button>
     </div>
   );
