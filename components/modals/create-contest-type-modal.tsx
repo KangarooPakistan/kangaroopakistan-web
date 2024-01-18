@@ -221,7 +221,7 @@ const CreateContestTypeModal = () => {
                     </button>
                   )}
                 </div>
-                <div className="flex justify-between items-center w-full">
+                <div className="flex justify-center items-center w-full">
                   <FormField
                     control={form.control}
                     name="hasFile"
@@ -251,14 +251,14 @@ const CreateContestTypeModal = () => {
                       </FormItem>
                     )}
                   />
-                  <button
+                  {/* <button
                     onClick={submitImage}
                     className="bg-blue-500 text-white py-2 px-4 rounded-full shadow-md hover:bg-blue-600 transition duration-300 flex items-center space-x-2"
                     type="button"
                   >
                     <Upload className="h-6 w-6" />
                     <span>Upload </span>
-                  </button>
+                  </button> */}
                 </div>
               </div>
 
