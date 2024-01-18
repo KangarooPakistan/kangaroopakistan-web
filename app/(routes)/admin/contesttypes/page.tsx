@@ -1,17 +1,9 @@
 "use client";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import Image from "next/image";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useModal } from "@/hooks/use-modal-store";
+import Skeleton from "@/app/components/Skeleton";
 
 interface ContestType {
   id: string;
@@ -20,14 +12,15 @@ interface ContestType {
 }
 const Page = () => {
   const [contestTypes, setContestTypes] = useState<ContestType[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const { onOpen } = useModal();
 
   useEffect(() => {
     async function fetchContestTypes() {
       try {
         const response = await axios.get("/api/users/contesttype"); // Replace with your actual API route URL
-        console.log(response);
         setContestTypes(response.data);
+        setIsLoading(false);
       } catch (error) {
         console.error("Error:", error);
       }
@@ -36,21 +29,6 @@ const Page = () => {
     // Call the fetchContestTypes function when the component mounts
     fetchContestTypes();
   }, []);
-  
-  useEffect(() => {
-    async function fetchContestTypes() {
-      try {
-        const response = await axios.get("/api/users/contesttype"); // Replace with your actual API route URL
-        console.log(response);
-        setContestTypes(response.data);
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    }
-
-    // Call the fetchContestTypes function when the component mounts
-    fetchContestTypes();
-  }, [contestTypes]);
 
   return (
     <>
@@ -60,7 +38,11 @@ const Page = () => {
         </Button>
       </div>
       <section className="w-fit mx-auto grid grid-cols-2 lg:grid-cols-4 md:grid-cols-3 justify-items-center justify-center gap-y-20 gap-x-6 mt-10 mb-5">
-        {contestTypes?.length > 0 &&
+        {isLoading ? (
+          Array.from({ length: 8 }).map((_, index) => (
+            <Skeleton key={index} />
+          ))
+        ) : contestTypes?.length > 0 ? (
           contestTypes.map((contestType) => (
             <div
               className="w-64 bg-white shadow-xl rounded-xl duration-500 hover:scale-105 hover:shadow-2xl"
@@ -76,16 +58,21 @@ const Page = () => {
                   {contestType.contestName}
                 </p>
                 <div className="flex items-center mt-3 justify-between">
-                  <button className="py-2 px-3 bg-black text-white rounded-md">
+                  <Button className="py-2 px-3 bg-black text-white rounded-md">
                     Edit
-                  </button>
-                  <button className="py-2 px-3 bg-black text-white rounded-md ">
+                  </Button>
+                  <Button className="py-2 px-3 bg-black text-white rounded-md ">
                     Add Contest
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>
-          ))}
+          ))
+        ) : (
+          <div className="text-center">
+            <p>No contest types found.</p>
+          </div>
+        )}
       </section>
     </>
   );
