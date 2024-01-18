@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { User, columns } from "./columns";
 import { DataTable } from "./data-table";
 
-const page = () => {
+const Users = () => {
   const [users, setUsers] = useState([]);
   useEffect(() => {
     async function fetchContestTypes() {

@@ -185,13 +185,13 @@ const AdminNavbar = () => {
                   aria-labelledby="dropdownLargeButton"
                 >
                   <li>
-                    <Button
-                      variant="outline"
+                    <Link
+                      href="/admin/register"
                       className="block px-4 py-2 hover:bg-gray-100 rounded w-full text-left border-0"
-                      onClick={toggleDropdown}
+                      // onClick={toggleDropdown}
                     >
                       Register User
-                    </Button>
+                    </Link>
                   </li>
                   <li>
                     <Link
