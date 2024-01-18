@@ -36,6 +36,21 @@ const Page = () => {
     // Call the fetchContestTypes function when the component mounts
     fetchContestTypes();
   }, []);
+  
+  useEffect(() => {
+    async function fetchContestTypes() {
+      try {
+        const response = await axios.get("/api/users/contesttype"); // Replace with your actual API route URL
+        console.log(response);
+        setContestTypes(response.data);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
+
+    // Call the fetchContestTypes function when the component mounts
+    fetchContestTypes();
+  }, [contestTypes]);
 
   return (
     <>
