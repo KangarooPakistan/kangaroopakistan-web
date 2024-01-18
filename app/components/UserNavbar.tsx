@@ -5,6 +5,11 @@ import { signOut, useSession } from "next-auth/react";
 import { Button } from "../../components/ui/button";
 import { useRouter } from "next/navigation";
 
+// interface SessionData {
+//   role: string | undefined;
+//   email: string | undefined | null;
+// }
+
 const UserNavbar = () => {
   const [isProfileOpen, setProfileOpen] = useState(false);
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -58,9 +63,9 @@ const UserNavbar = () => {
             id="user-dropdown"
           >
             <div className="px-4 py-3">
-              <span className="block text-sm text-gray-900 ">Bonnie Green</span>
+              <span className="block text-sm text-gray-900 ">Name</span>
               <span className="block text-sm text-gray-500 truncate ">
-                name@flowbite.com
+                email@email.com
               </span>
             </div>
             <ul className="py-2" aria-labelledby="user-menu-button">
