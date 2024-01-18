@@ -5,6 +5,11 @@ import { signOut, useSession } from "next-auth/react";
 import { Button } from "../../components/ui/button";
 import { useRouter } from "next/navigation";
 
+// interface SessionData {
+//   role: string;
+//   email: string ;
+// }
+
 const AdminNavbar = () => {
   const [isProfileOpen, setProfileOpen] = useState(false);
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -28,6 +33,15 @@ const AdminNavbar = () => {
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const handleClickRegister = () => {
+    toggleDropdown();
+    router.push("/admin/register");
+  };
+  const handleClickUser = () => {
+    toggleDropdown();
+    router.push("/admin/users");
   };
 
   return (
@@ -63,9 +77,9 @@ const AdminNavbar = () => {
             id="user-dropdown"
           >
             <div className="px-4 py-3">
-              <span className="block text-sm text-gray-900 ">Bonnie Green</span>
+              <span className="block text-sm text-gray-900 ">Name</span>
               <span className="block text-sm text-gray-500 truncate ">
-                name@flowbite.com
+                email@email.com
               </span>
             </div>
             <ul className="py-2" aria-labelledby="user-menu-button">
@@ -167,8 +181,8 @@ const AdminNavbar = () => {
                   <path
                     stroke="currentColor"
                     strokeLinecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
                     d="m1 1 4 4 4-4"
                   />
                 </svg>
@@ -185,22 +199,20 @@ const AdminNavbar = () => {
                   aria-labelledby="dropdownLargeButton"
                 >
                   <li>
-                    <Link
-                      href="/admin/register"
+                    <button
                       className="block px-4 py-2 hover:bg-gray-100 rounded w-full text-left border-0"
-                      // onClick={toggleDropdown}
+                      onClick={handleClickRegister}
                     >
                       Register User
-                    </Link>
+                    </button>
                   </li>
                   <li>
-                    <Link
-                      href="/admin/users"
+                    <button
                       className="block px-4 py-2 hover:bg-gray-100 rounded w-full text-left border-0"
-                      // onClick={toggleDropdown}
+                      onClick={handleClickUser}
                     >
                       View All Users
-                    </Link>
+                    </button>
                   </li>
                 </ul>
               </div>
