@@ -39,7 +39,7 @@ const Page = () => {
 
   return (
     <>
-      <div className="d-block mx-auto">
+      <div className="flex justify-end mr-5">
         <Button variant="default" onClick={() => onOpen("createContest")}>
           Create Contest
         </Button>
