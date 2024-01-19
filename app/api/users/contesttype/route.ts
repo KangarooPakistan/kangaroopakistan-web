@@ -3,53 +3,47 @@ import { getToken } from "next-auth/jwt";
 import { getServerSession } from "next-auth";
 import { db } from "@/app/lib/prisma";
 
-interface ContestData {
-  name: string;
-  startDate: Date;
-  endDate: Date;
-  contestTypeId: string;
+interface ContestTypeData {
+  contestName: string;
+  imageUrl: string;  // Optional field
 }
 
 export async function POST(request: NextRequest) {
   const session = await getServerSession();
   const token = await getToken({ req: request });
 
-  if (session && token?.role === "Admin") {
-    try {
-      const reqBody = await request.json();
-      const { name, startDate, endDate, contestTypeId } = reqBody;
+  if (session) {
+    if (token?.role === "Admin") {
+      try {
+        const reqBody = await request.json();
+        const { contestName, imageUrl } = reqBody;
+        const contestTypeData: ContestTypeData = {
+          contestName: contestName,
+          imageUrl: imageUrl,
+        };        
+        const existingContest = await db.contestType.findUnique({
+            where: {
+                contestName: contestTypeData.contestName,
+            },
+        });
+        if(existingContest)
+            {
+                return NextResponse.json({error: "User Already Exists"}, {status: 400})
+            }
+        const contestType = await db.contestType.create({
+          data: contestTypeData,
+        });
 
-      console.log(endDate)
-      const contestData: ContestData = {
-        name,
-        startDate: new Date(startDate),
-        endDate: new Date(endDate),
-        contestTypeId,
-      };
-
-      // Optionally, validate if the contestTypeId exists in ContestType
-      const existingContestType = await db.contestType.findUnique({
-        where: { id: contestTypeId },
-      });
-
-      if (!existingContestType) {
-        return NextResponse.json({ error: "Contest Type not found" }, { status: 404 });
+        return NextResponse.json(contestType);
+      } catch (error: any) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
       }
-
-      const newContest = await db.contest.create({
-        data: contestData,
-      });
-
-      return NextResponse.json(newContest);
-    } catch (error: any) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
     }
-  } else {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+
+  // Handle other cases or return a response for unauthorized requests
+  return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 }
-
-
 export async function GET(request: NextRequest) {
     try {
       // Fetch all rows from the contestType table

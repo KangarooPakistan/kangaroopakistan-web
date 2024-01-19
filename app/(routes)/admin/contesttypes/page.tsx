@@ -1,4 +1,6 @@
 "use client";
+
+import Image from "next/image";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -48,8 +50,7 @@ const Page = () => {
   }, [contestTypes]);
 
   const handleCardClick = (contestTypeId: string) => {
-    // Navigate to the desired page with the contestTypeId as a parameter
-    router.push(`/admin/createcontest/${contestTypeId}`);
+    router.push(`/admin/contesttypes/${contestTypeId}/createcontest`);
   };
 
   return (
@@ -81,7 +82,12 @@ const Page = () => {
                   <Button className="py-2 px-3 bg-black text-white rounded-md">
                     Edit
                   </Button>
-                  <Button className="py-2 px-3 bg-black text-white rounded-md ">
+                  <Button
+                    className="py-2 px-3 bg-black text-white rounded-md "
+                    onClick={() => {
+                      handleCardClick(contestType.id);
+                    }}
+                  >
                     Add Contest
                   </Button>
                 </div>
