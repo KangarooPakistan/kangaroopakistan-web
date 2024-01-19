@@ -13,6 +13,7 @@ import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useModal } from "@/hooks/use-modal-store";
 import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 interface ContestType {
   id: string;
@@ -21,6 +22,7 @@ interface ContestType {
 }
 const Page = () => {
   const [contestTypes, setContestTypes] = useState<ContestType[]>([]);
+  const router = useRouter();
 
   const { onOpen } = useModal();
 
@@ -56,7 +58,7 @@ const Page = () => {
 
   const handleCardClick = (contestTypeId: string) => {
     // Navigate to the desired page with the contestTypeId as a parameter
-    router.push(`/your-destination-page/${contestTypeId}`);
+    router.push(`/admin/createcontest/${contestTypeId}`);
   };
   return (
     <>
@@ -85,7 +87,10 @@ const Page = () => {
                   <button className="py-2 px-3 bg-black text-white rounded-md">
                     Edit
                   </button>
-                  <button className="py-2 px-3 bg-black text-white rounded-md ">
+                  <button
+                    className="py-2 px-3 bg-black text-white rounded-md"
+                    onClick={() => handleCardClick(contestType.id)}
+                  >
                     Add Contest
                   </button>
                 </div>
