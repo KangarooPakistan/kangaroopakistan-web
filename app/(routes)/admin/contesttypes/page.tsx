@@ -37,11 +37,9 @@ const Page = () => {
           Create Contest Type
         </Button>
       </div>
-      <section className="w-fit mx-auto grid grid-cols-2 lg:grid-cols-4 md:grid-cols-3 justify-items-center justify-center gap-y-20 gap-x-6 mt-10 mb-5">
+      <section className="w-fit mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 md:grid-cols-3 justify-items-center justify-center gap-y-20 gap-x-6 mt-10 mb-5">
         {isLoading ? (
-          Array.from({ length: 8 }).map((_, index) => (
-            <Skeleton key={index} />
-          ))
+          Array.from({ length: 8 }).map((_, index) => <Skeleton key={index} />)
         ) : contestTypes?.length > 0 ? (
           contestTypes.map((contestType) => (
             <div

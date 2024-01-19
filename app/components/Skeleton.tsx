@@ -1,6 +1,6 @@
 const Skeleton = () => {
   return (
-    <div className="w-64 bg-white shadow rounded-xl border border-gray-200  animate-pulse md:p-6">
+    <div className="w-64 bg-white shadow rounded-xl border border-gray-200  animate-pulse p-4">
       <div className="flex items-center justify-center h-52 mb-4 bg-gray-300 rounded ">
         <svg
           className="w-10 h-10 text-gray-200 dark:text-gray-600"
@@ -13,12 +13,11 @@ const Skeleton = () => {
           <path d="M5 5V.13a2.96 2.96 0 0 0-1.293.749L.879 3.707A2.98 2.98 0 0 0 .13 5H5Z" />
         </svg>
       </div>
-      <div className="h-5 bg-gray-200 rounded-full w-52 mb-4"></div>
+      <div className="h-5 bg-gray-200 rounded-full w-52 mb-4 "></div>
       <div className="flex items-center mt-3 justify-between">
         <div className="h-10 bg-gray-200 rounded-md w-20 mb-2"></div>
         <div className="h-10 bg-gray-200 rounded-md w-20 mb-2"></div>
       </div>
-      <span className="sr-only">Loading...</span>
     </div>
   );
 };
