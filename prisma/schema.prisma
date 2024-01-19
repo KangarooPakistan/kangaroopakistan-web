@@ -25,4 +25,15 @@ model ContestType {
   id       String     @id @default(uuid())
   contestName     String  @unique
   imageUrl String @db.VarChar(10000)
+   contests      Contest[]
+}
+model Contest {
+  id            String   @id @default(uuid())
+  name          String
+  startDate     DateTime
+  endDate       DateTime
+  contestTypeId String
+  contestType   ContestType @relation(fields: [contestTypeId], references: [id], onDelete: Cascade)
+
+   @@index([contestTypeId])
 }

@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import Spinner from "@/app/components/Spinner";
 
 interface UserProfileProps {
   params: {
@@ -36,7 +37,7 @@ function UserProfile({ params }: UserProfileProps) {
     fetchUserData(); // Call the async function
   }, [params.id]); // Include params.id as a dependency
   if (loading) {
-    return <p>Loading...</p>;
+    return <Spinner />;
   }
 
   if (!userData) {

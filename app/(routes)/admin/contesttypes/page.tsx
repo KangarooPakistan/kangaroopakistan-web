@@ -12,6 +12,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useModal } from "@/hooks/use-modal-store";
+import { useRouter } from "next/navigation";
 
 interface ContestType {
   id: string;
@@ -20,6 +21,7 @@ interface ContestType {
 }
 const Page = () => {
   const [contestTypes, setContestTypes] = useState<ContestType[]>([]);
+
   const { onOpen } = useModal();
 
   useEffect(() => {
@@ -36,7 +38,7 @@ const Page = () => {
     // Call the fetchContestTypes function when the component mounts
     fetchContestTypes();
   }, []);
-  
+
   useEffect(() => {
     async function fetchContestTypes() {
       try {
@@ -52,6 +54,10 @@ const Page = () => {
     fetchContestTypes();
   }, [contestTypes]);
 
+  const handleCardClick = (contestTypeId: string) => {
+    // Navigate to the desired page with the contestTypeId as a parameter
+    router.push(`/your-destination-page/${contestTypeId}`);
+  };
   return (
     <>
       <div className="flex justify-end mr-16">

@@ -27,7 +27,13 @@ const UserNavbar = () => {
   const goToProfile = () => {
     if (session && session.user && session.user.id) {
       router.push(`/user/profile/${session.user.id}`); // Use session.user.id directly
+      toggleProfile();
     }
+  };
+
+  const logOut = () => {
+    signOut();
+    toggleProfile();
   };
 
   return (
@@ -82,7 +88,7 @@ const UserNavbar = () => {
                 <Button
                   variant="outline"
                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full border-0 text-left "
-                  onClick={() => signOut()}
+                  onClick={logOut}
                 >
                   Sign out
                 </Button>
