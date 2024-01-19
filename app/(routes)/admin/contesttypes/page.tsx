@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useModal } from "@/hooks/use-modal-store";
 import Skeleton from "@/app/components/Skeleton";
+import { useRouter } from "next/navigation";
 
 interface ContestType {
   id: string;
@@ -30,6 +31,26 @@ const Page = () => {
     fetchContestTypes();
   }, []);
 
+  useEffect(() => {
+    async function fetchContestTypes() {
+      try {
+        const response = await axios.get("/api/users/contesttype"); // Replace with your actual API route URL
+        console.log(response);
+        setContestTypes(response.data);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
+
+    // Call the fetchContestTypes function when the component mounts
+    fetchContestTypes();
+  }, [contestTypes]);
+
+  const handleCardClick = (contestTypeId: string) => {
+    // Navigate to the desired page with the contestTypeId as a parameter
+    router.push(`/admin/createcontest/${contestTypeId}`);
+  };
+  
   return (
     <>
       <div className="flex justify-end mr-16">
