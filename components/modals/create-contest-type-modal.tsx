@@ -98,39 +98,7 @@ const CreateContestTypeModal = () => {
       .join("");
     return hashHex;
   };
-  const submitImage = async () => {
-    try {
-      if (file) {
-        const fileName = generateUniqueFileName(file.name);
-        const checksum = await computeSHA256(file);
-
-        const signedURLResult = await getSignedURL(
-          file.type,
-          checksum,
-          fileName
-        );
-
-        if (signedURLResult.failure !== undefined) {
-          throw new Error(signedURLResult.failure);
-        }
-
-        const { url } = signedURLResult.success;
-
-        await axios
-          .put(url, file, {
-            headers: {
-              "Content-Type": file.type,
-            },
-          })
-          .then((resp) => {});
-
-        setFileUrl(`${s3BucketUrl}${fileName}`);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-    // Use 'router.reload()' to refresh the page.
-  };
+  
 
   const onSubmit = async (values: z.infer<typeof formSchema>, e: any) => {
     e.preventDefault();

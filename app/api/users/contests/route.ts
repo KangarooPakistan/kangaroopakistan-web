@@ -4,33 +4,56 @@ import { getServerSession } from "next-auth";
 import { db } from "@/app/lib/prisma";
 
 interface ContestData {
-  contestName: string;
-  imageUrl: string;  // Optional field
+  name: string;
+  startDate: Date;
+  endDate: Date;
+  contestTypeId: string;
 }
 
 export async function POST(request: NextRequest) {
   const session = await getServerSession();
   const token = await getToken({ req: request });
 
-  if (session) {
-    if (token?.role === "Admin") {
-      try {
-        const reqBody = await request.json();
-        const { contestName, imageUrl } = reqBody;
-        
-      } catch (error: any) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
-      }
-    }
-  }
+  if (session && token?.role === "Admin") {
+    try {
+      const reqBody = await request.json();
+      const { name, startDate, endDate, contestTypeId } = reqBody;
 
-  // Handle other cases or return a response for unauthorized requests
-  return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      console.log(endDate)
+      const contestData: ContestData = {
+        name,
+        startDate: new Date(startDate),
+        endDate: new Date(endDate),
+        contestTypeId,
+      };
+
+      // Optionally, validate if the contestTypeId exists in ContestType
+      const existingContestType = await db.contestType.findUnique({
+        where: { id: contestTypeId },
+      });
+
+      if (!existingContestType) {
+        return NextResponse.json({ error: "Contest Type not found" }, { status: 404 });
+      }
+
+      const newContest = await db.contest.create({
+        data: contestData,
+      });
+
+      return NextResponse.json(newContest);
+    } catch (error: any) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+  } else {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 }
+
+
 export async function GET(request: NextRequest) {
     try {
       // Fetch all rows from the contestType table
-      const contestTypes = await db.contest.findMany();
+      const contestTypes = await db.contestType.findMany();
       console.log(contestTypes)
       // Return the contestTypes as JSON response
       return NextResponse.json(contestTypes);

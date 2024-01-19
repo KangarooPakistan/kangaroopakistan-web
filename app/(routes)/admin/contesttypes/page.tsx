@@ -1,10 +1,11 @@
 "use client";
+
+import Image from "next/image";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useModal } from "@/hooks/use-modal-store";
 import Skeleton from "@/app/components/Skeleton";
-import { useRouter } from "next/navigation";
 import { useRouter } from "next/navigation";
 
 interface ContestType {
@@ -16,6 +17,7 @@ const Page = () => {
   const [contestTypes, setContestTypes] = useState<ContestType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { onOpen } = useModal();
+  const router = useRouter();
 
   useEffect(() => {
     async function fetchContestTypes() {
@@ -48,10 +50,9 @@ const Page = () => {
   }, [contestTypes]);
 
   const handleCardClick = (contestTypeId: string) => {
-    // Navigate to the desired page with the contestTypeId as a parameter
-    router.push(`/admin/createcontest/${contestTypeId}`);
+    router.push(`/admin/contesttypes/${contestTypeId}/createcontest`);
   };
-  
+
   return (
     <>
       <div className="flex justify-end mr-16">
@@ -81,7 +82,12 @@ const Page = () => {
                   <Button className="py-2 px-3 bg-black text-white rounded-md">
                     Edit
                   </Button>
-                  <Button className="py-2 px-3 bg-black text-white rounded-md ">
+                  <Button
+                    className="py-2 px-3 bg-black text-white rounded-md "
+                    onClick={() => {
+                      handleCardClick(contestType.id);
+                    }}
+                  >
                     Add Contest
                   </Button>
                 </div>
