@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useModal } from "@/hooks/use-modal-store";
 import Skeleton from "@/app/components/Skeleton";
 import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 interface ContestType {
   id: string;
