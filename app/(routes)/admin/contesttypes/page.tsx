@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { useModal } from "@/hooks/use-modal-store";
 import Skeleton from "@/app/components/Skeleton";
 import { useRouter } from "next/navigation";
-import { useRouter } from "next/navigation";
 
 interface ContestType {
   id: string;
@@ -16,6 +15,7 @@ const Page = () => {
   const [contestTypes, setContestTypes] = useState<ContestType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { onOpen } = useModal();
+  const router = useRouter();
 
   useEffect(() => {
     async function fetchContestTypes() {
@@ -51,7 +51,7 @@ const Page = () => {
     // Navigate to the desired page with the contestTypeId as a parameter
     router.push(`/admin/createcontest/${contestTypeId}`);
   };
-  
+
   return (
     <>
       <div className="flex justify-end mr-16">

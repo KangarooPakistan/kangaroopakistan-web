@@ -205,20 +205,20 @@ const AdminNavbar = () => {
                   aria-labelledby="dropdownLargeButton"
                 >
                   <li>
-                    <button
+                    <Button
                       className="block px-4 py-2 hover:bg-gray-100 rounded w-full text-left border-0"
                       onClick={handleClickRegister}
                     >
                       Register User
-                    </button>
+                    </Button>
                   </li>
                   <li>
-                    <button
+                    <Button
                       className="block px-4 py-2 hover:bg-gray-100 rounded w-full text-left border-0"
                       onClick={handleClickUser}
                     >
                       View All Users
-                    </button>
+                    </Button>
                   </li>
                 </ul>
               </div>
@@ -229,6 +229,14 @@ const AdminNavbar = () => {
                 className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0"
               >
                 Notifications
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/admin/enrollstudents"
+                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0"
+              >
+                Enroll Students
               </Link>
             </li>
           </ul>
