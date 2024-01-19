@@ -84,7 +84,7 @@ const Page = () => {
                 id={`studentName${index}`}
                 value={student.name}
                 onChange={(e) => updateStudent(index, e.target.value, "name")}
-                className="p-1 sm:p-2 border rounded-md text-xs md:text-base"
+                className="p-2 border rounded-md text-xs md:text-base"
                 required
               />
               <input
@@ -94,7 +94,7 @@ const Page = () => {
                 onChange={(e) =>
                   updateStudent(index, e.target.value, "fatherName")
                 }
-                className="p-1 sm:p-2 border rounded-md text-xs md:text-base"
+                className="p-2 border rounded-md text-xs md:text-base"
                 required
               />
             </div>
