@@ -205,20 +205,20 @@ const AdminNavbar = () => {
                   aria-labelledby="dropdownLargeButton"
                 >
                   <li>
-                    <Button
+                    <button
                       className="block px-4 py-2 hover:bg-gray-100 rounded w-full text-left border-0"
                       onClick={handleClickRegister}
                     >
                       Register User
-                    </Button>
+                    </button>
                   </li>
                   <li>
-                    <Button
+                    <button
                       className="block px-4 py-2 hover:bg-gray-100 rounded w-full text-left border-0"
                       onClick={handleClickUser}
                     >
                       View All Users
-                    </Button>
+                    </button>
                   </li>
                 </ul>
               </div>

@@ -60,7 +60,7 @@ const Page = () => {
           Create Contest Type
         </Button>
       </div>
-      <section className="w-fit mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 md:grid-cols-3 justify-items-center justify-center gap-y-20 gap-x-6 mt-10 mb-5">
+      <section className="w-fit mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 md:grid-cols-3  gap-y-20 gap-x-6 mt-10 mb-5">
         {isLoading ? (
           Array.from({ length: 8 }).map((_, index) => <Skeleton key={index} />)
         ) : contestTypes?.length > 0 ? (
@@ -72,18 +72,21 @@ const Page = () => {
               <img
                 src={contestType.imageUrl}
                 alt="contest image"
-                className="h-72 w-64 object-cover rounded-t-xl"
+                className="h-52 w-64 object-cover rounded-t-xl"
               />
               <div className="px-4 py-3 w-64">
-                <p className="text-lg font-bold text-black truncate block capitalize">
+                <button className="bg-green-500 text-white rounded-xl text-smallest py-1 px-4 mb-2">
+                  View
+                </button>
+                <p className="text-lg font-medium text-black truncate block capitalize">
                   {contestType.contestName}
                 </p>
                 <div className="flex items-center mt-3 justify-between">
-                  <Button className="py-2 px-3 bg-black text-white rounded-md">
+                  <Button className="w-1/2 bg-black text-white rounded-xl mr-3">
                     Edit
                   </Button>
                   <Button
-                    className="py-2 px-3 bg-black text-white rounded-md "
+                    className="w-1/2 bg-black text-white rounded-xl "
                     onClick={() => {
                       handleCardClick(contestType.id);
                     }}
