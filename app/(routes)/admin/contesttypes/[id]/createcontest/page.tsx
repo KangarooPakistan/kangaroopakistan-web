@@ -61,7 +61,10 @@ const UserRegister = () => {
     };
     // console.log(`/api/users/contests`);
     // console.log(params.id);
-    await axios.post("/api/users/contests", payload);
+    await axios.post("/api/users/contests", payload).then((resp) => {
+      console.log("aminah123");
+      router.push(`/admin/contesttypes/${params.id}/viewcontest`);
+    });
     // const databaseDate = "2024-01-11T14:59:11.000Z";
     // const parsedDate = new Date(databaseDate);
 

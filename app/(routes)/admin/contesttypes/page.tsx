@@ -71,8 +71,13 @@ const Page = () => {
                   {contestType.contestName}
                 </p>
                 <div className="flex items-center mt-3 justify-between">
-                  <Button className="w-1/2 bg-black text-white rounded-xl mr-3">
-                    Edit
+                  <Button
+                    className="w-1/2 bg-black text-white rounded-xl mr-3"
+                    onClick={() => {
+                      handleViewClick(contestType.id);
+                    }}
+                  >
+                    View
                   </Button>
                   <Button
                     className="w-1/2 bg-black text-white rounded-xl "
