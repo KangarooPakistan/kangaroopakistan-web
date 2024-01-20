@@ -139,16 +139,19 @@ const CreateContestTypeModal = () => {
           setFileUrl("");
         }
 
-        router.refresh();
-        onClose();
+        handleClose();
       }
     } catch (error) {
       console.error(error);
     }
+    router.refresh();
+    window.location.reload();
   };
   const handleClose = () => {
     form.reset();
+
     onClose();
+    router.refresh(); // Reload the page when the modal is closed
   };
 
   return (
