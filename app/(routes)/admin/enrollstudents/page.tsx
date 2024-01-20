@@ -47,6 +47,7 @@ const Page = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("Number of students:", students.length);
+    console.log("Array:", students);
     // Add any additional logic or API calls here for form submission
   };
 
