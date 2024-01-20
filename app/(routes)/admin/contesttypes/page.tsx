@@ -34,23 +34,12 @@ const Page = () => {
     fetchContestTypes();
   }, []);
 
-  useEffect(() => {
-    async function fetchContestTypes() {
-      try {
-        const response = await axios.get("/api/users/contesttype"); // Replace with your actual API route URL
-        console.log(response);
-        setContestTypes(response.data);
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    }
-
-    // Call the fetchContestTypes function when the component mounts
-    fetchContestTypes();
-  }, [contestTypes]);
 
   const handleCardClick = (contestTypeId: string) => {
     router.push(`/admin/contesttypes/${contestTypeId}/createcontest`);
+  };
+  const handleViewClick = (contestTypeId: string) => {
+    router.push(`/admin/contesttypes/${contestTypeId}/viewcontest`);
   };
 
   return (
@@ -79,8 +68,13 @@ const Page = () => {
                   {contestType.contestName}
                 </p>
                 <div className="flex items-center mt-3 justify-between">
-                  <Button className="py-2 px-3 bg-black text-white rounded-md">
-                    Edit
+                  <Button
+                    className="py-2 px-3 bg-black text-white rounded-md"
+                    onClick={() => {
+                      handleViewClick(contestType.id);
+                    }}
+                  >
+                    View Contests
                   </Button>
                   <Button
                     className="py-2 px-3 bg-black text-white rounded-md "

@@ -49,19 +49,43 @@ export async function POST(request: NextRequest) {
   }
 }
 
+export  async function GET(req: NextRequest, res: NextResponse, ) {
+  try {
+    const url = new URL(req.url)
 
-export async function GET(request: NextRequest) {
-    try {
-      // Fetch all rows from the contestType table
-      const contestTypes = await db.contestType.findMany();
-      console.log(contestTypes)
-      // Return the contestTypes as JSON response
-      return NextResponse.json(contestTypes);
-    } catch (error: any) {
-      // Handle errors and return an appropriate response
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
+    const contestTypeId = url.searchParams.get("contestTypeId")
+    // const take = url.searchParams.get("take")
+    console.log(typeof(contestTypeId))
+    console.log('kainat')
+    // Optionally, you can validate if contestTypeId is provided
+    if (!contestTypeId) {
+      return NextResponse.json({ error: "Missing contestTypeId" }, { status: 401 });
+     }
+
+    // Query the database to get contests with the specified contestTypeId
+    const contests = await db.contest.findMany({
+      where: { contestTypeId: contestTypeId },
+    });
+    return NextResponse.json(contests);
+
+  } catch (error) {
+    console.error('Error:', error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
+}
+
+// export async function GET(request: NextRequest) {
+//     try {
+//       // Fetch all rows from the contestType table
+//       const contestTypes = await db.contestType.findMany();
+//       console.log(contestTypes)
+//       // Return the contestTypes as JSON response
+//       return NextResponse.json(contestTypes);
+//     } catch (error: any) {
+//       // Handle errors and return an appropriate response
+//       return NextResponse.json({ error: error.message }, { status: 500 });
+//     }
+//   }
 
 
 export async function PUT(request: NextRequest) {

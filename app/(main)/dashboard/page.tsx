@@ -8,7 +8,6 @@ const Dashboard = async () => {
   const mysession = JSON.stringify(session);
 
   return (
-    
     <div>
       Hi
       <pre>{mysession}</pre>
