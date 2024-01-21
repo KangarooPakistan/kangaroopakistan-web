@@ -78,20 +78,6 @@ export  async function GET(req: NextRequest, res: NextResponse, ) {
   }
 }
 
-// export async function GET(request: NextRequest) {
-//     try {
-//       // Fetch all rows from the contestType table
-//       const contestTypes = await db.contestType.findMany();
-//       console.log(contestTypes)
-//       // Return the contestTypes as JSON response
-//       return NextResponse.json(contestTypes);
-//     } catch (error: any) {
-//       // Handle errors and return an appropriate response
-//       return NextResponse.json({ error: error.message }, { status: 500 });
-//     }
-//   }
-
-
 export async function PUT(request: NextRequest) {
   try {
     // Extract the id and updated data from the request body

@@ -12,7 +12,8 @@ const ViewAllContests = () => {
       try {
         const contestTypeId = params.id;
         await axios
-          .get(`/api/users/contests?contestTypeId=${contestTypeId}`)
+          // .get(`/api/users/contests/active?contestTypeId=${contestTypeId}`) // show at user side 
+          .get(`/api/users/contests?contestTypeId=${contestTypeId}`) // show at admin side 
           .then((resp) => {
             console.log(resp.data);
             setContests(resp.data);
