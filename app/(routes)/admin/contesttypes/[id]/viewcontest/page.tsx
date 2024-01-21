@@ -1,10 +1,12 @@
 "use client";
-import axios from "axios";
+import { Contest, columns } from "./columns";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { DataTable } from "./data-table";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 
 const ViewAllContests = () => {
-  const [contests, setContests] = useState();
+  const [contests, setContests] = useState([]);
   const params = useParams();
 
   useEffect(() => {
@@ -12,8 +14,8 @@ const ViewAllContests = () => {
       try {
         const contestTypeId = params.id;
         await axios
-          // .get(`/api/users/contests/active?contestTypeId=${contestTypeId}`) // show at user side 
-          .get(`/api/users/contests?contestTypeId=${contestTypeId}`) // show at admin side 
+          // .get(`/api/users/contests/active?contestTypeId=${contestTypeId}`) // show at user side
+          .get(`/api/users/contests?contestTypeId=${contestTypeId}`) // show at admin side
           .then((resp) => {
             console.log(resp.data);
             setContests(resp.data);
@@ -32,7 +34,11 @@ const ViewAllContests = () => {
     fetchContestTypes();
   }, []);
 
-  return <div>page</div>;
+  return (
+    <div className="container mx-auto py-10">
+      <DataTable columns={columns} data={contests} />
+    </div>
+  );
 };
 
 export default ViewAllContests;
