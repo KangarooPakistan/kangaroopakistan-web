@@ -35,7 +35,7 @@ const formSchema = z.object({
       message: "End date is required.",
     }),
 });
-const UserRegister = () => {
+const CreateContest = () => {
   const router = useRouter();
   const params = useParams();
   const form = useForm({
@@ -107,7 +107,7 @@ const UserRegister = () => {
                         <Input
                           disabled={isLoading}
                           className="input"
-                          placeholder="Enter your email"
+                          placeholder="Enter Contest Name"
                           {...field}
                         />
                       </FormControl>
@@ -180,4 +180,4 @@ const UserRegister = () => {
   );
 };
 
-export default UserRegister;
+export default CreateContest;

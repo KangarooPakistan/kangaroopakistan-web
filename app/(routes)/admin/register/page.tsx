@@ -31,7 +31,38 @@ const formSchema = z.object({
       /[^A-Za-z0-9]/,
       "Password must contain at least one special character"
     ),
-     // At least one special character
+  schoolId: z.string(),
+  schoolName: z.string(),
+  contactNumber: z
+    .string()
+    .regex(/^\d{3}-\d{7}$/, "Phone number must be in the format 051-5194964"),
+  district: z.string(),
+  tehsil: z.string(),
+  fax: z.string(),
+  bankTitle: z.string(),
+  p_fName: z.string(),
+  p_mName: z.string(),
+  p_lName: z.string(),
+  p_contact: z
+    .string()
+    .regex(/^\d{4}-\d{7}$/, "Phone number must be in the format 0333-5194964"),
+  p_phone: z
+    .string()
+    .regex(/^\d{3}-\d{7}$/, "Phone number must be in the format 051-5194964"),
+  p_email: z.string(),
+  c_fName: z.string(),
+  c_mName: z.string(),
+  c_lName: z.string(),
+  c_contact: z
+    .string()
+    .regex(/^\d{4}-\d{7}$/, "Phone number must be in the format 0333-5194964"),
+  c_phone: z
+    .string()
+    .regex(/^\d{3}-\d{7}$/, "Phone number must be in the format 051-5194964"),
+  c_email: z.string().email(),
+  c_accountDetails: z.string(),
+
+  // At least one special character
 });
 const UserRegister = () => {
   const router = useRouter();
@@ -43,17 +74,32 @@ const UserRegister = () => {
       schoolId: "",
       schoolName: "",
       contactNumber: "",
+      district: "",
+      tehsil: "",
+      fax: "",
+      bankTitle: "",
+      p_fName: "",
+      p_mName: "",
+      p_lName: "",
+      p_contact: "",
+      p_phone: "",
+      p_email: "",
+      c_fName: "",
+      c_mName: "",
+      c_lName: "",
+      c_contact: "",
+      c_phone: "",
+      c_email: "",
+      c_accountDetails: "",
     },
   });
   const isLoading = form.formState.isSubmitting;
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    console.log(values);
     try {
       const payload = {
         ...values, // Spread the form values
-        role: "User",
-        schoolId: 3,
-        contactNumber: "0333-5194964",
-        schoolName: "F.G school", // Add the additional string
+        role: "User", // Add the additional string
       };
 
       await axios.post("/api/users/signup", payload);
@@ -157,6 +203,348 @@ const UserRegister = () => {
                     <FormItem className="">
                       <FormLabel className="label mt-5">
                         Contact Number
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          placeholder="051-1234567"
+                          disabled={isLoading}
+                          className="input"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="district"
+                  render={({ field }) => (
+                    <FormItem className="">
+                      <FormLabel className="label mt-5">
+                        District Code
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          disabled={isLoading}
+                          className="input"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="tehsil"
+                  render={({ field }) => (
+                    <FormItem className="">
+                      <FormLabel className="label mt-5">Tehsil</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          disabled={isLoading}
+                          className="input"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="fax"
+                  render={({ field }) => (
+                    <FormItem className="">
+                      <FormLabel className="label mt-5">Fax</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          disabled={isLoading}
+                          className="input"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="bankTitle"
+                  render={({ field }) => (
+                    <FormItem className="">
+                      <FormLabel className="label mt-5">
+                        OFFICIAL BANK TITLE OF THE INSTITUTION’S BANK ACCOUNT
+                        FOR HONORARIUM
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          disabled={isLoading}
+                          className="input"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="p_fName"
+                  render={({ field }) => (
+                    <FormItem className="">
+                      <FormLabel className="label mt-5">
+                        Principal First Name
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          disabled={isLoading}
+                          className="input"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="p_mName"
+                  render={({ field }) => (
+                    <FormItem className="">
+                      <FormLabel className="label mt-5">
+                        Principal Middle Name
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          disabled={isLoading}
+                          className="input"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="p_lName"
+                  render={({ field }) => (
+                    <FormItem className="">
+                      <FormLabel className="label mt-5">
+                        Principal's Last Name
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          disabled={isLoading}
+                          className="input"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="p_contact"
+                  render={({ field }) => (
+                    <FormItem className="">
+                      <FormLabel className="label mt-5">
+                        Principal's Contact
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          placeholder="0333-1234567"
+                          disabled={isLoading}
+                          className="input"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="p_phone"
+                  render={({ field }) => (
+                    <FormItem className="">
+                      <FormLabel className="label mt-5">
+                        Principal's Phone Number
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="051-1234567"
+                          type="text"
+                          disabled={isLoading}
+                          className="input"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="p_email"
+                  render={({ field }) => (
+                    <FormItem className="">
+                      <FormLabel className="label mt-5">
+                        Principal's Email
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          disabled={isLoading}
+                          className="input"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="c_fName"
+                  render={({ field }) => (
+                    <FormItem className="">
+                      <FormLabel className="label mt-5">
+                        Coordinator's first Name
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          disabled={isLoading}
+                          className="input"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="c_mName"
+                  render={({ field }) => (
+                    <FormItem className="">
+                      <FormLabel className="label mt-5">
+                        Coordinator's Middle Name
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          disabled={isLoading}
+                          className="input"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="c_lName"
+                  render={({ field }) => (
+                    <FormItem className="">
+                      <FormLabel className="label mt-5">
+                        Coordinator's Last Name
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          disabled={isLoading}
+                          className="input"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="c_contact"
+                  render={({ field }) => (
+                    <FormItem className="">
+                      <FormLabel className="label mt-5">
+                        Coordinator's Contact number
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          placeholder="0333-1234567"
+                          disabled={isLoading}
+                          className="input"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="c_phone"
+                  render={({ field }) => (
+                    <FormItem className="">
+                      <FormLabel className="label mt-5">
+                        Coordinator's Phone number
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          placeholder="051-1234567"
+                          disabled={isLoading}
+                          className="input"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="c_email"
+                  render={({ field }) => (
+                    <FormItem className="">
+                      <FormLabel className="label mt-5">
+                        Coordinator's Email
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          disabled={isLoading}
+                          className="input"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="c_accountDetails"
+                  render={({ field }) => (
+                    <FormItem className="">
+                      <FormLabel className="label mt-5">
+                        Coordinator's Account Details
                       </FormLabel>
                       <FormControl>
                         <Input

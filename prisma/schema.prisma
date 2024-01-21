@@ -15,17 +15,46 @@ model User {
   schoolId      Int?     @unique
   schoolName    String?  // Optional: only for non-admin users
   contactNumber String?
+  schoolAddress String?
+  district String?
+  tehsil String?
+  fax String?
+  bankTitle String?
+  p_fName String?
+  p_mName String?
+  p_lName String?
+  p_contact String?
+  p_phone String?
+  p_email String?
+  c_fName String?
+  c_mName String?
+  c_lName String?
+  c_contact String?
+  c_phone String?
+  c_email String?
+  c_accountDetails String?
+
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+    students      Student[]
+
 }
 
-// schema.prisma
+model Student {
+  id          String   @id
+  studentName String
+  fatherName  String
+  schoolId    Int
+  school      User     @relation(fields: [schoolId], references: [id])
+   @@index([schoolId])
+}
 
 model ContestType {
   id       String     @id @default(uuid())
   contestName     String  @unique
   imageUrl String @db.VarChar(10000)
    contests      Contest[]
+   
 }
 model Contest {
   id            String   @id @default(uuid())
