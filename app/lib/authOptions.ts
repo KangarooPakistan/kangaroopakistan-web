@@ -50,6 +50,7 @@ export const authOptions: NextAuthOptions = {
           role: user.role,
           contactNumber: user.contactNumber,
           schoolName: user.schoolName,
+          district: user.district,
           schoolId: user.schoolId || null,
         };
       }
