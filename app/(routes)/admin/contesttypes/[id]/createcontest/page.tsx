@@ -34,6 +34,8 @@ const formSchema = z.object({
     .refine((endDate) => endDate !== null && endDate !== undefined, {
       message: "End date is required.",
     }),
+  contestDate: z.string(),
+  resultDate: z.string(),
 });
 const CreateContest = () => {
   const router = useRouter();
@@ -44,6 +46,8 @@ const CreateContest = () => {
       name: "",
       startDate: new Date(), // Provide a valid initial date value
       endDate: new Date(),
+      contestDate: "",
+      resultDate: "",
     },
   });
 
@@ -124,6 +128,7 @@ const CreateContest = () => {
                       <FormControl>
                         {/* Use react-datepicker for date selection */}
                         <DatePicker
+                          disabled={isLoading}
                           selected={field.value}
                           onChange={(date: Date | null) => {
                             field.onChange(date);
@@ -131,7 +136,6 @@ const CreateContest = () => {
                           dateFormat="yyyy/MM/dd"
                           placeholderText="Pick a date"
                           className="input"
-                          disabled={isLoading}
                         />
                       </FormControl>
                       <FormMessage />
@@ -147,14 +151,51 @@ const CreateContest = () => {
                       <FormControl>
                         {/* Use react-datepicker for date selection */}
                         <DatePicker
+                          disabled={isLoading}
                           selected={field.value}
                           onChange={(date: Date | null) => {
                             field.onChange(date);
                           }}
                           dateFormat="yyyy/MM/dd"
                           placeholderText="Pick a date"
-                          className="input"
+                          className="input w-full"
+
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="contestDate"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="label">Contest Date</FormLabel>
+                      <FormControl>
+                        <Input
                           disabled={isLoading}
+                          className="input"
+                          placeholder="Enter Contest Date"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="resultDate"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="label">Result Date</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={isLoading}
+                          className="input"
+                          placeholder="Enter Result Date"
+                          {...field}
                         />
                       </FormControl>
                       <FormMessage />

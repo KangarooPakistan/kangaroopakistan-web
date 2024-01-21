@@ -61,6 +61,8 @@ model Contest {
   name          String
   startDate     DateTime
   endDate       DateTime
+  contestDate String?
+  resultDate String?
   contestTypeId String
   contestType   ContestType @relation(fields: [contestTypeId], references: [id], onDelete: Cascade)
 

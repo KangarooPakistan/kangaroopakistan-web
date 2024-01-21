@@ -7,6 +7,8 @@ interface ContestData {
   name: string;
   startDate: Date;
   endDate: Date;
+  contestDate: string | null;
+  resultDate: string | null;
   contestTypeId: string;
 }
 
@@ -17,13 +19,15 @@ export async function POST(request: NextRequest) {
   if (session && token?.role === "Admin") {
     try {
       const reqBody = await request.json();
-      const { name, startDate, endDate, contestTypeId } = reqBody;
+      const { name, startDate, endDate, contestTypeId, contestDate, resultDate } = reqBody;
 
       console.log(endDate)
       const contestData: ContestData = {
         name,
         startDate: new Date(startDate),
         endDate: new Date(endDate),
+        contestDate: contestDate || null,
+        resultDate: resultDate || null, 
         contestTypeId,
       };
 
@@ -122,4 +126,5 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
 
