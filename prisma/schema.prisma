@@ -12,7 +12,7 @@ model User {
   email         String   @unique
   password      String
   role          String   @default("Admin") // 'admin', 'user', etc.
-  schoolId      Int?     @unique
+  schoolId      String?     @unique
   schoolName    String?  // Optional: only for non-admin users
   contactNumber String?
   schoolAddress String?

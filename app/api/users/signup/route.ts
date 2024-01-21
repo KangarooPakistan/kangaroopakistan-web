@@ -7,7 +7,7 @@ interface UserData {
     password: string;
     role: string;
     contactNumber?: string | null; // Optional field
-    schoolId?: number  | null;     // Optional field
+    schoolId?: string  | null;     // Optional field
     schoolName?: string  | null;   // Optional field
     district?: string  | null;   // Optional field
     tehsil?: string  | null;   // Optional field
@@ -36,8 +36,6 @@ export async function POST(request: NextRequest){
         } = reqBody;
         console.log(reqBody)
         console.log(typeof schoolId)
-        let num = parseInt(schoolId, 10); // 10 is the base (radix)
-        console.log(typeof num)
         const userExists = await db.user.findUnique({
             where: {
                 email: reqBody.email
@@ -50,7 +48,7 @@ export async function POST(request: NextRequest){
             const idExists = await db.user.findFirst({
               where: {
                 schoolId: {
-                  equals: num,
+                  equals: schoolId,
                 },
               },
             });
@@ -67,7 +65,7 @@ export async function POST(request: NextRequest){
                     password: hashedPassword,
                     role,
                     contactNumber: contactNumber || null, // Use null if not provided
-                    schoolId: num || null,           // Use null if not provided
+                    schoolId: schoolId || null,           // Use null if not provided
                     schoolName: schoolName || null,       // Use null if not provided
                     tehsil: tehsil || null,       // Use null if not provided
                     fax: fax || null,       // Use null if not provided
