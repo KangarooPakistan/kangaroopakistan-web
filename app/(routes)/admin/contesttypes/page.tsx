@@ -23,6 +23,7 @@ const Page = () => {
     async function fetchContestTypes() {
       try {
         const response = await axios.get("/api/users/contesttype"); // Replace with your actual API route URL
+        console.log(response.data);
         setContestTypes(response.data);
         setIsLoading(false);
       } catch (error) {
@@ -33,7 +34,6 @@ const Page = () => {
     // Call the fetchContestTypes function when the component mounts
     fetchContestTypes();
   }, []);
-
 
   const handleCardClick = (contestTypeId: string) => {
     router.push(`/admin/contesttypes/${contestTypeId}/createcontest`);
@@ -49,7 +49,7 @@ const Page = () => {
           Create Contest Type
         </Button>
       </div>
-      <section className="w-fit mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 md:grid-cols-3  gap-y-20 gap-x-6 mt-10 mb-5">
+      <section className="w-fit mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 md:grid-cols-3 gap-y-20 gap-x-5 mt-10 mb-5">
         {isLoading ? (
           Array.from({ length: 8 }).map((_, index) => <Skeleton key={index} />)
         ) : contestTypes?.length > 0 ? (
@@ -70,17 +70,17 @@ const Page = () => {
                 <p className="text-lg font-medium text-black truncate block capitalize">
                   {contestType.contestName}
                 </p>
-                <div className="flex items-center mt-3 justify-between">
+                <div className="flex items-center mt-3 justify-between w-full">
                   <Button
-                    className="w-1/2 bg-black text-white rounded-xl mr-3"
+                    className="px-5 py-2 bg-black text-white rounded-xl mr-2 text-xs"
                     onClick={() => {
                       handleViewClick(contestType.id);
                     }}
                   >
-                    View
+                    View Contest
                   </Button>
                   <Button
-                    className="w-1/2 bg-black text-white rounded-xl "
+                    className="px-5 py-2 bg-black text-white rounded-xl text-xs"
                     onClick={() => {
                       handleCardClick(contestType.id);
                     }}
