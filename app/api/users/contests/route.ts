@@ -10,6 +10,7 @@ interface ContestData {
   contestDate: string | null;
   resultDate: string | null;
   contestTypeId: string;
+  contestCh: string | null;
 }
 
 export async function POST(request: NextRequest) {
@@ -19,7 +20,7 @@ export async function POST(request: NextRequest) {
   if (session && token?.role === "Admin") {
     try {
       const reqBody = await request.json();
-      const { name, startDate, endDate, contestTypeId, contestDate, resultDate } = reqBody;
+      const { name, startDate, endDate, contestTypeId, contestDate, resultDate, contestCh } = reqBody;
 
       console.log(endDate)
       const contestData: ContestData = {
@@ -28,6 +29,7 @@ export async function POST(request: NextRequest) {
         endDate: new Date(endDate),
         contestDate: contestDate || null,
         resultDate: resultDate || null, 
+        contestCh: contestCh || null,
         contestTypeId,
       };
 

@@ -5,7 +5,8 @@ import { db } from "@/app/lib/prisma";
 
 interface ContestTypeData {
   contestName: string;
-  imageUrl: string;  // Optional field
+  imageUrl: string; 
+  contestCh: string; // Optional field
 }
 
 export async function POST(request: NextRequest) {
@@ -16,10 +17,22 @@ export async function POST(request: NextRequest) {
     if (token?.role === "Admin") {
       try {
         const reqBody = await request.json();
-        const { contestName, imageUrl } = reqBody;
+        const { contestName, imageUrl, contestCh } = reqBody;
+        const isLowercase = (contestCh: string) => contestCh === contestCh.toLowerCase();
+        let uppercaseContestCh; 
+        if (isLowercase(contestCh)) {
+          // If contestCh is lowercase, convert it to uppercase
+           uppercaseContestCh = contestCh.toUpperCase();
+          // Use uppercaseContestCh in your code as needed
+        } else{
+          uppercaseContestCh = contestCh;
+        }
+        console.log("uppercaseContestCh")
+        console.log(uppercaseContestCh)
         const contestTypeData: ContestTypeData = {
           contestName: contestName,
           imageUrl: imageUrl,
+          contestCh: uppercaseContestCh,
         };        
         const existingContest = await db.contestType.findUnique({
             where: {

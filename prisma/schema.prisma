@@ -53,8 +53,8 @@ model ContestType {
   id       String     @id @default(uuid())
   contestName     String  @unique
   imageUrl String @db.VarChar(10000)
-   contests      Contest[]
-   
+  contestCh String
+  contests      Contest[]
 }
 model Contest {
   id            String   @id @default(uuid())
@@ -63,6 +63,7 @@ model Contest {
   endDate       DateTime
   contestDate String?
   resultDate String?
+  contestCh String?
   contestTypeId String
   contestType   ContestType @relation(fields: [contestTypeId], references: [id], onDelete: Cascade)
 

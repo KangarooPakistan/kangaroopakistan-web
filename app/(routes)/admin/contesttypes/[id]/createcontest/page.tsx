@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import * as z from "zod";
 import axios from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -38,8 +38,24 @@ const formSchema = z.object({
   resultDate: z.string(),
 });
 const CreateContest = () => {
+  const [data, setData] = useState();
   const router = useRouter();
   const params = useParams();
+
+  useEffect(() => {
+    const fetch = async () => {
+      await axios
+        .get(`/api/users/contesttype/${params.id}`)
+        .then((resp) => {
+          console.log(resp.data.contestCh);
+          setData(resp.data.contestCh);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
+    fetch();
+  }, [params.id]);
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -62,11 +78,11 @@ const CreateContest = () => {
       startDate: values.startDate.toISOString(),
       endDate: values.endDate.toISOString(),
       contestTypeId: params.id,
+      contestCh: data,
     };
     // console.log(`/api/users/contests`);
     // console.log(params.id);
     await axios.post("/api/users/contests", payload).then((resp) => {
-      console.log("aminah123");
       router.push(`/admin/contesttypes/${params.id}/viewcontest`);
     });
     // const databaseDate = "2024-01-11T14:59:11.000Z";
@@ -159,7 +175,6 @@ const CreateContest = () => {
                           dateFormat="yyyy/MM/dd"
                           placeholderText="Pick a date"
                           className="input w-full"
-
                         />
                       </FormControl>
                       <FormMessage />

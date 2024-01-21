@@ -32,6 +32,10 @@ const formSchema = z.object({
   name: z.string().min(1, {
     message: "ContestType is required.",
   }),
+  contestCh: z.string().max(1, {
+    message:
+      "Character to represent contest type in Student roll # is required.",
+  }),
   hasFile: z.boolean().refine((val) => val, {
     message: "A file is required.",
   }),
@@ -66,6 +70,7 @@ const CreateContestTypeModal = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
+      contestCh: "",
       hasFile: false,
     },
   });
@@ -98,7 +103,6 @@ const CreateContestTypeModal = () => {
       .join("");
     return hashHex;
   };
-  
 
   const onSubmit = async (values: z.infer<typeof formSchema>, e: any) => {
     e.preventDefault();
@@ -129,7 +133,8 @@ const CreateContestTypeModal = () => {
           .then((resp) => {});
         awsUrl = `${s3BucketUrl}${fileName}`;
         const payload = {
-          contestName: values.name, // Spread the form values
+          contestName: values.name,
+          contestCh: values.contestCh, // Spread the form values
           imageUrl: awsUrl,
         };
         await axios.post("/api/users/contesttype", payload);
@@ -222,48 +227,8 @@ const CreateContestTypeModal = () => {
                       </FormItem>
                     )}
                   />
-                  {/* <button
-                    onClick={submitImage}
-                    className="bg-blue-500 text-white py-2 px-4 rounded-full shadow-md hover:bg-blue-600 transition duration-300 flex items-center space-x-2"
-                    type="button"
-                  >
-                    <Upload className="h-6 w-6" />
-                    <span>Upload </span>
-                  </button> */}
                 </div>
               </div>
-
-              {/* <div className="flex items-center justify-center text-center">
-                <div className="flex flex-col justify-center">
-                  
-                  <div className="flex gap-4 items-start pb-4 w-full">
-                    <div className="">
-                      <img src={fileUrl} />
-                    </div>
-                  </div>
-                  <FormField
-                    control={form.control}
-                    name="hasFile"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            type="file"
-                            ref={fileInputRef} // Attach the ref here
-                            className="bg-transparent flex-1 border-none outline-none"
-                            name="imageUrl"
-                            accept="image/jpeg, image/png, image/webp, image/gif" // Add ',' between file types
-                            onChange={handleChange}
-                          />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <Button type="button" onClick={submitImage} variant="default">
-                  Upload Image
-                </Button>
-              </div> */}
 
               <FormField
                 control={form.control}
@@ -279,6 +244,27 @@ const CreateContestTypeModal = () => {
                         className="bg-zinc-300/50 border-0 focus-visible:ring-0 text-black focus-visible:ring-offset-0"
                         placeholder="Enter Contest Type"
                         {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="contestCh"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
+                      Character to represent contest type
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={isLoading}
+                        className="bg-zinc-300/50 border-0 focus-visible:ring-0 text-black focus-visible:ring-offset-0"
+                        placeholder="Write a character which will represent this type in Student roll #. "
+                        {...field}
+                        maxLength={1}
                       />
                     </FormControl>
                     <FormMessage />
