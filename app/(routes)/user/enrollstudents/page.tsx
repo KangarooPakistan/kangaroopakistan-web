@@ -1,135 +1,222 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import React from "react";
+import { useForm, useFieldArray, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as zod from "zod";
 
-interface Student {
-  name: string;
+interface StudentData {
+  studentName: string;
   fatherName: string;
+  rollNumber: string;
+  level: string;
+  class: string;
 }
 
-const Page = () => {
-  const [students, setStudents] = useState<Student[]>([
-    { name: "", fatherName: "" },
-    { name: "", fatherName: "" },
-    { name: "", fatherName: "" },
-    { name: "", fatherName: "" },
-    { name: "", fatherName: "" },
-    { name: "", fatherName: "" },
-    { name: "", fatherName: "" },
-    { name: "", fatherName: "" },
-    { name: "", fatherName: "" },
-    { name: "", fatherName: "" },
-  ]);
+interface FormData {
+  students: StudentData[];
+}
+const schema = zod.object({
+  students: zod.array(
+    zod.object({
+      studentName: zod.string().min(1, "Student name is required"),
+      fatherName: zod.string().min(1, "Father's name is required"),
+      rollNumber: zod.string().min(1, "Roll number is required"),
+      level: zod.string().min(1, "Roll number is required"),
+      class: zod.string().min(1, "Roll number is required"),
+    })
+  ),
+});
 
-  const addRow = () => {
-    setStudents([...students, { name: "", fatherName: "" }]);
-  };
+const Register = () => {
+  const {
+    register,
+    control,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      students: [
+        {
+          studentName: "",
+          fatherName: "",
+          rollNumber: "",
+          level: "",
+          class: "",
+        },
+      ],
+    },
+  });
 
-  const removeRow = () => {
-    const updatedStudents = students.slice(0, -1);
-    console.log(updatedStudents);
-    console.log(updatedStudents.length);
-    setStudents(updatedStudents);
-  };
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "students",
+  });
 
-  const updateStudent = (
-    index: number,
-    value: string,
-    field: "name" | "fatherName"
-  ) => {
-    setStudents(
-      students.map((student, i) =>
-        i === index ? { ...student, [field]: value } : student
-      )
+  const generateRollNumber = (index: number) => {
+    // Dummy logic for roll number generation
+    const rollNumber = `RN-${Math.floor(Math.random() * 10000)}`;
+    console.log(rollNumber);
+
+    // Update the rollNumber value for a specific student
+    const updatedStudents = [...fields];
+    updatedStudents[index].rollNumber = rollNumber;
+
+    // Set the updated students array to trigger re-render
+    // setValue("students", updatedStudents);
+    fields[index].rollNumber = rollNumber;
+    setValue(
+      `students[${index}].rollNumber` as `students.${number}.rollNumber`,
+      rollNumber
     );
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log("Number of students:", students.length);
-    console.log("Array:", students);
-    // Add any additional logic or API calls here for form submission
+  const onSubmit = (data: FormData) => {
+    console.log(data);
   };
 
   return (
-    <div className="sm:container mx-5 sm:mx-0">
-      <h1 className="text-lg text-center md:text-2xl font-bold mb-2 md:mb-10 mt-4 flex justify-center">
-        Students Contest Enrollment Form
-      </h1>
-
-      <form onSubmit={handleSubmit} className="flex justify-center mb-10">
-        <div className="sm:border sm:mx-auto pb-9 pt-6 sm:px-10 rounded-md">
-          <h2 className="text-base md:text-xl font-semibold flex items-center justify-center mb-8">
-            Students List
-          </h2>
-
-          <div className="grid grid-cols-2 gap-4 md:gap-20">
-            <label
-              htmlFor="studentName"
-              className="block text-base md:text-xl text-gray-700 font-bold mb-2"
-            >
-              Student Name
-            </label>
-            <label
-              htmlFor="fatherName"
-              className="block text-base md:text-xl text-gray-700 font-bold mb-2"
-            >
-              Father Name
-            </label>
-          </div>
-
-          {students.map((student, index) => (
-            <div key={index} className="grid grid-cols-2 gap-4 md:gap-20 mb-4">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className=" mx-auto p-4 border border-gray-300 rounded-lg"
+    >
+      {fields.map((field, index) => (
+        <div key={field.id} className="mb-4 p-2 border-b border-gray-300">
+          <div className="flex items-center space-x-4">
+            <div className="w-1/4">
               <input
-                type="text"
-                id={`studentName${index}`}
-                value={student.name}
-                onChange={(e) => updateStudent(index, e.target.value, "name")}
-                className="p-2 border rounded-md text-xs md:text-base"
-                required
+                {...register(`students.${index}.studentName`)}
+                placeholder="Student Name"
+                className="w-full p-2 rounded border border-gray-300 focus:outline-none focus:border-blue-500"
               />
-              <input
-                type="text"
-                id={`fatherName${index}`}
-                value={student.fatherName}
-                onChange={(e) =>
-                  updateStudent(index, e.target.value, "fatherName")
-                }
-                className="p-2 border rounded-md text-xs md:text-base"
-                required
-              />
+              {errors?.students?.[index]?.studentName && (
+                <p className="text-red-500">
+                  {errors.students[index]?.studentName?.message}
+                </p>
+              )}
             </div>
-          ))}
+            <div className="w-1/4">
+              <input
+                {...register(`students.${index}.fatherName`)}
+                placeholder="Father's Name"
+                className="w-full p-2 rounded border border-gray-300 focus:outline-none focus:border-blue-500"
+              />
+              {errors?.students?.[index]?.fatherName && (
+                <p className="text-red-500">
+                  {errors.students[index]?.studentName?.message}
+                </p>
+              )}
+            </div>
+            <div className="w-1/4 relative">
+              <input
+                {...register(`students.${index}.rollNumber`)}
+                placeholder="Roll Number"
+                readOnly // Make it readonly to prevent manual input
+                className="w-full p-2 rounded border border-gray-300 focus:outline-none focus:border-blue-500"
+              />
 
-          <div className="flex items-center justify-center">
-            <Button
-              type="button"
-              className="px-4 py-2 rounded-md mr-3 text-sm md:text-base"
-              onClick={addRow}
-            >
-              Add Student
-            </Button>
-            <Button
-              type="button"
-              className="px-4 py-2 rounded-md text-sm md:text-base"
-              onClick={removeRow}
-            >
-              Remove Student
-            </Button>
+              <button
+                type="button"
+                onClick={() => generateRollNumber(index)}
+                className="absolute right-0 top-0 h-full bg-blue-500 text-white px-3 py-2 rounded-r"
+              >
+                Generate
+              </button>
+              {errors?.students?.[index]?.rollNumber && (
+                <p className="text-red-500">
+                  {errors.students[index]?.studentName?.message}
+                </p>
+              )}
+            </div>
+            <div className="w-1/4">
+              <Controller
+                name={`students.${index}.level`}
+                control={control}
+                render={({ field }) => (
+                  <select
+                    {...field}
+                    className="w-full p-2 rounded border border-gray-300 focus:outline-none focus:border-blue-500"
+                  >
+                    <option value="">Select level</option>
+                    <option value="one">One</option>
+                    <option value="two">Two</option>
+                    <option value="three">Three</option>
+                    <option value="four">Four</option>
+                    <option value="five">Five</option>
+                    <option value="six">Six</option>
+                    <option value="seven">Four</option>
+                    {/* Add level options here */}
+                  </select>
+                )}
+              />
+              {errors?.students?.[index]?.studentName && (
+                <p className="text-red-500">
+                  {errors.students[index]?.studentName?.message}
+                </p>
+              )}
+            </div>
           </div>
-
-          <div className="flex justify-center">
-            <button
-              type="submit"
-              className="bg-green-500 text-white px-4 py-2 rounded-md mt-4 text-sm md:text-base"
-            >
-              Submit
-            </button>
+          <div className="flex items-center space-x-4 mt-2">
+            <div className="w-1/4">
+              <Controller
+                name={`students.${index}.class`}
+                control={control}
+                render={({ field }) => (
+                  <select
+                    {...field}
+                    className="w-full p-2 rounded border border-gray-300 focus:outline-none focus:border-blue-500"
+                  >
+                    <option value="one">One</option>
+                    <option value="two">Two</option>
+                    <option value="three">Three</option>
+                    <option value="four">Four</option>
+                    <option value="five">Five</option>
+                    <option value="six">Six</option>
+                  </select>
+                )}
+              />
+              {errors?.students?.[index]?.studentName && (
+                <p className="text-red-500">
+                  {errors.students[index]?.studentName?.message}
+                </p>
+              )}
+            </div>
           </div>
         </div>
-      </form>
-    </div>
+      ))}
+      <div className="flex justify-center space-x-4 mt-4">
+        <button
+          type="button"
+          onClick={() =>
+            append({
+              studentName: "",
+              fatherName: "",
+              rollNumber: "",
+              level: "",
+              class: "",
+            })
+          }
+          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+        >
+          Add Row
+        </button>
+        <button
+          type="button"
+          onClick={() => remove(fields.length - 1)}
+          className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+        >
+          Remove Row
+        </button>
+        <button
+          type="submit"
+          className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
+        >
+          Submit Form
+        </button>
+      </div>
+    </form>
   );
 };
 
-export default Page;
+export default Register;
