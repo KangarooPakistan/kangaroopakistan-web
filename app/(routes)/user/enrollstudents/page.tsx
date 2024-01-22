@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as zod from "zod";
@@ -21,18 +21,21 @@ const schema = zod.object({
       studentName: zod.string().min(1, "Student name is required"),
       fatherName: zod.string().min(1, "Father's name is required"),
       rollNumber: zod.string().min(1, "Roll number is required"),
-      level: zod.string().min(1, "Roll number is required"),
-      class: zod.string().min(1, "Roll number is required"),
+      level: zod.string(),
+      class: zod.string(),
     })
   ),
 });
 
 const Register = () => {
+  const [duplicateError, setDuplicateError] = useState<string | null>(null);
+
   const {
     register,
     control,
     handleSubmit,
     setValue,
+    setError,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(schema),
@@ -49,6 +52,55 @@ const Register = () => {
     },
   });
 
+  const isDuplicate = (formData: FormData, index: number) => {
+    const currentName = formData.students[index].studentName;
+    const currentFatherName = formData.students[index].fatherName;
+
+    for (let i = 0; i < index; i++) {
+      const prevName = formData.students[i].studentName;
+      const prevFatherName = formData.students[i].fatherName;
+
+      if (currentName === prevName && currentFatherName === prevFatherName) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+  const onSubmit = (data: FormData) => {
+    const hasDuplicates = data.students.some((student, index) =>
+      isDuplicate(data, index)
+    );
+
+    if (hasDuplicates) {
+      // Set error message for duplicate fields.
+      setDuplicateError("Name and Father's name must be unique");
+
+      // data.students.forEach((student, index) => {
+      //   if (isDuplicate(data, index)) {
+      //     setError(
+      //       `students[${index}].studentName` as `students.${number}.studentName`,
+      //       {
+      //         type: "manual",
+      //         message: "Name and Father's name must be unique",
+      //       }
+      //     );
+
+      //     setError(
+      //       `students[${index}].fatherName` as `students.${number}.fatherName`,
+      //       {
+      //         type: "manual",
+      //         message: "Name and Father's name must be unique",
+      //       }
+      //     );
+      //   }
+      // });
+    } else {
+      // Proceed with form submission
+      console.log(data);
+      setDuplicateError(null); // Clear any previous error
+    }
+  };
   const { fields, append, remove } = useFieldArray({
     control,
     name: "students",
@@ -72,17 +124,18 @@ const Register = () => {
     );
   };
 
-  const onSubmit = (data: FormData) => {
-    console.log(data);
-  };
+  // const onSubmit = (data: FormData) => {
+  //   console.log(data);
+  // };
 
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
       className=" mx-auto p-4 border border-gray-300 rounded-lg"
     >
+      {duplicateError && <p className="text-red-500">{duplicateError}</p>}
       {fields.map((field, index) => (
-        <div key={field.id} className="mb-4 p-2 border-b border-gray-300">
+        <div key={field.id} className="mb-4 p-2 border-b mx-auto border-gray-300">
           <div className="flex items-center space-x-4">
             <div className="w-1/4">
               <input
