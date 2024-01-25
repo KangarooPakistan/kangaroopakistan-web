@@ -37,13 +37,10 @@ const ViewRegistered = () => {
 
     fetch();
   }, []);
-<<<<<<< Updated upstream
 
-=======
   const handleClick = () => {
     console.log();
   };
->>>>>>> Stashed changes
   return (
     <>
       <div className="container mx-auto py-10">
