@@ -15,6 +15,10 @@ export type Student = {
 
 export const columns: ColumnDef<Student>[] = [
   {
+    accessorKey: "registrationId",
+    header: "registrationId",
+  },
+  {
     accessorKey: "rollNumber",
     header: "Roll Number",
   },
