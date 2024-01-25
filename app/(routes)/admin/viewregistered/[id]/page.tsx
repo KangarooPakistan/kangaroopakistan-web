@@ -35,11 +35,9 @@ const page = () => {
     fetch();
   }, []);
   return (
-    <>
-      <div className="container mx-auto py-10">
-        <DataTable columns={columns} data={students} />
-      </div>
-    </>
+    <div className="container mx-auto py-10">
+      <DataTable columns={columns} data={students} />
+    </div>
   );
 };
 

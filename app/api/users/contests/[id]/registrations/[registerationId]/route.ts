@@ -6,19 +6,24 @@ export async function GET(request: Request, {
   }: {
     params: {
       id: string; // Contest ID
-      registrationId: string; // Registration ID
+      registerationId: string; // Registration ID
     };
   }) {
     console.log(params)
     try {
-      const { registrationId } = params;
-  
+      const { registerationId } = params;
+        console.log('-----------------------------------------------------')
+        console.log('-----------------------------------------------------')
+        console.log('-----------------------------------------------------')
+        console.log('-----------------------------------------------------')
+        console.log(registerationId)
       // Retrieve students associated with the specified registrationId
       const students = await db.student.findMany({
         where: {
-          registrationId,
+            registrationId: registerationId,
         },
       });
+      console.log(students)
   
       if (!students) {
         return NextResponse.json({ error: "No students found for this registration" }, { status: 404 });
