@@ -27,8 +27,12 @@ type ContestActionsProps = {
 };
 const ContestActions: React.FC<ContestActionsProps> = ({ contest }) => {
   const router = useRouter();
+  console.log(contest);
+  const handleRegister = () => {
+    router.push(`/user/enrollstudents/${contest.id}`);
+  };
   const handleView = () => {
-    router.push(`/admin/viewregistered/${contest.id}`);
+    router.push(`/user/viewregistered/${contest.id}`);
   };
   return (
     <DropdownMenu>
@@ -40,7 +44,9 @@ const ContestActions: React.FC<ContestActionsProps> = ({ contest }) => {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <DropdownMenuItem>Edit</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleRegister}>
+          Register Students
+        </DropdownMenuItem>
         <DropdownMenuItem onClick={handleView}>View</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
