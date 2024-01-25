@@ -12,10 +12,6 @@ export async function GET(request: Request, {
     console.log(params)
     try {
       const { registerationId } = params;
-        console.log('-----------------------------------------------------')
-        console.log('-----------------------------------------------------')
-        console.log('-----------------------------------------------------')
-        console.log('-----------------------------------------------------')
         console.log(registerationId)
       // Retrieve students associated with the specified registrationId
       const students = await db.student.findMany({

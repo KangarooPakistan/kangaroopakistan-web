@@ -108,7 +108,11 @@ export async function GET(request: Request, { params }: { params: { id: string }
           where: {
               contestId: id,
           },
+          include: {
+            students: true, // Include related students
+          },
       });
+      console.log(registrations)
 
       if (!registrations) {
           return NextResponse.json({ error: "No registrations found for this contest" }, { status: 404 });

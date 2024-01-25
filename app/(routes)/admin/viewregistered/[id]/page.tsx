@@ -16,8 +16,8 @@ const ViewRegistered = () => {
         const registeredStudents = await axios.get(
           `/api/users/contests/${params.id}/registrations`
         );
-        console.log(registeredStudents);
-        setStudents(registeredStudents.data);
+        console.log(registeredStudents.data[0].students);
+        setStudents(registeredStudents.data[0].students);
       } catch (error) {
         console.error("Error:", error);
       }
