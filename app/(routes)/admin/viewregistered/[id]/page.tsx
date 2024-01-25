@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { DataTable } from "./data-table";
 import { Student, columns } from "./columns";
+import { Button } from "@/components/ui/button";
 
 interface ItemType {
   students: Student[];
@@ -36,11 +37,27 @@ const ViewRegistered = () => {
 
     fetch();
   }, []);
+<<<<<<< Updated upstream
 
+=======
+  const handleClick = () => {
+    console.log();
+  };
+>>>>>>> Stashed changes
   return (
-    <div className="container mx-auto py-10">
-      <DataTable columns={columns} data={students} />
-    </div>
+    <>
+      <div className="container mx-auto py-10">
+        <div className="flex justify-end">
+          <Button className="mx-2"> View All Images</Button>
+          <Button className="mx-2" onClick={handleClick}>
+            Add Image
+          </Button>
+        </div>
+      </div>
+      <div className="container mx-auto py-10">
+        <DataTable columns={columns} data={students} />
+      </div>
+    </>
   );
 };
 
