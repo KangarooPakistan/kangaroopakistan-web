@@ -8,7 +8,7 @@ type MyUser = {
   role: string;
   contactNumber: string | null,
   schoolName: string | null,
-  schoolId: number |null,
+  schoolId: string |null,
   // include other user properties as needed
 };
 
