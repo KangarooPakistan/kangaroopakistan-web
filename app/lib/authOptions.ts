@@ -20,7 +20,7 @@ export const authOptions: NextAuthOptions = {
         },
         password: { label: 'Password', type: 'password' }
       },
-      async authorize(credentials, req) {
+      async authorize(credentials) {
         if (!credentials?.email || !credentials.password) {
           return null;
         }
@@ -55,40 +55,7 @@ export const authOptions: NextAuthOptions = {
         };
       }
       
-      // async authorize(credentials, req) {
-      //   if (!credentials?.email || !credentials.password) {
-      //     return null
-      //   }
 
-      //   const user = await db.user.findUnique({
-      //     where: {
-      //       email: credentials.email
-      //     }
-      //   })
-
-      //   if (!user) {
-      //     return null
-      //   }
-
-      //   const isPasswordValid = await compare(
-      //     credentials.password,
-      //     user.password
-      //   )
-
-      //   if (!isPasswordValid) {
-      //     return null
-      //   }
-
-      //   return {
-      //     id: user.id + '',
-      //     email: user.email,
-      //     role: user.role,
-      //     contactNumber: user.contactNumber,
-      //     schoolName: user.schoolName,
-      //     schoolId: user.schoolId || null,
-      //   };
-        
-      // }
     })
   ],
   callbacks: {
@@ -99,6 +66,7 @@ export const authOptions: NextAuthOptions = {
           ...session.user,
           id: token.id,
           role: token.role,
+          district: token.district,
           randomKey: token.randomKey
         }
       }
@@ -110,6 +78,7 @@ export const authOptions: NextAuthOptions = {
           ...token,
           id: u.id,
           role: u.role,
+          district: u.district,
           randomKey: u.randomKey
         }
       }

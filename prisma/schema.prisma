@@ -36,17 +36,26 @@ model User {
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-    students      Student[]
+  registrations Registration[]
+
 
 }
 
-model Student {
-  id          String   @id
-  studentName String
-  fatherName  String
-  schoolId    Int
-  school      User     @relation(fields: [schoolId], references: [id])
-   @@index([schoolId])
+model Registration {
+  id          String       @id @default(uuid())
+  contestId    String
+  schoolId     String
+     // Custom identifier for registration creator
+  students     Student[]
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  registeredBy   Int      // This will link to the User model
+
+  user          User     @relation(fields: [registeredBy], references: [id])
+  // Add indices for efficient retrieval
+  @@index([contestId])
+  @@index([registeredBy])
+  @@index([schoolId])
 }
 
 model ContestType {
@@ -68,4 +77,17 @@ model Contest {
   contestType   ContestType @relation(fields: [contestTypeId], references: [id], onDelete: Cascade)
 
    @@index([contestTypeId])
+}
+
+model Student {
+  id           Int      @id @default(autoincrement())
+  registration Registration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+  registrationId String
+  rollNumber     String
+  studentName  String
+  fatherName   String
+  class        String
+  level        String
+
+  @@index([registrationId])
 }

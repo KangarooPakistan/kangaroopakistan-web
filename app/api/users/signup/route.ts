@@ -83,6 +83,7 @@ export async function POST(request: NextRequest){
                     c_phone: c_phone || null,       // Use null if not provided
                     c_email: c_email || null,       // Use null if not provided
                     c_accountDetails: c_accountDetails || null,       // Use null if not provided
+                    district: district || null,       // Use null if not provided
               };
              
             const user = await db.user.create({
