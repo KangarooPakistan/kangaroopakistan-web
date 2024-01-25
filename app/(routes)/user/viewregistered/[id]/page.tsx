@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import { DataTable } from "./data-table";
 import { Student, columns } from "./columns";
 
-const ViewRegistered = () => {
+const page = () => {
   const [students, setStudents] = useState<Student[]>([]);
   const params = useParams();
 
@@ -43,4 +43,4 @@ const ViewRegistered = () => {
   );
 };
 
-export default ViewRegistered;
+export default page;
