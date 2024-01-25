@@ -281,8 +281,8 @@ const UserRegister = () => {
                   render={({ field }) => (
                     <FormItem className="">
                       <FormLabel className="label mt-5">
-                        OFFICIAL BANK TITLE OF THE INSTITUTION’S BANK ACCOUNT
-                        FOR HONORARIUM
+                        OFFICIAL BANK TITLE OF THE INSTITUTION&apos;s BANK
+                        ACCOUNT FOR HONORARIUM
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -302,7 +302,7 @@ const UserRegister = () => {
                   render={({ field }) => (
                     <FormItem className="">
                       <FormLabel className="label mt-5">
-                        Principal First Name
+                        Principal&apos;s First Name
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -322,7 +322,7 @@ const UserRegister = () => {
                   render={({ field }) => (
                     <FormItem className="">
                       <FormLabel className="label mt-5">
-                        Principal Middle Name
+                        Principal&apos;s Middle Name
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -342,7 +342,7 @@ const UserRegister = () => {
                   render={({ field }) => (
                     <FormItem className="">
                       <FormLabel className="label mt-5">
-                        Principal's Last Name
+                        Principal&apos;s Last Name
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -362,7 +362,7 @@ const UserRegister = () => {
                   render={({ field }) => (
                     <FormItem className="">
                       <FormLabel className="label mt-5">
-                        Principal's Contact
+                        Principal&apos;s Contact
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -383,7 +383,7 @@ const UserRegister = () => {
                   render={({ field }) => (
                     <FormItem className="">
                       <FormLabel className="label mt-5">
-                        Principal's Phone Number
+                        Principal&apos;s Phone Number
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -404,7 +404,7 @@ const UserRegister = () => {
                   render={({ field }) => (
                     <FormItem className="">
                       <FormLabel className="label mt-5">
-                        Principal's Email
+                        Principal&apos;s Email
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -424,7 +424,7 @@ const UserRegister = () => {
                   render={({ field }) => (
                     <FormItem className="">
                       <FormLabel className="label mt-5">
-                        Coordinator's first Name
+                        Coordinator&apos;s first Name
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -444,7 +444,7 @@ const UserRegister = () => {
                   render={({ field }) => (
                     <FormItem className="">
                       <FormLabel className="label mt-5">
-                        Coordinator's Middle Name
+                        Coordinator&apos;s Middle Name
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -464,7 +464,7 @@ const UserRegister = () => {
                   render={({ field }) => (
                     <FormItem className="">
                       <FormLabel className="label mt-5">
-                        Coordinator's Last Name
+                        Coordinator&apos;s Last Name
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -484,7 +484,7 @@ const UserRegister = () => {
                   render={({ field }) => (
                     <FormItem className="">
                       <FormLabel className="label mt-5">
-                        Coordinator's Contact number
+                        Coordinator&apos;s Contact number
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -505,7 +505,7 @@ const UserRegister = () => {
                   render={({ field }) => (
                     <FormItem className="">
                       <FormLabel className="label mt-5">
-                        Coordinator's Phone number
+                        Coordinator&apos;s Phone number
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -526,7 +526,7 @@ const UserRegister = () => {
                   render={({ field }) => (
                     <FormItem className="">
                       <FormLabel className="label mt-5">
-                        Coordinator's Email
+                        Coordinator&apos;s Email
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -546,7 +546,7 @@ const UserRegister = () => {
                   render={({ field }) => (
                     <FormItem className="">
                       <FormLabel className="label mt-5">
-                        Coordinator's Account Details
+                        Coordinator&apos;s Account Details
                       </FormLabel>
                       <FormControl>
                         <Input
