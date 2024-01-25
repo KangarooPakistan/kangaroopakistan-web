@@ -12,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useRouter } from "next/navigation";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -38,7 +39,12 @@ export const columns: ColumnDef<Contest>[] = [
   },
   {
     id: "actions",
-    cell: ({}) => {
+    cell: ({ row }) => {
+      const router = useRouter();
+      const contest = row.original;
+      const handleView = () => {
+        router.push(`/admin/viewregistered/${contest.id}`);
+      };
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -50,7 +56,7 @@ export const columns: ColumnDef<Contest>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem>Edit</DropdownMenuItem>
-            <DropdownMenuItem>View</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleView}>View</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

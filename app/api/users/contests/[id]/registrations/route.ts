@@ -98,3 +98,25 @@ function generateRollNumber(student:StudentData,currentMaxIndex: number, year:st
 
 
 
+export async function GET(request: Request, { params }: { params: { id: string } }) {
+  try {
+      const { id } = params; // Contest ID
+      console.log('-------------------------------------------')
+      console.log(id)
+      // Retrieve registrations associated with the specified contest ID
+      const registrations = await db.registration.findMany({
+          where: {
+              contestId: id,
+          },
+      });
+
+      if (!registrations) {
+          return NextResponse.json({ error: "No registrations found for this contest" }, { status: 404 });
+      }
+
+      return NextResponse.json(registrations, { status: 200 });
+  } catch (error) {
+      console.error("Request error", error);
+      return NextResponse.json({ error: "Error fetching registrations" }, { status: 500 });
+  }
+}
