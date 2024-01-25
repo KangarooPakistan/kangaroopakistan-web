@@ -47,6 +47,9 @@ export const columns: ColumnDef<Contest>[] = [
       const handleRegister = () => {
         router.push(`/user/enrollstudents/${contest.id}`);
       };
+      const handleView = () => {
+        router.push(`/user/viewregistered/${contest.id}`);
+      };
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -60,7 +63,7 @@ export const columns: ColumnDef<Contest>[] = [
             <DropdownMenuItem onClick={handleRegister}>
               Register Students
             </DropdownMenuItem>
-            <DropdownMenuItem>View</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleView}>View</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

@@ -1,40 +1,100 @@
-import { NextResponse, NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import { db } from "@/app/lib/prisma";
-export async function POST(request: Request, 
-    { params }: { params: { id: string } }){
+
+const padNumber = (num: number) => String(num).padStart(3, "0");
+
+interface StudentData {
+    year: string;
+    district: string;
+    schoolId: string;
+    class: string;
+    contestCh: string;
+    // Add any other properties that are used from the 'student' object
+  }
+
+// ... (rest of your code)
+
+export async function POST(request: Request, { params }: { params: { id: string } }) {
     try {
         const reqBody = await request.json();
-        const {contestId, schoolId, registeredBy, students
-        } = reqBody;
-        const contesttId = params.id
+        const { schoolId, registeredBy, students,  registrationId, year, district, contestCh } = reqBody;
+        const contestId = params.id
 
-      // Validate the data (you can add more complex validations as needed)
-      if (!contestId || !schoolId || !registeredBy || !Array.isArray(students)) {
-        console.log("404")
-        return NextResponse.json({error: "Invalid registration data"}, {status: 400})
-      }
+        if (!schoolId || !registeredBy || !Array.isArray(students)) {
+            console.log("Invalid registration data");
+            return NextResponse.json({ error: "Invalid registration data" }, { status: 400 });
+        }
+        console.log('----------------------------------------------------')
 
-      // Create a new registration with student details
-      const registration = await db.registration.create({
-        data: {
-          contestId,
-          schoolId,
-          registeredBy,
-          students: {
-            create: students, // Assuming 'students' is an array of student data
-          },
-        },
-        include: {
-          students: true, // To return students data in the response
-        },
-      });
+        let regId = registrationId;
+        
+        // Create a new registration if no registrationId is provided
+        if (!regId) {
+            if (!contestId) {
+                console.log("Contest ID is required for new registration");
+                return NextResponse.json({ error: "Contest ID is required for new registration" }, { status: 400 });
+            }
 
-      return NextResponse.json(registration, {status: 201})
+            const newRegistration = await db.registration.create({
+                data: {
+                    contestId,
+                    schoolId,
+                    registeredBy: parseInt(registeredBy) // assuming registeredBy is a numeric ID
+                }
+            });
+            regId = newRegistration.id;
+        }
 
+        const createdStudents = [];
+        const classIndexMap: { [key: string]: number } = {};
+
+        for (const student of students) {
+            const existingStudent = await db.student.findFirst({
+                where: {
+                  registrationId: regId,
+                  studentName: student.studentName,
+                  class:student.class
+                },
+              });
+        
+              if (existingStudent) {
+                console.log(`Student ${student.studentName} already exists for this registration`);
+                continue; // Skip creating a new student
+              }
+            // Generate roll number
+            const currentMaxIndex = classIndexMap[student.class] || 0;
+
+            const rollNumber = generateRollNumber(student, currentMaxIndex, year, district, schoolId,contestCh  );
+            classIndexMap[student.class] = currentMaxIndex + 1;
+
+            // Create new student
+            const createdStudent = await db.student.create({
+                data: {
+                    registrationId: regId,
+                    rollNumber,
+                    studentName: student.studentName,
+                    fatherName: student.fatherName,
+                    class: student.class,
+                    level: student.level
+                }
+            });
+
+            createdStudents.push(createdStudent);
+        }
+
+        return NextResponse.json(createdStudents, { status: 201 });
     } catch (error) {
-      // Handling any unexpected errors
-      console.error('Request error', error);
-      return NextResponse.json({error: "Error creating registration"}, {status: 500})
+        console.error("Request error", error);
+        return NextResponse.json({ error: "Error creating registration" }, { status: 500 });
     }
-  
 }
+
+// ... (rest of your code)
+function generateRollNumber(student:StudentData,currentMaxIndex: number, year:string, district:string, schoolId: string, contestCh: string ) {
+    const index = currentMaxIndex + 1;
+
+    return `${year}-${district}-${schoolId}-${student.class}-${padNumber(index)}-${contestCh}`;
+}
+
+
+

@@ -10,7 +10,7 @@ import axios from "axios";
 interface StudentData {
   studentName: string;
   fatherName: string;
-  rollNumber: string;
+
   level: string;
   class: string;
 }
@@ -18,16 +18,16 @@ interface StudentData {
 interface FormData {
   students: StudentData[];
 }
-const rollNumberRegex = /^\d{2}-\d+-\d+-\d{2}-\d{3}-[A-Za-z]+$/; // Adjust this regex as needed
+// const rollNumberRegex = /^\d{2}-\d+-\d+-\d{2}-\d{3}-[A-Za-z]+$/; // Adjust this regex as needed
 
 const schema = zod.object({
   students: zod.array(
     zod.object({
       studentName: zod.string().min(1, "Student name is required"),
       fatherName: zod.string().min(1, "Father's name is required"),
-      rollNumber: zod
-        .string()
-        .regex(rollNumberRegex, "Roll number must be in the correct format"),
+      // rollNumber: zod
+      //   .string()
+      //   .regex(rollNumberRegex, "Roll number must be in the correct format"),
       level: zod.string().min(1, "Pls select level"),
       class: zod
         .string()
@@ -43,6 +43,9 @@ const Register = () => {
   const [schoolId, setSchoolId] = useState<string | undefined>();
   const [schoolEmail, setSchoolEmail] = useState<number | undefined | null>();
   const [district, setDistrict] = useState<string | undefined | null>();
+  const [registerationId, setRegistrationId] = useState<
+    string | undefined | null
+  >();
   const [year, setYear] = useState<string | undefined>();
   const [schoolName, setSchoolName] = useState<string | undefined>();
 
@@ -66,6 +69,12 @@ const Register = () => {
       const response = await axios.get(
         `/api/users/getuserbyemail/${session?.user.email}`
       );
+      const regId = await axios.get(
+        `/api/users/contests/${params.id}/${response.data.schoolId}`
+      );
+      console.log(regId);
+      setRegistrationId(regId.data.id);
+      console.log(response.data.district);
       setDistrict(response.data.district);
       setSchoolName(response.data.schoolName);
       setSchoolId(response.data.schoolId);
@@ -78,9 +87,7 @@ const Register = () => {
     register,
     control,
     handleSubmit,
-    setValue,
-    setError,
-    getValues,
+
     formState: { errors },
   } = useForm({
     resolver: zodResolver(schema),
@@ -89,7 +96,7 @@ const Register = () => {
         {
           studentName: "",
           fatherName: "",
-          rollNumber: "",
+          // rollNumber: "",
           level: "",
           class: "",
         },
@@ -126,10 +133,14 @@ const Register = () => {
       const studentsArray = data.students;
       const payload = {
         students: studentsArray,
-        contestId: params.id,
+        year: year,
+        district: district,
+        registrationId: registerationId,
+        contestCh: contestCh,
         schoolId: schoolId,
         registeredBy: schoolEmail,
       };
+      console.log(payload);
       await axios
         .post(`/api/users/contests/${params.id}/registrations`, payload)
         .then((response) => {
@@ -147,30 +158,30 @@ const Register = () => {
     control,
     name: "students",
   });
-  const padNumber = (num: number) => {
-    return String(num).padStart(3, "0");
-  };
-  const generateRollNumber = (index: number) => {
-    // Dummy logic for roll number generation
-    const classNumber = getValues(`students.${index}.class`);
-    const formattedIndex = padNumber(index + 1); // Adding 1 because index starts from 0
+  // const padNumber = (num: number) => {
+  //   return String(num).padStart(3, "0");
+  // };
+  // const generateRollNumber = (index: number) => {
+  //   // Dummy logic for roll number generation
+  //   const classNumber = getValues(`students.${index}.class`);
+  //   const formattedIndex = padNumber(index + 1); // Adding 1 because index starts from 0
 
-    const rollNumber = `${year}-${district}-${schoolId}-${classNumber}-${formattedIndex}-${contestCh}`;
-    console.log(classNumber);
-    console.log(rollNumber);
+  //   const rollNumber = `${year}-${district}-${schoolId}-${classNumber}-${formattedIndex}-${contestCh}`;
+  //   console.log(classNumber);
+  //   console.log(rollNumber);
 
-    // Update the rollNumber value for a specific student
-    const updatedStudents = [...fields];
-    updatedStudents[index].rollNumber = rollNumber;
+  //   // Update the rollNumber value for a specific student
+  //   const updatedStudents = [...fields];
+  //   updatedStudents[index].rollNumber = rollNumber;
 
-    // Set the updated students array to trigger re-render
-    // setValue("students", updatedStudents);
-    fields[index].rollNumber = rollNumber;
-    setValue(
-      `students[${index}].rollNumber` as `students.${number}.rollNumber`,
-      rollNumber
-    );
-  };
+  //   // Set the updated students array to trigger re-render
+  //   // setValue("students", updatedStudents);
+  //   fields[index].rollNumber = rollNumber;
+  //   setValue(
+  //     `students[${index}].rollNumber` as `students.${number}.rollNumber`,
+  //     rollNumber
+  //   );
+  // };
 
   // const onSubmit = (data: FormData) => {
   //   console.log(data);
@@ -269,29 +280,6 @@ const Register = () => {
               )}
             </div>
           </div>
-          <div className="flex justify-center items-center space-x-4 mt-3">
-            <div className="w-1/4 relative">
-              <input
-                {...register(`students.${index}.rollNumber`)}
-                placeholder="23-051-00109-1-002-E"
-                readOnly // Make it readonly to prevent manual input
-                className="w-full p-2 rounded border border-gray-300 focus:outline-none focus:border-blue-500"
-              />
-
-              <button
-                type="button"
-                onClick={() => generateRollNumber(index)}
-                className="absolute right-0 top-0 h-full bg-blue-500 text-white px-3 py-2 rounded-r"
-              >
-                Generate Roll#
-              </button>
-            </div>
-            {errors?.students?.[index]?.rollNumber && (
-              <p className="text-red-500">
-                {errors.students[index]?.rollNumber?.message}
-              </p>
-            )}
-          </div>
         </div>
       ))}
       <div className="flex justify-center space-x-4 mt-4">
@@ -301,7 +289,6 @@ const Register = () => {
             append({
               studentName: "",
               fatherName: "",
-              rollNumber: "",
               level: "",
               class: "",
             })

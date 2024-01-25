@@ -45,7 +45,6 @@ model Registration {
   id          String       @id @default(uuid())
   contestId    String
   schoolId     String
-     // Custom identifier for registration creator
   students     Student[]
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
@@ -54,6 +53,7 @@ model Registration {
   user          User     @relation(fields: [registeredBy], references: [id])
   // Add indices for efficient retrieval
   @@index([contestId])
+  @@unique([contestId, schoolId])
   @@index([registeredBy])
   @@index([schoolId])
 }

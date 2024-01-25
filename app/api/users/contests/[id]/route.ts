@@ -3,8 +3,8 @@ import { db } from "@/app/lib/prisma";
 export async function GET(request: Request, 
     { params }: { params: { id: string } }
     ) {
-    try {
-        
+        console.log
+    try {   
         const contest = await db.contest.findUnique({
             where: {
                 id: params.id,
