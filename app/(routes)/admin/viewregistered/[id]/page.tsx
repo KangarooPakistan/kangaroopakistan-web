@@ -2,6 +2,7 @@
 import axios from "axios";
 import { getSession } from "next-auth/react";
 import { useParams } from "next/navigation";
+<<<<<<< HEAD
 import React, { useEffect, useState } from "react";
 import { DataTable } from "./data-table";
 import { Student, columns } from "./columns";
@@ -39,6 +40,23 @@ const page = () => {
       <DataTable columns={columns} data={students} />
     </div>
   );
+=======
+import React, { useEffect } from "react";
+
+const page = () => {
+  const params = useParams();
+  useEffect(() => {
+    const fetch = async () => {
+      const registeredStudents = await axios.get(
+        `/api/users/contests/${params.id}/registrations`
+      );
+
+      console.log(registeredStudents);
+    };
+    fetch();
+  }, []);
+  return <div>page</div>;
+>>>>>>> a8041842edb0b2e738e604881ef1f5031816eb77
 };
 
 export default page;
