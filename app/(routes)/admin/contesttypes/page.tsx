@@ -13,7 +13,7 @@ interface ContestType {
   contestName: string;
   imageUrl: string;
 }
-const Page = () => {
+const ContestTypesPage = () => {
   const [contestTypes, setContestTypes] = useState<ContestType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { onOpen } = useModal();
@@ -101,4 +101,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default ContestTypesPage;
