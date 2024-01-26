@@ -8,7 +8,7 @@ import { Student, columns } from "./columns";
 import { Button } from "@/components/ui/button";
 import { useModal } from "@/hooks/use-modal-store";
 
-const page = () => {
+const ViewRegistered = () => {
   const [students, setStudents] = useState<Student[]>([]);
   const { onOpen } = useModal();
   const router = useRouter();
@@ -67,4 +67,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default ViewRegistered;
