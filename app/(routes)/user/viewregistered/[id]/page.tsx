@@ -1,14 +1,19 @@
 "use client";
 import axios from "axios";
 import { getSession } from "next-auth/react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { DataTable } from "./data-table";
 import { Student, columns } from "./columns";
 import { Button } from "@/components/ui/button";
+import { useModal } from "@/hooks/use-modal-store";
 
 const page = () => {
   const [students, setStudents] = useState<Student[]>([]);
+  const { onOpen } = useModal();
+  const router = useRouter();
+  const [registrationId, setRegistrationId] = useState<string>();
+
   const params = useParams();
 
   useEffect(() => {
@@ -23,6 +28,7 @@ const page = () => {
           `/api/users/contests/${params.id}/${response.data.schoolId}`
         );
         console.log(regId);
+        setRegistrationId(regId.data.id);
         const registeredStudents = await axios.get(
           `/api/users/contests/${params.id}/registrations/${regId.data.id}`
         );
@@ -35,13 +41,21 @@ const page = () => {
     };
     fetch();
   }, []);
-  const handleClick = () => {};
+  const handleClick = () => {
+    router.push(`/user/viewallrecipts/${registrationId}`);
+  };
   return (
     <>
-      <div className="container mx-auto py-10">
+      <div className="container mx-auto py-4">
         <div className="flex justify-end">
-          <Button className="mx-2"> View All Images</Button>
           <Button className="mx-2" onClick={handleClick}>
+            {" "}
+            View All Images
+          </Button>
+          <Button
+            className="mx-2"
+            onClick={() => onOpen("addImage", { registrationId })}
+          >
             Add Image
           </Button>
         </div>

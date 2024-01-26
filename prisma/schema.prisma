@@ -48,10 +48,11 @@ model Registration {
   students     Student[]
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
-  registeredBy   Int      // This will link to the User model
-
+  registeredBy   Int   
+  paymentProof PaymentProof[]
   user          User     @relation(fields: [registeredBy], references: [id])
-  // Add indices for efficient retrieval
+  
+  
   @@index([contestId])
   @@unique([contestId, schoolId])
   @@index([registeredBy])
@@ -76,7 +77,8 @@ model Contest {
   contestTypeId String
   contestType   ContestType @relation(fields: [contestTypeId], references: [id], onDelete: Cascade)
 
-   @@index([contestTypeId])
+
+  @@index([contestTypeId])
 }
 
 model Student {
@@ -90,4 +92,13 @@ model Student {
   level        String
 
   @@index([registrationId])
+}
+
+model PaymentProof{
+  id Int @id @default(autoincrement())
+  imageUrl String
+  registration Registration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+  registrationId String
+  @@index([registrationId])
+
 }

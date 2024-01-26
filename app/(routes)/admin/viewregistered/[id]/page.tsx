@@ -1,7 +1,7 @@
 "use client";
 import axios from "axios";
 import { getSession } from "next-auth/react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { DataTable } from "./data-table";
 import { Student, columns } from "./columns";
@@ -14,6 +14,7 @@ interface ItemType {
 const ViewRegistered = () => {
   const [students, setStudents] = useState<Student[]>([]);
   const params = useParams();
+  const router = useRouter();
 
   useEffect(() => {
     const fetch = async () => {
@@ -39,7 +40,7 @@ const ViewRegistered = () => {
   }, []);
 
   const handleClick = () => {
-    console.log();
+    router.push(`/user/viewallrecipts/${params.id}`);
   };
   return (
     <>
