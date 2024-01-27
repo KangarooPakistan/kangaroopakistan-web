@@ -40,9 +40,14 @@ const ViewAllRecipts = () => {
   return (
     <>
       <div className="container mx-auto py-4">
-        <div className="mx-auto flex justify-center items-center	font-bold	 p-3 bg-blue-500 w-[400px] text-white	text-3xl h-[120px] mb-10">
+        <div className="flex justify-center items-center">
+        <div className="mx-auto	font-bold flex justify-center items-center	 p-3 bg-blue-500 w-[350px] text-white	text-2xl h-[100px] mb-10">
           <h1>Total # of students: &nbsp; </h1>
           <h1>{totalStudents}</h1>
+        </div>
+        <div className="mx-auto flex justify-center items-center	font-bold	 p-3 bg-slate-950 w-[300px] text-white text-2xl h-[100px] mb-10">
+          Payment Proofs.
+        </div>
         </div>
         <div>
           {paymentProof.length > 0 &&
