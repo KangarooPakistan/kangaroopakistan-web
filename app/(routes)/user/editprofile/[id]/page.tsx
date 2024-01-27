@@ -199,7 +199,7 @@ const UserRegister = () => {
         <div className="w-full rounded-lg shadow-2xl md:mt-0 sm:max-w-md xl:p-0 mx-auto">
           <div className="p-6 space-y-3 md:space-y-6 sm:p-8">
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl ">
-              Create account
+              Update account
             </h1>
 
             <Form {...form}>
@@ -629,23 +629,11 @@ const UserRegister = () => {
                     variant="default"
                     className="px-10"
                   >
-                    Create
+                    Update Account
                   </Button>
                 </div>
               </form>
             </Form>
-          </div>
-        </div>
-        <div className="xl:w-3/4 mt-20">
-          <div className="bg-gray-100 py-2 px-5 rounded text-xs md:text-base mx-2 xl:mx-0">
-            <h2 className="font-bold">Instructions</h2>
-            <ul className="list-disc mt-4 list-inside">
-              <li>Password must be at least 8 characters long.</li>
-              <li>Password must contain at least one uppercase letter.</li>
-              <li>Password must contain at least one lowercase letter.</li>
-              <li>Password must contain at least one number.</li>
-              <li>Password must contain at least one special character.</li>
-            </ul>
           </div>
         </div>
       </div>
