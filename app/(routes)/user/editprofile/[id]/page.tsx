@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import * as z from "zod";
 import axios from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,7 +12,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -21,16 +21,6 @@ const formSchema = z.object({
   email: z.string().email({
     message: "Email is required",
   }),
-  password: z
-    .string()
-    .min(8, "Password must be at least 8 characters long") // Minimum length
-    .regex(/[A-Z]/, "Password must contain at least one uppercase letter") // At least one uppercase letter
-    .regex(/[a-z]/, "Password must contain at least one lowercase letter") // At least one lowercase letter
-    .regex(/[0-9]/, "Password must contain at least one number") // At least one number
-    .regex(
-      /[^A-Za-z0-9]/,
-      "Password must contain at least one special character"
-    ),
   schoolId: z.string({
     required_error: "School Id is required",
   }),
@@ -42,7 +32,7 @@ const formSchema = z.object({
     .or(z.literal("")),
   district: z.string(),
   tehsil: z.string(),
-  fax: z.string(),
+  fax: z.string().optional().or(z.literal("")),
   bankTitle: z.string(),
   p_fName: z.string(),
   p_mName: z.string(),
@@ -76,45 +66,127 @@ const formSchema = z.object({
 
   // At least one special character
 });
+interface UserData {
+  email: string;
+  schoolId: string;
+  schoolName: string;
+  contactNumber: string;
+  district: string;
+  tehsil: string;
+  fax: string;
+  bankTitle: string;
+  p_fName: string;
+  p_mName: string;
+  p_lName: string;
+  p_contact: string;
+  p_phone: string;
+  p_email: string;
+  c_fName: string;
+  c_mName: string;
+  c_lName: string;
+  c_contact: string;
+  c_phone: string;
+  c_email: string;
+  c_accountDetails: string;
+  // Define other properties here as needed
+}
+const initialData: UserData = {
+  email: "",
+  schoolId: "",
+  schoolName: "",
+  contactNumber: "",
+  district: "",
+  tehsil: "",
+  fax: "",
+  bankTitle: "",
+  p_fName: "",
+  p_mName: "",
+  p_lName: "",
+  p_contact: "",
+  p_phone: "",
+  p_email: "",
+  c_fName: "",
+  c_mName: "",
+  c_lName: "",
+  c_contact: "",
+  c_phone: "",
+  c_email: "",
+  c_accountDetails: "",
+};
 const UserRegister = () => {
+  const [data, setData] = useState<UserData>(initialData);
   const router = useRouter();
+  const params = useParams();
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
-      password: "",
-      schoolId: "",
-      schoolName: "",
-      contactNumber: "",
-      district: "",
-      tehsil: "",
-      fax: "",
-      bankTitle: "",
-      p_fName: "",
-      p_mName: "",
-      p_lName: "",
-      p_contact: "",
-      p_phone: "",
-      p_email: "",
-      c_fName: "",
-      c_mName: "",
-      c_lName: "",
-      c_contact: "",
-      c_phone: "",
-      c_email: "",
-      c_accountDetails: "",
+      email: data.email,
+      // password: "",
+      schoolId: data.schoolId,
+      schoolName: data.schoolName,
+      contactNumber: data.contactNumber,
+      district: data.district,
+      tehsil: data.tehsil,
+      fax: data.fax,
+      bankTitle: data.bankTitle,
+      p_fName: data.p_fName,
+      p_mName: data.c_mName,
+      p_lName: data.c_lName,
+      p_contact: data.p_contact,
+      p_phone: data.p_phone,
+      p_email: data.email,
+      c_fName: data.c_fName,
+      c_mName: data.c_mName,
+      c_lName: data.c_lName,
+      c_contact: data.c_contact,
+      c_phone: data.c_phone,
+      c_email: data.c_email,
+      c_accountDetails: data.c_accountDetails,
     },
   });
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await axios.get(`/api/users/editprofile/${params.id}`);
+      console.log(response.data);
+      setData(response.data);
+      form.reset({
+        email: response.data.email ?? "",
+        schoolId: response.data.schoolId ?? "",
+        schoolName: response.data.schoolName ?? "",
+        contactNumber: response.data.contactNumber ?? "",
+        district: response.data.district ?? "",
+        tehsil: response.data.tehsil ?? "",
+        fax: response.data.fax ?? "",
+        bankTitle: response.data.bankTitle ?? "",
+        p_fName: response.data.p_fName ?? "",
+        p_mName: response.data.p_mName ?? "",
+        p_lName: response.data.p_lName ?? "",
+        p_contact: response.data.p_contact ?? "",
+        p_phone: response.data.p_phone ?? "",
+        p_email: response.data.p_email ?? "",
+        c_fName: response.data.c_fName ?? "",
+        c_mName: response.data.c_mName ?? "",
+        c_lName: response.data.c_lName ?? "",
+        c_contact: response.data.c_contact ?? "",
+        c_phone: response.data.c_phone ?? "",
+        c_email: response.data.c_email ?? "",
+        c_accountDetails: response.data.c_accountDetails ?? "",
+      });
+    };
+    fetchData();
+  }, [form]);
+
   const isLoading = form.formState.isSubmitting;
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: UserData) => {
     console.log(values);
+    console.log(data);
     try {
       const payload = {
         ...values, // Spread the form values
         role: "User", // Add the additional string
       };
       console.log(payload);
-      await axios.post("/api/users/signup", payload);
+      await axios.put(`/api/users/editprofile/${params.id}`, payload);
       form.reset();
       router.push("/dashboard");
     } catch (error) {
@@ -146,25 +218,6 @@ const UserRegister = () => {
                           disabled={isLoading}
                           className="input"
                           placeholder="Enter your email"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem className="">
-                      <FormLabel className="label mt-5">Password</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="password"
-                          disabled={isLoading}
-                          className="input"
-                          placeholder="Enter your password"
                           {...field}
                         />
                       </FormControl>

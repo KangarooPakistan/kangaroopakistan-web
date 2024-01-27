@@ -58,7 +58,7 @@ export async function PUT(request: NextRequest,
         c_email,
         c_accountDetails,
       } = reqBody;
-  
+      console.log(reqBody)
       // Check if the user with the specified ID exists
       const existingUser = await db.user.findUnique({
         where: {
@@ -109,3 +109,24 @@ export async function PUT(request: NextRequest,
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
   }  
+
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+    try {
+      const id = params.id; // Assuming you pass the user ID as a query parameter
+  
+      // Check if the user with the specified ID exists
+      const user = await db.user.findUnique({
+        where: {
+          id: Number(id), // Convert the ID to a number (assuming it's a numeric ID)
+        },
+      });
+  
+      if (!user) {
+        return NextResponse.json({ error: "User not found" }, { status: 404 });
+      }
+  
+      return NextResponse.json(user);
+    } catch (error: any) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+  }

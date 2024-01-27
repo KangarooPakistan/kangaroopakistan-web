@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Spinner from "@/app/components/Spinner";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 interface UserProfileProps {
   params: {
@@ -40,6 +41,7 @@ interface UserData {
 function UserProfile({ params }: UserProfileProps) {
   const [userData, setUserData] = useState<UserData | null>(null); // Initialize userData as null
   const [loading, setLoading] = useState<boolean>(true);
+  const router = useRouter();
 
   useEffect(() => {
     // Fetch user profile data when the component mounts or when params.id changes
@@ -56,6 +58,9 @@ function UserProfile({ params }: UserProfileProps) {
       });
   }, [params.id]); // Include params.id as a dependency
 
+  const handleClick = () => {
+    router.push(`/user/editprofile/${params.id}`);
+  };
   if (loading) {
     return <Spinner />;
   }
@@ -75,7 +80,7 @@ function UserProfile({ params }: UserProfileProps) {
               src="https://img.freepik.com/premium-vector/account-icon-user-icon-vector-graphics_292645-552.jpg?w=740"
               alt="profile"
             />
-            <Button>Edit Profile</Button>
+            <Button onClick={handleClick}>Edit Profile</Button>
           </div>
 
           <div>
