@@ -30,6 +30,7 @@ const ViewRegistered = () => {
         });
 
         const flattenedStudents = mappedStudents.flat();
+        console.log(flattenedStudents);
         setStudents(flattenedStudents);
       } catch (error) {
         console.error("Error:", error);

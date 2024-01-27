@@ -49,7 +49,6 @@ const ViewRegistered = () => {
       <div className="container mx-auto py-4">
         <div className="flex justify-end">
           <Button className="mx-2" onClick={handleClick}>
-            {" "}
             View All Images
           </Button>
           <Button

@@ -34,4 +34,5 @@ export const columns: ColumnDef<Student>[] = [
     accessorKey: "level",
     header: "Level",
   },
+  
 ];
