@@ -74,22 +74,26 @@ function UserProfile({ params }: UserProfileProps) {
     <div className="flex  w-full justify-center mt-10 mb-10">
       <div className="max-w-4xl">
         <div className="bg-white shadow-xl rounded-lg py-4 px-40">
-          <div>
+          <div className="flex">
             <img
-              className="w-32 h-32 rounded-full mx-auto"
+              className="w-32 h-32 rounded-full"
               src="https://img.freepik.com/premium-vector/account-icon-user-icon-vector-graphics_292645-552.jpg?w=740"
               alt="profile"
             />
-            <Button onClick={handleClick}>Edit Profile</Button>
+            <div className="flex mt-7">
+              <div>
+                <h3 className="text-lg text-gray-900 font-medium leading-8">
+                  Profile
+                </h3>
+                <p className="text-gray-400 text-xs font-semibold">
+                  {userData.role}
+                </p>
+              </div>
+          <Button onClick={handleClick} className="ml-20 text-xs rounded-full">Edit Profile</Button>
+            </div>
           </div>
 
           <div>
-            <h3 className="text-center text-xl text-gray-900 font-medium leading-8">
-              User Profile
-            </h3>
-            <div className="text-center text-gray-400 text-xs font-semibold">
-              <p>{userData.role}</p>
-            </div>
             <table className="text-xs my-3">
               <tbody>
                 <tr>
