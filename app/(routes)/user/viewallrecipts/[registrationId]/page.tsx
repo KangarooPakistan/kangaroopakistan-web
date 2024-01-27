@@ -54,11 +54,11 @@ const ViewAllRecipts = () => {
           {paymentProof.length > 0 &&
             paymentProof.map((item, index) => (
               <div
-                key={index}
+                key={item.id}
                 className="h-[240px] w-[240px] rounded overflow-hidden shadow-lg flex justify-center items-center mx-2"
               >
                 <div
-                  key={index}
+                  key={item.id}
                   className="flex justify-center items-center mx-auto my-auto"
                 >
                   <a href={item.imageUrl} target="_blank">

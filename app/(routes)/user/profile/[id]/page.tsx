@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Spinner from "@/app/components/Spinner";
-import { Button } from "react-day-picker";
+import { Button } from "@/components/ui/button";
 
 interface UserProfileProps {
   params: {
@@ -75,7 +75,9 @@ function UserProfile({ params }: UserProfileProps) {
               src="https://img.freepik.com/premium-vector/account-icon-user-icon-vector-graphics_292645-552.jpg?w=740"
               alt="profile"
             />
+            <Button>Edit Profile</Button>
           </div>
+
           <div>
             <h3 className="text-center text-xl text-gray-900 font-medium leading-8">
               User Profile
@@ -200,7 +202,6 @@ function UserProfile({ params }: UserProfileProps) {
                 </tr>
               </tbody>
             </table>
-            <Button >Edit Profile</Button>
           </div>
         </div>
       </div>
