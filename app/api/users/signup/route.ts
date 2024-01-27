@@ -97,3 +97,86 @@ export async function POST(request: NextRequest){
             )
     }
 }
+
+export async function PUT(request: NextRequest, 
+    { params }: { params: { id: string }}) {
+    try {
+      const id = params.id; // Assuming you pass the user ID as a query parameter
+  
+      const reqBody = await request.json();
+      const {
+        email,
+        password,
+        role,
+        schoolId,
+        schoolName,
+        contactNumber,
+        district,
+        tehsil,
+        fax,
+        bankTitle,
+        p_fName,
+        p_mName,
+        p_lName,
+        p_contact,
+        p_phone,
+        p_email,
+        c_fName,
+        c_mName,
+        c_lName,
+        c_contact,
+        c_phone,
+        c_email,
+        c_accountDetails,
+      } = reqBody;
+  
+      // Check if the user with the specified ID exists
+      const existingUser = await db.user.findUnique({
+        where: {
+          id: Number(id), // Convert the ID to a number (assuming it's a numeric ID)
+        },
+      });
+  
+      if (!existingUser) {
+        return NextResponse.json({ error: "User not found" }, { status: 404 });
+      }
+  
+      // Update the user's data
+      const updatedUserData: UserData = {
+        email,
+        password: existingUser.password, // Keep the existing password
+        role,
+        contactNumber,
+        schoolId,
+        schoolName,
+        district,
+        tehsil,
+        fax,
+        bankTitle,
+        p_fName,
+        p_mName,
+        p_lName,
+        p_contact,
+        p_phone,
+        p_email,
+        c_fName,
+        c_mName,
+        c_lName,
+        c_contact,
+        c_phone,
+        c_email,
+        c_accountDetails,
+      };
+  
+      const updatedUser = await db.user.update({
+        where: {
+          id: Number(id),
+        },
+        data: updatedUserData,
+      });
+  
+      return NextResponse.json(updatedUser);
+    } catch (error: any) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+  }  

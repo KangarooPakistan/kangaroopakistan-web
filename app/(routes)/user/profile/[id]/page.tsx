@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Spinner from "@/app/components/Spinner";
+import { Button } from "react-day-picker";
 
 interface UserProfileProps {
   params: {
@@ -199,6 +200,7 @@ function UserProfile({ params }: UserProfileProps) {
                 </tr>
               </tbody>
             </table>
+            <Button >Edit Profile</Button>
           </div>
         </div>
       </div>

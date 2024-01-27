@@ -52,7 +52,10 @@ const ViewAllRecipts = () => {
         <div>
           {paymentProof.length > 0 &&
             paymentProof.map((item, index) => (
-              <div className="h-[240px] w-[240px] rounded overflow-hidden shadow-lg flex justify-center items-center">
+              <div
+                key={index}
+                className="h-[240px] w-[240px] rounded overflow-hidden shadow-lg flex justify-center items-center"
+              >
                 <div
                   key={index}
                   className="h-[220px] w-[220px] mx-auto my-auto"
