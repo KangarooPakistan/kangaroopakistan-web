@@ -54,8 +54,8 @@ const ContestActions: React.FC<StudentActionsProps> = ({ student }) => {
 
 export const columns: ColumnDef<Student>[] = [
   {
-    accessorKey: "registrationId",
-    header: "registrationId",
+    accessorKey: "schoolId",
+    header: "schoolId",
   },
   {
     accessorKey: "rollNumber",

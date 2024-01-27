@@ -7,8 +7,10 @@ import { DataTable } from "./data-table";
 import { Student, columns } from "./columns";
 import { Button } from "@/components/ui/button";
 
+
 interface ItemType {
   students: Student[];
+  schoolId: string;
 }
 
 const ViewRegistered = () => {
@@ -23,15 +25,18 @@ const ViewRegistered = () => {
           `/api/users/contests/${params.id}/registrations`
         );
 
+        console.log(registeredStudents);
         const data: ItemType[] = registeredStudents.data;
 
-        const mappedStudents = data.map((item: ItemType) => {
-          return item.students;
-        });
-
-        const flattenedStudents = mappedStudents.flat();
-        console.log(flattenedStudents);
-        setStudents(flattenedStudents);
+        const extractedStudents: Student[] = data.flatMap((item: ItemType) =>
+          item.students.map((student) => ({
+            ...student,
+            schoolId: item.schoolId,
+          }))
+        );
+        console.log("-----------------------------------");
+        console.log(extractedStudents);
+        setStudents(extractedStudents);
       } catch (error) {
         console.error("Error:", error);
       }
@@ -45,14 +50,6 @@ const ViewRegistered = () => {
   };
   return (
     <>
-      <div className="container mx-auto py-10">
-        <div className="flex justify-end">
-          <Button className="mx-2"> View All Images</Button>
-          <Button className="mx-2" onClick={handleClick}>
-            Add Image
-          </Button>
-        </div>
-      </div>
       <div className="container mx-auto py-10">
         <DataTable columns={columns} data={students} />
       </div>

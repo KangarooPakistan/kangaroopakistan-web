@@ -8,7 +8,7 @@ export async function GET(request: Request,
             if (!params.registrationId) {
                 return NextResponse.json({ error: "Missing registrationId in query parameters" }, { status: 400 });
               }
-              const paymentProof = await db.paymentProof.findFirst({
+              const paymentProof = await db.paymentProof.findMany({
                 where: {
                   registrationId: params.registrationId
                 }
