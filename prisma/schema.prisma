@@ -8,11 +8,11 @@ generator client {
   provider = "prisma-client-js"
 }
 model User {
-  id            Int      @id @default(autoincrement()) @unique
+  id            String      @id @default(uuid()) @unique
   email         String   @unique
   password      String
   role          String   @default("Admin") // 'admin', 'user', etc.
-  schoolId      String?     @unique
+  schoolId      Int     @unique  @default(autoincrement())
   schoolName    String?  // Optional: only for non-admin users
   contactNumber String?
   schoolAddress String?
@@ -37,18 +37,16 @@ model User {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   registrations Registration[]
-
-
 }
 
 model Registration {
   id          String       @id @default(uuid())
   contestId    String
-  schoolId     String
+  schoolId     Int
   students     Student[]
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
-  registeredBy   Int   
+  registeredBy   String
   paymentProof PaymentProof[]
   user          User     @relation(fields: [registeredBy], references: [id])
   

@@ -13,7 +13,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     // Find the user by ID
     const user = await db.user.findUnique({
       where: {
-        id: Number(id),
+        id: id,
       },
     });
 
@@ -36,7 +36,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     // Update the user's password in the database
     const updatedUser = await db.user.update({
       where: {
-        id: Number(id),
+        id: id,
       },
       data: {
         password: hashedPassword, // Update the password field with the hashed new password

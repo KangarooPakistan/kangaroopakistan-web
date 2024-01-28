@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 
 interface ItemType {
   students: Student[];
-  schoolId: string;
+  schoolId: number;
 }
 
 const ViewRegistered = () => {

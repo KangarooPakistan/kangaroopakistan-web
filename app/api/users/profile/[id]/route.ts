@@ -4,13 +4,7 @@ export async function GET(request: Request,
     { params }: { params: { id: string } }
     ) {
     try {
-        const userId = parseInt(params.id, 10); // Use parseInt with base 10
-
-        if (isNaN(userId)) {
-            return NextResponse.json({ error: "User ID is required and must be a number" }, { status: 400 });
-        }
-
-        
+        const userId = params.id; // Use parseInt with base 10
         const user = await db.user.findUnique({
             where: {
                 id: userId,

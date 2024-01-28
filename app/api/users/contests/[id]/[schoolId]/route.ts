@@ -10,11 +10,13 @@ export async function GET(request: Request, {
   };
 }) {
   try {
+    const schoolIdInt = parseInt(params.schoolId, 10);
+
     const registration = await db.registration.findUnique({
       where: {
         contestId_schoolId: {
           contestId: params.id,
-          schoolId: params.schoolId,
+          schoolId: schoolIdInt,
         },
       },
     });

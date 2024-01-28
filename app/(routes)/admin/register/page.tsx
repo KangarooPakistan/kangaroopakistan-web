@@ -31,9 +31,7 @@ const formSchema = z.object({
       /[^A-Za-z0-9]/,
       "Password must contain at least one special character"
     ),
-  schoolId: z.string({
-    required_error: "School Id is required",
-  }),
+
   schoolName: z.string(),
   contactNumber: z
     .string()
@@ -83,7 +81,6 @@ const UserRegister = () => {
     defaultValues: {
       email: "",
       password: "",
-      schoolId: "",
       schoolName: "",
       contactNumber: "",
       district: "",
@@ -165,24 +162,6 @@ const UserRegister = () => {
                           disabled={isLoading}
                           className="input"
                           placeholder="Enter your password"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="schoolId"
-                  render={({ field }) => (
-                    <FormItem className="">
-                      <FormLabel className="label mt-5">School ID</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="text"
-                          disabled={isLoading}
-                          className="input"
                           {...field}
                         />
                       </FormControl>

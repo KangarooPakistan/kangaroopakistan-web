@@ -4,7 +4,7 @@ import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as zod from "zod";
 import { getSession } from "next-auth/react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 
 interface StudentData {
@@ -39,13 +39,15 @@ const schema = zod.object({
 const Register = () => {
   const [duplicateError, setDuplicateError] = useState<string | null>(null);
   const params = useParams();
+  const router = useRouter();
   const [contestCh, setContestCh] = useState<string | null>();
-  const [schoolId, setSchoolId] = useState<string | undefined>();
+  const [schoolId, setSchoolId] = useState<number | undefined>();
   const [schoolEmail, setSchoolEmail] = useState<number | undefined | null>();
   const [district, setDistrict] = useState<string | undefined | null>();
   const [registerationId, setRegistrationId] = useState<
     string | undefined | null
   >();
+
   const [year, setYear] = useState<string | undefined>();
   const [schoolName, setSchoolName] = useState<string | undefined>();
 
@@ -145,6 +147,7 @@ const Register = () => {
         .post(`/api/users/contests/${params.id}/registrations`, payload)
         .then((response) => {
           console.log("Registration created successfully:", response.data);
+          router.push("/dashboard");
           // Handle successful registration creation
         })
         .catch((error) => {

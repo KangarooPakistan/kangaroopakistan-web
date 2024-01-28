@@ -49,6 +49,10 @@ const AdminNavbar = () => {
     toggleDropdown();
     router.push("/admin/users");
   };
+  const handleAdminUser = () => {
+    toggleDropdown();
+    router.push("/users");
+  };
 
   return (
     <nav className="bg-purple-600 text-white">
@@ -223,9 +227,9 @@ const AdminNavbar = () => {
                   <li>
                     <button
                       className="block px-4 py-2 hover:bg-gray-100 rounded w-full text-left border-0"
-                      onClick={handleClickUser}
+                      onClick={handleAdminUser}
                     >
-                      View All Users
+                      Create Admin
                     </button>
                   </li>
                 </ul>

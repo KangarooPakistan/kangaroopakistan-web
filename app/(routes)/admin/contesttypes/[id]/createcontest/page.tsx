@@ -122,7 +122,7 @@ const CreateContest = () => {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="label">Email</FormLabel>
+                      <FormLabel className="label">Contest Name</FormLabel>
                       <FormControl>
                         <Input
                           disabled={isLoading}
@@ -140,7 +140,9 @@ const CreateContest = () => {
                   name="startDate"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="label">Start Date</FormLabel>
+                      <FormLabel className="label">
+                        Registration Start Date
+                      </FormLabel>
                       <FormControl>
                         {/* Use react-datepicker for date selection */}
                         <DatePicker
@@ -163,7 +165,9 @@ const CreateContest = () => {
                   name="endDate"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="label">End Date</FormLabel>
+                      <FormLabel className="label">
+                        Registration End Date
+                      </FormLabel>
                       <FormControl>
                         {/* Use react-datepicker for date selection */}
                         <DatePicker

@@ -7,7 +7,6 @@ interface UserData {
     password: string;
     role: string;
     contactNumber?: string | null; // Optional field
-    schoolId?: string  | null;     // Optional field
     schoolName?: string  | null;   // Optional field
     district?: string  | null;   // Optional field
     tehsil?: string  | null;   // Optional field
@@ -65,7 +64,6 @@ export async function POST(request: NextRequest){
                     password: hashedPassword,
                     role,
                     contactNumber: contactNumber || null, // Use null if not provided
-                    schoolId: schoolId || null,           // Use null if not provided
                     schoolName: schoolName || null,       // Use null if not provided
                     tehsil: tehsil || null,       // Use null if not provided
                     fax: fax || null,       // Use null if not provided
@@ -133,7 +131,7 @@ export async function PUT(request: NextRequest,
       // Check if the user with the specified ID exists
       const existingUser = await db.user.findUnique({
         where: {
-          id: Number(id), // Convert the ID to a number (assuming it's a numeric ID)
+          id: id, // Convert the ID to a number (assuming it's a numeric ID)
         },
       });
   
@@ -147,7 +145,6 @@ export async function PUT(request: NextRequest,
         password: existingUser.password, // Keep the existing password
         role,
         contactNumber,
-        schoolId,
         schoolName,
         district,
         tehsil,
@@ -170,7 +167,7 @@ export async function PUT(request: NextRequest,
   
       const updatedUser = await db.user.update({
         where: {
-          id: Number(id),
+          id: id,
         },
         data: updatedUserData,
       });

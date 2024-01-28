@@ -2,11 +2,12 @@ import { NextResponse } from "next/server";
 import { db } from "@/app/lib/prisma";
 
 const padNumber = (num: number) => String(num).padStart(3, "0");
+const padNumber5 = (num: number) => String(num).padStart(5, "0");
 
 interface StudentData {
     year: string;
     district: string;
-    schoolId: string;
+    schoolId: number;
     class: string;
     contestCh: string;
     // Add any other properties that are used from the 'student' object
@@ -20,7 +21,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
         const { schoolId, registeredBy, students,  registrationId, year, district, contestCh } = reqBody;
         const contestId = params.id
 
-        if (!schoolId || !registeredBy || !Array.isArray(students)) {
+        if ( !registeredBy || !Array.isArray(students)) {
             console.log("Invalid registration data");
             return NextResponse.json({ error: "Invalid registration data" }, { status: 400 });
         }
@@ -39,7 +40,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
                 data: {
                     contestId,
                     schoolId,
-                    registeredBy: parseInt(registeredBy) // assuming registeredBy is a numeric ID
+                    registeredBy: registeredBy // assuming registeredBy is a numeric ID
                 }
             });
             regId = newRegistration.id;
@@ -90,10 +91,10 @@ export async function POST(request: Request, { params }: { params: { id: string 
 }
 
 // ... (rest of your code)
-function generateRollNumber(student:StudentData,currentMaxIndex: number, year:string, district:string, schoolId: string, contestCh: string ) {
+function generateRollNumber(student:StudentData,currentMaxIndex: number, year:string, district:string, schoolId: number, contestCh: string ) {
     const index = currentMaxIndex + 1;
 
-    return `${year}-${district}-${schoolId}-${student.class}-${padNumber(index)}-${contestCh}`;
+    return `${year}-${district}-${padNumber5(schoolId)}-${student.class}-${padNumber(index)}-${contestCh}`;
 }
 
 
