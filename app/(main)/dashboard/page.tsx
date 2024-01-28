@@ -9,10 +9,10 @@ const Dashboard = async () => {
 
   return (
     <div>
-      Hi
-      <pre>{mysession}</pre>
+      {/* Hi */}
+      {/* <pre>{mysession}</pre> */}
       <Frontend />
-      <InitialModal />
+      {/* <InitialModal /> */}
       {/* <ProfileButton /> */}
     </div>
   );
