@@ -30,6 +30,12 @@ const UserNavbar = () => {
       toggleProfile();
     }
   };
+  const changePassword = () => {
+    if (session && session.user && session.user.id) {
+      router.push(`/user/passwordchange/${session.user.id}`); // Use session.user.id directly
+      toggleProfile();
+    }
+  };
 
   const logOut = () => {
     signOut();
@@ -82,6 +88,15 @@ const UserNavbar = () => {
                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full border-0 text-left"
                 >
                   Profile
+                </Button>
+              </li>
+              <li>
+                <Button
+                  onClick={changePassword}
+                  variant="outline"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full border-0 text-left"
+                >
+                  Change Password
                 </Button>
               </li>
               <li>

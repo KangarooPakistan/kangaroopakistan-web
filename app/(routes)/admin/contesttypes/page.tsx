@@ -72,7 +72,7 @@ const ContestTypesPage = () => {
                 </p>
                 <div className="flex items-center mt-3 justify-between w-full">
                   <Button
-                    className="px-5 py-2 bg-black text-white rounded-xl mr-2 text-xs"
+                    className="px-5 py-2  rounded-xl mr-2 text-xs"
                     onClick={() => {
                       handleViewClick(contestType.id);
                     }}
@@ -80,7 +80,7 @@ const ContestTypesPage = () => {
                     View Contest
                   </Button>
                   <Button
-                    className="px-5 py-2 bg-black text-white rounded-xl text-xs"
+                    className="px-5 py-2 font-bold rounded-xl text-xs"
                     onClick={() => {
                       handleCardClick(contestType.id);
                     }}

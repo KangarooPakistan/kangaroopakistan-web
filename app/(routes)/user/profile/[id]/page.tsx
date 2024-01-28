@@ -61,7 +61,7 @@ function UserProfile({ params }: UserProfileProps) {
     router.push(`/user/editprofile/${params.id}`);
   };
 
-  const handleTabClick = (tabId) => {
+  const handleTabClick = (tabId: number) => {
     setActiveTab(tabId);
   };
 
@@ -80,6 +80,7 @@ function UserProfile({ params }: UserProfileProps) {
   ];
 
   return (
+    
     <div className="flex w-full justify-center mt-10 mb-10">
       <div className="max-w-4xl">
         <div className="bg-white shadow-xl rounded-lg py-4 px-40 mt-4">

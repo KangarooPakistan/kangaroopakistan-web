@@ -51,10 +51,10 @@ const AdminNavbar = () => {
   };
 
   return (
-    <nav className="bg-white">
+    <nav className="bg-purple-600">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <Link href="/dashboard" className="flex items-center space-x-3">
-          <span className="self-center text-2xl font-semibold whitespace-nowrap ">
+          <span className="self-center text-white text-2xl font-semibold whitespace-nowrap ">
             KangarooPakistan
           </span>
         </Link>
@@ -142,7 +142,7 @@ const AdminNavbar = () => {
           }`}
           id="navbar-user"
         >
-          <ul className="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white ">
+          <ul className="flex flex-col font-medium p-4 md:p-0 mt-4 border border-purple-600 rounded-lg bg-purple-600 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white ">
             <li>
               <Link
                 href="/dashboard"
@@ -231,7 +231,6 @@ const AdminNavbar = () => {
                 Notifications
               </Link>
             </li>
-            
           </ul>
         </div>
       </div>
