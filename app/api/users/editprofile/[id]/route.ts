@@ -7,7 +7,7 @@ interface UserData {
     password: string;
     role: string;
     contactNumber?: string | null; // Optional field
-    schoolId?: string  | null;     // Optional field
+    schoolId?: number  ;     // Optional field
     schoolName?: string  | null;   // Optional field
     district?: string  | null;   // Optional field
     tehsil?: string  | null;   // Optional field
@@ -99,7 +99,7 @@ export async function PUT(request: NextRequest,
   
       const updatedUser = await db.user.update({
         where: {
-          id: Number(id),
+          id: id,
         },
         data: updatedUserData,
       });
@@ -117,7 +117,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       // Check if the user with the specified ID exists
       const user = await db.user.findUnique({
         where: {
-          id: Number(id), // Convert the ID to a number (assuming it's a numeric ID)
+          id: id, // Convert the ID to a number (assuming it's a numeric ID)
         },
       });
   
