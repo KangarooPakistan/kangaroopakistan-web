@@ -34,7 +34,6 @@ const ViewRegistered = () => {
             schoolId: item.schoolId,
           }))
         );
-        console.log("-----------------------------------");
         console.log(extractedStudents);
         setStudents(extractedStudents);
       } catch (error) {
