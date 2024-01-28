@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
 
         const user = await db.user.findUnique({
             where: {
-                id: parseInt(id),
+                id: id,
             },
         });
 
