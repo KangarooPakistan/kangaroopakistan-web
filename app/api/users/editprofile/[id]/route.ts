@@ -62,7 +62,7 @@ export async function PUT(request: NextRequest,
       // Check if the user with the specified ID exists
       const existingUser = await db.user.findUnique({
         where: {
-          id: Number(id), // Convert the ID to a number (assuming it's a numeric ID)
+          id: id, // Convert the ID to a number (assuming it's a numeric ID)
         },
       });
   
