@@ -7,7 +7,7 @@ interface UserData {
     password: string;
     role: string;
     contactNumber?: string | null; // Optional field
-    schoolId?: number  ;     // Optional field
+    schoolId: number  ;     // Optional field
     schoolName?: string  | null;   // Optional field
     district?: string  | null;   // Optional field
     tehsil?: string  | null;   // Optional field
