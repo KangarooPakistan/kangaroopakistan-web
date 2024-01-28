@@ -83,10 +83,13 @@
   @apply bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 !important;
 }
 
+.table-header {
+  @apply uppercase bg-purple-600 rounded-lg text-sm font-bold !important;
+}
+
 .text-smallest {
   font-size: 0.725rem;
 }
-
 
 .register-height-style {
   height: 103vh;
