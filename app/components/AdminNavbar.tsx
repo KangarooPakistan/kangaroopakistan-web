@@ -152,14 +152,14 @@ const AdminNavbar = () => {
                 Dashboard
               </Link>
             </li>
-            <li>
+            {/* <li>
               <Link
                 href="/admin/contesttypes"
                 className="block py-2 px-3 md:p-0 "
               >
                 Resources
               </Link>
-            </li>
+            </li> */}
             <li>
               <Link
                 href="/admin/contesttypes"
@@ -220,14 +220,22 @@ const AdminNavbar = () => {
                       View All Users
                     </button>
                   </li>
+                  <li>
+                    <button
+                      className="block px-4 py-2 hover:bg-gray-100 rounded w-full text-left border-0"
+                      onClick={handleClickUser}
+                    >
+                      View All Users
+                    </button>
+                  </li>
                 </ul>
               </div>
             </li>
-            <li>
+            {/* <li>
               <Link href="/user" className="block py-2 px-3 md:p-0">
                 Notifications
               </Link>
-            </li>
+            </li> */}
           </ul>
         </div>
       </div>
