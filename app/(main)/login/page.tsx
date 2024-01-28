@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { signIn, useSession } from "next-auth/react";
+import Link from "next/link";
 
 const Login = () => {
   const [error, setError] = useState("");
@@ -129,6 +130,15 @@ const Login = () => {
                     Sign In
                   </Button>
                 </div>
+                <p className="text-sm font-light text-gray-500 w-full text-center">
+                  Dont have an account? &nbsp;
+                  <Link
+                    className="font-medium text-blue-600 hover:underline"
+                    href="/login"
+                  >
+                    Sign up here
+                  </Link>
+                </p>
               </form>
             </Form>
           </div>
