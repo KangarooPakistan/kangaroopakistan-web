@@ -43,7 +43,7 @@ const UserNavbar = () => {
   };
 
   return (
-    <nav className="bg-purple-600">
+    <nav className="bg-purple-600 text-white">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <Link href="" className="flex items-center space-x-3">
           <span className="self-center text-2xl font-semibold whitespace-nowrap ">
@@ -143,11 +143,11 @@ const UserNavbar = () => {
           }`}
           id="navbar-user"
         >
-      <ul className="flex flex-col font-medium p-4 md:p-0 mt-4 border md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white ">
+          <ul className="flex flex-col font-medium p-4 md:p-0 mt-4 border md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white ">
             <li>
               <Link
                 href="/dashboard"
-                className="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0"
+                className="block py-2 px-3 md:p-0"
                 aria-current="page"
               >
                 Dashboard
@@ -156,7 +156,7 @@ const UserNavbar = () => {
             <li>
               <Link
                 href="/user/active/contest"
-                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 "
+                className="block py-2 px-3 md:p-0 "
               >
                 Resources
               </Link>
@@ -164,24 +164,18 @@ const UserNavbar = () => {
             <li>
               <Link
                 href="/user/active/contest"
-                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 "
+                className="block py-2 px-3 md:p-0 "
               >
                 Contest
               </Link>
             </li>
             <li>
-              <Link
-                href="/user"
-                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 "
-              >
+              <Link href="/user" className="block py-2 px-3 md:p-0 ">
                 History
               </Link>
             </li>
             <li>
-              <Link
-                href="/user"
-                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 "
-              >
+              <Link href="/user" className="block py-2 px-3 md:p-0 ">
                 Notifications
               </Link>
             </li>
