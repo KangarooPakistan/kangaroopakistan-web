@@ -1,0 +1,102 @@
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+model User {
+  id            String      @id @default(uuid()) @unique
+  email         String   @unique
+  password      String
+  role          String   @default("Admin") // 'admin', 'user', etc.
+  schoolId      Int     @unique  @default(autoincrement())
+  schoolName    String?  // Optional: only for non-admin users
+  contactNumber String?
+  schoolAddress String?
+  district String?
+  tehsil String?
+  fax String?
+  bankTitle String?
+  p_fName String?
+  p_mName String?
+  p_lName String?
+  p_contact String?
+  p_phone String?
+  p_email String?
+  c_fName String?
+  c_mName String?
+  c_lName String?
+  c_contact String?
+  c_phone String?
+  c_email String?
+  c_accountDetails String?
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  registrations Registration[]
+}
+
+model Registration {
+  id          String       @id @default(uuid())
+  contestId    String
+  schoolId     Int
+  students     Student[]
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  registeredBy   String
+  paymentProof PaymentProof[]
+  user          User     @relation(fields: [registeredBy], references: [id])
+  
+  
+  @@index([contestId])
+  @@unique([contestId, schoolId])
+  @@index([registeredBy])
+  @@index([schoolId])
+}
+
+model ContestType {
+  id       String     @id @default(uuid())
+  contestName     String  @unique
+  imageUrl String @db.VarChar(10000)
+  contestCh String
+  contests      Contest[]
+}
+model Contest {
+  id            String   @id @default(uuid())
+  name          String
+  startDate     DateTime
+  endDate       DateTime
+  contestDate String?
+  resultDate String?
+  contestCh String?
+  contestTypeId String
+  contestType   ContestType @relation(fields: [contestTypeId], references: [id], onDelete: Cascade)
+
+
+  @@index([contestTypeId])
+}
+
+model Student {
+  id           Int      @id @default(autoincrement())
+  registration Registration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+  registrationId String
+  rollNumber     String
+  studentName  String
+  fatherName   String
+  class        String
+  level        String
+
+  @@index([registrationId])
+}
+
+model PaymentProof{
+  id Int @id @default(autoincrement())
+  imageUrl String
+  registration Registration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+  registrationId String
+  @@index([registrationId])
+
+}
