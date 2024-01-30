@@ -16,6 +16,7 @@ const s3Client = new S3Client({
         secretAccessKey: secretAccessKey
     }
 })
+console.log('kainat')
 
 const acceptedTypes = [
     "image/jpeg",
