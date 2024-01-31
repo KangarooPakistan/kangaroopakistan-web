@@ -147,7 +147,7 @@ const Register = () => {
         .post(`/api/users/contests/${params.id}/registrations`, payload)
         .then((response) => {
           console.log("Registration created successfully:", response.data);
-          router.push("/dashboard");
+          router.push(`/user/viewregistered/${registerationId}`);
           // Handle successful registration creation
         })
         .catch((error) => {
