@@ -59,6 +59,11 @@ const ViewRegistered = () => {
           </Button>
         </div>
       </div>
+      <div className="flex justify-center">
+        <h1 className="text-xl font-bold leading-tight tracking-tight text-purple-600  md:text-2xl">
+          Attach Proof of Payment
+        </h1>
+      </div>
       <div className="container mx-auto py-10">
         <DataTable columns={columns} data={students} />
       </div>
