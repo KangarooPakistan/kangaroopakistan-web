@@ -15,7 +15,6 @@ import {
 import { useParams, useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 
 interface UserData {
   email: string;
@@ -433,7 +432,7 @@ const UserRegister = () => {
                   render={({ field }) => (
                     <FormItem className="">
                       <FormLabel className="label mt-5">
-                        Principal&apos;s Contact
+                        Principal&apos;s Cell #
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -555,7 +554,7 @@ const UserRegister = () => {
                   render={({ field }) => (
                     <FormItem className="">
                       <FormLabel className="label mt-5">
-                        Coordinator&apos;s Contact number
+                        Coordinator&apos;s Cell #
                       </FormLabel>
                       <FormControl>
                         <Input

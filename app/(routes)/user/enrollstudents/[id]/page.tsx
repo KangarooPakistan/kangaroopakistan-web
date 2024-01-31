@@ -193,7 +193,7 @@ const Register = () => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className=" mx-auto p-4 border border-gray-300 rounded-lg"
+      className="mx-auto p-4 border border-gray-300 rounded-lg"
     >
       {duplicateError && <p className="text-red-500">{duplicateError}</p>}
       {fields.map((field, index) => (
@@ -202,7 +202,7 @@ const Register = () => {
           className="mb-4 p-2 border-solid border-2 border-grey-600 "
         >
           <div className="flex items-center space-x-4">
-            <div className="w-1/4">
+            <div className=" w-full sm:w-full md:w-1/2 lg:w-1/4 xl:w-1/4">
               <input
                 {...register(`students.${index}.studentName`)}
                 placeholder="Student Name"
@@ -214,7 +214,7 @@ const Register = () => {
                 </p>
               )}
             </div>
-            <div className="w-1/4">
+            <div className="w-full sm:w-full md:w-1/2 lg:w-1/4 xl:w-1/4">
               <input
                 {...register(`students.${index}.fatherName`)}
                 placeholder="Father's Name"
@@ -226,7 +226,7 @@ const Register = () => {
                 </p>
               )}
             </div>
-            <div className="w-1/4">
+            <div className="w-full sm:w-full md:w-1/2 lg:w-1/4 xl:w-1/4">
               <Controller
                 name={`students.${index}.level`}
                 control={control}
@@ -251,7 +251,7 @@ const Register = () => {
                 </p>
               )}
             </div>
-            <div className="w-1/4">
+            <div className="w-full sm:w-full md:w-1/2 lg:w-1/4 xl:w-1/4">
               <Controller
                 name={`students.${index}.class`}
                 control={control}

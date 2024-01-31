@@ -49,20 +49,24 @@ const ViewRegistered = () => {
       <div className="container mx-auto py-4">
         <div className="flex justify-end">
           <Button className="mx-2" onClick={handleClick}>
-            View All Images
+            View All Proof of Payments
           </Button>
           <Button
             className="mx-2"
             onClick={() => onOpen("addImage", { registrationId })}
           >
-            Add Image
+            Add Proof of Payment
           </Button>
         </div>
       </div>
       <div className="flex justify-center">
-        <h1 className="text-xl font-bold leading-tight tracking-tight text-purple-600  md:text-2xl">
+        <Button
+          variant="ghost"
+          className="text-xl font-bold leading-tight tracking-tight text-purple-600  md:text-3xl"
+          onClick={() => onOpen("addImage", { registrationId })}
+        >
           Attach Proof of Payment
-        </h1>
+        </Button>
       </div>
       <div className="container mx-auto py-10">
         <DataTable columns={columns} data={students} />
