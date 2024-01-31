@@ -153,14 +153,14 @@ const UserNavbar = () => {
                 Dashboard
               </Link>
             </li>
-            <li>
+            {/* <li>
               <Link
                 href="/user/active/contest"
                 className="block py-2 px-3 md:p-0 "
               >
                 Resources
               </Link>
-            </li>
+            </li> */}
             <li>
               <Link
                 href="/user/active/contest"
@@ -169,16 +169,16 @@ const UserNavbar = () => {
                 Contest
               </Link>
             </li>
-            <li>
+            {/* <li>
               <Link href="/user" className="block py-2 px-3 md:p-0 ">
                 History
               </Link>
-            </li>
-            <li>
+            </li> */}
+            {/* <li>
               <Link href="/user" className="block py-2 px-3 md:p-0 ">
                 Notifications
               </Link>
-            </li>
+            </li> */}
             {/* <li>
               <Link
                 href="/user/enrollstudents"
