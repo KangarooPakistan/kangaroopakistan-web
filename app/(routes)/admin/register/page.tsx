@@ -35,7 +35,7 @@ const formSchema = z.object({
   schoolName: z.string(),
   contactNumber: z
     .string()
-    .regex(/^\d{3}-\d{7}$/, "Phone number must be in the format 051-5194964")
+    // .regex(/^\d{3}-\d{7}$/, "Phone number must be in the format 051-5194964")
     .optional()
     .or(z.literal("")),
   district: z.string(),
@@ -47,12 +47,12 @@ const formSchema = z.object({
   p_lName: z.string(),
   p_contact: z
     .string()
-    .regex(/^\d{4}-\d{7}$/, "Phone number must be in the format 0333-5194964")
+    // .regex(/^\d{4}-\d{7}$/, "Phone number must be in the format 0333-5194964")
     .optional()
     .or(z.literal("")),
   p_phone: z
     .string()
-    .regex(/^\d{3}-\d{7}$/, "Phone number must be in the format 051-5194964")
+    // .regex(/^\d{3}-\d{7}$/, "Phone number must be in the format 051-5194964")
     .optional()
     .or(z.literal("")),
   p_email: z.string(),
@@ -61,12 +61,12 @@ const formSchema = z.object({
   c_lName: z.string(),
   c_contact: z
     .string()
-    .regex(/^\d{4}-\d{7}$/, "Phone number must be in the format 0333-5194964")
+    // .regex(/^\d{4}-\d{7}$/, "Phone number must be in the format 0333-5194964")
     .optional()
     .or(z.literal("")),
   c_phone: z
     .string()
-    .regex(/^\d{3}-\d{7}$/, "Phone number must be in the format 051-5194964")
+    // .regex(/^\d{3}-\d{7}$/, "Phone number must be in the format 051-5194964")
     .optional()
     .or(z.literal("")),
   c_email: z.string().email().optional().or(z.literal("")),
