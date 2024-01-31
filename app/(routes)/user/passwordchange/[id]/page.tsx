@@ -16,6 +16,7 @@ import { useParams, useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { Eye, EyeOff } from "lucide-react";
 
 const formSchema = z.object({
   currentPassword: z.string(),
@@ -33,6 +34,9 @@ const formSchema = z.object({
 });
 
 const PasswordChange = () => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+
   const router = useRouter();
   const params = useParams();
   const form = useForm({
@@ -60,6 +64,13 @@ const PasswordChange = () => {
       console.log(error);
     }
   };
+  const toggleCurrentPasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+  const toggleNewPasswordVisibility = () => {
+    setShowNewPassword(!showNewPassword);
+  };
+
   return (
     <section className="bg-white mb-12">
       <div className=" pt-10  grid grid-cols-1 md:grid-cols-2 gap-2 xl:gap-0">
@@ -81,13 +92,26 @@ const PasswordChange = () => {
                     <FormItem>
                       <FormLabel className="label">Old Password</FormLabel>
                       <FormControl>
-                        <Input
-                          disabled={isLoading}
-                          className="input"
-                          type="password"
-                          placeholder="Enter old password"
-                          {...field}
-                        />
+                        <div className="relative">
+                          <Input
+                            type={showPassword ? "text" : "password"}
+                            disabled={isLoading}
+                            className="input pl-10" // Adjust padding to accommodate the icon
+                            placeholder="Enter your password"
+                            {...field}
+                          />
+                          {showPassword ? (
+                            <Eye
+                              className="absolute top-3 right-3 cursor-pointer"
+                              onClick={toggleCurrentPasswordVisibility}
+                            />
+                          ) : (
+                            <EyeOff
+                              className="absolute top-3 right-3 cursor-pointer"
+                              onClick={toggleCurrentPasswordVisibility}
+                            />
+                          )}
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -100,12 +124,26 @@ const PasswordChange = () => {
                     <FormItem className="">
                       <FormLabel className="label mt-5">New Password</FormLabel>
                       <FormControl>
-                        <Input
-                          type="password"
-                          disabled={isLoading}
-                          className="input"
-                          {...field}
-                        />
+                        <div className="relative">
+                          <Input
+                            type={showNewPassword ? "text" : "password"}
+                            disabled={isLoading}
+                            className="input pl-10" // Adjust padding to accommodate the icon
+                            placeholder="Enter your password"
+                            {...field}
+                          />
+                          {showNewPassword ? (
+                            <Eye
+                              className="absolute top-3 right-3 cursor-pointer"
+                              onClick={toggleNewPasswordVisibility}
+                            />
+                          ) : (
+                            <EyeOff
+                              className="absolute top-3 right-3 cursor-pointer"
+                              onClick={toggleNewPasswordVisibility}
+                            />
+                          )}
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>

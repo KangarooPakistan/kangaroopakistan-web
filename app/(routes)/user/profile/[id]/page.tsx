@@ -80,7 +80,6 @@ function UserProfile({ params }: UserProfileProps) {
   ];
 
   return (
-    
     <div className="flex w-full justify-center mt-10 mb-10">
       <div className="max-w-4xl mx-1">
         <div className="bg-white shadow-2xl rounded-lg py-4 px-3 sm:px-20 md:px-40 mt-4">
@@ -188,6 +187,12 @@ function UserProfile({ params }: UserProfileProps) {
                     </td>
                     <td className="px-2 py-2">{userData.p_phone}</td>
                   </tr>
+                  <tr>
+                    <td className="px-2 py-2 text-gray-500 font-semibold">
+                      Principal Cell #
+                    </td>
+                    <td className="px-2 py-2">{userData.p_contact}</td>
+                  </tr>
                 </tbody>
               </table>
             )}
@@ -214,6 +219,12 @@ function UserProfile({ params }: UserProfileProps) {
                       Coordinator Phone
                     </td>
                     <td className="px-2 py-2">{userData.c_phone}</td>
+                  </tr>
+                  <tr>
+                    <td className="px-2 py-2 text-gray-500 font-semibold">
+                      Coordinator Cell #
+                    </td>
+                    <td className="px-2 py-2">{userData.c_contact}</td>
                   </tr>
                   <tr>
                     <td className="px-2 py-2 text-gray-500 font-semibold">

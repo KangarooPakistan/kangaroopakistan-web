@@ -26,6 +26,7 @@ interface UserData {
     c_phone?: string  | null;   // Optional field
     c_email?: string  | null;   // Optional field
     c_accountDetails?: string  | null;   // Optional field
+    schoolAddress?: string  | null;   // Optional field
   }
 
 export async function PUT(request: NextRequest, 
@@ -43,6 +44,7 @@ export async function PUT(request: NextRequest,
         district,
         tehsil,
         fax,
+        schoolAddress,
         bankTitle,
         p_fName,
         p_mName,
@@ -82,6 +84,7 @@ export async function PUT(request: NextRequest,
         tehsil,
         fax,
         bankTitle,
+        schoolAddress,
         p_fName,
         p_mName,
         p_lName,
@@ -117,7 +120,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       // Check if the user with the specified ID exists
       const user = await db.user.findUnique({
         where: {
-          id: id, // Convert the ID to a number (assuming it's a numeric ID)
+          id: id, 
         },
       });
   
