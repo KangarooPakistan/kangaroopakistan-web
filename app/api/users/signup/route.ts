@@ -25,13 +25,14 @@ interface UserData {
     c_phone?: string  | null;   // Optional field
     c_email?: string  | null;   // Optional field
     c_accountDetails?: string  | null;   // Optional field
+    schoolAddress?: string  | null;   // Optional field
   }
 export async function POST(request: NextRequest){
     try {
         const reqBody = await request.json();
         const {email , password, role, schoolId, schoolName, contactNumber,district, tehsil,fax , 
             bankTitle,p_fName,p_mName, p_lName ,p_contact, p_phone, p_email , c_fName,c_mName
-            ,c_lName, c_contact, c_phone, c_email, c_accountDetails
+            ,c_lName, c_contact, c_phone, c_email, c_accountDetails,schoolAddress
         } = reqBody;
         console.log(reqBody)
         console.log(typeof schoolId)
@@ -65,6 +66,7 @@ export async function POST(request: NextRequest){
                     role,
                     contactNumber: contactNumber || null, // Use null if not provided
                     schoolName: schoolName || null,       // Use null if not provided
+                    schoolAddress: schoolAddress || null,       // Use null if not provided
                     tehsil: tehsil || null,       // Use null if not provided
                     fax: fax || null,       // Use null if not provided
                     bankTitle: bankTitle || null,       // Use null if not provided
@@ -115,6 +117,7 @@ export async function PUT(request: NextRequest,
         bankTitle,
         p_fName,
         p_mName,
+        schoolAddress,
         p_lName,
         p_contact,
         p_phone,
@@ -152,6 +155,7 @@ export async function PUT(request: NextRequest,
         bankTitle,
         p_fName,
         p_mName,
+        schoolAddress,
         p_lName,
         p_contact,
         p_phone,

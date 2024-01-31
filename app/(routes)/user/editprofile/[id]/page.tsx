@@ -17,58 +17,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-const formSchema = z.object({
-  email: z.string().email({
-    message: "Email is required",
-  }),
-  schoolId: z.string({
-    required_error: "School Id is required",
-  }),
-  schoolName: z.string(),
-  contactNumber: z
-    .string()
-    .regex(/^\d{3}-\d{7}$/, "Phone number must be in the format 051-5194964")
-    .optional()
-    .or(z.literal("")),
-  district: z.string(),
-  tehsil: z.string(),
-  fax: z.string().optional().or(z.literal("")),
-  bankTitle: z.string(),
-  p_fName: z.string(),
-  p_mName: z.string(),
-  p_lName: z.string(),
-  p_contact: z
-    .string()
-    .regex(/^\d{4}-\d{7}$/, "Phone number must be in the format 0333-5194964")
-    .optional()
-    .or(z.literal("")),
-  p_phone: z
-    .string()
-    .regex(/^\d{3}-\d{7}$/, "Phone number must be in the format 051-5194964")
-    .optional()
-    .or(z.literal("")),
-  p_email: z.string(),
-  c_fName: z.string(),
-  c_mName: z.string(),
-  c_lName: z.string(),
-  c_contact: z
-    .string()
-    .regex(/^\d{4}-\d{7}$/, "Phone number must be in the format 0333-5194964")
-    .optional()
-    .or(z.literal("")),
-  c_phone: z
-    .string()
-    .regex(/^\d{3}-\d{7}$/, "Phone number must be in the format 051-5194964")
-    .optional()
-    .or(z.literal("")),
-  c_email: z.string().email().optional().or(z.literal("")),
-  c_accountDetails: z.string(),
-
-  // At least one special character
-});
 interface UserData {
   email: string;
-  schoolId: string;
+  schoolId: number;
   schoolName: string;
   contactNumber: string;
   district: string;
@@ -76,7 +27,6 @@ interface UserData {
   fax: string;
   bankTitle: string;
   p_fName: string;
-  p_mName: string;
   p_lName: string;
   p_contact: string;
   p_phone: string;
@@ -88,11 +38,81 @@ interface UserData {
   c_phone: string;
   c_email: string;
   c_accountDetails: string;
+  schoolAddress: string;
   // Define other properties here as needed
 }
+const formSchema = z.object({
+  email: z.string().email({
+    message: "Email is required",
+  }),
+  schoolName: z.string().refine((data) => data.trim() !== "", {
+    message: "SchoolName cannot be empty",
+  }),
+  contactNumber: z.string().refine((data) => data.trim() !== "", {
+    message: "Phone number cannot be empty",
+  }),
+  // .regex(/^\d{3}-\d{7}$/, "Phone number must be in the format 051-5194964"),
+
+  district: z.string().refine((data) => data.trim() !== "", {
+    message: "District cannot be empty",
+  }),
+  tehsil: z.string().refine((data) => data.trim() !== "", {
+    message: "Tehsil cannot be empty",
+  }),
+  fax: z.string(),
+  bankTitle: z.string().refine((data) => data.trim() !== "", {
+    message: "BankTitle cannot be empty",
+  }),
+  p_fName: z.string().refine((data) => data.trim() !== "", {
+    message: "Principal's First Name cannot be empty",
+  }),
+  p_lName: z.string().refine((data) => data.trim() !== "", {
+    message: "Principal's last name cannot be empty",
+  }),
+  p_contact: z.string().refine((data) => data.trim() !== "", {
+    message: "Phone number cannot be empty",
+  }),
+  // .regex(/^\d{4}-\d{7}$/, "Phone number must be in the format 0333-5194964"),
+  p_phone: z.string().refine((data) => data.trim() !== "", {
+    message: "Phone number cannot be empty",
+  }),
+
+  // .regex(/^\d{3}-\d{7}$/, "Phone number must be in the format 051-5194964"),
+
+  p_email: z.string().refine((data) => data.trim() !== "", {
+    message: "Principal's email cannot be empty",
+  }),
+  c_fName: z.string().refine((data) => data.trim() !== "", {
+    message: "Coordinator's firstname cannot be empty",
+  }),
+  c_lName: z.string().refine((data) => data.trim() !== "", {
+    message: "Coordinator's last name cannot be empty",
+  }),
+  c_contact: z.string().refine((data) => data.trim() !== "", {
+    message: "Phone number cannot be empty",
+  }),
+  // .regex(/^\d{4}-\d{7}$/, "Phone number must be in the format 0333-5194964"),
+  c_phone: z.string().refine((data) => data.trim() !== "", {
+    message: "Phone number cannot be empty",
+  }),
+  // .regex(/^\d{3}-\d{7}$/, "Phone number must be in the format 051-5194964"),
+  c_email: z
+    .string()
+    .email()
+    .refine((data) => data.trim() !== "", {
+      message: "Coordinator's email cannot be empty",
+    }),
+  c_accountDetails: z.string().refine((data) => data.trim() !== "", {
+    message: "Coordinator's account details cannot be empty",
+  }),
+  schoolAddress: z.string().refine((data) => data.trim() !== "", {
+    message: "School Address details cannot be empty",
+  }),
+});
+
 const initialData: UserData = {
   email: "",
-  schoolId: "",
+  schoolId: 0,
   schoolName: "",
   contactNumber: "",
   district: "",
@@ -100,7 +120,6 @@ const initialData: UserData = {
   fax: "",
   bankTitle: "",
   p_fName: "",
-  p_mName: "",
   p_lName: "",
   p_contact: "",
   p_phone: "",
@@ -112,10 +131,12 @@ const initialData: UserData = {
   c_phone: "",
   c_email: "",
   c_accountDetails: "",
+  schoolAddress: "",
 };
 const UserRegister = () => {
   const [data, setData] = useState<UserData>(initialData);
   const router = useRouter();
+  const [schoolIdFromBE, setSchoolIdFromBE] = useState<number | undefined>();
   const params = useParams();
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -130,7 +151,7 @@ const UserRegister = () => {
       fax: data.fax,
       bankTitle: data.bankTitle,
       p_fName: data.p_fName,
-      p_mName: data.c_mName,
+
       p_lName: data.c_lName,
       p_contact: data.p_contact,
       p_phone: data.p_phone,
@@ -141,6 +162,7 @@ const UserRegister = () => {
       c_contact: data.c_contact,
       c_phone: data.c_phone,
       c_email: data.c_email,
+      schoolAddress: data.schoolAddress,
       c_accountDetails: data.c_accountDetails,
     },
   });
@@ -149,17 +171,18 @@ const UserRegister = () => {
       const response = await axios.get(`/api/users/editprofile/${params.id}`);
       console.log(response.data);
       setData(response.data);
+      setSchoolIdFromBE(response.data.schoolId);
+
       form.reset({
         email: response.data.email ?? "",
-        schoolId: response.data.schoolId ?? "",
         schoolName: response.data.schoolName ?? "",
         contactNumber: response.data.contactNumber ?? "",
         district: response.data.district ?? "",
         tehsil: response.data.tehsil ?? "",
         fax: response.data.fax ?? "",
+        schoolAddress: response.data.schoolAddress ?? "",
         bankTitle: response.data.bankTitle ?? "",
         p_fName: response.data.p_fName ?? "",
-        p_mName: response.data.p_mName ?? "",
         p_lName: response.data.p_lName ?? "",
         p_contact: response.data.p_contact ?? "",
         p_phone: response.data.p_phone ?? "",
@@ -182,7 +205,9 @@ const UserRegister = () => {
     console.log(data);
     try {
       const payload = {
-        ...values, // Spread the form values
+        ...values,
+        schooldId: schoolIdFromBE,
+         // Spread the form values
         role: "User", // Add the additional string
       };
       console.log(payload);
@@ -227,10 +252,12 @@ const UserRegister = () => {
                 />
                 <FormField
                   control={form.control}
-                  name="schoolId"
+                  name="schoolAddress"
                   render={({ field }) => (
                     <FormItem className="">
-                      <FormLabel className="label mt-5">School ID</FormLabel>
+                      <FormLabel className="label mt-5">
+                        School Address
+                      </FormLabel>
                       <FormControl>
                         <Input
                           type="text"
@@ -379,26 +406,7 @@ const UserRegister = () => {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="p_mName"
-                  render={({ field }) => (
-                    <FormItem className="">
-                      <FormLabel className="label mt-5">
-                        Principal&apos;s Middle Name
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          type="text"
-                          disabled={isLoading}
-                          className="input"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+
                 <FormField
                   control={form.control}
                   name="p_lName"

@@ -33,7 +33,7 @@ const formSchema = z.object({
       "Password must contain at least one special character"
     ),
   schoolName: z.string().refine((data) => data.trim() !== "", {
-    message: "SchoolName cannot be empty",
+    message: "School Name cannot be empty",
   }),
   contactNumber: z.string().refine((data) => data.trim() !== "", {
     message: "Phone number cannot be empty",
@@ -92,6 +92,9 @@ const formSchema = z.object({
   c_accountDetails: z.string().refine((data) => data.trim() !== "", {
     message: "Coordinator's account details cannot be empty",
   }),
+  schoolAddress: z.string().refine((data) => data.trim() !== "", {
+    message: "School Adress cannot be empty",
+  }),
   // At least one special character
 });
 
@@ -111,7 +114,7 @@ const UserRegister = () => {
       fax: "",
       bankTitle: "",
       p_fName: "",
-
+      schoolAddress: "",
       p_lName: "",
       p_contact: "",
       p_phone: "",
@@ -214,6 +217,26 @@ const UserRegister = () => {
                   render={({ field }) => (
                     <FormItem className="">
                       <FormLabel className="label mt-5">School Name</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          disabled={isLoading}
+                          className="input"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="schoolAddress"
+                  render={({ field }) => (
+                    <FormItem className="">
+                      <FormLabel className="label mt-5">
+                        School Address
+                      </FormLabel>
                       <FormControl>
                         <Input
                           type="text"
