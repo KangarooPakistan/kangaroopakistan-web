@@ -5,8 +5,8 @@ const nextConfig = {
   },
   images: {
     domains: [
-      "https://kangaroo-pakistan-local-kainat.s3.us-east-1.amazonaws.com/",
-      "kangaroo-pakistan-local-kainat.s3.us-east-1.amazonaws.com",
+      "https://kangaroopakistan-prod.s3.us-east-1.amazonaws.com/",
+      "kangaroopakistan-prod.s3.us-east-1.amazonaws.com",
     ],
   },
 };

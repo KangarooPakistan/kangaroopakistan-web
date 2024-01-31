@@ -45,7 +45,7 @@ const InitialModal = () => {
 
   const s3BucketUrl =
     process.env.AWS_BUCKET_NAME ??
-    "https://kangaroo-pakistan-local-kainat.s3.us-east-1.amazonaws.com/";
+    "https://kangaroopakistan-prod.s3.us-east-1.amazonaws.com/";
 
   const [fileUrl, setFileUrl] = useState<string | undefined>(undefined);
   const [content, setContent] = useState("");

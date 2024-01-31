@@ -43,7 +43,7 @@ const AddImageModal = () => {
   );
   const s3BucketUrl =
     process.env.AWS_BUCKET_NAME ??
-    "https://kangaroo-pakistan-local-kainat.s3.us-east-1.amazonaws.com/";
+    "https://kangaroopakistan-prod.s3.us-east-1.amazonaws.com/";
 
   const generateUniqueFileName = (fileNameString: string) => {
     const timestamp = Date.now();
