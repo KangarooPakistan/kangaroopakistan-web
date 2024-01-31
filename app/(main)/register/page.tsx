@@ -1,8 +1,9 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import * as z from "zod";
 import axios from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { EyeOff, Eye } from "lucide-react";
 import { useForm } from "react-hook-form";
 import {
   Form,
@@ -56,7 +57,7 @@ const formSchema = z.object({
     message: "Principal's last name cannot be empty",
   }),
   p_contact: z.string().refine((data) => data.trim() !== "", {
-    message: "Phone numbercannot be empty",
+    message: "Phone number cannot be empty",
   }),
   // .regex(/^\d{4}-\d{7}$/, "Phone number must be in the format 0333-5194964"),
   p_phone: z.string().refine((data) => data.trim() !== "", {
@@ -93,7 +94,10 @@ const formSchema = z.object({
   }),
   // At least one special character
 });
+
 const UserRegister = () => {
+  const [showPassword, setShowPassword] = useState(false);
+
   const router = useRouter();
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -137,6 +141,9 @@ const UserRegister = () => {
       console.log(error);
     }
   };
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
   return (
     <section className="bg-white mb-12">
       <div className=" pt-10 h-screen grid grid-cols-1 md:grid-cols-2 gap-2 xl:gap-0">
@@ -176,13 +183,26 @@ const UserRegister = () => {
                     <FormItem className="">
                       <FormLabel className="label mt-5">Password</FormLabel>
                       <FormControl>
-                        <Input
-                          type="password"
-                          disabled={isLoading}
-                          className="input"
-                          placeholder="Enter your password"
-                          {...field}
-                        />
+                        <div className="relative">
+                          <Input
+                            type={showPassword ? "text" : "password"}
+                            disabled={isLoading}
+                            className="input pl-10" // Adjust padding to accommodate the icon
+                            placeholder="Enter your password"
+                            {...field}
+                          />
+                          {showPassword ? (
+                            <EyeOff
+                              className="absolute top-3 right-3 cursor-pointer"
+                              onClick={togglePasswordVisibility}
+                            />
+                          ) : (
+                            <Eye
+                              className="absolute top-3 right-3 cursor-pointer"
+                              onClick={togglePasswordVisibility}
+                            />
+                          )}
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>

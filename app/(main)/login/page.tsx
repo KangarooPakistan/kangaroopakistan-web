@@ -1,5 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { EyeOff, Eye } from "lucide-react";
+
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -20,6 +22,7 @@ import Link from "next/link";
 const Login = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const { data: session, status } = useSession();
   const formSchema = z.object({
@@ -62,7 +65,9 @@ const Login = () => {
       console.log("User's role:", session.user.role);
     }
   }, [session]);
-
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
   return (
     <section className="bg-white">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto h-screen lg:py-0">
@@ -107,13 +112,26 @@ const Login = () => {
                     <FormItem>
                       <FormLabel className="label">Password</FormLabel>
                       <FormControl>
-                        <Input
-                          type="password"
-                          disabled={isLoading}
-                          className="input"
-                          placeholder="Enter your password"
-                          {...field}
-                        />
+                        <div className="relative">
+                          <Input
+                            type={showPassword ? "text" : "password"}
+                            disabled={isLoading}
+                            className="input pl-10" // Adjust padding to accommodate the icon
+                            placeholder="Enter your password"
+                            {...field}
+                          />
+                          {showPassword ? (
+                            <EyeOff
+                              className="absolute top-3 right-3 cursor-pointer"
+                              onClick={togglePasswordVisibility}
+                            />
+                          ) : (
+                            <Eye
+                              className="absolute top-3 right-3 cursor-pointer"
+                              onClick={togglePasswordVisibility}
+                            />
+                          )}
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
