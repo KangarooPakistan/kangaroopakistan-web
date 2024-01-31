@@ -121,12 +121,12 @@ const Login = () => {
                             {...field}
                           />
                           {showPassword ? (
-                            <EyeOff
+                            <Eye
                               className="absolute top-3 right-3 cursor-pointer"
                               onClick={togglePasswordVisibility}
                             />
                           ) : (
-                            <Eye
+                            <EyeOff
                               className="absolute top-3 right-3 cursor-pointer"
                               onClick={togglePasswordVisibility}
                             />
