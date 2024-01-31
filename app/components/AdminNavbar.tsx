@@ -58,7 +58,7 @@ const AdminNavbar = () => {
     <nav className="bg-purple-600 text-white">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <Link href="/dashboard" className="flex items-center space-x-3">
-          <span className="self-center  text-2xl font-semibold whitespace-nowrap ">
+          <span className="self-center text-base md:text-2xl font-semibold whitespace-nowrap ">
             KangarooPakistan
           </span>
         </Link>
@@ -83,7 +83,7 @@ const AdminNavbar = () => {
           <div
             className={`z-50 ${
               isProfileOpen ? "block" : "hidden"
-            } text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow absolute mt-40 right-10`}
+            } text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow absolute mt-[11.2rem] right-[4.5rem] md:mt-48 md:right-8`}
             id="user-dropdown"
           >
             <div className="px-4 py-3">

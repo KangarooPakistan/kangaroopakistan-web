@@ -74,25 +74,25 @@ function UserProfile({ params }: UserProfileProps) {
   }
 
   const tabs = [
-    { id: 1, label: "School Details" },
-    { id: 2, label: "Principal Details" },
-    { id: 3, label: "Coordinator Details" },
+    { id: 1, label: "School " },
+    { id: 2, label: "Principal " },
+    { id: 3, label: "Coordinator " },
   ];
 
   return (
     
     <div className="flex w-full justify-center mt-10 mb-10">
-      <div className="max-w-4xl">
-        <div className="bg-white shadow-xl rounded-lg py-4 px-40 mt-4">
+      <div className="max-w-4xl mx-1">
+        <div className="bg-white shadow-2xl rounded-lg py-4 px-3 sm:px-20 md:px-40 mt-4">
           <div className="flex">
             <img
-              className="w-28 h-28 rounded-full"
+              className="w-24 h-24 sm:w-28 sm:h-28 rounded-full"
               src="https://img.freepik.com/premium-vector/account-icon-user-icon-vector-graphics_292645-552.jpg?w=740"
               alt="profile"
             />
-            <div className="flex mt-7">
+            <div className="flex mt-5 sm:mt-7">
               <div>
-                <h3 className="text-lg text-gray-900 font-medium leading-8">
+                <h3 className="text-base sm:text-lg text-gray-900 font-medium leading-8">
                   Profile
                 </h3>
                 <p className="text-gray-400 text-xs font-semibold">
@@ -101,7 +101,7 @@ function UserProfile({ params }: UserProfileProps) {
               </div>
               <Button
                 onClick={handleClick}
-                className="ml-20 text-xs rounded-full"
+                className="ml-[3.3rem] sm: md:ml-20 text-xs rounded-full  py-1 sm:px-4 sm:py-2"
               >
                 Edit Profile
               </Button>

@@ -29,10 +29,10 @@ interface TabsProps {
 }
 
 const Tabs: FC<TabsProps> = ({ tabs, activeTab, onTabClick }) => (
-  <div className="text-sm font-medium text-center text-gray-500 border-b border-gray-200 ">
-    <ul className="flex flex-wrap -mb-px">
+  <div className="text-xs font-medium text-center text-gray-500 border-b border-gray-200 ">
+    <ul className="grid grid-cols-3 ">
       {tabs.map((tab) => (
-        <li key={tab.id} className="me-2">
+        <li key={tab.id} className="sm:me-2">
           <Tab
             label={tab.label}
             onClick={() => onTabClick(tab.id)}

@@ -47,18 +47,18 @@ function UserProfile({ params }: UserProfileProps) {
 
   // Render the user profile using the userData state variable
   return (
-    <div className="flex h-screen w-full justify-center mt-20">
+    <div className="sm:flex h-screen w-full sm:justify-center mt-20">
       <div className="max-w-4xl">
-        <div className="bg-white shadow-xl rounded-lg py-4 px-40">
+        <div className="bg-white shadow-2xl rounded-lg py-4 px-4 mx-3 sm:mx-0 sm:px-20 md:px-40">
           <div>
             <img
-              className="w-32 h-32 rounded-full mx-auto"
+              className="w-24 h-24 sm:w-32 sm:h-32 rounded-full mx-auto"
               src="https://img.freepik.com/premium-vector/account-icon-user-icon-vector-graphics_292645-552.jpg?w=740"
               alt="profile"
             />
           </div>
           <div>
-            <h3 className="text-center text-xl text-gray-900 font-medium leading-8">
+            <h3 className="text-center text-base sm:text-xl text-gray-900 font-medium leading-8">
               User Profile
             </h3>
             <div className="text-center text-gray-400 text-xs font-semibold">

@@ -201,12 +201,12 @@ const Register = () => {
           key={field.id}
           className="mb-4 p-2 border-solid border-2 border-grey-600 "
         >
-          <div className="flex items-center space-x-4">
-            <div className="w-1/4">
+          <div className="grid items-center lg:space-x-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="md:mr-4 lg:mr-0">
               <input
                 {...register(`students.${index}.studentName`)}
                 placeholder="Student Name"
-                className="w-full p-2 rounded border border-gray-300 focus:outline-none focus:border-blue-500"
+                className="w-full p-2 text-sm md:text-base rounded border border-gray-300 focus:outline-none focus:border-blue-500"
               />
               {errors?.students?.[index]?.studentName && (
                 <p className="text-red-500">
@@ -214,11 +214,11 @@ const Register = () => {
                 </p>
               )}
             </div>
-            <div className="w-1/4">
+            <div className="mt-3 md:mt-0">
               <input
                 {...register(`students.${index}.fatherName`)}
                 placeholder="Father's Name"
-                className="w-full p-2 rounded border border-gray-300 focus:outline-none focus:border-blue-500"
+                className="w-full p-2 rounded border text-sm md:text-base border-gray-300 focus:outline-none focus:border-blue-500"
               />
               {errors?.students?.[index]?.fatherName && (
                 <p className="text-red-500">
@@ -226,14 +226,14 @@ const Register = () => {
                 </p>
               )}
             </div>
-            <div className="w-1/4">
+            <div className="mt-3 lg:mt-0 md:mr-4 lg:mr-0">
               <Controller
                 name={`students.${index}.level`}
                 control={control}
                 render={({ field }) => (
                   <select
                     {...field}
-                    className="w-full p-2 rounded border border-gray-300 focus:outline-none focus:border-blue-500"
+                    className="w-full p-2 rounded border text-xs md:text-base border-gray-300 focus:outline-none focus:border-blue-500"
                   >
                     <option value="">SELECT LEVEL</option>
                     <option value="preecolier">PRE ECOLIER</option>
@@ -251,14 +251,14 @@ const Register = () => {
                 </p>
               )}
             </div>
-            <div className="w-1/4">
+            <div className="mt-3 lg:mt-0">
               <Controller
                 name={`students.${index}.class`}
                 control={control}
                 render={({ field }) => (
                   <select
                     {...field}
-                    className="w-full p-2 rounded border border-gray-300 focus:outline-none focus:border-blue-500"
+                    className="w-full p-2 text-xs md:text-base rounded border border-gray-300 focus:outline-none focus:border-blue-500"
                   >
                     <option value="">SELECT CLASS</option>
                     <option value="01">ONE</option>
@@ -285,34 +285,38 @@ const Register = () => {
           </div>
         </div>
       ))}
-      <div className="flex justify-center space-x-4 mt-4">
-        <button
-          type="button"
-          onClick={() =>
-            append({
-              studentName: "",
-              fatherName: "",
-              level: "",
-              class: "",
-            })
-          }
-          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
-        >
-          Add Another Student
-        </button>
-        <button
-          type="button"
-          onClick={() => remove(fields.length - 1)}
-          className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
-        >
-          Remove Student
-        </button>
-        <button
-          type="submit"
-          className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
-        >
-          Submit Form
-        </button>
+      <div className="block sm:flex sm:justify-center space-x-2 sm:space-x-4 mt-4 mx-auto">
+        <div className="flex justify-center sm:block gap-5 sm:space-x-4">
+          <button
+            type="button"
+            onClick={() =>
+              append({
+                studentName: "",
+                fatherName: "",
+                level: "",
+                class: "",
+              })
+            }
+            className="bg-blue-500 hover:bg-blue-600 text-white p-3 text-xs sm:text-base sm:px-4 sm:py-2 rounded"
+          >
+            Add Another Student
+          </button>
+          <button
+            type="button"
+            onClick={() => remove(fields.length - 1)}
+            className="bg-red-500 hover:bg-red-600 text-white p-3 text-xs sm:text-base sm:px-4 sm:py-2 rounded"
+          >
+            Remove Student
+          </button>
+        </div>
+        <div className="flex justify-center sm:block mt-4 sm:mt-0">
+          <button
+            type="submit"
+            className=" bg-green-500 hover:bg-green-600 text-white p-3 text-xs sm:text-base sm:px-4 sm:py-2 rounded"
+          >
+            Submit Form
+          </button>
+        </div>
       </div>
     </form>
   );
