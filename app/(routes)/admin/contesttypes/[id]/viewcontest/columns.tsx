@@ -32,6 +32,10 @@ const ContestActions: React.FC<ContestActionsProps> = ({ contest }) => {
   const handleView = () => {
     router.push(`/admin/viewregistered/${contest.id}`);
   };
+  const handleAllRegistrationsView = () => {
+    console.log(contest.id);
+    router.push(`/admin/fetchallregistration/${contest.id}`);
+  };
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -44,6 +48,9 @@ const ContestActions: React.FC<ContestActionsProps> = ({ contest }) => {
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <DropdownMenuItem>Edit</DropdownMenuItem>
         <DropdownMenuItem onClick={handleView}>View</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleAllRegistrationsView}>
+          View By Schools
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

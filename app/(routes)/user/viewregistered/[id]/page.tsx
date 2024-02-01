@@ -24,6 +24,7 @@ const ViewRegistered = () => {
         const response = await axios.get(
           `/api/users/getuserbyemail/${session?.user.email}`
         );
+        
         const regId = await axios.get(
           `/api/users/contests/${params.id}/${response.data.schoolId}`
         );

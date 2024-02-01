@@ -35,6 +35,10 @@ const ContestActions: React.FC<StudentActionsProps> = ({ student }) => {
 
     // router.push(`/admin/viewregistered/${student.registrationId}`);
   };
+  const handleAllRegistrationsView = () => {
+    console.log(student.registrationId)
+    // router.push(`/admin/fetchallregistration/`);
+  };
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -47,6 +51,9 @@ const ContestActions: React.FC<StudentActionsProps> = ({ student }) => {
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <DropdownMenuItem>Edit</DropdownMenuItem>
         <DropdownMenuItem onClick={handleView}>View</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleAllRegistrationsView}>
+          View By Schools
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

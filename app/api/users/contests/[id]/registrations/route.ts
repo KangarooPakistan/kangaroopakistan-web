@@ -18,7 +18,7 @@ interface StudentData {
 export async function POST(request: Request, { params }: { params: { id: string } }) {
     try {
         const reqBody = await request.json();
-        const { schoolId, registeredBy, students,  registrationId, year, district, contestCh } = reqBody;
+        const { schoolId, registeredBy, students,  registrationId, year, district, contestCh, schoolName } = reqBody;
         const contestId = params.id
 
         if ( !registeredBy || !Array.isArray(students)) {
@@ -40,6 +40,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
                 data: {
                     contestId,
                     schoolId,
+                    schoolName,
                     registeredBy: registeredBy // assuming registeredBy is a numeric ID
                 }
             });
@@ -53,6 +54,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
             const existingStudent = await db.student.findFirst({
                 where: {
                   registrationId: regId,
+                  
                   studentName: student.studentName,
                   class:student.class
                 },
