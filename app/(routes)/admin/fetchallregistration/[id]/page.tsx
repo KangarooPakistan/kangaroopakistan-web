@@ -10,6 +10,8 @@ const FetchAllRegistrations = () => {
       console.log(params.id);
       const res = await axios.get(`/api/users/fetchallregistrations/${params.id}`);
       console.log(res);
+      console.log(res);
+      console.log(res);
     };
     fetchData();
   }, []);
