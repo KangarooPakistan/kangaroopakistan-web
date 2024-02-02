@@ -71,6 +71,8 @@ const Register = () => {
       const response = await axios.get(
         `/api/users/getuserbyemail/${session?.user.email}`
       );
+      console.log("response");
+      console.log(response);
       const regId = await axios.get(
         `/api/users/contests/${params.id}/${response.data.schoolId}`
       );
@@ -139,6 +141,7 @@ const Register = () => {
         district: district,
         registrationId: registerationId,
         contestCh: contestCh,
+        schoolName: schoolName,
         schoolId: schoolId,
         registeredBy: schoolEmail,
       };

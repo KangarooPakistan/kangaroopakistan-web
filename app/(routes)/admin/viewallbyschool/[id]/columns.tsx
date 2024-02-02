@@ -36,7 +36,7 @@ const ContestActions: React.FC<StudentActionsProps> = ({ student }) => {
     // router.push(`/admin/viewregistered/${student.registrationId}`);
   };
   const handleAllRegistrationsView = () => {
-    console.log(student.registrationId)
+    console.log(student.registrationId);
     // router.push(`/admin/fetchallregistration/`);
   };
   return (
@@ -49,11 +49,7 @@ const ContestActions: React.FC<StudentActionsProps> = ({ student }) => {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <DropdownMenuItem>Edit</DropdownMenuItem>
-        <DropdownMenuItem onClick={handleView}>View</DropdownMenuItem>
-        <DropdownMenuItem onClick={handleAllRegistrationsView}>
-          View By Schools
-        </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleView}>View Receipts </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -62,17 +58,7 @@ const ContestActions: React.FC<StudentActionsProps> = ({ student }) => {
 export const columns: ColumnDef<Student>[] = [
   {
     accessorKey: "schoolId",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          SchoolId
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
+    header: "schoolId",
   },
   {
     accessorKey: "rollNumber",

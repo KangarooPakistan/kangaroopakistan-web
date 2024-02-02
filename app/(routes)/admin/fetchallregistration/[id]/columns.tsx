@@ -16,25 +16,26 @@ import { useRouter } from "next/navigation";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
-export type Contest = {
+export type Registration = {
   id: string;
-  name: string;
-  startDate: string;
-  endDate: string;
-  contestDate: string;
+  schoolId: number;
+  schoolName: string;
+  studentsLength: number;
+  email: string;
 };
 
-type ContestActionsProps = {
-  contest: Contest; // Use the Contest type here
+type RegistrationProps = {
+  registration: Registration; // Use the Contest type here
 };
-const ContestActions: React.FC<ContestActionsProps> = ({ contest }) => {
+const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
   const router = useRouter();
   const handleView = () => {
-    router.push(`/admin/viewregistered/${contest.id}`);
+    console.log(registration);
+    router.push(`/admin/viewallbyschool/${registration.id}`);
   };
   const handleAllRegistrationsView = () => {
-    console.log(contest.id);
-    router.push(`/admin/fetchallregistration/${contest.id}`);
+    // console.log(contest.id);
+    // router.push(`/admin/fetchallregistration/${contest.id}`);
   };
   return (
     <DropdownMenu>
@@ -46,30 +47,30 @@ const ContestActions: React.FC<ContestActionsProps> = ({ contest }) => {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <DropdownMenuItem>Edit</DropdownMenuItem>
         <DropdownMenuItem onClick={handleView}>View</DropdownMenuItem>
-        <DropdownMenuItem onClick={handleAllRegistrationsView}>
-          View By Schools
-        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
 };
-export const columns: ColumnDef<Contest>[] = [
+export const columns: ColumnDef<Registration>[] = [
   {
-    accessorKey: "name",
-    header: "Name",
+    accessorKey: "schoolId",
+    header: "schoolId",
   },
   {
-    accessorKey: "startDate",
-    header: "Registration Start",
+    accessorKey: "schoolName",
+    header: "schoolName",
   },
   {
-    accessorKey: "endDate",
-    header: "Registration End",
+    accessorKey: "email",
+    header: "email",
+  },
+  {
+    accessorKey: "studentsLength",
+    header: "Total Students",
   },
   {
     id: "actions",
-    cell: ({ row }) => <ContestActions contest={row.original} />,
+    cell: ({ row }) => <RegistrationActions registration={row.original} />,
   },
 ];

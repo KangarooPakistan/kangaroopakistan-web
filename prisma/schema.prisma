@@ -43,14 +43,13 @@ model Registration {
   id          String       @id @default(uuid())
   contestId    String
   schoolId     Int
+  schoolName    String?
   students     Student[]
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
   registeredBy   String
   paymentProof PaymentProof[]
   user          User     @relation(fields: [registeredBy], references: [id])
-  
-  
   @@index([contestId])
   @@unique([contestId, schoolId])
   @@index([registeredBy])
