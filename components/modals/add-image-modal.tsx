@@ -21,6 +21,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { getSignedURL } from "@/app/api/s3-upload/actions";
@@ -136,10 +138,29 @@ const AddImageModal = () => {
           fileInputRef.current.value = "";
           setFileUrl("");
         }
-
         handleClose();
+        toast.success("🦄 Image added successfully", {
+          position: "bottom-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
       }
     } catch (error) {
+      toast.error("Error Updating Profile ", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
       console.error(error);
     }
     router.refresh();

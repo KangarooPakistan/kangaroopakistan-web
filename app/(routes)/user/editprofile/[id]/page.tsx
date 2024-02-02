@@ -12,6 +12,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { useParams, useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -206,14 +208,34 @@ const UserRegister = () => {
       const payload = {
         ...values,
         schooldId: schoolIdFromBE,
-         // Spread the form values
+        // Spread the form values
         role: "User", // Add the additional string
       };
       console.log(payload);
       await axios.put(`/api/users/editprofile/${params.id}`, payload);
       form.reset();
-      router.push("/dashboard");
+      router.push(`/user/profile/${params.id}`);
+      toast.success("🦄 Profile Updated successfully", {
+        position: "bottom-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } catch (error) {
+      toast.error("Error Updating Profile ", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
       console.log(error);
     }
   };

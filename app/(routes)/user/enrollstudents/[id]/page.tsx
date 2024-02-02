@@ -6,7 +6,8 @@ import * as zod from "zod";
 import { getSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
-
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 interface StudentData {
   studentName: string;
   fatherName: string;
@@ -154,9 +155,29 @@ const Register = () => {
 
         console.log("Registration created successfully:", response.data);
         router.push(`/user/viewregistered/${params.id}`);
-      
+        toast.success("🦄 Student registered successfully", {
+          position: "bottom-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+
         // Handle successful registration creation
       } catch (error) {
+        toast.error("Error creating registration ", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
         console.error("Error creating registration:", error);
         // Handle errors appropriately
       }

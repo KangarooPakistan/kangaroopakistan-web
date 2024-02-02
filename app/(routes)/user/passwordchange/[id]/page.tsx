@@ -62,7 +62,7 @@ const PasswordChange = () => {
       await axios.put(`/api/users/updatepassword/${params.id}`, payload);
       form.reset();
       await router.push("/dashboard");
-      toast.success("🦄 Account successfully created", {
+      toast.success(" Password updated successfully", {
         position: "bottom-center",
         autoClose: 5000,
         hideProgressBar: false,
@@ -74,7 +74,7 @@ const PasswordChange = () => {
       });
     } catch (error) {
       console.log(error);
-      toast.error(" " + error, {
+      toast.error(" Error occured while updating password", {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,

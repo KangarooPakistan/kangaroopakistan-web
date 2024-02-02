@@ -131,16 +131,6 @@ const CreateContestTypeModal = () => {
               "Content-Type": file.type,
             },
           });
-          toast.success("🦄 Account successfully created", {
-            position: "bottom-center",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-          });
         } catch (error) {
           console.log(error);
           toast.error(" " + error, {
@@ -169,12 +159,33 @@ const CreateContestTypeModal = () => {
         }
 
         handleClose();
+        toast.success("🦄 ContestType successfully created", {
+          position: "bottom-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
       }
     } catch (error) {
+      toast.error(" " + error, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
       console.error(error);
     }
     router.refresh();
     window.location.reload();
+    
   };
   const handleClose = () => {
     form.reset();
