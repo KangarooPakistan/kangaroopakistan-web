@@ -17,6 +17,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const formSchema = z.object({
   currentPassword: z.string(),
@@ -59,9 +61,29 @@ const PasswordChange = () => {
       console.log(payload);
       await axios.put(`/api/users/updatepassword/${params.id}`, payload);
       form.reset();
-      router.push("/dashboard");
+      await router.push("/dashboard");
+      toast.success("🦄 Account successfully created", {
+        position: "bottom-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } catch (error) {
       console.log(error);
+      toast.error(" " + error, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
   };
   const toggleCurrentPasswordVisibility = () => {
@@ -72,99 +94,104 @@ const PasswordChange = () => {
   };
 
   return (
-    <section className="bg-white mb-12">
-      <div className=" pt-10  grid grid-cols-1 md:grid-cols-2 gap-2 xl:gap-0">
-        <div className="w-full rounded-lg shadow-2xl md:mt-0 sm:max-w-md xl:p-0 mx-auto">
-          <div className="p-6 space-y-3 md:space-y-6 sm:p-8">
-            <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl ">
-              Update account
-            </h1>
+    <>
+      <section className="bg-white mb-12">
+        <div className=" pt-10  grid grid-cols-1 md:grid-cols-2 gap-2 xl:gap-0">
+          <div className="w-full rounded-lg shadow-2xl md:mt-0 sm:max-w-md xl:p-0 mx-auto">
+            <div className="p-6 space-y-3 md:space-y-6 sm:p-8">
+              <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl ">
+                Update account
+              </h1>
 
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-4 md:space-y-6"
-              >
-                <FormField
-                  control={form.control}
-                  name="currentPassword"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="label">Old Password</FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <Input
-                            type={showPassword ? "text" : "password"}
-                            disabled={isLoading}
-                            className="input pl-10" // Adjust padding to accommodate the icon
-                            placeholder="Enter your password"
-                            {...field}
-                          />
-                          {showPassword ? (
-                            <Eye
-                              className="absolute top-3 right-3 cursor-pointer"
-                              onClick={toggleCurrentPasswordVisibility}
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-4 md:space-y-6"
+                >
+                  <FormField
+                    control={form.control}
+                    name="currentPassword"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="label">Old Password</FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <Input
+                              type={showPassword ? "text" : "password"}
+                              disabled={isLoading}
+                              className="input pl-10" // Adjust padding to accommodate the icon
+                              placeholder="Enter your password"
+                              {...field}
                             />
-                          ) : (
-                            <EyeOff
-                              className="absolute top-3 right-3 cursor-pointer"
-                              onClick={toggleCurrentPasswordVisibility}
+                            {showPassword ? (
+                              <Eye
+                                className="absolute top-3 right-3 cursor-pointer"
+                                onClick={toggleCurrentPasswordVisibility}
+                              />
+                            ) : (
+                              <EyeOff
+                                className="absolute top-3 right-3 cursor-pointer"
+                                onClick={toggleCurrentPasswordVisibility}
+                              />
+                            )}
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="newpassword"
+                    render={({ field }) => (
+                      <FormItem className="">
+                        <FormLabel className="label mt-5">
+                          New Password
+                        </FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <Input
+                              type={showNewPassword ? "text" : "password"}
+                              disabled={isLoading}
+                              className="input pl-10" // Adjust padding to accommodate the icon
+                              placeholder="Enter your password"
+                              {...field}
                             />
-                          )}
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="newpassword"
-                  render={({ field }) => (
-                    <FormItem className="">
-                      <FormLabel className="label mt-5">New Password</FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <Input
-                            type={showNewPassword ? "text" : "password"}
-                            disabled={isLoading}
-                            className="input pl-10" // Adjust padding to accommodate the icon
-                            placeholder="Enter your password"
-                            {...field}
-                          />
-                          {showNewPassword ? (
-                            <Eye
-                              className="absolute top-3 right-3 cursor-pointer"
-                              onClick={toggleNewPasswordVisibility}
-                            />
-                          ) : (
-                            <EyeOff
-                              className="absolute top-3 right-3 cursor-pointer"
-                              onClick={toggleNewPasswordVisibility}
-                            />
-                          )}
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                            {showNewPassword ? (
+                              <Eye
+                                className="absolute top-3 right-3 cursor-pointer"
+                                onClick={toggleNewPasswordVisibility}
+                              />
+                            ) : (
+                              <EyeOff
+                                className="absolute top-3 right-3 cursor-pointer"
+                                onClick={toggleNewPasswordVisibility}
+                              />
+                            )}
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                <div className="flex items-center justify-center mt-16">
-                  <Button
-                    disabled={isLoading}
-                    variant="default"
-                    className="px-10"
-                  >
-                    Update Account
-                  </Button>
-                </div>
-              </form>
-            </Form>
+                  <div className="flex items-center justify-center mt-16">
+                    <Button
+                      disabled={isLoading}
+                      variant="default"
+                      className="px-10"
+                    >
+                      Update Account
+                    </Button>
+                  </div>
+                </form>
+              </Form>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+      <ToastContainer />
+    </>
   );
 };
 

@@ -35,6 +35,7 @@
     "react-dom": "^18",
     "react-hook-form": "^7.49.2",
     "react-loader-spinner": "^6.1.6",
+    "react-toastify": "^10.0.4",
     "tailwind-merge": "^2.2.0",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.22.4",

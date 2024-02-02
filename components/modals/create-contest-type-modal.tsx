@@ -27,6 +27,8 @@ import Image from "next/image";
 import { getSignedURL } from "@/app/api/s3-upload/actions";
 import { useModal } from "@/hooks/use-modal-store";
 import { X, UploadCloud, Upload } from "lucide-react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const formSchema = z.object({
   name: z.string().min(1, {
@@ -123,14 +125,36 @@ const CreateContestTypeModal = () => {
         }
 
         const { url } = signedURLResult.success;
-
-        await axios
-          .put(url, file, {
+        try {
+          await axios.put(url, file, {
             headers: {
               "Content-Type": file.type,
             },
-          })
-          .then((resp) => {});
+          });
+          toast.success("🦄 Account successfully created", {
+            position: "bottom-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          });
+        } catch (error) {
+          console.log(error);
+          toast.error(" " + error, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          });
+        }
+
         awsUrl = `${s3BucketUrl}${fileName}`;
         const payload = {
           contestName: values.name,
@@ -160,127 +184,130 @@ const CreateContestTypeModal = () => {
   };
 
   return (
-    <Dialog open={isModalOpen} onOpenChange={handleClose}>
-      <DialogContent className="bg-white text-black p-0 overflow-hidden">
-        <DialogHeader className="pt-8 px-6">
-          <DialogTitle className="text-2xl text-center font-bold">
-            Add a new contest type
-          </DialogTitle>
-        </DialogHeader>
-        <DialogDescription className="text-center text-zinc-500">
-          Add an image and title to your contest type. You can always change it
-          later.
-        </DialogDescription>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <div className="space-y-8 px-6">
-              <div className="flex flex-col items-center justify-center text-center space-y-4">
-                <div className="relative    overflow-hidden">
-                  <div className="h-40 w-40 rounded-full">
+    <>
+      <Dialog open={isModalOpen} onOpenChange={handleClose}>
+        <DialogContent className="bg-white text-black p-0 overflow-hidden">
+          <DialogHeader className="pt-8 px-6">
+            <DialogTitle className="text-2xl text-center font-bold">
+              Add a new contest type
+            </DialogTitle>
+          </DialogHeader>
+          <DialogDescription className="text-center text-zinc-500">
+            Add an image and title to your contest type. You can always change
+            it later.
+          </DialogDescription>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              <div className="space-y-8 px-6">
+                <div className="flex flex-col items-center justify-center text-center space-y-4">
+                  <div className="relative    overflow-hidden">
+                    <div className="h-40 w-40 rounded-full">
+                      {fileUrl && (
+                        <Image
+                          src={fileUrl}
+                          alt="Uploaded Image"
+                          className="rounded-full"
+                          layout="fill"
+                          objectFit="contain"
+                        />
+                      )}
+                    </div>
                     {fileUrl && (
-                      <Image
-                        src={fileUrl}
-                        alt="Uploaded Image"
-                        className="rounded-full"
-                        layout="fill"
-                        objectFit="contain"
-                      />
+                      <button
+                        onClick={() => setFileUrl("")}
+                        className="absolute z-20 top-2 right-2 bg-red-500 text-white p-2 rounded-full shadow-md hover:bg-red-600 transition duration-300"
+                        type="button"
+                      >
+                        <X className="h-6 w-6" />
+                      </button>
                     )}
                   </div>
-                  {fileUrl && (
-                    <button
-                      onClick={() => setFileUrl("")}
-                      className="absolute z-20 top-2 right-2 bg-red-500 text-white p-2 rounded-full shadow-md hover:bg-red-600 transition duration-300"
-                      type="button"
-                    >
-                      <X className="h-6 w-6" />
-                    </button>
-                  )}
+                  <div className="flex justify-center items-center w-full">
+                    <FormField
+                      control={form.control}
+                      name="hasFile"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <label
+                              htmlFor="fileInput"
+                              className="bg-transparent flex-1 border-none outline-none cursor-pointer"
+                            >
+                              {/* Style the label to look like a button */}
+                              <div className="bg-blue-500 text-white py-2 px-4 rounded-full shadow-md hover:bg-blue-600 transition duration-300 flex items-center  space-x-2">
+                                <Upload className="h-6 w-6" />
+                                <span>Select Image</span>
+                              </div>
+                              <input
+                                type="file"
+                                id="fileInput"
+                                ref={fileInputRef}
+                                name="imageUrl"
+                                accept="image/jpeg, image/png, image/webp, image/gif"
+                                onChange={handleChange}
+                                className="hidden"
+                              />
+                            </label>
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
                 </div>
-                <div className="flex justify-center items-center w-full">
-                  <FormField
-                    control={form.control}
-                    name="hasFile"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <label
-                            htmlFor="fileInput"
-                            className="bg-transparent flex-1 border-none outline-none cursor-pointer"
-                          >
-                            {/* Style the label to look like a button */}
-                            <div className="bg-blue-500 text-white py-2 px-4 rounded-full shadow-md hover:bg-blue-600 transition duration-300 flex items-center  space-x-2">
-                              <Upload className="h-6 w-6" />
-                              <span>Select Image</span>
-                            </div>
-                            <input
-                              type="file"
-                              id="fileInput"
-                              ref={fileInputRef}
-                              name="imageUrl"
-                              accept="image/jpeg, image/png, image/webp, image/gif"
-                              onChange={handleChange}
-                              className="hidden"
-                            />
-                          </label>
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </div>
 
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
-                      Contest Type
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        disabled={isLoading}
-                        className="bg-zinc-300/50 border-0 focus-visible:ring-0 text-black focus-visible:ring-offset-0"
-                        placeholder="Enter Contest Type"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="contestCh"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
-                      Character to represent contest type
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        disabled={isLoading}
-                        className="bg-zinc-300/50 border-0 focus-visible:ring-0 text-black focus-visible:ring-offset-0"
-                        placeholder="Write a character which will represent this type in Student roll #. "
-                        {...field}
-                        maxLength={1}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <DialogFooter className="bg-gray-100 px-6 py-4">
-              <Button type="submit" variant="default">
-                Create
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
+                        Contest Type
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={isLoading}
+                          className="bg-zinc-300/50 border-0 focus-visible:ring-0 text-black focus-visible:ring-offset-0"
+                          placeholder="Enter Contest Type"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="contestCh"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
+                        Character to represent contest type
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={isLoading}
+                          className="bg-zinc-300/50 border-0 focus-visible:ring-0 text-black focus-visible:ring-offset-0"
+                          placeholder="Write a character which will represent this type in Student roll #. "
+                          {...field}
+                          maxLength={1}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <DialogFooter className="bg-gray-100 px-6 py-4">
+                <Button type="submit" variant="default">
+                  Create
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+      <ToastContainer />
+    </>
   );
 };
 

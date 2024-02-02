@@ -143,17 +143,21 @@ const Register = () => {
         registeredBy: schoolEmail,
       };
       console.log(payload);
-      await axios
-        .post(`/api/users/contests/${params.id}/registrations`, payload)
-        .then((response) => {
-          console.log("Registration created successfully:", response.data);
-          router.push(`/user/viewregistered/${params.id}`);
-          // Handle successful registration creation
-        })
-        .catch((error) => {
-          console.error("Error creating registration:", error);
-          // Handle errors appropriately
-        });
+      try {
+        const response = await axios.post(
+          `/api/users/contests/${params.id}/registrations`,
+          payload
+        );
+
+        console.log("Registration created successfully:", response.data);
+        router.push(`/user/viewregistered/${params.id}`);
+      
+        // Handle successful registration creation
+      } catch (error) {
+        console.error("Error creating registration:", error);
+        // Handle errors appropriately
+      }
+
       setDuplicateError(null); // Clear any previous error
     }
   };

@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { toast, ToastContainer } from "react-toastify";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -50,98 +51,125 @@ const Register = () => {
     try {
       await axios.post("/api/users/signup", payload);
       form.reset();
-      router.push("/login");
+      await router.push("/login");
+      toast.success("🦄 Account successfully created", {
+        position: "bottom-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } catch (error) {
+      toast.error(" " + error, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
       console.log(error);
     }
   };
   return (
-    <section className="bg-white">
-      <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto h-screen lg:py-0">
-        <div className="w-full bg-white rounded-lg shadow-2xl md:mt-0 sm:max-w-md xl:p-0">
-          <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-            <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
-              Create account
-            </h1>
+    <>
+      <section className="bg-white">
+        <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto h-screen lg:py-0">
+          <div className="w-full bg-white rounded-lg shadow-2xl md:mt-0 sm:max-w-md xl:p-0">
+            <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
+              <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
+                Create account
+              </h1>
 
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-4 md:space-y-6"
-              >
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="label">Email</FormLabel>
-                      <FormControl>
-                        <Input
-                          disabled={isLoading}
-                          className="input"
-                          placeholder="Enter your email"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem className="">
-                      <FormLabel className="label mt-5">Password</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="password"
-                          disabled={isLoading}
-                          className="input"
-                          placeholder="Enter your password"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <div className="bg-gray-100 py-2 px-5 rounded text-smallest">
-                  <h2 className="font-bold">Instructions</h2>
-                  <ul className="list-disc mt-4 list-inside">
-                    <li>Password must be at least 8 characters long.</li>
-                    <li>
-                      Password must contain at least one uppercase letter.
-                    </li>
-                    <li>
-                      Password must contain at least one lowercase letter.
-                    </li>
-                    <li>Password must contain at least one number.</li>
-                    <li>
-                      Password must contain at least one special character.
-                    </li>
-                  </ul>
-                </div>
-                <div className="flex items-center justify-center mt-16">
-                  <Button disabled={isLoading} variant="default" className="px-4">
-                    Create
-                  </Button>
-                </div>
-                <p className="text-sm font-light text-gray-500 w-full text-center">
-                  Already have an account?{" "}
-                  <Link
-                    className="font-medium text-blue-600 hover:underline"
-                    href="/login"
-                  >
-                    Sign in here
-                  </Link>
-                </p>
-              </form>
-            </Form>
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-4 md:space-y-6"
+                >
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="label">Email</FormLabel>
+                        <FormControl>
+                          <Input
+                            disabled={isLoading}
+                            className="input"
+                            placeholder="Enter your email"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem className="">
+                        <FormLabel className="label mt-5">Password</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="password"
+                            disabled={isLoading}
+                            className="input"
+                            placeholder="Enter your password"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <div className="bg-gray-100 py-2 px-5 rounded text-smallest">
+                    <h2 className="font-bold">Instructions</h2>
+                    <ul className="list-disc mt-4 list-inside">
+                      <li>Password must be at least 8 characters long.</li>
+                      <li>
+                        Password must contain at least one uppercase letter.
+                      </li>
+                      <li>
+                        Password must contain at least one lowercase letter.
+                      </li>
+                      <li>Password must contain at least one number.</li>
+                      <li>
+                        Password must contain at least one special character.
+                      </li>
+                    </ul>
+                  </div>
+                  <div className="flex items-center justify-center mt-16">
+                    <Button
+                      disabled={isLoading}
+                      variant="default"
+                      className="px-4"
+                    >
+                      Create
+                    </Button>
+                  </div>
+                  <p className="text-sm font-light text-gray-500 w-full text-center">
+                    Already have an account?{" "}
+                    <Link
+                      className="font-medium text-blue-600 hover:underline"
+                      href="/login"
+                    >
+                      Sign in here
+                    </Link>
+                  </p>
+                </form>
+              </Form>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+      <ToastContainer />
+    </>
   );
 };
 
