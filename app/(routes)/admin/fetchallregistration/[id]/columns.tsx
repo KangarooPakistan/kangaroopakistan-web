@@ -62,7 +62,7 @@ export const columns: ColumnDef<Registration>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           SchoolId
-          <ArrowUpDo className="ml-2 h-4 w-4" />
+          <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
