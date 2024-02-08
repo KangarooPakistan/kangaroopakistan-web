@@ -68,7 +68,8 @@ export async function GET(request: Request,
               console.log("studentsArray")
               console.log(studentsArray.length)
             }
-            const doc = new PDFDocument();
+            const doc = new PDFDocument({font: 'Courier'});
+
         // Pipe the PDF document to a buffer
         const buffers: Buffer[] = [];
         doc.on('data', buffers.push.bind(buffers));
