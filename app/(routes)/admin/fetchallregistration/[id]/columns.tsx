@@ -419,7 +419,7 @@ const MyDocument: React.FC<MyDocumentProps> = ({ students }) => (
           </View>
 
           <View style={styles.studentInfoRow}>
-            <Text style={styles.studentInfoTitle}>Father's Name</Text>
+            <Text style={styles.studentInfoTitle}>Father Name</Text>
             <Text style={styles.studentInfoContent}>{student.fatherName}</Text>
           </View>
 
@@ -589,7 +589,6 @@ const MyDocument: React.FC<MyDocumentProps> = ({ students }) => (
 
         {/* Answer Grid */}
         <View style={styles.answerGrid}>
-          {/* This is a mock structure. You would generate this based on the student's answers */}
           {[...Array(30)].map((_, questionIndex) => (
             <View style={styles.answerRow} key={questionIndex}>
               <Text style={styles.questionNumber}>{questionIndex + 1}</Text>
@@ -616,21 +615,4 @@ const MyDocument: React.FC<MyDocumentProps> = ({ students }) => (
       </Page>
     ))}
   </Document>
-
-  // <Document>
-  //   {students.map((student, index) => (
-  //     <Page size="A4" style={styles.page} key={index}>
-  //       <View style={styles.section}>
-  //         <Text>Roll Number: {student.rollNumber}</Text>
-  //         <Text>Name: {student.studentName}</Text>
-  //         <Text>Father's Name: {student.fatherName}</Text>
-  //         <Text>Level: {student.studentLevel}</Text>
-  //         <Text>Class: {student.studentClass}</Text>
-  //         <Text>School: {student.schoolName}</Text>
-  //         <Text>Address: {student.address}</Text>
-  //         <Text>District: {student.districtCode}</Text>
-  //       </View>
-  //     </Page>
-  //   ))}
-  // </Document>
 );
