@@ -57,14 +57,11 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
   const handleDownloadPdf = async () => {
     try {
       setLoading(true);
-
       const response = await axios.get(
         `/api/users/pdfdownload/${registration.id}`
       );
       const students: Student[] = response.data;
-
       const blob = await generatePdfBlob(students);
-
       saveAs(blob, "students.pdf");
     } catch (error) {
       console.error("Error downloading the PDF:", error);
@@ -158,7 +155,7 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
   },
   studentInfo: {
-    marginBottom: 20,
+    marginBottom: 4,
   },
   studentInfoRow: {
     flexDirection: "row",
@@ -176,33 +173,202 @@ const styles = StyleSheet.create({
   },
   answerGrid: {
     flexDirection: "row",
+    justifyContent: "flex-start",
     flexWrap: "wrap",
   },
   answerRow: {
     flexDirection: "row",
-    marginBottom: 10,
+    justifyContent: "flex-start",
+    width: "33%", // Set width for 3 columns
+    paddingBottom: 10, // You can set padding for separation between rows
   },
   questionNumber: {
-    width: 20,
-    // marginRight: 10,
-  },
-
-  optionsContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    marginRight: 2,
+    width: "20px",
+    textAlign: "center",
+    height: 13,
+    fontSize: 11,
+    paddingVertical: "auto !important",
+    marginTop: "2px",
+    fontWeight: "bold",
   },
   option: {
-    width: 15, // Adjust the width to make the options smaller
-    height: 15, // Adjust the height to make the options smaller
-
-    borderWidth: 1,
+    width: "20px", // Adjust the width as per your layout requirement
+    borderWidth: "1px",
     borderColor: "black",
+    height: 13,
+    marginRight: "2px",
+    fontSize: 11,
+    marginTop: "2px",
+    paddingVertical: "auto !important",
     textAlign: "center",
-    justifyContent: "center",
-    marginRight: 5,
+    // marginRight: 10,
+    // Adding flex and justifyContent to center the text vertically
+    display: "flex", // Use flex to enable flexbox properties
+    alignItems: "center", // Center the text vertically
+    justifyContent: "center", // Center the text horizontally
   },
-
-  // ... Define more styles as needed
+  optionsRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    marginBottom: 5,
+  },
+  answerRowInst: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    marginBottom: 2,
+  },
+  optionBox: {
+    width: "20px",
+    height: "20px",
+    borderWidth: "1px",
+    borderColor: "black",
+    marginRight: "5px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative", // Needed to
+  },
+  optionBoxForAnswers: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-evenly",
+  },
+  optionBoxLast: {
+    width: "50px",
+    height: "20px",
+    borderWidth: "1px",
+    borderColor: "black",
+    marginRight: "5px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative", // Needed to
+  },
+  optionText: {
+    fontSize: 10,
+    textAlign: "center",
+  },
+  correctFilling: {
+    backgroundColor: "black",
+  },
+  wrongFilling: {
+    // Style for wrong filling can include a cross, different color, etc.
+    // This example just changes the border color to red
+    borderColor: "red",
+  },
+  filledOption: {
+    // When the option is filled incorrectly
+    width: "100%",
+    height: "100%",
+    backgroundColor: "black",
+  },
+  instBox: {
+    borderWidth: 1,
+    padding: "10px",
+    borderColor: "black",
+    marginVertical: "20px",
+  },
+  cross: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  crossLine: {
+    position: "absolute",
+    width: "100%",
+    height: 2,
+    backgroundColor: "blue",
+    transform: "rotate(-45deg)", // Correctly formatted rotate transform
+    // Rotate line to create an X
+  },
+  crossLineReverse: {
+    position: "absolute",
+    width: "100%",
+    height: 2,
+    backgroundColor: "blue",
+    transform: "rotate(45deg)", // Rotate line in the opposite direction to complete the X
+  },
+  tickContainer: {
+    position: "absolute",
+    top: "0",
+    left: "0",
+    width: "100%",
+    height: "100%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  tick: {
+    position: "absolute",
+    border: "2px solid blue", // Tick color
+    borderTop: "none",
+    borderRight: "none",
+    width: "16px", // Adjust width as needed
+    height: "8px", // Adjust height as needed
+    transform: "rotate(-45deg)", // Rotate to create the tick shape
+    marginBottom: "5px", // Push down to fit within the box
+  },
+  optionTextWrong: {
+    fontSize: "10px",
+    position: "relative",
+    zIndex: "1",
+  },
+  circle: {
+    width: "15px",
+    height: "15px",
+    position: "absolute",
+    borderRadius: "50%",
+    backgroundColor: "blue",
+  },
+  wrongFillingLast: {
+    background: "linear-gradient(to right, black 50%, transparent 50%)",
+    borderRight: "none", // Remove the border to make it look like a single box
+  },
+  // Add a right box style to remove the left border to continue the illusion
+  rightBox: {
+    borderLeft: "none",
+  },
+  gradientBox: {
+    display: "flex",
+    flexDirection: "row",
+  },
+  halfBlack: {
+    width: "24px", // Half of the optionBox width
+    height: "12px", // Same as the optionBox height
+    backgroundColor: "black",
+    top: "4px",
+    left: "10px",
+    position: "absolute",
+  },
+  wrongBox: {
+    marginRight: "20px",
+    marginVertical: "5px",
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
+  },
+  correctBox: {
+    marginTop: "10px",
+    marginVertical: "5px",
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    marginLeft: "20px",
+  },
+  // halfTransparent: {
+  //   width: "15px", // Half of the optionBox width
+  //   height: "30px", // Same as the optionBox height
+  //   backgroundColor: "transparent",
+  // },
 });
 
 interface Student {
@@ -216,6 +382,7 @@ interface Student {
   districtCode: string | null;
   schoolId: number;
 }
+
 interface MyDocumentProps {
   students: Student[];
 }
@@ -278,6 +445,148 @@ const MyDocument: React.FC<MyDocumentProps> = ({ students }) => (
 
           {/* ... other student info rows */}
         </View>
+        <View style={styles.instBox}>
+          {/* Row with correct filling example */}
+          <Text style={styles.optionText}>
+            Choose only one of the five proposed answers[A,B,C,D,E] and fill in
+            the box with your answer. Example of correctly filled table of
+            answer is.
+          </Text>
+
+          <View style={styles.correctBox}>
+            <View style={styles.answerRowInst}>
+              <View style={styles.optionBox}>
+                <Text style={styles.optionText}>A</Text>
+              </View>
+              <View style={styles.optionBox}>
+                <Text style={styles.optionText}>B</Text>
+              </View>
+              <View style={[styles.optionBox, styles.correctFilling]}></View> //
+              Correct filling for "C"
+              <View style={styles.optionBox}>
+                <Text style={styles.optionText}>D</Text>
+              </View>
+              <View style={styles.optionBox}>
+                <Text style={styles.optionText}>E</Text>
+              </View>
+            </View>
+            <Text style={styles.optionText}>Wrong filling</Text>
+          </View>
+          {/* Example rows with wrong fillings */}
+          {/* <View style={styles.wrongBox}>
+            <View style={styles.answerRowInst}>
+              <View style={[styles.optionBox, styles.wrongFilling]}>
+                <View style={styles.filledOption}></View>
+              </View>{" "}
+              // Wrong filling for "A"
+              <View style={styles.optionBox}>
+                <Text style={styles.optionText}>B</Text>
+              </View>
+              <View style={styles.optionBox}>
+                <Text style={styles.optionText}>C</Text>
+              </View>
+              <View style={styles.optionBox}>
+                <Text style={styles.optionText}>D</Text>
+              </View>
+              <View style={styles.optionBox}>
+                <Text style={styles.optionText}>E</Text>
+              </View>
+            </View>
+            <Text style={styles.optionText}>Wrong filling</Text>
+          </View> */}
+          <View style={styles.wrongBox}>
+            <View style={styles.answerRowInst}>
+              <View style={styles.optionBox}>
+                <Text style={styles.optionText}>A</Text>
+                <View style={styles.cross}>
+                  <View style={styles.crossLine}></View>
+                  <View style={styles.crossLineReverse}></View>
+                </View>
+              </View>
+              <View style={styles.optionBox}>
+                <Text style={styles.optionText}>B</Text>
+              </View>
+              <View style={styles.optionBox}>
+                <Text style={styles.optionText}>C</Text>
+              </View>
+              <View style={styles.optionBox}>
+                <Text style={styles.optionText}>D</Text>
+              </View>
+              <View style={styles.optionBox}>
+                <Text style={styles.optionText}>E</Text>
+              </View>
+              {/* ... other options ... */}
+            </View>
+            <Text style={styles.optionText}>Wrong filling</Text>
+          </View>
+          <View style={styles.wrongBox}>
+            <View style={styles.answerRowInst}>
+              <View style={styles.optionBox}>
+                <Text style={styles.optionText}>A</Text>
+              </View>
+              <View style={styles.optionBox}>
+                <Text style={styles.optionTextWrong}>B</Text>
+                <View style={styles.tick}></View>
+              </View>
+              <View style={styles.optionBox}>
+                <Text style={styles.optionText}>C</Text>
+              </View>
+              <View style={styles.optionBox}>
+                <Text style={styles.optionText}>D</Text>
+              </View>
+              <View style={styles.optionBox}>
+                <Text style={styles.optionText}>E</Text>
+              </View>
+            </View>
+            <Text style={styles.optionText}>Wrong filling</Text>
+          </View>
+          <View style={styles.wrongBox}>
+            <View style={styles.answerRowInst}>
+              <View style={styles.optionBox}>
+                <Text style={styles.optionText}>A</Text>
+              </View>
+              <View style={styles.optionBox}>
+                <Text style={styles.optionText}>B</Text>
+              </View>
+
+              <View style={styles.optionBox}>
+                <Text style={styles.optionTextWrong}>C</Text>
+                <View style={styles.circle}></View>
+              </View>
+              <View style={styles.optionBox}>
+                <Text style={styles.optionText}>D</Text>
+              </View>
+              <View style={styles.optionBox}>
+                <Text style={styles.optionText}>E</Text>
+              </View>
+            </View>
+            <Text style={styles.optionText}>Wrong filling</Text>
+          </View>
+          <View style={styles.wrongBox}>
+            <View style={styles.answerRowInst}>
+              <View style={styles.optionBox}>
+                <Text>A</Text>
+              </View>
+
+              <View style={[styles.gradientBox]}>
+                <View style={styles.optionBox}>
+                  <Text style={styles.optionText}>B</Text>
+                </View>
+                <View style={styles.halfBlack} />
+                <View style={styles.optionBox}>
+                  <Text style={styles.optionText}>C</Text>
+                </View>
+              </View>
+              <View style={styles.optionBox}>
+                <Text style={styles.optionText}>D</Text>
+              </View>
+              <View style={styles.optionBox}>
+                <Text style={styles.optionText}>E</Text>
+              </View>
+            </View>
+            <Text style={styles.optionText}>Wrong filling</Text>
+          </View>
+        </View>
 
         {/* Answer Grid */}
         <View style={styles.answerGrid}>
@@ -285,11 +594,21 @@ const MyDocument: React.FC<MyDocumentProps> = ({ students }) => (
           {[...Array(30)].map((_, questionIndex) => (
             <View style={styles.answerRow} key={questionIndex}>
               <Text style={styles.questionNumber}>{questionIndex + 1}</Text>
-              <Text style={styles.option}>A</Text>
-              <Text style={styles.option}>B</Text>
-              <Text style={styles.option}>C</Text>
-              <Text style={styles.option}>D</Text>
-              <Text style={styles.option}>E</Text>
+              <View style={styles.optionText}>
+                <Text style={styles.option}>A</Text>
+              </View>
+              <View style={styles.optionBoxForAnswers}>
+                <Text style={styles.option}>B</Text>
+              </View>
+              <View style={styles.optionBoxForAnswers}>
+                <Text style={styles.option}>C</Text>
+              </View>
+              <View style={styles.optionBoxForAnswers}>
+                <Text style={styles.option}>D</Text>
+              </View>
+              <View style={styles.optionBoxForAnswers}>
+                <Text style={styles.option}>E</Text>
+              </View>
             </View>
           ))}
         </View>
