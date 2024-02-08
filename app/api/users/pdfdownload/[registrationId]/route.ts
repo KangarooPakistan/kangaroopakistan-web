@@ -1,8 +1,6 @@
 import { db } from "@/app/lib/prisma";
 import { NextResponse } from "next/server";
-import PDFDocument from 'pdfkit';
-
-
+import { PDFDocument, rgb } from 'pdf-lib';
 
 interface Student {
     rollNumber: string;
@@ -68,33 +66,38 @@ export async function GET(request: Request,
               console.log("studentsArray")
               console.log(studentsArray.length)
             }
-            const doc = new PDFDocument({font: 'Courier'});
-
-        // Pipe the PDF document to a buffer
-        const buffers: Buffer[] = [];
-        doc.on('data', buffers.push.bind(buffers));
-        doc.on('end', () => {
-            const pdfData = Buffer.concat(buffers);
-            // You can return the PDF data here or save it to a file
-            // For simplicity, let's return the PDF data as JSON response
-            return NextResponse.json({ pdfData }, { status: 200 });
+            const pdfDoc = await PDFDocument.create();
+            let page = pdfDoc.addPage();
+            const { width, height } = page.getSize();
+            const fontSize = 12;
+            let yOffset = height - 30; // Start 30 units from the top
+    
+            // Loop through each student and add their details to the PDF
+            for (const student of studentsArray) {
+                const text = `Roll Number: ${student.rollNumber}, Name: ${student.studentName}, Father's Name: ${student.fatherName}, Level: ${student.studentLevel}, Class: ${student.studentClass}, School: ${student.schoolName || 'N/A'}, Address: ${student.address || 'N/A'}, District: ${student.districtCode || 'N/A'}`;
+                page.drawText(text, {
+                    x: 50,
+                    y: yOffset,
+                    size: fontSize,
+                    color: rgb(0, 0, 0),
+                });
+                yOffset -= 15; // Move down for the next entry
+                if (yOffset < 30) { // Check if we need a new page
+                    page = pdfDoc.addPage();
+                    yOffset = height - 30; // Reset Y Offset
+                }
+            }
+    
+            // Serialize the PDF to bytes (a Uint8Array)
+            const pdfBytes = await pdfDoc.save();
+    
+        return new Response(pdfBytes, {
+            headers: {
+                'Content-Type': 'application/pdf',
+                'Content-Disposition': 'attachment; filename=students.pdf',
+            },
         });
-
-        // Populate PDF with student data
-        doc.fontSize(12);
-        for (const student of studentsArray) {
-            doc.text(`Roll Number: ${student.rollNumber}`);
-            doc.text(`Student Name: ${student.studentName}`);
-            doc.text(`Father's Name: ${student.fatherName}`);
-            doc.text(`Student Level: ${student.studentLevel}`);
-            doc.text(`Student Class: ${student.studentClass}`);
-            doc.text(`School Name: ${student.schoolName}`);
-            doc.text(`Address: ${student.address}`);
-            doc.text(`District Code: ${student.districtCode}`);
-            doc.moveDown(); // Move down for next student
-        }
-
-        doc.end(); 
+             
               return NextResponse.json(studentsArray, { status: 200 });
         } catch (error) {
             console.log(error)

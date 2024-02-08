@@ -43,11 +43,20 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         }
       );
 
-      const pdfData = response.data;
-      // Create a blob URL for the PDF data
-      const pdfUrl = URL.createObjectURL(pdfData);
-      // Open the PDF in a new tab/window or download it
-      window.open(pdfUrl);
+      const blob = new Blob([response.data], { type: "application/pdf" });
+      const downloadUrl = window.URL.createObjectURL(blob);
+
+      // Create an anchor tag to download the blob
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.setAttribute("download", "students.pdf"); // Set the file name for the download
+      document.body.appendChild(link);
+      link.click();
+
+      // Clean up by revoking the URL and removing the link
+      window.URL.revokeObjectURL(downloadUrl);
+      link.parentNode?.removeChild(link);
+  
     } catch (error) {
       console.error("Error downloading the PDF:", error);
       // Handle specific error cases as needed
