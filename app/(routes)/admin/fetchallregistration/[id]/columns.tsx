@@ -188,7 +188,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     height: 13,
     fontSize: 11,
-    paddingVertical: "auto !important",
     marginTop: "2px",
     fontWeight: "bold",
   },
