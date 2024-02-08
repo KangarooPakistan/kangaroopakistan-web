@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -33,10 +34,29 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
     console.log(registration);
     router.push(`/admin/viewallbyschool/${registration.id}`);
   };
-  const handleAllRegistrationsView = () => {
-    // console.log(contest.id);
-    // router.push(`/admin/fetchallregistration/${contest.id}`);
+  const handleDownloadPdf = async () => {
+    try {
+      const response = await axios.get(
+        `/api/users/pdfdownload/${registration.id}`,
+        {
+          responseType: "blob", // Important for handling binary data like PDF
+        }
+      );
+
+      const pdfData = response.data;
+      // Create a blob URL for the PDF data
+      const pdfUrl = URL.createObjectURL(pdfData);
+      // Open the PDF in a new tab/window or download it
+      window.open(pdfUrl);
+    } catch (error) {
+      console.error("Error downloading the PDF:", error);
+      // Handle specific error cases as needed
+    }
   };
+
+  // console.log("registeredStudents");
+  // console.log(registeredStudents);
+  // router.push(`/admin/fetchallregistration/${contest.id}`);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -48,6 +68,9 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <DropdownMenuItem onClick={handleView}>View</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleDownloadPdf}>
+          Download Pdf
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

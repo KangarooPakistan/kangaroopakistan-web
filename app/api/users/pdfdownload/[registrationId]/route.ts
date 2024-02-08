@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import PDFDocument from 'pdfkit';
 
 
+
 interface Student {
     rollNumber: string;
     studentName: string;
@@ -67,8 +68,35 @@ export async function GET(request: Request,
               console.log("studentsArray")
               console.log(studentsArray.length)
             }
+            const doc = new PDFDocument();
+        // Pipe the PDF document to a buffer
+        const buffers: Buffer[] = [];
+        doc.on('data', buffers.push.bind(buffers));
+        doc.on('end', () => {
+            const pdfData = Buffer.concat(buffers);
+            // You can return the PDF data here or save it to a file
+            // For simplicity, let's return the PDF data as JSON response
+            return NextResponse.json({ pdfData }, { status: 200 });
+        });
+
+        // Populate PDF with student data
+        doc.fontSize(12);
+        for (const student of studentsArray) {
+            doc.text(`Roll Number: ${student.rollNumber}`);
+            doc.text(`Student Name: ${student.studentName}`);
+            doc.text(`Father's Name: ${student.fatherName}`);
+            doc.text(`Student Level: ${student.studentLevel}`);
+            doc.text(`Student Class: ${student.studentClass}`);
+            doc.text(`School Name: ${student.schoolName}`);
+            doc.text(`Address: ${student.address}`);
+            doc.text(`District Code: ${student.districtCode}`);
+            doc.moveDown(); // Move down for next student
+        }
+
+        doc.end(); 
               return NextResponse.json(studentsArray, { status: 200 });
         } catch (error) {
+            console.log(error)
             return NextResponse.json(params.registrationId,  { status: 400 });
             
         }
