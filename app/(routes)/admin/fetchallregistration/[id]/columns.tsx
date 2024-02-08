@@ -460,8 +460,7 @@ const MyDocument: React.FC<MyDocumentProps> = ({ students }) => (
               <View style={styles.optionBox}>
                 <Text style={styles.optionText}>B</Text>
               </View>
-              <View style={[styles.optionBox, styles.correctFilling]}></View> //
-              Correct filling for "C"
+              <View style={[styles.optionBox, styles.correctFilling]}></View>
               <View style={styles.optionBox}>
                 <Text style={styles.optionText}>D</Text>
               </View>
@@ -471,28 +470,6 @@ const MyDocument: React.FC<MyDocumentProps> = ({ students }) => (
             </View>
             <Text style={styles.optionText}>Wrong filling</Text>
           </View>
-          {/* Example rows with wrong fillings */}
-          {/* <View style={styles.wrongBox}>
-            <View style={styles.answerRowInst}>
-              <View style={[styles.optionBox, styles.wrongFilling]}>
-                <View style={styles.filledOption}></View>
-              </View>{" "}
-              // Wrong filling for "A"
-              <View style={styles.optionBox}>
-                <Text style={styles.optionText}>B</Text>
-              </View>
-              <View style={styles.optionBox}>
-                <Text style={styles.optionText}>C</Text>
-              </View>
-              <View style={styles.optionBox}>
-                <Text style={styles.optionText}>D</Text>
-              </View>
-              <View style={styles.optionBox}>
-                <Text style={styles.optionText}>E</Text>
-              </View>
-            </View>
-            <Text style={styles.optionText}>Wrong filling</Text>
-          </View> */}
           <View style={styles.wrongBox}>
             <View style={styles.answerRowInst}>
               <View style={styles.optionBox}>
