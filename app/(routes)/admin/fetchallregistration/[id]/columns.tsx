@@ -184,18 +184,11 @@ const styles = StyleSheet.create({
   },
   questionNumberBox: {
     width: "20px",
-<<<<<<< Updated upstream
     textAlign: "center",
     height: 13,
     fontSize: 11,
     marginTop: "2px",
     fontWeight: "bold",
-=======
-    height: "20px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-evenly",
->>>>>>> Stashed changes
   },
   questionNumber: {},
   option: {
