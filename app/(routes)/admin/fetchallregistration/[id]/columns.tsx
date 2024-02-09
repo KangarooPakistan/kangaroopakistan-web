@@ -206,6 +206,10 @@ const styles = StyleSheet.create({
   },
   answerGrid: {
     flexDirection: "row",
+    borderWidth: 2,
+    borderColor: "black",
+    padding: 10,
+    // paddingVertical:
     // flex: 1,
     justifyContent: "flex-start",
     flexWrap: "wrap",
@@ -217,15 +221,22 @@ const styles = StyleSheet.create({
     paddingBottom: 10, // You can set padding for separation between rows
   },
   questionNumberBox: {
-    width: "20px",
-    height: "20px",
+    width: "25px",
+    height: "25px",
+    marginRight: 14,
     display: "flex",
-    alignItems: "center",
-    justifyContent: "space-evenly",
+    alignItems: "flex-end",
+    justifyContent: "flex-start",
+    borderRadius: "50%",
   },
   questionNumber: {},
   option: {
-    fontSize: 12,
+    fontSize: 13,
+    fontWeight: "bold",
+  },
+  optionNumber: {
+    fontSize: 15,
+    marginTop: 2,
   },
   optionsRow: {
     flexDirection: "row",
@@ -245,14 +256,15 @@ const styles = StyleSheet.create({
     borderWidth: "1px",
     borderColor: "black",
     marginRight: "5px",
+    borderRadius: "50%",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     position: "relative", // Needed to
   },
   optionBoxForAnswers: {
-    width: "20px",
-    height: "20px",
+    width: "25px",
+    height: "25px",
     marginRight: 4,
     display: "flex",
     borderRadius: "50%",
@@ -423,7 +435,13 @@ const MyDocument: React.FC<MyDocumentProps> = ({ students }) => (
         <Text style={styles.subHeaderBetween}>Answer Sheet</Text>
 
         <Text style={styles.subHeader}>
-          Student Level ({student.studentLevel})
+          {student.studentLevel === "preecolier" &&
+            "PRE ECOLIER(Class 01 & 02)"}
+          {student.studentLevel === "ecolier" && "ECOLIER(Class 03 & 04)"}
+          {student.studentLevel === "Benjamin" && "BENJAMIN(Class 05 & 06)"}
+          {student.studentLevel === "cadet" && "CADET(Class 07 & 08)"}
+          {student.studentLevel === "junior" && "JUNIOR(Class 09 & 10)"}
+          {student.studentLevel === "student" && "STUDENT(Class 11 & 12)"}
         </Text>
 
         {/* Student Info */}
@@ -545,28 +563,6 @@ const MyDocument: React.FC<MyDocumentProps> = ({ students }) => (
           <View style={styles.wrongBox}>
             <View style={styles.answerRowInst}>
               <View style={styles.optionBox}>
-                <Text style={styles.optionText}>A</Text>
-              </View>
-              <View style={styles.optionBox}>
-                <Text style={styles.optionText}>B</Text>
-              </View>
-
-              <View style={styles.optionBox}>
-                <Text style={styles.optionTextWrong}>C</Text>
-                <View style={styles.circle}></View>
-              </View>
-              <View style={styles.optionBox}>
-                <Text style={styles.optionText}>D</Text>
-              </View>
-              <View style={styles.optionBox}>
-                <Text style={styles.optionText}>E</Text>
-              </View>
-            </View>
-            <Text style={styles.optionText}>Wrong filling</Text>
-          </View>
-          <View style={styles.wrongBox}>
-            <View style={styles.answerRowInst}>
-              <View style={styles.optionBox}>
                 <Text>A</Text>
               </View>
               <View style={[styles.gradientBox]}>
@@ -660,7 +656,7 @@ const VerticalNumberGrid = ({ totalNumbers = 30 }) => {
           {row.map((number, colIndex) => (
             <View key={colIndex} style={styles.answerRow}>
               <View style={styles.questionNumberBox}>
-                {number && <Text style={styles.option}>{number}</Text>}
+                {number && <Text style={styles.optionNumber}>{number}</Text>}
               </View>
               {/* Render the options A, B, C, D, E */}
               {number &&
