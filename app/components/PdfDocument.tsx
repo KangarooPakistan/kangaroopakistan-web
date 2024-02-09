@@ -1,9 +1,3 @@
-"use client";
-
-import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, MoreHorizontal } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
 import {
   Page,
   Text,
@@ -12,122 +6,6 @@ import {
   StyleSheet,
   pdf,
 } from "@react-pdf/renderer";
-import { saveAs } from "file-saver";
-
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { useRouter } from "next/navigation";
-import axios from "axios";
-import { useState } from "react";
-
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
-export type Registration = {
-  id: string;
-  schoolId: number;
-  schoolName: string;
-  studentsLength: number;
-  email: string;
-};
-
-type RegistrationProps = {
-  registration: Registration; // Use the Contest type here
-};
-const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
-  const [students, setStudents] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  const router = useRouter();
-  const handleView = () => {
-    console.log(registration);
-    router.push(`/admin/viewallbyschool/${registration.id}`);
-  };
-  async function generatePdfBlob(students: Student[]) {
-    const doc = <MyDocument students={students} />;
-    const asPdf = pdf(doc); // Create an empty PDF instance
-    const blob = await asPdf.toBlob();
-    return blob;
-  }
-  const handleDownloadPdf = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get(
-        `/api/users/pdfdownload/${registration.id}`
-      );
-      const students: Student[] = response.data;
-      const blob = await generatePdfBlob(students);
-      saveAs(blob, "students.pdf");
-    } catch (error) {
-      console.error("Error downloading the PDF:", error);
-      setLoading(false);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // console.log("registeredStudents");
-  // console.log(registeredStudents);
-  // router.push(`/admin/fetchallregistration/${contest.id}`);
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="h-8 w-8 p-0">
-          <span className="sr-only">Open menu</span>
-          <MoreHorizontal className="h-4 w-4" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <DropdownMenuItem onClick={handleView}>View</DropdownMenuItem>
-        <DropdownMenuItem onClick={handleDownloadPdf}>
-          Download PDF
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-};
-export const columns: ColumnDef<Registration>[] = [
-  {
-    accessorKey: "schoolId",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          SchoolId
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-  },
-  {
-    accessorKey: "schoolName",
-    header: "schoolName",
-  },
-  {
-    accessorKey: "email",
-    header: "email",
-  },
-  {
-    accessorKey: "studentsLength",
-    header: "Total Students",
-  },
-  {
-    id: "actions",
-    cell: ({ row }) => <RegistrationActions registration={row.original} />,
-  },
-];
-
-const numColumns = 3; // Number of columns
-const optionWidth = `${100 / numColumns}%`; // Calculate the width of each option
-
 const styles = StyleSheet.create({
   page: {
     flexDirection: "column",
@@ -184,24 +62,15 @@ const styles = StyleSheet.create({
   },
   questionNumberBox: {
     width: "20px",
-<<<<<<< Updated upstream
-    textAlign: "center",
-    height: 13,
-    fontSize: 11,
-    paddingVertical: "auto !important",
-    marginTop: "2px",
-    fontWeight: "bold",
-=======
     height: "20px",
     display: "flex",
     alignItems: "center",
     justifyContent: "space-evenly",
->>>>>>> Stashed changes
   },
   questionNumber: {},
   option: {
     fontSize: 12,
-    marginRight: "2px"
+    marginRight: "2px",
   },
   optionsRow: {
     flexDirection: "row",
@@ -382,14 +251,14 @@ interface Student {
   schoolId: number;
 }
 
-interface MyDocumentProps {
+interface PdfDocumentProps {
   students: Student[];
 }
 
-const MyDocument: React.FC<MyDocumentProps> = ({ students }) => (
+const PdfDocumentPage: React.FC<PdfDocumentProps> = ({ students }) => (
   <Document>
     {students.map((student, index) => (
-      <Page size="A4" style={styles.page} key={index}>
+      <Page wrap size="A4" style={styles.page} key={index}>
         <Text style={styles.header}>
           International Kangaroo Mathematics Contest
         </Text>
@@ -419,7 +288,7 @@ const MyDocument: React.FC<MyDocumentProps> = ({ students }) => (
           </View>
 
           <View style={styles.studentInfoRow}>
-            <Text style={styles.studentInfoTitle}>Father's Name</Text>
+            <Text style={styles.studentInfoTitle}>Father Name</Text>
             <Text style={styles.studentInfoContent}>{student.fatherName}</Text>
           </View>
 
@@ -460,8 +329,7 @@ const MyDocument: React.FC<MyDocumentProps> = ({ students }) => (
               <View style={styles.optionBox}>
                 <Text style={styles.optionText}>B</Text>
               </View>
-              <View style={[styles.optionBox, styles.correctFilling]}></View> //
-              Correct filling for "C"
+              <View style={[styles.optionBox, styles.correctFilling]}></View>
               <View style={styles.optionBox}>
                 <Text style={styles.optionText}>D</Text>
               </View>
@@ -471,28 +339,6 @@ const MyDocument: React.FC<MyDocumentProps> = ({ students }) => (
             </View>
             <Text style={styles.optionText}>Wrong filling</Text>
           </View>
-          {/* Example rows with wrong fillings */}
-          {/* <View style={styles.wrongBox}>
-            <View style={styles.answerRowInst}>
-              <View style={[styles.optionBox, styles.wrongFilling]}>
-                <View style={styles.filledOption}></View>
-              </View>{" "}
-              // Wrong filling for "A"
-              <View style={styles.optionBox}>
-                <Text style={styles.optionText}>B</Text>
-              </View>
-              <View style={styles.optionBox}>
-                <Text style={styles.optionText}>C</Text>
-              </View>
-              <View style={styles.optionBox}>
-                <Text style={styles.optionText}>D</Text>
-              </View>
-              <View style={styles.optionBox}>
-                <Text style={styles.optionText}>E</Text>
-              </View>
-            </View>
-            <Text style={styles.optionText}>Wrong filling</Text>
-          </View> */}
           <View style={styles.wrongBox}>
             <View style={styles.answerRowInst}>
               <View style={styles.optionBox}>
@@ -589,7 +435,6 @@ const MyDocument: React.FC<MyDocumentProps> = ({ students }) => (
 
         {/* Answer Grid */}
         <View style={styles.answerGrid}>
-          {/* This is a mock structure. You would generate this based on the student's answers */}
           {[...Array(30)].map((_, questionIndex) => (
             <View style={styles.answerRow} key={questionIndex}>
               <View style={styles.questionNumberBox}>
@@ -618,21 +463,6 @@ const MyDocument: React.FC<MyDocumentProps> = ({ students }) => (
       </Page>
     ))}
   </Document>
-
-  // <Document>
-  //   {students.map((student, index) => (
-  //     <Page size="A4" style={styles.page} key={index}>
-  //       <View style={styles.section}>
-  //         <Text>Roll Number: {student.rollNumber}</Text>
-  //         <Text>Name: {student.studentName}</Text>
-  //         <Text>Father's Name: {student.fatherName}</Text>
-  //         <Text>Level: {student.studentLevel}</Text>
-  //         <Text>Class: {student.studentClass}</Text>
-  //         <Text>School: {student.schoolName}</Text>
-  //         <Text>Address: {student.address}</Text>
-  //         <Text>District: {student.districtCode}</Text>
-  //       </View>
-  //     </Page>
-  //   ))}
-  // </Document>
 );
+
+export default PdfDocumentPage;
