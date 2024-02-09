@@ -50,10 +50,39 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
   };
   async function generatePdfBlob(students: Student[]) {
     const doc = <MyDocument students={students} />;
+
     const asPdf = pdf(doc); // Create an empty PDF instance
     const blob = await asPdf.toBlob();
     return blob;
   }
+  // const handleDownPdf = async () => {
+  //   try {
+  //     // Update the URL to match the path to your API route
+  //     const response = await axios.get(
+  //       `/api/users/pdfdownload/${registration.id}`,
+  //       {
+  //         responseType: "blob", // Important for handling the PDF binary data
+  //       }
+  //     );
+
+  //     // Create a Blob from the PDF Stream
+  //     const file = new Blob([response.data], { type: "application/pdf" });
+
+  //     // Create a link to download the PDF
+  //     const fileURL = URL.createObjectURL(file);
+  //     const link = document.createElement("a");
+  //     link.href = fileURL;
+  //     link.setAttribute("download", "registration.pdf"); // or any other name
+  //     document.body.appendChild(link);
+  //     link.click();
+
+  //     // Clean up
+  //     link.parentNode?.removeChild(link);
+  //     URL.revokeObjectURL(fileURL);
+  //   } catch (error) {
+  //     console.error("Error fetching PDF:", error);
+  //   }
+  // };
   const handleDownloadPdf = async () => {
     try {
       setLoading(true);
@@ -88,6 +117,9 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         <DropdownMenuItem onClick={handleDownloadPdf}>
           Download PDF
         </DropdownMenuItem>
+        {/* <DropdownMenuItem onClick={handleDownPdf}>
+          Download PDF 2
+        </DropdownMenuItem> */}
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -184,16 +216,15 @@ const styles = StyleSheet.create({
   },
   questionNumberBox: {
     width: "20px",
-    textAlign: "center",
-    height: 13,
-    fontSize: 11,
-    marginTop: "2px",
-    fontWeight: "bold",
+    height: "20px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative",
   },
   questionNumber: {},
   option: {
     fontSize: 12,
-    marginRight: "2px"
   },
   optionsRow: {
     flexDirection: "row",
@@ -460,7 +491,7 @@ const MyDocument: React.FC<MyDocumentProps> = ({ students }) => (
                 <Text style={styles.optionText}>E</Text>
               </View>
             </View>
-            <Text style={styles.optionText}>Wrong filling</Text>
+            <Text style={styles.optionText}>Correct filling</Text>
           </View>
           <View style={styles.wrongBox}>
             <View style={styles.answerRowInst}>
