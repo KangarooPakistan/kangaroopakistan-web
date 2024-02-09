@@ -125,7 +125,7 @@ export const columns: ColumnDef<Registration>[] = [
   },
 ];
 
-const numColumns = 3; // Number of columns
+const numColumns = 2; // Number of columns
 const optionWidth = `${100 / numColumns}%`; // Calculate the width of each option
 
 const styles = StyleSheet.create({
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     padding: 30,
   },
   header: {
-    fontSize: 18,
+    fontSize: 14,
     marginBottom: 10,
     fontWeight: "bold",
 
@@ -142,13 +142,13 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
   },
   subHeaderBetween: {
-    fontSize: 12,
+    fontSize: 10,
     fontWeight: "bold",
     marginBottom: 10,
     textAlign: "center",
   },
   subHeader: {
-    fontSize: 15,
+    fontSize: 8,
     fontWeight: "bold",
     marginBottom: 10,
     textAlign: "center",
@@ -160,43 +160,36 @@ const styles = StyleSheet.create({
   studentInfoRow: {
     flexDirection: "row",
     justifyContent: "flex-start",
-    marginBottom: 4,
+    marginBottom: 1,
   },
   studentInfoTitle: {
-    fontSize: 12,
+    fontSize: 8,
     width: "100px",
     fontWeight: "heavy",
   },
   studentInfoContent: {
-    fontSize: 12,
+    fontSize: 10,
+    fontWeight: "bold",
     marginLeft: "20px",
   },
   answerGrid: {
     flexDirection: "row",
+    // flex: 1,
     justifyContent: "flex-start",
     flexWrap: "wrap",
   },
   answerRow: {
     flexDirection: "row",
-    justifyContent: "flex-start",
-    width: "33%", // Set width for 3 columns
+    // justifyContent: "flex-start",
+    width: "100%", // Set width for 3 columns
     paddingBottom: 10, // You can set padding for separation between rows
   },
   questionNumberBox: {
     width: "20px",
-<<<<<<< Updated upstream
-    textAlign: "center",
-    height: 13,
-    fontSize: 11,
-    paddingVertical: "auto !important",
-    marginTop: "2px",
-    fontWeight: "bold",
-=======
     height: "20px",
     display: "flex",
     alignItems: "center",
     justifyContent: "space-evenly",
->>>>>>> Stashed changes
   },
   questionNumber: {},
   option: {
@@ -213,11 +206,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-start",
-    marginBottom: 2,
+    // marginBottom: "1px",
   },
   optionBox: {
-    width: "20px",
-    height: "20px",
+    width: "14px",
+    height: "14px",
     borderWidth: "1px",
     borderColor: "black",
     marginRight: "5px",
@@ -229,8 +222,10 @@ const styles = StyleSheet.create({
   optionBoxForAnswers: {
     width: "20px",
     height: "20px",
+    marginRight: 4,
     display: "flex",
-    borderWidth: "1px",
+    borderRadius: "50%",
+    borderWidth: "2px",
     borderColor: "black",
     alignItems: "center",
     justifyContent: "space-evenly",
@@ -240,6 +235,7 @@ const styles = StyleSheet.create({
     height: "20px",
     borderWidth: "1px",
     borderColor: "black",
+
     marginRight: "5px",
     display: "flex",
     alignItems: "center",
@@ -247,7 +243,7 @@ const styles = StyleSheet.create({
     position: "relative", // Needed to
   },
   optionText: {
-    fontSize: 10,
+    fontSize: 8,
     textAlign: "center",
   },
   correctFilling: {
@@ -339,11 +335,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   halfBlack: {
-    width: "24px", // Half of the optionBox width
-    height: "12px", // Same as the optionBox height
+    width: "20px", // Half of the optionBox width
+    height: "8px", // Same as the optionBox height
     backgroundColor: "black",
     top: "4px",
-    left: "10px",
+    left: "6px",
     position: "absolute",
   },
   wrongBox: {
@@ -355,8 +351,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   correctBox: {
-    marginTop: "10px",
-    marginVertical: "5px",
+    marginTop: "4px",
+    // marginVertical: "5px",
     display: "flex",
     flexDirection: "row",
     justifyContent: "flex-start",
@@ -451,7 +447,6 @@ const MyDocument: React.FC<MyDocumentProps> = ({ students }) => (
             the box with your answer. Example of correctly filled table of
             answer is.
           </Text>
-
           <View style={styles.correctBox}>
             <View style={styles.answerRowInst}>
               <View style={styles.optionBox}>
@@ -566,7 +561,6 @@ const MyDocument: React.FC<MyDocumentProps> = ({ students }) => (
               <View style={styles.optionBox}>
                 <Text>A</Text>
               </View>
-
               <View style={[styles.gradientBox]}>
                 <View style={styles.optionBox}>
                   <Text style={styles.optionText}>B</Text>
@@ -586,10 +580,15 @@ const MyDocument: React.FC<MyDocumentProps> = ({ students }) => (
             <Text style={styles.optionText}>Wrong filling</Text>
           </View>
         </View>
+        {student.studentLevel === "preecolier" ||
+        student.studentLevel === "ecolier" ? (
+          <VerticalNumberGrid totalNumbers={24} />
+        ) : (
+          <VerticalNumberGrid totalNumbers={30} />
+        )}
 
         {/* Answer Grid */}
-        <View style={styles.answerGrid}>
-          {/* This is a mock structure. You would generate this based on the student's answers */}
+        {/* <View style={styles.answerGrid}>
           {[...Array(30)].map((_, questionIndex) => (
             <View style={styles.answerRow} key={questionIndex}>
               <View style={styles.questionNumberBox}>
@@ -612,27 +611,61 @@ const MyDocument: React.FC<MyDocumentProps> = ({ students }) => (
               </View>
             </View>
           ))}
-        </View>
+        </View> */}
 
         {/* Add other elements such as instructions, footer, etc. */}
       </Page>
     ))}
   </Document>
-
-  // <Document>
-  //   {students.map((student, index) => (
-  //     <Page size="A4" style={styles.page} key={index}>
-  //       <View style={styles.section}>
-  //         <Text>Roll Number: {student.rollNumber}</Text>
-  //         <Text>Name: {student.studentName}</Text>
-  //         <Text>Father's Name: {student.fatherName}</Text>
-  //         <Text>Level: {student.studentLevel}</Text>
-  //         <Text>Class: {student.studentClass}</Text>
-  //         <Text>School: {student.schoolName}</Text>
-  //         <Text>Address: {student.address}</Text>
-  //         <Text>District: {student.districtCode}</Text>
-  //       </View>
-  //     </Page>
-  //   ))}
-  // </Document>
 );
+
+const generateVerticalNumbers = (totalNumbers: number, numColumns: number) => {
+  const numRows = Math.ceil(totalNumbers / numColumns);
+  const grid = Array.from({ length: numRows }, () =>
+    new Array(numColumns).fill(null)
+  );
+
+  for (let number = 1; number <= totalNumbers; number++) {
+    const colIndex = Math.floor((number - 1) / numRows);
+    const rowIndex = (number - 1) % numRows;
+    grid[rowIndex][colIndex] = number;
+  }
+
+  return grid;
+};
+
+// Render the numbers inside your PDF document
+const VerticalNumberGrid = ({ totalNumbers = 30 }) => {
+  const grid = generateVerticalNumbers(totalNumbers, 3);
+
+  return (
+    <View style={styles.answerGrid}>
+      {grid.map((row, rowIndex) => (
+        <View
+          key={rowIndex}
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-around",
+            marginVertical: "1px",
+          }}
+        >
+          {row.map((number, colIndex) => (
+            <View key={colIndex} style={styles.answerRow}>
+              <View style={styles.questionNumberBox}>
+                {number && <Text style={styles.option}>{number}</Text>}
+              </View>
+              {/* Render the options A, B, C, D, E */}
+              {number &&
+                "ABCDE".split("").map((option) => (
+                  <View key={option} style={styles.optionBoxForAnswers}>
+                    <Text style={styles.option}>{option}</Text>
+                  </View>
+                ))}
+            </View>
+          ))}
+        </View>
+      ))}
+    </View>
+  );
+};
+
