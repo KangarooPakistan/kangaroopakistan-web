@@ -436,13 +436,13 @@ const MyDocument: React.FC<MyDocumentProps> = ({ students }) => (
 
         <Text style={styles.subHeader}>
           {student.studentLevel == "preecolier" &&
-            "PRE ECOLIER(Class 01 & 02)"}
-          {student.studentLevel == "ecolier" && "ECOLIER(Class 03 & 04)"}
-          {student.studentLevel == "benjamin" && "BENJAMIN(Class 03 & 04)"}
+            "PRE ECOLIER (Class 01 & 02)"}
+          {student.studentLevel == "ecolier" && "ECOLIER (Class 03 & 04)"}
+          {student.studentLevel == "benjamin" && "BENJAMIN (Class 03 & 04)"}
           {/* {student.studentLevel === "BENJAMIN" && "BENJAMIN(Class 05 & 06)"} */}
-          {student.studentLevel == "cadet" && "CADET(Class 07 & 08)"}
-          {student.studentLevel == "junior" && "JUNIOR(Class 09 & 10)"}
-          {student.studentLevel == "student" && "STUDENT(Class 11 & 12)"}
+          {student.studentLevel == "cadet" && "CADET (Class 07 & 08)"}
+          {student.studentLevel == "junior" && "JUNIOR (Class 09 & 10)"}
+          {student.studentLevel == "student" && "STUDENT (Class 11 & 12)"}
         </Text>
 
         {/* Student Info */}
