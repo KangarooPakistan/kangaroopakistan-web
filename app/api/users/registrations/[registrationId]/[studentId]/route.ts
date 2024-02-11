@@ -50,3 +50,32 @@ export async function PUT(request: Request, { params }: { params: { registration
             return NextResponse.json({ error: "Failed to update student." }, { status: 400 });
         }
     }
+export async function DELETE(request: Request, { params }: { params: { registrationId: string, studentId: string; } }) {
+        try {
+            const studentIdInt = parseInt(params.studentId, 10); // Convert studentId to integer for database operation
+    
+            // Perform the deletion
+            const deletedStudent = await db.student.delete({
+                where: {
+                    id: studentIdInt,
+                    // Note: Prisma does not directly support multiple conditions in `delete` operation's `where`.
+                    // If `registrationId` needs to be considered, ensure your schema supports this logic,
+                    // or perform a check before deletion.
+                },
+            });
+    
+            // If deletion was successful, return a success response
+            return NextResponse.json({ message: "Student successfully deleted." }, { status: 200 });
+        } catch (error : any) {
+            console.error('Error deleting student:', error);
+    
+            // Handle the case where the student does not exist
+            if (error.code === 'P2025') {
+                return NextResponse.json({ error: "Student not found." }, { status: 404 });
+            }
+    
+            // For other errors, return a generic error response
+            return NextResponse.json({ error: "Error deleting student." }, { status: 500 });
+        }
+    }
+    

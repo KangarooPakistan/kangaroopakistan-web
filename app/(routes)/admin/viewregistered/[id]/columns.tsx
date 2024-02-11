@@ -32,30 +32,14 @@ const ContestActions: React.FC<StudentActionsProps> = ({ student }) => {
   const handleView = () => {
     console.log(student);
     router.push(`/admin/viewallrecipts/${student.registrationId}`);
+  };
 
-    // router.push(`/admin/viewregistered/${student.registrationId}`);
-  };
-  const handleAllRegistrationsView = () => {
-    console.log(student.registrationId)
-    // router.push(`/admin/fetchallregistration/`);
-  };
+  const handleEdit = () => {};
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="h-8 w-8 p-0">
-          <span className="sr-only">Open menu</span>
-          <MoreHorizontal className="h-4 w-4" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <DropdownMenuItem>Edit</DropdownMenuItem>
-        <DropdownMenuItem onClick={handleView}>View</DropdownMenuItem>
-        <DropdownMenuItem onClick={handleAllRegistrationsView}>
-          View By Schools
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <>
+      <Button onClick={handleEdit}>Edit</Button>
+      <Button onClick={handleView}>View</Button>
+    </>
   );
 };
 

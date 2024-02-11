@@ -36,23 +36,29 @@ const ContestActions: React.FC<ContestActionsProps> = ({ contest }) => {
     console.log(contest.id);
     router.push(`/admin/fetchallregistration/${contest.id}`);
   };
+  const handleEdit = () => {};
+
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="h-8 w-8 p-0">
-          <span className="sr-only">Open menu</span>
-          <MoreHorizontal className="h-4 w-4" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <DropdownMenuItem>Edit</DropdownMenuItem>
-        <DropdownMenuItem onClick={handleView}>View</DropdownMenuItem>
-        <DropdownMenuItem onClick={handleAllRegistrationsView}>
-          View By Schools
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <div className="flex justify-around ">
+      <Button onClick={handleEdit}>Edit</Button>
+      <Button onClick={handleAllRegistrationsView}>View</Button>
+    </div>
+    // <DropdownMenu>
+    //   <DropdownMenuTrigger asChild>
+    //     <Button variant="ghost" className="h-8 w-8 p-0">
+    //       <span className="sr-only">Open menu</span>
+    //       <MoreHorizontal className="h-4 w-4" />
+    //     </Button>
+    //   </DropdownMenuTrigger>
+    //   <DropdownMenuContent align="end">
+    //     <DropdownMenuLabel>Actions</DropdownMenuLabel>
+    //     <DropdownMenuItem>Edit</DropdownMenuItem>
+    //     <DropdownMenuItem onClick={handleView}>View</DropdownMenuItem>
+    //     <DropdownMenuItem onClick={handleAllRegistrationsView}>
+    //       View By Schools
+    //     </DropdownMenuItem>
+    //   </DropdownMenuContent>
+    // </DropdownMenu>
   );
 };
 export const columns: ColumnDef<Contest>[] = [
