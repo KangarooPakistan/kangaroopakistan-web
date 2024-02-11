@@ -164,13 +164,12 @@ const EditStudent = () => {
 
   return (
     <section className="bg-white mb-12">
-      <div className=" pt-10 h-screen grid grid-cols-1">
-        <div className="w-full rounded-lg shadow-2xl md:mt-0 sm:max-w-md xl:p-0 mx-auto">
+      <div className=" pt-10  grid grid-cols-1">
+        <div className="rounded-lg shadow-2xl md:mt-0 sm:max-w-md xl:p-0 mx-auto">
           <div className="p-6 space-y-3 md:space-y-6 sm:p-8">
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl ">
-              Update account
+              Update Student
             </h1>
-
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
