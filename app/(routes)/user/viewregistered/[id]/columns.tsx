@@ -15,6 +15,7 @@ import { MoreHorizontal } from "lucide-react";
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type Student = {
+  id: number;
   registrationId: string;
   rollNumber: string;
   studentName: string;
@@ -30,13 +31,10 @@ const ContestActions: React.FC<StudentActionsProps> = ({ student }) => {
   const router = useRouter();
   const handleView = () => {
     console.log(student);
-    router.push(`/user/viewallrecipts/${student.registrationId}`);
-
-    // router.push(`/admin/viewregistered/${student.registrationId}`);
-  };
-  const handleAllRegistrationsView = () => {
-    console.log(student.registrationId);
-    // router.push(`/admin/fetchallregistration/`);
+    console.log(student.id);
+    router.push(
+      `/user/viewregistered/${student.registrationId}/${student.id}}`
+    );
   };
   return (
     <DropdownMenu>

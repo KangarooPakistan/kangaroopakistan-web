@@ -139,34 +139,34 @@ const UserRegister = () => {
   const router = useRouter();
   const [schoolIdFromBE, setSchoolIdFromBE] = useState<number | undefined>();
   const params = useParams();
-  const form = useForm({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: data.email,
-      // password: "",
-      schoolId: data.schoolId,
-      schoolName: data.schoolName,
-      contactNumber: data.contactNumber,
-      district: data.district,
-      tehsil: data.tehsil,
-      fax: data.fax,
-      bankTitle: data.bankTitle,
-      p_fName: data.p_fName,
+    const form = useForm({
+      resolver: zodResolver(formSchema),
+      defaultValues: {
+        email: data.email,
+        // password: "",
+        schoolId: data.schoolId,
+        schoolName: data.schoolName,
+        contactNumber: data.contactNumber,
+        district: data.district,
+        tehsil: data.tehsil,
+        fax: data.fax,
+        bankTitle: data.bankTitle,
+        p_fName: data.p_fName,
 
-      p_lName: data.c_lName,
-      p_contact: data.p_contact,
-      p_phone: data.p_phone,
-      p_email: data.email,
-      c_fName: data.c_fName,
-      c_mName: data.c_mName,
-      c_lName: data.c_lName,
-      c_contact: data.c_contact,
-      c_phone: data.c_phone,
-      c_email: data.c_email,
-      schoolAddress: data.schoolAddress,
-      c_accountDetails: data.c_accountDetails,
-    },
-  });
+        p_lName: data.c_lName,
+        p_contact: data.p_contact,
+        p_phone: data.p_phone,
+        p_email: data.email,
+        c_fName: data.c_fName,
+        c_mName: data.c_mName,
+        c_lName: data.c_lName,
+        c_contact: data.c_contact,
+        c_phone: data.c_phone,
+        c_email: data.c_email,
+        schoolAddress: data.schoolAddress,
+        c_accountDetails: data.c_accountDetails,
+      },
+    });
   useEffect(() => {
     const fetchData = async () => {
       const response = await axios.get(`/api/users/editprofile/${params.id}`);
