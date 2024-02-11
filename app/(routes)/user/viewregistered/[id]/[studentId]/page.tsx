@@ -49,7 +49,7 @@ const initialData: Student = {
   schoolId: 0,
 };
 
-const page = () => {
+const EditStudent = () => {
   const [data, setData] = useState<Student>(initialData);
 
   const params = useParams();
@@ -280,4 +280,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default EditStudent;
