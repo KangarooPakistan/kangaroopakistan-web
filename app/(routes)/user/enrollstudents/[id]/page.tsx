@@ -8,6 +8,7 @@ import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Brackets } from "lucide-react";
 interface StudentData {
   studentName: string;
   fatherName: string;
@@ -92,7 +93,8 @@ const Register = () => {
     register,
     control,
     handleSubmit,
-
+    setValue,
+    watch,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(schema),
@@ -189,34 +191,54 @@ const Register = () => {
     control,
     name: "students",
   });
-  // const padNumber = (num: number) => {
-  //   return String(num).padStart(3, "0");
-  // };
-  // const generateRollNumber = (index: number) => {
-  //   // Dummy logic for roll number generation
-  //   const classNumber = getValues(`students.${index}.class`);
-  //   const formattedIndex = padNumber(index + 1); // Adding 1 because index starts from 0
 
-  //   const rollNumber = `${year}-${district}-${schoolId}-${classNumber}-${formattedIndex}-${contestCh}`;
-  //   console.log(classNumber);
-  //   console.log(rollNumber);
+  // Loop through each student to set up watchers for their class field
+  fields.forEach((field, index) => {
+    const classWatch = watch(`students.${index}.class`);
 
-  //   // Update the rollNumber value for a specific student
-  //   const updatedStudents = [...fields];
-  //   updatedStudents[index].rollNumber = rollNumber;
+    useEffect(() => {
+      // Function to determine and set the level based on the class
+      const updateLevelBasedOnClass = (classValue: string) => {
+        let levelValue = "";
+        switch (classValue) {
+          case "01":
+          case "02":
+            levelValue = "preecolier";
+            break;
+          case "03":
+          case "04":
+            levelValue = "ecolier";
+            break;
+          case "05":
+          case "06":
+            levelValue = "benjamin";
+            break;
+          case "07":
+          case "08":
+            levelValue = "cadet";
+            break;
+          case "09":
+          case "10":
+            levelValue = "junior";
+            break;
+          case "11":
+          case "12":
+            levelValue = "student";
+            break;
 
-  //   // Set the updated students array to trigger re-render
-  //   // setValue("students", updatedStudents);
-  //   fields[index].rollNumber = rollNumber;
-  //   setValue(
-  //     `students[${index}].rollNumber` as `students.${number}.rollNumber`,
-  //     rollNumber
-  //   );
-  // };
+          // Add more cases if there are more levels corresponding to other classes
+        }
 
-  // const onSubmit = (data: FormData) => {
-  //   console.log(data);
-  // };
+        setValue(`students.${index}.level`, levelValue, {
+          shouldValidate: false,
+        });
+      };
+
+      if (classWatch) {
+        updateLevelBasedOnClass(classWatch);
+      }
+    }, [classWatch, index, setValue]);
+  });
 
   return (
     <form
@@ -256,31 +278,6 @@ const Register = () => {
             </div>
             <div className="mt-3 lg:mt-0 md:mr-4 lg:mr-0">
               <Controller
-                name={`students.${index}.level`}
-                control={control}
-                render={({ field }) => (
-                  <select
-                    {...field}
-                    className="w-full p-2 rounded border text-xs md:text-base border-gray-300 focus:outline-none focus:border-blue-500"
-                  >
-                    <option value="">SELECT LEVEL</option>
-                    <option value="preecolier">PRE ECOLIER</option>
-                    <option value="ecolier">ECOLIER</option>
-                    <option value="benjamin">BENJAMIN</option>
-                    <option value="cadet">CADET</option>
-                    <option value="junior">JUNIOR</option>
-                    <option value="student">STUDENT</option>
-                  </select>
-                )}
-              />
-              {errors?.students?.[index]?.level && (
-                <p className="text-red-500">
-                  {errors.students[index]?.level?.message}
-                </p>
-              )}
-            </div>
-            <div className="mt-3 lg:mt-0">
-              <Controller
                 name={`students.${index}.class`}
                 control={control}
                 render={({ field }) => (
@@ -307,6 +304,32 @@ const Register = () => {
               {errors?.students?.[index]?.class && (
                 <p className="text-red-500">
                   {errors.students[index]?.class?.message}
+                </p>
+              )}
+            </div>
+            <div className="mt-3 lg:mt-0">
+              <Controller
+                name={`students.${index}.level`}
+                control={control}
+                render={({ field }) => (
+                  <select
+                    disabled
+                    {...field}
+                    className="w-full p-2 rounded border text-xs md:text-base border-gray-300 focus:outline-none focus:border-blue-500"
+                  >
+                    <option value="">SELECT LEVEL</option>
+                    <option value="preecolier">PRE ECOLIER</option>
+                    <option value="ecolier">ECOLIER</option>
+                    <option value="benjamin">BENJAMIN</option>
+                    <option value="cadet">CADET</option>
+                    <option value="junior">JUNIOR</option>
+                    <option value="student">STUDENT</option>
+                  </select>
+                )}
+              />
+              {errors?.students?.[index]?.level && (
+                <p className="text-red-500">
+                  {errors.students[index]?.level?.message}
                 </p>
               )}
             </div>
