@@ -192,54 +192,40 @@ const Register = () => {
     name: "students",
   });
 
-  // Loop through each student to set up watchers for their class field
-  fields.forEach((field, index) => {
-    const classWatch = watch(`students.${index}.class`);
 
-    useEffect(() => {
-      // Function to determine and set the level based on the class
-      const updateLevelBasedOnClass = (classValue: string) => {
-        let levelValue = "";
-        switch (classValue) {
-          case "01":
-          case "02":
-            levelValue = "preecolier";
-            break;
-          case "03":
-          case "04":
-            levelValue = "ecolier";
-            break;
-          case "05":
-          case "06":
-            levelValue = "benjamin";
-            break;
-          case "07":
-          case "08":
-            levelValue = "cadet";
-            break;
-          case "09":
-          case "10":
-            levelValue = "junior";
-            break;
-          case "11":
-          case "12":
-            levelValue = "student";
-            break;
-
-          // Add more cases if there are more levels corresponding to other classes
-        }
-
-        setValue(`students.${index}.level`, levelValue, {
-          shouldValidate: false,
-        });
-      };
-
-      if (classWatch) {
-        updateLevelBasedOnClass(classWatch);
-      }
-    }, [classWatch, index, setValue]);
-  });
-
+  const handleClassChange = (classValue: string, index: number) => {
+    let levelValue = "";
+    switch (classValue) {
+      case "01":
+      case "02":
+        levelValue = "preecolier";
+        break;
+      case "03":
+      case "04":
+        levelValue = "ecolier";
+        break;
+      case "05":
+      case "06":
+        levelValue = "benjamin";
+        break;
+      case "07":
+      case "08":
+        levelValue = "cadet";
+        break;
+      case "09":
+      case "10":
+        levelValue = "junior";
+        break;
+      case "11":
+      case "12":
+        levelValue = "student";
+        break;
+      // Add more cases if needed
+      default:
+        break;
+    }
+    setValue(`students.${index}.level`, levelValue);
+  };
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -283,6 +269,10 @@ const Register = () => {
                 render={({ field }) => (
                   <select
                     {...field}
+                    onChange={(e) => {
+                      field.onChange(e); // Important: update the form state
+                      handleClassChange(e.target.value, index); // Update the level based on the class
+                    }}
                     className="w-full p-2 text-xs md:text-base rounded border border-gray-300 focus:outline-none focus:border-blue-500"
                   >
                     <option value="">SELECT CLASS</option>
