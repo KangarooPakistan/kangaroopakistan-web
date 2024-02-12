@@ -10,16 +10,14 @@ export async function GET(req: Request, { params }: { params: { id: string } } )
         },
         include: {
           students: true,
-          user:true // Include related students
+        
       },
       });
+      console.log(registrations)
 
       return NextResponse.json(registrations, { status: 200 });
 
     } catch (error:any) {
-      console.log(error.message)
-      console.error("error");
-      console.error("--------------------");
       return NextResponse.json({ error: error.message }, { status: 500 });
 
     }
