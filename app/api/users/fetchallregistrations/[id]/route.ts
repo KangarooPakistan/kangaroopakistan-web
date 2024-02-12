@@ -10,7 +10,7 @@ export async function GET(req: Request, { params }: { params: { id: string } } )
         },
         include: {
           students: true,
-        
+          user:true // Include related students
       },
       });
       console.log(registrations)
