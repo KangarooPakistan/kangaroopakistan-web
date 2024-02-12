@@ -17,6 +17,7 @@ export async function GET(req: Request, { params }: { params: { id: string } } )
       return NextResponse.json(registrations, { status: 200 });
 
     } catch (error:any) {
+      console.log(error.message)
       console.error("error");
       console.error("--------------------");
       return NextResponse.json({ error: error.message }, { status: 500 });
