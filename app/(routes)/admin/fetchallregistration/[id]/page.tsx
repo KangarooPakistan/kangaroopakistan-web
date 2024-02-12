@@ -12,6 +12,8 @@ const FetchAllRegistrations = () => {
   useEffect(() => {
     const fetchData = async () => {
       console.log(params.id);
+      
+      console.log(`/api/users/fetchallregistrations/${params.id}`);
       const res = await axios.get(
         `/api/users/fetchallregistrations/${params.id}`
       );
