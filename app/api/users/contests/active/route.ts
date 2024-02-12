@@ -17,6 +17,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
       contestType: true, // assuming you want to include details from the ContestType model
     },
   });
+
     return NextResponse.json(activeContests);
   } catch (error) {
           console.error('Error:', error);

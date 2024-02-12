@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -29,6 +29,7 @@ type ContestActionsProps = {
 };
 const ContestActions: React.FC<ContestActionsProps> = ({ contest }) => {
   const router = useRouter();
+  const params = useParams();
   const handleView = () => {
     router.push(`/admin/viewregistered/${contest.id}`);
   };
@@ -36,7 +37,11 @@ const ContestActions: React.FC<ContestActionsProps> = ({ contest }) => {
     console.log(contest.id);
     router.push(`/admin/fetchallregistration/${contest.id}`);
   };
-  const handleEdit = () => {};
+  const handleEdit = () => {
+    router.push(
+      `/admin/contesttypes/${params.id}/updatecontest/${contest.id}`
+    );
+  };
 
   return (
     <div className="flex justify-around ">
