@@ -12,6 +12,7 @@ import {
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { useModal } from "@/hooks/use-modal-store";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -23,12 +24,15 @@ export type Student = {
   fatherName: string;
   class: string;
   level: string;
+  id: number;
 };
 type StudentActionsProps = {
   student: Student; // Use the Student type here
 };
 const ContestActions: React.FC<StudentActionsProps> = ({ student }) => {
   const router = useRouter();
+  const { onOpen } = useModal();
+
   const handleView = () => {
     console.log(student);
     router.push(`/admin/viewallrecipts/${student.registrationId}`);
@@ -50,6 +54,11 @@ const ContestActions: React.FC<StudentActionsProps> = ({ student }) => {
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <DropdownMenuItem onClick={handleView}>View Receipts </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => onOpen("deleteStudent", { id: student.id })}
+        >
+          Delete Student{" "}
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
