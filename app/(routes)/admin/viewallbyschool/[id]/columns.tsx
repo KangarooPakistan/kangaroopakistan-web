@@ -79,7 +79,7 @@ export const columns: ColumnDef<Student>[] = [
   },
   {
     accessorKey: "fatherName",
-    header: "Father Number",
+    header: "Father Name",
   },
   {
     accessorKey: "class",
