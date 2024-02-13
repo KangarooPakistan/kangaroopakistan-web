@@ -1,9 +1,10 @@
 import { ContestType,  } from "@prisma/client";
 import { create } from "zustand";
 
-export type ModalType = "createContest" | "addImage";
+export type ModalType = "createContest" | "addImage" | "deleteStudent";
 interface ModalData {
   registrationId?: string;
+  id?: number
   
 }
 

@@ -12,6 +12,8 @@ import {
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
+import { useModal } from "@/hooks/use-modal-store";
+import { useEffect } from "react";
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type Student = {
@@ -29,13 +31,16 @@ type StudentActionsProps = {
 };
 const ContestActions: React.FC<StudentActionsProps> = ({ student }) => {
   const router = useRouter();
-  const handleView = () => {
+  const { onOpen } = useModal();
+
+  const handleEdit = () => {
     console.log(student);
     console.log(student.id);
     router.push(
       `/user/viewregistered/${student.registrationId}/${student.id}}`
     );
   };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -46,7 +51,12 @@ const ContestActions: React.FC<StudentActionsProps> = ({ student }) => {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <DropdownMenuItem onClick={handleView}>Edit Student</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleEdit}>Edit Student</DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => onOpen("deleteStudent", { id: student.id })}
+        >
+          Delete Student
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

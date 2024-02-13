@@ -13,7 +13,6 @@ export async function GET(req: Request, { params }: { params: { id: string } } )
           user:true // Include related students
       },
       });
-      console.log(registrations)
 
       return NextResponse.json(registrations, { status: 200 });
 
