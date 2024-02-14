@@ -34,6 +34,7 @@ export type Registration = {
   schoolName: string;
   studentsLength: number;
   email: string;
+  
 };
 
 type RegistrationProps = {
