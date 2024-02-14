@@ -97,5 +97,4 @@ model PaymentProof{
   registration Registration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
   registrationId String
   @@index([registrationId])
-
 }
