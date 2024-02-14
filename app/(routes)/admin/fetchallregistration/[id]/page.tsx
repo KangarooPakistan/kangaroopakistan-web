@@ -107,12 +107,14 @@ const FetchAllRegistrations = () => {
   return (
     <>
       <div className="container mx-auto py-10">
-         <div className="flex flex-wrap -mx-2">
+        <div className="flex flex-wrap -mx-2">
           <div className="w-full md:w-1/2 px-2 mb-6 md:mb-0">
             <div className="bg-gradient-to-r from-blue-500 to-teal-500 rounded-lg shadow-lg p-6 text-white transform transition duration-500 hover:scale-105">
               <h2 className="font-bold text-2xl mb-4">Total # of Students</h2>
               <p className="text-lg font-semibold">{allStudents.length}</p>
-              <h2 className="font-bold text-2xl mb-4">Total # of Students</h2>
+              <h2 className="font-bold text-2xl mb-4">
+                Total # of Payments Done
+              </h2>
               <p className="text-lg font-semibold">{totalPaymentDone}</p>
             </div>
           </div>
@@ -145,7 +147,7 @@ const FetchAllRegistrations = () => {
               </ul>
             </div>
           </div>
-        </div> 
+        </div>
         <DataTable columns={columns} data={data} />;
       </div>
     </>

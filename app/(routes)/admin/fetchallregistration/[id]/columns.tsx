@@ -122,7 +122,14 @@ export const columns: ColumnDef<Registration>[] = [
     header: "Total Students",
   },
   {
-    header: "Payment Proof",
+    accessorKey: "paymentProof", // This should match the key from your data
+    header: ({ column }) => (
+      <Button variant="ghost" onClick={() => column.toggleSorting()}>
+        Payment Proof
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    sortingFn: "basic",
     cell: ({ row }) => {
       // Access the paymentProof property of the row data
       const paymentProofs = row.original.paymentProof || []; // Fallback to an empty array if undefined
