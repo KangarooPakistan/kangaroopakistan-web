@@ -3,6 +3,7 @@ import CreateContestTypeModal from "@/components/modals/create-contest-type-moda
 import { useEffect, useState } from "react";
 import AddImageModal from "../modals/add-image-modal";
 import DeleteStudent from "../modals/delete-student-modal";
+import DeleteSchool from "../modals/delete-school-modal";
 
 export const ModalProvider = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -18,6 +19,7 @@ export const ModalProvider = () => {
       <CreateContestTypeModal />
       <AddImageModal />
       <DeleteStudent />
+      <DeleteSchool />
     </>
   );
 };
