@@ -49,7 +49,7 @@ model Registration {
   updatedAt    DateTime     @updatedAt
   registeredBy   String
   paymentProof PaymentProof[]
-  user          User     @relation(fields: [registeredBy], references: [id])
+  user          User     @relation(fields: [registeredBy], references: [id],  onDelete: Cascade)
   @@index([contestId])
   @@unique([contestId, schoolId])
   @@index([registeredBy])
