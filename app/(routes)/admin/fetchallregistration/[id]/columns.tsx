@@ -34,7 +34,11 @@ export type Registration = {
   schoolName: string;
   studentsLength: number;
   email: string;
-  
+  paymentProof?: PaymentProof[];
+};
+export type PaymentProof = {
+  id: number;
+  imageUrl: string;
 };
 
 type RegistrationProps = {
@@ -56,34 +60,6 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
     const blob = await asPdf.toBlob();
     return blob;
   }
-  // const handleDownPdf = async () => {
-  //   try {
-  //     // Update the URL to match the path to your API route
-  //     const response = await axios.get(
-  //       `/api/users/pdfdownload/${registration.id}`,
-  //       {
-  //         responseType: "blob", // Important for handling the PDF binary data
-  //       }
-  //     );
-
-  //     // Create a Blob from the PDF Stream
-  //     const file = new Blob([response.data], { type: "application/pdf" });
-
-  //     // Create a link to download the PDF
-  //     const fileURL = URL.createObjectURL(file);
-  //     const link = document.createElement("a");
-  //     link.href = fileURL;
-  //     link.setAttribute("download", "registration.pdf"); // or any other name
-  //     document.body.appendChild(link);
-  //     link.click();
-
-  //     // Clean up
-  //     link.parentNode?.removeChild(link);
-  //     URL.revokeObjectURL(fileURL);
-  //   } catch (error) {
-  //     console.error("Error fetching PDF:", error);
-  //   }
-  // };
   const handleDownloadPdf = async () => {
     try {
       setLoading(true);
@@ -100,10 +76,6 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       setLoading(false);
     }
   };
-
-  // console.log("registeredStudents");
-  // console.log(registeredStudents);
-  // router.push(`/admin/fetchallregistration/${contest.id}`);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -118,9 +90,6 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         <DropdownMenuItem onClick={handleDownloadPdf}>
           Download PDF
         </DropdownMenuItem>
-        {/* <DropdownMenuItem onClick={handleDownPdf}>
-          Download PDF 2
-        </DropdownMenuItem> */}
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -152,6 +121,15 @@ export const columns: ColumnDef<Registration>[] = [
     accessorKey: "studentsLength",
     header: "Total Students",
   },
+  {
+    header: "Payment Proof",
+    cell: ({ row }) => {
+      // Access the paymentProof property of the row data
+      const paymentProofs = row.original.paymentProof || []; // Fallback to an empty array if undefined
+      return paymentProofs.length > 0 ? "P" : "NP";
+    },
+  },
+
   {
     id: "actions",
     cell: ({ row }) => <RegistrationActions registration={row.original} />,

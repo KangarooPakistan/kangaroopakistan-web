@@ -10,6 +10,7 @@ export async function GET(req: Request, { params }: { params: { id: string } } )
         },
         include: {
           students: true,
+          paymentProof: true,
           user:true // Include related students
       },
       });
