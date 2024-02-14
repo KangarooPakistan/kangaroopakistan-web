@@ -111,12 +111,28 @@ const FetchAllRegistrations = () => {
             <div className="bg-gradient-to-r from-blue-500 to-teal-500 rounded-lg shadow-lg p-6 text-white transform transition duration-500 hover:scale-105">
               <h2 className="font-bold text-2xl mb-4">Levels</h2>
               <ul>
-                <li className="mb-2 text-lg font-medium">Total # of PreEculier: <span className="font-bold">{preEculier}</span></li>
-                <li className="mb-2 text-lg font-medium">Total # of Eculier: <span className="font-bold">{eculier}</span></li>
-                <li className="mb-2 text-lg font-medium">Total # of Benjamin: <span className="font-bold">{benjamin}</span></li>
-                <li className="mb-2 text-lg font-medium">Total # of Cadet: <span className="font-bold">{cadet}</span></li>
-                <li className="mb-2 text-lg font-medium">Total # of Junior: <span className="font-bold">{junior}</span></li>
-                <li className="mb-2 text-lg font-medium">Total # of Student: <span className="font-bold">{student}</span></li>
+                <li className="mb-2 text-lg font-medium">
+                  Total # of PreEcolier:{" "}
+                  <span className="font-bold">{preEculier}</span>
+                </li>
+                <li className="mb-2 text-lg font-medium">
+                  Total # of Ecolier:{" "}
+                  <span className="font-bold">{eculier}</span>
+                </li>
+                <li className="mb-2 text-lg font-medium">
+                  Total # of Benjamin:{" "}
+                  <span className="font-bold">{benjamin}</span>
+                </li>
+                <li className="mb-2 text-lg font-medium">
+                  Total # of Cadet: <span className="font-bold">{cadet}</span>
+                </li>
+                <li className="mb-2 text-lg font-medium">
+                  Total # of Junior: <span className="font-bold">{junior}</span>
+                </li>
+                <li className="mb-2 text-lg font-medium">
+                  Total # of Student:{" "}
+                  <span className="font-bold">{student}</span>
+                </li>
               </ul>
             </div>
           </div>
