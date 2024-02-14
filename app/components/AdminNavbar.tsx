@@ -180,7 +180,7 @@ const AdminNavbar = () => {
                   "flex items-center justify-between w-full py-2 px-3 md:p-0 md:w-auto"
                 }
               >
-                Manage Users
+                Manage Schools
                 <svg
                   className="w-2.5 h-2.5 ms-2.5"
                   aria-hidden="true"
@@ -208,20 +208,20 @@ const AdminNavbar = () => {
                   className="py-2 text-sm text-gray-700 "
                   aria-labelledby="dropdownLargeButton"
                 >
-                  <li>
+                  {/* <li>
                     <button
                       className="block px-4 py-2 hover:bg-gray-100 rounded w-full text-left border-0"
                       onClick={handleClickRegister}
                     >
                       Register User
                     </button>
-                  </li>
+                  </li> */}
                   <li>
                     <button
                       className="block px-4 py-2 hover:bg-gray-100 rounded w-full text-left border-0"
                       onClick={handleClickUser}
                     >
-                      View All Users
+                      View All Schools
                     </button>
                   </li>
                   <li>
