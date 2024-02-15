@@ -36,8 +36,23 @@ model User {
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+  passwordResetTokens PasswordResetToken[]
+
   registrations Registration[]
 }
+model PasswordResetToken {
+  id        Int       @id @default(autoincrement())
+  token     String    @unique
+  createdAt DateTime  @default(now())
+  resetAt   DateTime?
+
+  user   User @relation(fields: [userId], references: [id])
+  userId String
+
+  @@index([userId])
+
+}
+
 
 model Registration {
   id          String       @id @default(uuid())
@@ -98,3 +113,4 @@ model PaymentProof{
   registrationId String
   @@index([registrationId])
 }
+

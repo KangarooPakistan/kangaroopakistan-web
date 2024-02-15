@@ -42,6 +42,8 @@ const Register = () => {
   const [duplicateError, setDuplicateError] = useState<string | null>(null);
   const params = useParams();
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false); // State to track if the form is submitting
+
   const [contestCh, setContestCh] = useState<string | null>();
   const [schoolId, setSchoolId] = useState<number | undefined>();
   const [schoolEmail, setSchoolEmail] = useState<number | undefined | null>();
@@ -127,6 +129,8 @@ const Register = () => {
     return false;
   };
   const onSubmit = async (data: FormData) => {
+    setIsSubmitting(true);
+
     const hasDuplicates = data.students.some((student, index) =>
       isDuplicate(data, index)
     );
@@ -167,6 +171,7 @@ const Register = () => {
           progress: undefined,
           theme: "light",
         });
+        setIsSubmitting(false);
 
         // Handle successful registration creation
       } catch (error) {
@@ -181,6 +186,8 @@ const Register = () => {
           theme: "light",
         });
         console.error("Error creating registration:", error);
+        setIsSubmitting(false);
+
         // Handle errors appropriately
       }
 
@@ -191,7 +198,6 @@ const Register = () => {
     control,
     name: "students",
   });
-
 
   const handleClassChange = (classValue: string, index: number) => {
     let levelValue = "";
@@ -353,9 +359,10 @@ const Register = () => {
         <div className="flex justify-center sm:block mt-4 sm:mt-0">
           <button
             type="submit"
+            disabled={isSubmitting} // Disable the button if isSubmitting is true
             className=" bg-green-500 hover:bg-green-600 text-white p-3 text-xs sm:text-base sm:px-4 sm:py-2 rounded"
           >
-            Submit Form
+            {isSubmitting ? "Submitting..." : "Submit Form"}
           </button>
         </div>
       </div>

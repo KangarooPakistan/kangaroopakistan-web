@@ -18,14 +18,13 @@ interface StudentData {
 export async function POST(request: Request, { params }: { params: { id: string } }) {
     try {
         const reqBody = await request.json();
-        const { schoolId, registeredBy, students,  registrationId, year, district, contestCh, schoolName } = reqBody;
-        const contestId = params.id
+        const { schoolId, registeredBy, students, registrationId, year, district, contestCh, schoolName } = reqBody;
+        const contestId = params.id;
 
-        if ( !registeredBy || !Array.isArray(students)) {
+        if (!registeredBy || !Array.isArray(students)) {
             console.log("Invalid registration data");
             return NextResponse.json({ error: "Invalid registration data" }, { status: 400 });
         }
-        console.log('----------------------------------------------------')
 
         let regId = registrationId;
         
@@ -48,27 +47,43 @@ export async function POST(request: Request, { params }: { params: { id: string 
         }
 
         const createdStudents = [];
-        const classIndexMap: { [key: string]: number } = {};
 
         for (const student of students) {
+            // Fetch the last index of the class from the database
             const existingStudent = await db.student.findFirst({
                 where: {
-                  registrationId: regId,
-                  
-                  studentName: student.studentName,
-                  class:student.class
+                    registrationId: regId,
+                    studentName: student.studentName,
+                    fatherName: student.fatherName,
+                    class: student.class
                 },
-              });
-        
-              if (existingStudent) {
+            });
+
+            if (existingStudent) {
                 console.log(`Student ${student.studentName} already exists for this registration`);
                 continue; // Skip creating a new student
-              }
-            // Generate roll number
-            const currentMaxIndex = classIndexMap[student.class] || 0;
+            }
+            const lastStudentOfClass = await db.student.findFirst({
+                where: {
+                    registrationId: regId,
+                    class: student.class,
+                },
+                orderBy: [
+                    {
+                        rollNumber: 'desc', // Order by rollNumber in descending order to get the last student
+                    }]
+            });
 
-            const rollNumber = generateRollNumber(student, currentMaxIndex, year, district, schoolId,contestCh  );
-            classIndexMap[student.class] = currentMaxIndex + 1;
+            let lastIndex = 0;
+            if (lastStudentOfClass) {
+                // Extract the index from the rollNumber
+                const rollNumberParts = lastStudentOfClass.rollNumber.split("-");
+                lastIndex = parseInt(rollNumberParts[4]); // Assuming the index is at position 4
+            }
+
+            // Generate roll number for the new student
+            const newIndex = lastIndex + 1;
+            const rollNumber = generateRollNumber(student, newIndex, year, district, schoolId, contestCh);
 
             // Create new student
             const createdStudent = await db.student.create({
@@ -92,11 +107,15 @@ export async function POST(request: Request, { params }: { params: { id: string 
     }
 }
 
+
+
+
 // ... (rest of your code)
 function generateRollNumber(student:StudentData,currentMaxIndex: number, year:string, district:string, schoolId: number, contestCh: string ) {
     const index = currentMaxIndex + 1;
 
-    return `${year}-${district}-${padNumber5(schoolId)}-${student.class}-${padNumber(index)}-${contestCh}`;
+
+    return `${year}-${district}-${padNumber5(schoolId)}-${student.class}-${padNumber(currentMaxIndex)}-${contestCh}`;
 }
 
 
@@ -104,8 +123,7 @@ function generateRollNumber(student:StudentData,currentMaxIndex: number, year:st
 export async function GET(request: Request, { params }: { params: { id: string } }) {
   try {
       const { id } = params; // Contest ID
-      console.log('-------------------------------------------')
-      console.log(id)
+
       // Retrieve registrations associated with the specified contest ID
       const registrations = await db.registration.findMany({
           where: {
@@ -115,7 +133,6 @@ export async function GET(request: Request, { params }: { params: { id: string }
             students: true, // Include related students
           },
       });
-      console.log(registrations)
 
       if (!registrations) {
           return NextResponse.json({ error: "No registrations found for this contest" }, { status: 404 });
