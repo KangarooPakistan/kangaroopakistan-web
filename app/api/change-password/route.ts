@@ -11,12 +11,12 @@ export async function PUT(request: NextRequest) {
             where: {
               token,
               createdAt: { gt: new Date(Date.now() - 1000 * 60 * 60 * 4) },
-              resetAt: null,
             },
           })
           console.log('-----------------------------------------------------')
           console.log('-----------------------------------------------------')
           console.log('-----------------------------------------------------')
+          console.log(passwordResetToken)
           if (!passwordResetToken) {
                 return NextResponse.json({ message:'Invalid token reset request. Please try resetting your password again.'}, { status: 400 });
         }
