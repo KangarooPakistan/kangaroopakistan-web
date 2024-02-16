@@ -1,12 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import { db } from "@/app/lib/prisma";
 import bcrypt from 'bcryptjs';
-import { randomUUID } from "crypto";
-import nodemailer from 'nodemailer';
 
-interface UserResetData {
-    email: string;
-}
 export async function PUT(request: NextRequest) {
     try {
         const reqBody = await request.json();

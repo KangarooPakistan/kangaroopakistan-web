@@ -62,7 +62,7 @@ const ResetPassword = () => {
         token: params.token,
         password: values.newpassword,
       };
-      await axios.put(`/api/auth/change-password`);
+      await axios.put(`/api/auth/change-password`, payload);
       form.reset();
       router.push("/dashboard");
       toast.success("🦄 Account successfully created", {
@@ -93,7 +93,7 @@ const ResetPassword = () => {
     setShowPassword(!showPassword);
   };
   const togglePasswordMatchVisibility = () => {
-    setShowMatchPassword(!showPassword);
+    setShowMatchPassword(!showMatchPassword);
   };
   return (
     <section className="bg-white">
