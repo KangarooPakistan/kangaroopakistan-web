@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
             },
         });
 
-        const resetLink = `https://enrollments.kangaroopakistan.org/new-password?token=${token}`;
+        const resetLink = `https://enrollments.kangaroopakistan.org/new-password/${token}`;
 
         await transporter.sendMail({
             from: 'info@kangaroopakistan.org',
