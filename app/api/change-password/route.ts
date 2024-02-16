@@ -20,8 +20,7 @@ export async function PUT(request: NextRequest) {
           })
 
           if (!passwordResetToken) {
-                return NextResponse.json({ message:'Invalid token reset request. Please try resetting your password again.',
-                });
+                return NextResponse.json({ message:'Invalid token reset request. Please try resetting your password again.'});
         }
         const salt  = await bcrypt.genSalt(10)
         const hashedPassword  = await bcrypt.hash(password, salt)
@@ -43,16 +42,15 @@ export async function PUT(request: NextRequest) {
         
           try {
             await db.$transaction([updateUser, updateToken])
+            return NextResponse.json({ message: "Password updated successfully" });
+
           } catch (err) {
             console.error(err)
-            return {
-              error: `An unexpected error occured. Please try again and if the problem persists, contact support.`,
-            }
+            return NextResponse.json({ message:'An unexpected error occured. Please try again and if the problem persists, contact support.'}); 
           }
         
         
         
-        return NextResponse.json({ message: "Password updated successfully" });
     } catch (error: any) {
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
