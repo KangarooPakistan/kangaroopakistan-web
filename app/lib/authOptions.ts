@@ -37,6 +37,8 @@ export const authOptions: NextAuthOptions = {
         // if(user?.password != credentials.password ) {
         //     throw new Error('Invalid password ')
         // }
+        console.log(credentials.password)
+        console.log(user.password)
         const isPasswordValid = await compare(credentials.password, user.password);
       
         if (!isPasswordValid) {

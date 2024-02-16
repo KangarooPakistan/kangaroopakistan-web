@@ -20,13 +20,15 @@ export async function PUT(request: NextRequest) {
         }
         const salt  = await bcrypt.genSalt(10)
         const hashedPassword  = await bcrypt.hash(password, salt)
-            
+            console.log("hashedPassword")
+            console.log(hashedPassword)
         const updateUser = db.user.update({
             where: { id: passwordResetToken.userId },
             data: {
               password: hashedPassword,
             },
           })
+          console.log(updateUser)
           const updateToken = db.reset.update({
             where: {
               id: passwordResetToken.id,
@@ -35,6 +37,9 @@ export async function PUT(request: NextRequest) {
               resetAt: new Date(),
             },
           })
+          console.log('Fakhira')
+          console.log(updateToken)
+
         
           try {
             await db.$transaction([updateUser, updateToken])
