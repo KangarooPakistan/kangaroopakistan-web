@@ -18,8 +18,10 @@ export async function PUT(request: NextRequest) {
           console.log('-----------------------------------------------------')
           console.log('-----------------------------------------------------')
           if (!passwordResetToken) {
-                return NextResponse.json({ message:'Invalid token reset request. Please try resetting your password again.'});
+                return NextResponse.json({ message:'Invalid token reset request. Please try resetting your password again.'}, { status: 400 });
         }
+        console.log('-----------------------------------------------------')
+
         const salt  = await bcrypt.genSalt(10)
         const hashedPassword  = await bcrypt.hash(password, salt)
             console.log("hashedPassword")
@@ -45,11 +47,11 @@ export async function PUT(request: NextRequest) {
         
           try {
             await db.$transaction([updateUser, updateToken])
-            return NextResponse.json({ message: "Password updated successfully" });
+            return NextResponse.json({ message: "Password updated successfully" }, { status: 200 });
 
           } catch (err) {
             console.error(err)
-            return NextResponse.json({ message:'An unexpected error occured. Please try again and if the problem persists, contact support.'}); 
+            return NextResponse.json({ message:'An unexpected error occured. Please try again and if the problem persists, contact support.'},{ status: 400 }); 
           }
         
         

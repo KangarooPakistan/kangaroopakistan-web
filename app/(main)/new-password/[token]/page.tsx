@@ -64,7 +64,7 @@ const ResetPassword = () => {
       };
       await axios.put(`/api/change-password`, payload);
       form.reset();
-      router.push("/dashboard");
+      router.push("/");
       toast.success("🦄 Account successfully created", {
         position: "bottom-center",
         autoClose: 5000,
