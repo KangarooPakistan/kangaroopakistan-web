@@ -3,6 +3,7 @@ import { db } from "@/app/lib/prisma";
 import bcrypt from 'bcryptjs';
 
 export async function PUT(request: NextRequest) {
+    console.log(request)
     try {
         const reqBody = await request.json();
         const { token, password } = reqBody;
