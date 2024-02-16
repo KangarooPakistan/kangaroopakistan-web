@@ -10,7 +10,6 @@ export async function PUT(request: NextRequest) {
         const passwordResetToken = await db.reset.findUnique({
             where: {
               token,
-              createdAt: { gt: new Date(Date.now() - 1000 * 60 * 60 * 4) },
             },
           })
           console.log(token)

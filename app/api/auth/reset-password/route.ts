@@ -21,13 +21,13 @@ export async function POST(request: NextRequest) {
         }
 
         const token = `${randomUUID()}${randomUUID()}`.replace(/-/g, '');
-        const expiry = new Date(Date.now() + 30 * 60 * 1000); // Token expires in 30 minutes
+        // Token expires in 30 minutes
         console.log("userExists.id")
         console.log(userExists.id)
         const resetToken =await db.reset.create({
             data: {
                 userId: userExists.id,
-                token: `${randomUUID()}${randomUUID()}`.replace(/-/g, ''),
+                token: token
               },
         });
 
