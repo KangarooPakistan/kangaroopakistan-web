@@ -13,11 +13,9 @@ export async function GET(request: NextRequest,
                 user: true, // Include the related User record
             },
         });
-        console.log(registration)
     } 
 
         catch (error) {
-            console.log('error')
         }
 
 }

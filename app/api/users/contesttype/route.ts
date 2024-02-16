@@ -27,8 +27,6 @@ export async function POST(request: NextRequest) {
         } else{
           uppercaseContestCh = contestCh;
         }
-        console.log("uppercaseContestCh")
-        console.log(uppercaseContestCh)
         const contestTypeData: ContestTypeData = {
           contestName: contestName,
           imageUrl: imageUrl,
@@ -61,7 +59,6 @@ export async function GET(request: NextRequest) {
     try {
       // Fetch all rows from the contestType table
       const contestTypes = await db.contestType.findMany();
-      console.log(contestTypes)
       // Return the contestTypes as JSON response
       return NextResponse.json(contestTypes);
     } catch (error: any) {

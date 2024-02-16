@@ -50,7 +50,6 @@ const Frontend = () => {
       axios
         .get(`/api/users/profile/${session?.user.id}`)
         .then((response) => {
-          console.log(response.data);
           setUserData(response.data as UserData);
           setLoading(false);
         })
@@ -62,7 +61,7 @@ const Frontend = () => {
     fetchData();
   }, []);
   const handleProfile = () => {
-    console.log("kainat");
+    
 
     if (mySession && role === "User") {
       router.push(`/user/profile/${mySession}`);

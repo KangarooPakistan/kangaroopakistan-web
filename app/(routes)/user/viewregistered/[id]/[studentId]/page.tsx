@@ -85,7 +85,6 @@ const EditStudent = () => {
       });
       handleClassChange(response.data.class);
       setData(response.data);
-      console.log(response);
     };
     fetchData();
   }, [form]);
@@ -125,7 +124,6 @@ const EditStudent = () => {
     }
   };
   const handleClassChange = (classValue: string) => {
-    console.log("-----------------------------------------");
     let levelValue = "";
     switch (classValue) {
       case "01":
@@ -156,10 +154,8 @@ const EditStudent = () => {
         levelValue = ""; // or any default value
         break;
     }
-    console.log("-----------------------------------");
 
     setValue("level", levelValue);
-    console.log("-----------------------------------");
   };
 
   return (

@@ -17,11 +17,9 @@ const ViewAllRecipts = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log(params.registrationId);
       const id = Array.isArray(params.registrationId)
         ? params.registrationId[0]
         : params.registrationId;
-      console.log(id);
       if (id) {
         setRegistrationId(id);
         const registeredStudents = await axios.get(
@@ -30,8 +28,6 @@ const ViewAllRecipts = () => {
         setTotalStudents(registeredStudents.data[0].students.length);
 
         const response = await axios.get(`/api/users/paymentproof/${id}`);
-        console.log("--------response--------------");
-        console.log(response);
         setPaymentProof(response.data);
       }
     };

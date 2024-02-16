@@ -39,7 +39,7 @@ const AddImageModal = () => {
   const [file, setFile] = useState<File | undefined>(undefined);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { isOpen, onClose, type, data } = useModal();
-  console.log(data);
+  
   const [uploadedFileUrl, setUploadedFileUrl] = useState<string | undefined>(
     undefined
   );
@@ -129,8 +129,6 @@ const AddImageModal = () => {
           imageUrl: awsUrl,
           registrationId: data.registrationId,
         };
-        console.log(data.registrationId);
-        console.log(awsUrl);
 
         await axios.post("/api/users/paymentproof", payload);
         form.reset();

@@ -68,21 +68,15 @@ const Register = () => {
       setContestCh(resp.data.contestCh);
       const endDate = new Date(resp.data.endDate);
       const contestYear = getYearInTwoDigits(endDate);
-      console.log(contestYear);
       setYear(contestYear);
-      console.log(resp);
       const session = await getSession();
       const response = await axios.get(
         `/api/users/getuserbyemail/${session?.user.email}`
       );
-      console.log("response");
-      console.log(response);
       const regId = await axios.get(
         `/api/users/contests/${params.id}/${response.data.schoolId}`
       );
-      console.log(regId);
       setRegistrationId(regId.data.id);
-      console.log(response.data.district);
       setDistrict(response.data.district);
       setSchoolName(response.data.schoolName);
       setSchoolId(response.data.schoolId);
@@ -140,7 +134,6 @@ const Register = () => {
       setDuplicateError("Name and Father's name must be unique");
     } else {
       // Proceed with form submission
-      console.log(data);
       const studentsArray = data.students;
       const payload = {
         students: studentsArray,
@@ -152,14 +145,12 @@ const Register = () => {
         schoolId: schoolId,
         registeredBy: schoolEmail,
       };
-      console.log(payload);
       try {
         const response = await axios.post(
           `/api/users/contests/${params.id}/registrations`,
           payload
         );
 
-        console.log("Registration created successfully:", response.data);
         router.push(`/user/viewregistered/${params.id}`);
         toast.success("🦄 Student registered successfully", {
           position: "bottom-center",

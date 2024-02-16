@@ -49,11 +49,9 @@ const CreateContest = () => {
       await axios
         .get(`/api/users/contesttype/${params.id}`)
         .then((resp) => {
-          console.log(resp.data.contestCh);
           setData(resp.data.contestCh);
         })
         .catch((error) => {
-          console.log(error);
         });
     };
     fetch();
@@ -71,9 +69,7 @@ const CreateContest = () => {
 
   const isLoading = form.formState.isSubmitting;
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
 
-    console.log(values.startDate.toISOString());
 
     const payload = {
       name: values.name, // Spread the form values
@@ -82,8 +78,6 @@ const CreateContest = () => {
       contestTypeId: params.id,
       contestCh: data,
     };
-    // console.log(`/api/users/contests`);
-    // console.log(params.id);
     try {
       await axios.post("/api/users/contests", payload);
       await router.push(`/admin/contesttypes/${params.id}/viewcontest`);
@@ -98,7 +92,6 @@ const CreateContest = () => {
         theme: "light",
       });
     } catch (error) {
-      console.log(error);
       toast.error(" " + error, {
         position: "top-right",
         autoClose: 5000,
@@ -126,8 +119,7 @@ const CreateContest = () => {
     //   timeZoneName: "short",
     // });
 
-    // console.log('kainat')
-    // console.log(formattedDate); // Output: "Sat Jan 27 2024 19:59:11 GMT+0500 (Pakistan Standard Time)"
+   
   };
   return (
     <>

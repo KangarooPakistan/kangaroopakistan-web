@@ -3,36 +3,29 @@ import { db } from "@/app/lib/prisma";
 import bcrypt from 'bcryptjs';
 
 export async function PUT(request: NextRequest) {
-    console.log(request)
     try {
         const reqBody = await request.json();
         const { token, password } = reqBody;
         const passwordResetToken = await db.reset.findUnique({
             where: {
               token,
+              createdAt: { gt: new Date(Date.now() - 1000 * 60 * 60 * 4) },
+              resetAt: null,
             },
           })
-          console.log(token)
-          console.log('-----------------------------------------------------')
-          console.log('-----------------------------------------------------')
-          console.log('-----------------------------------------------------')
-          console.log(passwordResetToken)
           if (!passwordResetToken) {
                 return NextResponse.json({ message:'Invalid token reset request. Please try resetting your password again.'}, { status: 400 });
         }
-        console.log('-----------------------------------------------------')
 
         const salt  = await bcrypt.genSalt(10)
         const hashedPassword  = await bcrypt.hash(password, salt)
-            console.log("hashedPassword")
-            console.log(hashedPassword)
+
         const updateUser = db.user.update({
             where: { id: passwordResetToken.userId },
             data: {
               password: hashedPassword,
             },
           })
-          console.log(updateUser)
           const updateToken = db.reset.update({
             where: {
               id: passwordResetToken.id,
@@ -41,8 +34,6 @@ export async function PUT(request: NextRequest) {
               resetAt: new Date(),
             },
           })
-          console.log('Fakhira')
-          console.log(updateToken)
 
         
           try {

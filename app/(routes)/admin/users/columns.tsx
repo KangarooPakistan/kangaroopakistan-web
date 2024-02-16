@@ -30,7 +30,6 @@ const RoleActions: React.FC<UserActionsProps> = ({ user }) => {
   const { onOpen } = useModal();
 
   const handleView = () => {
-    console.log(user);
     router.push(`/admin/userprofile/${user.id}`);
   };
   

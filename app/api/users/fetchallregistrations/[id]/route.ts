@@ -3,7 +3,6 @@ import { db } from "@/app/lib/prisma";
 
 export async function GET(req: Request, { params }: { params: { id: string } } ){
     try {
-      console.log('-----------------------------------------')
       const registrations = await db.registration.findMany({
         where: {
           contestId: params.id

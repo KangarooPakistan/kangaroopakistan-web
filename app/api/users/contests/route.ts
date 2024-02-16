@@ -22,7 +22,6 @@ export async function POST(request: NextRequest) {
       const reqBody = await request.json();
       const { name, startDate, endDate, contestTypeId, contestDate, resultDate, contestCh } = reqBody;
 
-      console.log(endDate)
       const contestData: ContestData = {
         name,
         startDate: new Date(startDate),
@@ -61,8 +60,7 @@ export  async function GET(req: NextRequest, res: NextResponse, ) {
 
     const contestTypeId = url.searchParams.get("contestTypeId")
     // const take = url.searchParams.get("take")
-    console.log(typeof(contestTypeId))
-    console.log('kainat')
+   
     // Optionally, you can validate if contestTypeId is provided
     if (!contestTypeId) {
       return NextResponse.json({ error: "Missing contestTypeId" }, { status: 401 });

@@ -10,7 +10,6 @@ const Users = () => {
     async function fetchContestTypes() {
       try {
         const response = await axios.get("/api/users/allusers"); // Replace with your actual API route URL
-        console.log(response.data);
         setUsers(response.data);
       } catch (error) {
         console.error("Error:", error);

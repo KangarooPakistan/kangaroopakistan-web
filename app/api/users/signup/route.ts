@@ -34,8 +34,6 @@ export async function POST(request: NextRequest){
             bankTitle,p_fName,p_mName, p_lName ,p_contact, p_phone, p_email , c_fName,c_mName
             ,c_lName, c_contact, c_phone, c_email, c_accountDetails,schoolAddress
         } = reqBody;
-        console.log(reqBody)
-        console.log(typeof schoolId)
         const userExists = await db.user.findUnique({
             where: {
                 email: reqBody.email

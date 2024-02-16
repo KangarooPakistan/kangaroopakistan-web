@@ -26,10 +26,8 @@ const DeleteSchool = () => {
   //   }, [isOpen, type]);
 
   const handleDelete = async () => {
-    console.log(data.id);
     try {
       const response = await axios.delete(`/api/users/deleteusers/${data.id}`);
-      console.log(response) // Replace ":id" with the actual ID of the student to be deleted
       toast.success("User successfully deleted", {
         position: "bottom-center",
         autoClose: 5000,

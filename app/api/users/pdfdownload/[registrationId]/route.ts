@@ -15,7 +15,6 @@ interface Student {
   }
 export async function GET(request: Request, 
     { params }: { params: { registrationId: string } }){
-        console.log(params.registrationId)
         try {
             const registrations = await db.registration.findMany({
                 where: {
@@ -28,10 +27,7 @@ export async function GET(request: Request,
                     // Add other related fields if necessary
                 },
             });
-            console.log('--------------------------------------')
-            console.log('--------------------------------------')
-            console.log('--------------------------------------')
-            console.log(registrations)
+        
             const studentsArray: Student[] = [];
 
             // Loop through registrations
@@ -63,15 +59,11 @@ export async function GET(request: Request,
         
                 studentsArray.push(studentObj);
               }
-              console.log(studentsArray)
-              console.log("studentsArray")
-              console.log(studentsArray.length)
             }
         
              
               return NextResponse.json(studentsArray, { status: 200 });
         } catch (error) {
-            console.log(error)
             return NextResponse.json(params.registrationId,  { status: 400 });
             
         }

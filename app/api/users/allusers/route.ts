@@ -10,7 +10,6 @@ export async function GET(request: NextRequest) {
         try {
         // Fetch all rows from the contestType table
         const contestTypes = await db.user.findMany();
-        console.log(contestTypes)
         // Return the contestTypes as JSON response
         return NextResponse.json(contestTypes);
         } catch (error: any) {

@@ -27,7 +27,6 @@ type ContestActionsProps = {
 };
 const ContestActions: React.FC<ContestActionsProps> = ({ contest }) => {
   const router = useRouter();
-  console.log(contest);
   const handleRegister = () => {
     router.push(`/user/enrollstudents/${contest.id}`);
   };

@@ -34,7 +34,6 @@ const ContestActions: React.FC<StudentActionsProps> = ({ student }) => {
   const { onOpen } = useModal();
 
   const handleView = () => {
-    console.log(student);
     router.push(`/admin/viewallrecipts/${student.registrationId}`);
 
     // router.push(`/admin/viewregistered/${student.registrationId}`);

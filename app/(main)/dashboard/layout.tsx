@@ -12,7 +12,6 @@ export default async function DashboardLayout({
   let isAdmin = session?.user?.role === "Admin";
   // isAdmin = false;
 
-  console.log(session);
   return (
     <>
       {isAdmin ? (

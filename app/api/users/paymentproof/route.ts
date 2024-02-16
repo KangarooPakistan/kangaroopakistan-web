@@ -11,7 +11,6 @@ export async function POST(request: Request) {
             }
           });
       
-          console.log('Payment Proof created:', paymentProof);
           return NextResponse.json(paymentProof,  { status: 200 });
       
         } catch (error: any) {

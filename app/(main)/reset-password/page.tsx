@@ -38,7 +38,6 @@ const ResetPassword = () => {
   });
   const isLoading = form.formState.isSubmitting;
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
     const payload = {
       email: values.email,
     };

@@ -9,7 +9,6 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     const { currentPassword, newPassword } = reqBody; // Get the current and new passwords from the request body
 
 
-    console.log(reqBody)
     // Find the user by ID
     const user = await db.user.findUnique({
       where: {

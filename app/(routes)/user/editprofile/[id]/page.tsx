@@ -170,7 +170,6 @@ const UserRegister = () => {
   useEffect(() => {
     const fetchData = async () => {
       const response = await axios.get(`/api/users/editprofile/${params.id}`);
-      console.log(response.data);
       setData(response.data);
       setSchoolIdFromBE(response.data.schoolId);
 
@@ -202,8 +201,6 @@ const UserRegister = () => {
 
   const isLoading = form.formState.isSubmitting;
   const onSubmit = async (values: UserData) => {
-    console.log(values);
-    console.log(data);
     try {
       const payload = {
         ...values,
@@ -211,7 +208,6 @@ const UserRegister = () => {
         // Spread the form values
         role: "User", // Add the additional string
       };
-      console.log(payload);
       await axios.put(`/api/users/editprofile/${params.id}`, payload);
       form.reset();
       router.push(`/user/profile/${params.id}`);
@@ -236,7 +232,6 @@ const UserRegister = () => {
         progress: undefined,
         theme: "light",
       });
-      console.log(error);
     }
   };
   return (

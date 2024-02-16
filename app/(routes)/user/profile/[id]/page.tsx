@@ -47,7 +47,6 @@ function UserProfile({ params }: UserProfileProps) {
     axios
       .get(`/api/users/profile/${params.id}`)
       .then((response) => {
-        console.log(response.data);
         setUserData(response.data as UserData);
         setLoading(false);
       })

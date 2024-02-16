@@ -132,13 +132,11 @@ const UserRegister = () => {
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
     try {
       const payload = {
         ...values, // Spread the form values
         role: "User", // Add the additional string
       };
-      console.log(payload);
       await axios.post("/api/users/signup", payload);
       form.reset();
       await router.push("/dashboard");
@@ -163,7 +161,6 @@ const UserRegister = () => {
         progress: undefined,
         theme: "light",
       });
-      console.log(error);
     }
   };
 

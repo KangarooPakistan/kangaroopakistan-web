@@ -26,7 +26,7 @@ const DeleteStudent = () => {
   //   }, [isOpen, type]);
 
   const handleDelete = async () => {
-    console.log(data.id);
+    
     try {
       const response = await axios.delete(
         `/api/users/deletestudent/${data.id}`

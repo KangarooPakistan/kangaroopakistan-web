@@ -28,13 +28,11 @@ const ViewRegistered = () => {
         const regId = await axios.get(
           `/api/users/contests/${params.id}/${response.data.schoolId}`
         );
-        console.log(regId);
         setRegistrationId(regId.data.id);
         const registeredStudents = await axios.get(
           `/api/users/contests/${params.id}/registrations/${regId.data.id}`
         );
 
-        console.log(registeredStudents);
         setStudents(registeredStudents.data);
       } catch (error) {
         console.error("Error:", error);

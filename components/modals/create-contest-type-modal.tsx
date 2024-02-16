@@ -132,7 +132,6 @@ const CreateContestTypeModal = () => {
             },
           });
         } catch (error) {
-          console.log(error);
           toast.error(" " + error, {
             position: "top-right",
             autoClose: 5000,

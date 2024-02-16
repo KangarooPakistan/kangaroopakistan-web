@@ -73,7 +73,6 @@ const Register = () => {
         progress: undefined,
         theme: "light",
       });
-      console.log(error);
     }
   };
   return (

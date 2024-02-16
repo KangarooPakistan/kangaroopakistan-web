@@ -50,7 +50,6 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
 
   const router = useRouter();
   const handleView = () => {
-    console.log(registration);
     router.push(`/admin/viewallbyschool/${registration.id}`);
   };
   async function generatePdfBlob(students: Student[]) {

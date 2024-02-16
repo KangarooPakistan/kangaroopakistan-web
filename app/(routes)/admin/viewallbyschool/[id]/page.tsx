@@ -21,7 +21,6 @@ const ViewAllBySchool = () => {
   useEffect(() => {
     const fetchData = async () => {
       const res = await axios.get(`/api/users/registrations/${params.id}`);
-      console.log(res);
     };
     fetchData();
   }, []);
@@ -32,7 +31,6 @@ const ViewAllBySchool = () => {
           `/api/users/registrations/${params.id}`
         );
 
-        console.log(registeredStudents);
         const data: ItemType[] = registeredStudents.data;
 
         const extractedStudents: Student[] = data.flatMap((item: ItemType) =>
@@ -41,7 +39,6 @@ const ViewAllBySchool = () => {
             schoolId: item.schoolId,
           }))
         );
-        console.log(extractedStudents);
         setStudents(extractedStudents);
       } catch (error) {
         console.error("Error:", error);

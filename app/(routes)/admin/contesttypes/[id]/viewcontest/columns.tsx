@@ -34,7 +34,6 @@ const ContestActions: React.FC<ContestActionsProps> = ({ contest }) => {
     router.push(`/admin/viewregistered/${contest.id}`);
   };
   const handleAllRegistrationsView = () => {
-    console.log(contest.id);
     router.push(`/admin/fetchallregistration/${contest.id}`);
   };
   const handleEdit = () => {

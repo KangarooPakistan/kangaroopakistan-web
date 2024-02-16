@@ -57,7 +57,6 @@ const ResetPassword = () => {
   const isLoading = form.formState.isSubmitting;
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      console.log(values);
       const payload = {
         token: params.token,
         password: values.newpassword,
@@ -86,7 +85,6 @@ const ResetPassword = () => {
         progress: undefined,
         theme: "light",
       });
-      console.log(error);
     }
   };
   const togglePasswordVisibility = () => {
@@ -151,14 +149,14 @@ const ResetPassword = () => {
                   name="repeatnewpassword"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="label">Password</FormLabel>
+                      <FormLabel className="label">Repeat Password</FormLabel>
                       <FormControl>
                         <div className="relative">
                           <Input
                             type={showMatchPassword ? "text" : "password"}
                             disabled={isLoading}
                             className="input pl-10" // Adjust padding to accommodate the icon
-                            placeholder="Enter your password"
+                            placeholder="Re-Enter your password"
                             {...field}
                           />
                           {showMatchPassword ? (

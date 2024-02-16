@@ -40,7 +40,7 @@ const FetchAllRegistrations = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log(params.id);
+      
 
       const res = await axios.get(
         `/api/users/fetchallregistrations/${params.id}`
@@ -55,9 +55,7 @@ const FetchAllRegistrations = () => {
         },
         0
       );
-      console.log("Shahmeer---");
-      console.log(totalPayments);
-
+      
       setTotalPaymentDone(totalPayments); //
 
       const studentsArrays = registrations.map((reg: Register) => reg.students);
@@ -65,8 +63,7 @@ const FetchAllRegistrations = () => {
 
       // Flatten the array of students arrays into a single array of students
       setAllStudents(flattenedStudents);
-      console.log("-----");
-      console.log(flattenedStudents);
+      
       // Count students at each level
       const levelCounts = flattenedStudents.reduce(
         (acc: LevelCounts, student: Student) => {
@@ -96,11 +93,9 @@ const FetchAllRegistrations = () => {
         email: obj.user.email,
         paymentProof: obj.paymentProof, // This assumes paymentProof is within the user object
       }));
-      console.log("aisha");
-      console.log(extractedData);
+     
       setData(extractedData);
-      console.log(res);
-      console.table(res);
+     
     };
     fetchData();
   }, []);

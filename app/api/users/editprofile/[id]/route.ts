@@ -60,7 +60,6 @@ export async function PUT(request: NextRequest,
         c_email,
         c_accountDetails,
       } = reqBody;
-      console.log(reqBody)
       // Check if the user with the specified ID exists
       const existingUser = await db.user.findUnique({
         where: {

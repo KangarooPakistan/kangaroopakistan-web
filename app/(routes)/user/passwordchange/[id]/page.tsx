@@ -51,14 +51,12 @@ const PasswordChange = () => {
 
   const isLoading = form.formState.isSubmitting;
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
 
     try {
       const payload = {
         currentPassword: values.currentPassword,
         newPassword: values.newpassword,
       };
-      console.log(payload);
       await axios.put(`/api/users/updatepassword/${params.id}`, payload);
       form.reset();
       await router.push("/dashboard");
@@ -73,7 +71,6 @@ const PasswordChange = () => {
         theme: "light",
       });
     } catch (error) {
-      console.log(error);
       toast.error(" Error occured while updating password", {
         position: "top-right",
         autoClose: 5000,

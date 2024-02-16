@@ -3,7 +3,6 @@ import { db } from "@/app/lib/prisma";
 export async function GET(request: Request, 
         { params }: { params: { email: string } }
         ) {
-            console.log(params)
         try {
         // Fetch all rows from the contestType table
         const user= await db.user.findUnique({
@@ -11,7 +10,6 @@ export async function GET(request: Request,
               email: params.email
             }
           });
-        console.log(user)
         // Return the contestTypes as JSON response
         return NextResponse.json(user);
         } catch (error: any) {

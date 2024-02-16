@@ -94,7 +94,6 @@ const UpdateContest = () => {
           edate.getDate()
         );
 
-        console.log(response.data);
         setData(response.data);
         setCid(response.data.id);
 
@@ -106,7 +105,6 @@ const UpdateContest = () => {
           resultDate: response.data.resultDate ?? "",
         });
       } catch (error) {
-        console.log(error);
       }
     };
     fetch();
@@ -114,9 +112,7 @@ const UpdateContest = () => {
 
   const isLoading = form.formState.isSubmitting;
   const onSubmit = async (values: Contest) => {
-    console.log("hello", values);
 
-    // console.log(values.startDate.toISOString());
 
     const payload = {
       id: contestId,
@@ -142,7 +138,7 @@ const UpdateContest = () => {
         theme: "light",
       });
     } catch (error) {
-      console.log(error);
+      
       toast.error(" " + error, {
         position: "top-right",
         autoClose: 5000,

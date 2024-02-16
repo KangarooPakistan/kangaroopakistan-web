@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 
 export async function GET(request: Request, 
     { params }: { params: { registrationId: string, studentId: string; } }){
-        console.log(params.registrationId)
         try {
             const studentIdInt = parseInt(params.studentId, 10); // The 10 is for base-10 (decimal)
 
@@ -26,7 +25,6 @@ export async function PUT(request: Request, { params }: { params: { registration
             // Parse the JSON body from the request
             const updateData = await request.json();
 
-            console.log(updateData)
             const dataToUpdate = {
                 studentName: updateData.studentName,
                 class: updateData.class,

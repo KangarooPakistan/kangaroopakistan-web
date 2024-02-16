@@ -8,7 +8,6 @@ export async function DELETE(request: Request, {
       id: string;
     };
   }) {
-    console.log(params)
     try {
       const { id } = params;
      

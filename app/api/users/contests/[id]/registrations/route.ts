@@ -22,7 +22,6 @@ export async function POST(request: Request, { params }: { params: { id: string 
         const contestId = params.id;
 
         if (!registeredBy || !Array.isArray(students)) {
-            console.log("Invalid registration data");
             return NextResponse.json({ error: "Invalid registration data" }, { status: 400 });
         }
 
@@ -31,7 +30,6 @@ export async function POST(request: Request, { params }: { params: { id: string 
         // Create a new registration if no registrationId is provided
         if (!regId) {
             if (!contestId) {
-                console.log("Contest ID is required for new registration");
                 return NextResponse.json({ error: "Contest ID is required for new registration" }, { status: 400 });
             }
 
@@ -60,7 +58,6 @@ export async function POST(request: Request, { params }: { params: { id: string 
             });
 
             if (existingStudent) {
-                console.log(`Student ${student.studentName} already exists for this registration`);
                 continue; // Skip creating a new student
             }
             const lastStudentOfClass = await db.student.findFirst({

@@ -25,7 +25,6 @@ const ViewRegistered = () => {
           `/api/users/contests/${params.id}/registrations`
         );
 
-        console.log(registeredStudents);
         const data: ItemType[] = registeredStudents.data;
 
         const extractedStudents: Student[] = data.flatMap((item: ItemType) =>
@@ -34,7 +33,6 @@ const ViewRegistered = () => {
             schoolId: item.schoolId,
           }))
         );
-        console.log(extractedStudents);
         setStudents(extractedStudents);
       } catch (error) {
         console.error("Error:", error);
