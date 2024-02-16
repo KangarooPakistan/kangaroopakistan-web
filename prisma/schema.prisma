@@ -7,48 +7,47 @@ datasource db {
 generator client {
   provider = "prisma-client-js"
 }
-model User {
-  id            String      @id @default(uuid()) @unique
-  email         String   @unique
-  password      String
-  role          String   @default("Admin") // 'admin', 'user', etc.
-  schoolId      Int     @unique  @default(autoincrement())
-  schoolName    String?  // Optional: only for non-admin users
-  contactNumber String?
-  schoolAddress String?
-  district String?
-  tehsil String?
-  fax String?
-  bankTitle String?
-  p_fName String?
-  p_mName String?
-  p_lName String?
-  p_contact String?
-  p_phone String?
-  p_email String?
-  c_fName String?
-  c_mName String?
-  c_lName String?
-  c_contact String?
-  c_phone String?
-  c_email String?
-  c_accountDetails String?
+  model User {
+    id            String      @id @default(uuid()) @unique
+    email         String   @unique
+    password      String
+    role          String   @default("Admin") // 'admin', 'user', etc.
+    schoolId      Int     @unique  @default(autoincrement())
+    schoolName    String?  // Optional: only for non-admin users
+    contactNumber String?
+    schoolAddress String?
+    district String?
+    tehsil String?
+    fax String?
+    bankTitle String?
+    p_fName String?
+    p_mName String?
+    p_lName String?
+    p_contact String?
+    p_phone String?
+    p_email String?
+    c_fName String?
+    c_mName String?
+    c_lName String?
+    c_contact String?
+    c_phone String?
+    c_email String?
+    c_accountDetails String?
 
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  passwordResetTokens PasswordResetToken[]
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
+    passwordResetTokens Reset[]
 
-  registrations Registration[]
-}
-model PasswordResetToken {
+    registrations Registration[]
+  }
+model Reset {
   id        Int       @id @default(autoincrement())
   token     String    @unique
   createdAt DateTime  @default(now())
   resetAt   DateTime?
-
-  user   User @relation(fields: [userId], references: [id])
   userId String
 
+  user   User @relation(fields: [userId], references: [id])
   @@index([userId])
 
 }
