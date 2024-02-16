@@ -2,6 +2,8 @@
 import React, { useEffect, useState } from "react";
 import { EyeOff, Eye } from "lucide-react";
 
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -13,15 +15,18 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import axios from "axios";
 
 const ResetPassword = () => {
   const [error, setError] = useState("");
+  const params = useParams();
   const [success, setSuccess] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [showMatchPassword, setShowMatchPassword] = useState(false);
   const router = useRouter();
   const formSchema = z
     .object({
@@ -51,9 +56,45 @@ const ResetPassword = () => {
   });
   const isLoading = form.formState.isSubmitting;
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+    try {
+      console.log(values);
+      const payload = {
+        token: params.token,
+        password: values.newpassword,
+      };
+      await axios.put(`/api/auth/change-password`);
+      form.reset();
+      router.push("/dashboard");
+      toast.success("🦄 Account successfully created", {
+        position: "bottom-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    } catch (error) {
+      toast.error(" " + error, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      console.log(error);
+    }
   };
-
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+  const togglePasswordMatchVisibility = () => {
+    setShowMatchPassword(!showPassword);
+  };
   return (
     <section className="bg-white">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto h-screen lg:py-0">
@@ -79,12 +120,26 @@ const ResetPassword = () => {
                     <FormItem>
                       <FormLabel className="label">Password</FormLabel>
                       <FormControl>
-                        <Input
-                          disabled={isLoading}
-                          className="input"
-                          placeholder="Enter your email"
-                          {...field}
-                        />
+                        <div className="relative">
+                          <Input
+                            type={showPassword ? "text" : "password"}
+                            disabled={isLoading}
+                            className="input pl-10" // Adjust padding to accommodate the icon
+                            placeholder="Enter your password"
+                            {...field}
+                          />
+                          {showPassword ? (
+                            <Eye
+                              className="absolute top-3 right-3 cursor-pointer"
+                              onClick={togglePasswordVisibility}
+                            />
+                          ) : (
+                            <EyeOff
+                              className="absolute top-3 right-3 cursor-pointer"
+                              onClick={togglePasswordVisibility}
+                            />
+                          )}
+                        </div>
                       </FormControl>
 
                       <FormMessage />
@@ -98,12 +153,26 @@ const ResetPassword = () => {
                     <FormItem>
                       <FormLabel className="label">Password</FormLabel>
                       <FormControl>
-                        <Input
-                          disabled={isLoading}
-                          className="input"
-                          placeholder="Enter your email"
-                          {...field}
-                        />
+                        <div className="relative">
+                          <Input
+                            type={showMatchPassword ? "text" : "password"}
+                            disabled={isLoading}
+                            className="input pl-10" // Adjust padding to accommodate the icon
+                            placeholder="Enter your password"
+                            {...field}
+                          />
+                          {showMatchPassword ? (
+                            <Eye
+                              className="absolute top-3 right-3 cursor-pointer"
+                              onClick={togglePasswordMatchVisibility}
+                            />
+                          ) : (
+                            <EyeOff
+                              className="absolute top-3 right-3 cursor-pointer"
+                              onClick={togglePasswordMatchVisibility}
+                            />
+                          )}
+                        </div>
                       </FormControl>
 
                       <FormMessage />
@@ -117,7 +186,7 @@ const ResetPassword = () => {
                     variant="default"
                     className="px-4"
                   >
-                    Sign In
+                    Submit
                   </Button>
                 </div>
                 <p className="text-sm font-light text-gray-500 w-full text-center">

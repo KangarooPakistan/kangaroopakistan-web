@@ -1,7 +1,8 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { EyeOff, Eye } from "lucide-react";
-
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -41,8 +42,32 @@ const ResetPassword = () => {
     const payload = {
       email: values.email,
     };
-    const response = await axios.post(`/api/auth/reset-password/`, payload);
-    console.log(response);
+    try {
+      const response = await axios.post(`/api/auth/reset-password/`, payload);
+      form.reset();
+      await router.push("/");
+      toast.success("🦄 Please check your email", {
+        position: "bottom-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    } catch (error) {
+      toast.error(" " + error, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
   };
 
   return (
@@ -89,7 +114,7 @@ const ResetPassword = () => {
                     variant="default"
                     className="px-4"
                   >
-                    Sign In
+                    Submit
                   </Button>
                 </div>
                 <p className="text-sm font-light text-gray-500 w-full text-center">
