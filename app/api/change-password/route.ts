@@ -13,6 +13,7 @@ export async function PUT(request: NextRequest) {
               createdAt: { gt: new Date(Date.now() - 1000 * 60 * 60 * 4) },
             },
           })
+          console.log(token)
           console.log('-----------------------------------------------------')
           console.log('-----------------------------------------------------')
           console.log('-----------------------------------------------------')
