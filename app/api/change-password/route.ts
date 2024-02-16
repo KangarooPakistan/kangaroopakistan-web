@@ -14,7 +14,9 @@ export async function PUT(request: NextRequest) {
               resetAt: null,
             },
           })
-
+          console.log('-----------------------------------------------------')
+          console.log('-----------------------------------------------------')
+          console.log('-----------------------------------------------------')
           if (!passwordResetToken) {
                 return NextResponse.json({ message:'Invalid token reset request. Please try resetting your password again.'});
         }
