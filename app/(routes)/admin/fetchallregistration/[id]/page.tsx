@@ -29,6 +29,7 @@ interface RegistrationWithPaymentProof extends Registration {
 const FetchAllRegistrations = () => {
   const params = useParams();
   const [data, setData] = useState<Registration[]>([]);
+  const [totalSchools, setTotalSchools] = useState<number>(0);
   const [allStudents, setAllStudents] = useState<Student[]>([]);
   const [preEculier, setPreEculier] = useState<number>(0);
   const [totalPaymentDone, setTotalPaymentDone] = useState<number>(0);
@@ -40,13 +41,13 @@ const FetchAllRegistrations = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      
-
       const res = await axios.get(
         `/api/users/fetchallregistrations/${params.id}`
       );
 
       const registrations = res.data;
+      setTotalSchools(res.data.length);
+      console.log(res.data.length);
       const totalPayments = registrations.reduce(
         (acc: number, curr: Registration) => {
           return (
@@ -55,7 +56,7 @@ const FetchAllRegistrations = () => {
         },
         0
       );
-      
+
       setTotalPaymentDone(totalPayments); //
 
       const studentsArrays = registrations.map((reg: Register) => reg.students);
@@ -63,7 +64,7 @@ const FetchAllRegistrations = () => {
 
       // Flatten the array of students arrays into a single array of students
       setAllStudents(flattenedStudents);
-      
+
       // Count students at each level
       const levelCounts = flattenedStudents.reduce(
         (acc: LevelCounts, student: Student) => {
@@ -93,9 +94,8 @@ const FetchAllRegistrations = () => {
         email: obj.user.email,
         paymentProof: obj.paymentProof, // This assumes paymentProof is within the user object
       }));
-     
+
       setData(extractedData);
-     
     };
     fetchData();
   }, []);
@@ -108,6 +108,10 @@ const FetchAllRegistrations = () => {
               <h2 className="font-bold text-2xl mb-4">Total # of Students</h2>
               <p className="text-lg font-semibold">{allStudents.length}</p>
               <h2 className="font-bold text-2xl mb-4">
+                Total # of Schools Registered in Contest
+              </h2>
+              <p className="text-lg font-semibold">{totalSchools}</p>
+              <h2 className="font-bold text-2xl mb-4">
                 Total # of Payments Done
               </h2>
               <p className="text-lg font-semibold">{totalPaymentDone}</p>
@@ -118,11 +122,11 @@ const FetchAllRegistrations = () => {
               <h2 className="font-bold text-2xl mb-4">Levels</h2>
               <ul>
                 <li className="mb-2 text-lg font-medium">
-                  Total # of PreEculier:{" "}
+                  Total # of Preecolier:{" "}
                   <span className="font-bold">{preEculier}</span>
                 </li>
                 <li className="mb-2 text-lg font-medium">
-                  Total # of Eculier:{" "}
+                  Total # of Ecolier:{" "}
                   <span className="font-bold">{eculier}</span>
                 </li>
                 <li className="mb-2 text-lg font-medium">
