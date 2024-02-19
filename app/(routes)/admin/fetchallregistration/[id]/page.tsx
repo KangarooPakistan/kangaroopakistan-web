@@ -4,6 +4,8 @@ import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { Registration, columns, PaymentProof } from "./columns";
 import { DataTable } from "./data-table";
+import { Button } from "@/components/ui/button";
+import * as XLSX from "xlsx";
 
 // Define a type for Registration, including the students array
 type Register = {
@@ -99,6 +101,12 @@ const FetchAllRegistrations = () => {
     };
     fetchData();
   }, []);
+  const handleClick = () => {
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Data");
+    XLSX.writeFile(wb, `data.xlsx`);
+  };
   return (
     <>
       <div className="container mx-auto py-10">
@@ -109,9 +117,13 @@ const FetchAllRegistrations = () => {
               <p className="text-lg font-semibold">{allStudents.length}</p>
               <h2 className="font-bold text-2xl mb-4">Registered Schools</h2>
               <p className="text-lg font-semibold">{totalSchools}</p>
+<<<<<<< Updated upstream
               <h2 className="font-bold text-2xl mb-4">
                 Total Payments 
               </h2>
+=======
+              <h2 className="font-bold text-2xl mb-4">Total Payments</h2>
+>>>>>>> Stashed changes
               <p className="text-lg font-semibold">{totalPaymentDone}</p>
             </div>
           </div>
@@ -144,6 +156,11 @@ const FetchAllRegistrations = () => {
               </ul>
             </div>
           </div>
+        </div>
+        <div className="p-4 border-t border-gray-300">
+          <Button className="" onClick={handleClick}>
+            Export Data
+          </Button>
         </div>
         <DataTable columns={columns} data={data} />;
       </div>
