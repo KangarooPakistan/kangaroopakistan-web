@@ -4,6 +4,7 @@ import { getSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { DataTable } from "./data-table";
+import * as XLSX from "xlsx";
 
 import { Student, columns } from "./columns";
 import { Button } from "@/components/ui/button";
@@ -48,12 +49,23 @@ const ViewAllBySchool = () => {
     fetch();
   }, []);
 
+  const exportSheet = () => {
+    const ws = XLSX.utils.json_to_sheet(students);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Data");
+    XLSX.writeFile(wb, `data.xlsx`);
+  };
   const handleClick = () => {
     router.push(`/user/viewallrecipts/${params.id}`);
   };
   return (
     <>
       <div className="container mx-auto py-10">
+        <div className="p-4 border-t border-gray-300">
+          <Button className="" onClick={exportSheet}>
+            Export Data
+          </Button>
+        </div>
         <DataTable columns={columns} data={students} />
       </div>
     </>
