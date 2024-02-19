@@ -117,13 +117,7 @@ const FetchAllRegistrations = () => {
               <p className="text-lg font-semibold">{allStudents.length}</p>
               <h2 className="font-bold text-2xl mb-4">Registered Schools</h2>
               <p className="text-lg font-semibold">{totalSchools}</p>
-<<<<<<< Updated upstream
-              <h2 className="font-bold text-2xl mb-4">
-                Total Payments 
-              </h2>
-=======
               <h2 className="font-bold text-2xl mb-4">Total Payments</h2>
->>>>>>> Stashed changes
               <p className="text-lg font-semibold">{totalPaymentDone}</p>
             </div>
           </div>
