@@ -31,6 +31,8 @@ interface RegistrationWithPaymentProof extends Registration {
 const FetchAllRegistrations = () => {
   const params = useParams();
   const [data, setData] = useState<Registration[]>([]);
+  const [excel, setExcel] = useState([]); // This makes sure `excel` is an array
+
   const [totalSchools, setTotalSchools] = useState<number>(0);
   const [allStudents, setAllStudents] = useState<Student[]>([]);
   const [preEculier, setPreEculier] = useState<number>(0);
@@ -84,7 +86,35 @@ const FetchAllRegistrations = () => {
       setCadet(levelCounts["cadet"] || 0);
       setJunior(levelCounts["junior"] || 0);
       setStudent(levelCounts["student"] || 0);
+      console.log(res.data);
 
+      const studentsForExcel = registrations.flatMap((reg: any) =>
+        reg.students.map((student: Student) => ({
+          bankTitle: reg.user?.bankTitle,
+          contactNumber: reg.user?.contactNumber,
+          schoolAddress: reg.user?.schoolAddress,
+          district: reg.user?.district,
+          tehsil: reg.user?.tehsil,
+          fax: reg.user?.fax,
+          p_fName: reg.user?.p_fName,
+          p_mName: reg.user?.p_mName,
+          p_lName: reg.user?.p_lName,
+          p_contact: reg.user?.p_contact,
+          p_phone: reg.user?.p_phone,
+          p_email: reg.user?.p_email,
+          c_fName: reg.user?.c_fName,
+          c_mName: reg.user?.c_mName,
+          c_lName: reg.user?.c_lName,
+          c_contact: reg.user?.c_contact,
+          c_phone: reg.user?.c_phone,
+          c_email: reg.user?.c_email,
+          c_accountDetails: reg.user?.c_accountDetails,
+          userEmail: reg.user?.email,
+          ...student, // Spread student attributes
+        }))
+      );
+      setExcel(studentsForExcel);
+      console.log(studentsForExcel);
       setData(res.data);
       const extractedData = res.data.map((obj: any) => ({
         contestId: obj.contestId,
@@ -102,11 +132,16 @@ const FetchAllRegistrations = () => {
     fetchData();
   }, []);
   const handleClick = () => {
-    const ws = XLSX.utils.json_to_sheet(data);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Data");
-    XLSX.writeFile(wb, `data.xlsx`);
+    if (excel.length > 0) {
+      const ws = XLSX.utils.json_to_sheet(excel);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Data");
+      XLSX.writeFile(wb, `data.xlsx`);
+    } else {
+      console.log("No data available to export");
+    }
   };
+  
   return (
     <>
       <div className="container mx-auto py-10">
