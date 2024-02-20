@@ -75,7 +75,9 @@ export async function POST(request: Request, { params }: { params: { id: string 
             if (lastStudentOfClass) {
                 // Extract the index from the rollNumber
                 const rollNumberParts = lastStudentOfClass.rollNumber.split("-");
-                lastIndex = parseInt(rollNumberParts[4]); // Assuming the index is at position 4
+                lastIndex = parseInt(rollNumberParts[4]);
+                console.log("last index") // Assuming the index is at position 4
+                console.log(lastIndex) // Assuming the index is at position 4
             }
 
             // Generate roll number for the new student
