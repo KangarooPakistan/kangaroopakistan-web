@@ -74,7 +74,7 @@ const ViewRegistered = () => {
         <div className="flex flex-wrap -mx-2">
           <div className="w-full md:w-1/2 px-2 mb-6 md:mb-0">
             <div className="bg-gradient-to-r from-blue-500 to-teal-500 rounded-lg shadow-lg p-6 text-white transform transition duration-500 hover:scale-105">
-              <h2 className="font-bold text-2xl mb-4">Total Payments</h2>
+              <h2 className="font-bold text-2xl mb-4">Total Students</h2>
               <p className="text-lg font-semibold">{students.length}</p>
             </div>
           </div>
