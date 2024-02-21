@@ -285,11 +285,13 @@ const Register = () => {
   };
   return (
     <>
-      <p className="text-xl flex justify-center text-purple-600 font-bold mb-3 mt-3">
+      <p className="text-xl flex flex-col items-center justify-center text-purple-600 font-bold mb-3 mt-3">
         For Bulk Upload Please Download the Sample file, Fill it with
         StudentName, FatherName and Class and then upload it again. <br />
-        Please Do not edit or remove the headings of the columns in the sample
-        excel file
+        <span className=" text-red-600 font-bold">
+          Please Do not edit or remove the headings of the columns in the sample
+          excel file
+        </span>
       </p>
       <div className="flex justify-center w-full mt-4 mb-4">
         <div className="flex mr-8">
