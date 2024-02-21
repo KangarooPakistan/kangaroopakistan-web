@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as zod from "zod";
@@ -8,13 +8,19 @@ import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Brackets } from "lucide-react";
+import * as XLSX from "xlsx";
+
 interface StudentData {
   studentName: string;
   fatherName: string;
 
   level: string;
   class: string;
+}
+interface StudentImport {
+  studentName?: string;
+  fatherName?: string;
+  class?: string;
 }
 
 interface FormData {
@@ -185,12 +191,64 @@ const Register = () => {
       setDuplicateError(null); // Clear any previous error
     }
   };
+  const handleFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+
+      const reader = new FileReader();
+      reader.onload = (e: ProgressEvent<FileReader>) => {
+        const binaryStr = e.target?.result;
+        if (binaryStr) {
+          // Proceed only if the result is not null
+          const workbook = XLSX.read(binaryStr, { type: "binary" });
+          const sheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[sheetName];
+          const json = XLSX.utils.sheet_to_json(worksheet);
+          console.log(json); // Check the output in the browser console
+
+          populateFormFields(json as StudentImport[]);
+        } else {
+          // Handle the error case where e.target.result is null
+          console.error("Failed to read the file");
+          // Optionally, notify the user that the file could not be read
+        }
+      };
+      reader.onerror = (error) => {
+        // Handle file reading errors
+        console.error("Error reading the file:", error);
+        // Optionally, notify the user that an error occurred while reading the file
+      };
+      reader.readAsBinaryString(file);
+    } else {
+      // Handle the case where no file was selected
+      console.error("No file selected");
+      // Optionally, notify the user that no file was selected
+    }
+  };
+
+  const populateFormFields = (data: StudentImport[]) => {
+    console.log(data);
+    const stds = data.map((item) => ({
+      studentName: item.studentName || "",
+      fatherName: item.fatherName || "",
+      class: item.class || "",
+      level: "", // You can dynamically set this based on class if needed
+    }));
+    console.log(stds); // Add this line before setValue("students", students);
+
+    setValue("students", stds);
+    stds.forEach((student, index) => {
+      handleClassChange(student.class, index);
+      console.log("kkr");
+    });
+  };
   const { fields, append, remove } = useFieldArray({
     control,
     name: "students",
   });
 
   const handleClassChange = (classValue: string, index: number) => {
+    console.log(classValue);
     let levelValue = "";
     switch (classValue) {
       case "01":
@@ -221,143 +279,182 @@ const Register = () => {
       default:
         break;
     }
+    console.log(levelValue);
+    console.log(`students.${index}.level`);
     setValue(`students.${index}.level`, levelValue);
   };
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="mx-auto p-4 border border-gray-300 rounded-lg"
-    >
-      {duplicateError && <p className="text-red-500">{duplicateError}</p>}
-      {fields.map((field, index) => (
-        <div
-          key={field.id}
-          className="mb-4 p-2 border-solid border-2 border-grey-600 "
-        >
-          <div className="grid items-center lg:space-x-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="md:mr-4 lg:mr-0">
-              <input
-                {...register(`students.${index}.studentName`)}
-                placeholder="Student Name"
-                className="w-full p-2 text-sm md:text-base rounded border border-gray-300 focus:outline-none focus:border-blue-500"
-              />
-              {errors?.students?.[index]?.studentName && (
-                <p className="text-red-500">
-                  {errors.students[index]?.studentName?.message}
-                </p>
-              )}
-            </div>
-            <div className="mt-3 md:mt-0">
-              <input
-                {...register(`students.${index}.fatherName`)}
-                placeholder="Father's Name"
-                className="w-full p-2 rounded border text-sm md:text-base border-gray-300 focus:outline-none focus:border-blue-500"
-              />
-              {errors?.students?.[index]?.fatherName && (
-                <p className="text-red-500">
-                  {errors.students[index]?.fatherName?.message}
-                </p>
-              )}
-            </div>
-            <div className="mt-3 lg:mt-0 md:mr-4 lg:mr-0">
-              <Controller
-                name={`students.${index}.class`}
-                control={control}
-                render={({ field }) => (
-                  <select
-                    {...field}
-                    onChange={(e) => {
-                      field.onChange(e); // Important: update the form state
-                      handleClassChange(e.target.value, index); // Update the level based on the class
-                    }}
-                    className="w-full p-2 text-xs md:text-base rounded border border-gray-300 focus:outline-none focus:border-blue-500"
-                  >
-                    <option value="">SELECT CLASS</option>
-                    <option value="01">ONE</option>
-                    <option value="02">TWO</option>
-                    <option value="03">THREE</option>
-                    <option value="04">FOUR</option>
-                    <option value="05">FIVE</option>
-                    <option value="06">SIX</option>
-                    <option value="07">SEVEN</option>
-                    <option value="08">EIGHT/O LEVEL-I</option>
-                    <option value="09">NINE/O LEVEL-I & II</option>
-                    <option value="10">TEN/O LEVEL-II & III</option>
-                    <option value="11">ELEVEN/O LEVEL-III & A LEVEL-I</option>
-                    <option value="12">TWELVE/A LEVEL-I & II</option>
-                  </select>
-                )}
-              />
-              {errors?.students?.[index]?.class && (
-                <p className="text-red-500">
-                  {errors.students[index]?.class?.message}
-                </p>
-              )}
-            </div>
-            <div className="mt-3 lg:mt-0">
-              <Controller
-                name={`students.${index}.level`}
-                control={control}
-                render={({ field }) => (
-                  <select
-                    disabled
-                    {...field}
-                    className="w-full p-2 rounded border text-xs md:text-base border-gray-300 focus:outline-none focus:border-blue-500"
-                  >
-                    <option value="">SELECT LEVEL</option>
-                    <option value="preecolier">PRE ECOLIER</option>
-                    <option value="ecolier">ECOLIER</option>
-                    <option value="benjamin">BENJAMIN</option>
-                    <option value="cadet">CADET</option>
-                    <option value="junior">JUNIOR</option>
-                    <option value="student">STUDENT</option>
-                  </select>
-                )}
-              />
-              {errors?.students?.[index]?.level && (
-                <p className="text-red-500">
-                  {errors.students[index]?.level?.message}
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
-      ))}
-      <div className="block sm:flex sm:justify-center space-x-2 sm:space-x-4 mt-4 mx-auto">
-        <div className="flex justify-center sm:block gap-5 sm:space-x-4">
-          <button
-            type="button"
-            onClick={() =>
-              append({
-                studentName: "",
-                fatherName: "",
-                level: "",
-                class: "",
-              })
-            }
-            className="bg-blue-500 hover:bg-blue-600 text-white p-3 text-xs sm:text-base sm:px-4 sm:py-2 rounded"
+    <>
+      <p className="text-xl flex justify-center text-purple-600 font-bold mb-3 mt-3">
+        For Bulk Upload Please Download the Sample file, Fill it with
+        StudentName, FatherName and Class and then upload it again. <br />
+        Please Do not edit of remove the headings of the columns
+      </p>
+      <div className="flex justify-center w-full mt-4 mb-4">
+        <div className="flex mr-8">
+          <label
+            htmlFor="file-input"
+            className="flex items-center px-4 py-2 border border-dashed mr-4 bg-purple-500 text-white border-gray-400 rounded-md cursor-pointer hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800"
           >
-            Add Another Student
-          </button>
-          <button
-            type="button"
-            onClick={() => remove(fields.length - 1)}
-            className="bg-red-500 hover:bg-red-600 text-white p-3 text-xs sm:text-base sm:px-4 sm:py-2 rounded"
+            <span className="text-sm font-medium truncate mr-2">
+              Upload Excel File
+            </span>
+            <input
+              type="file"
+              id="file-input"
+              accept=".xlsx, .xls"
+              onChange={handleFileUpload}
+              className="hidden"
+            />
+          </label>
+
+          <a
+            href="https://docs.google.com/spreadsheets/d/1SzmgA9fbOd9lA72jJCRrJcTw7UbN8wpr/export?format=xlsx"
+            download="sample.xlsx"
+            className="flex items-center px-4 py-2 border border-dashed bg-purple-500 text-white border-gray-400 rounded-md cursor-pointer hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800"
           >
-            Remove Student
-          </button>
-        </div>
-        <div className="flex justify-center sm:block mt-4 sm:mt-0">
-          <button
-            type="submit"
-            disabled={isSubmitting} // Disable the button if isSubmitting is true
-            className=" bg-green-500 hover:bg-green-600 text-white p-3 text-xs sm:text-base sm:px-4 sm:py-2 rounded"
-          >
-            {isSubmitting ? "Submitting..." : "Submit Form"}
-          </button>
+            <span className="text-sm font-medium truncate">
+              Download Sample File
+            </span>
+          </a>
         </div>
       </div>
-    </form>
+
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="mx-auto p-4 border border-gray-300 rounded-lg"
+      >
+        {duplicateError && <p className="text-red-500">{duplicateError}</p>}
+        {fields.map((field, index) => (
+          <div
+            key={field.id}
+            className="mb-4 p-2 border-solid border-2 border-grey-600 "
+          >
+            <div className="grid items-center lg:space-x-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="md:mr-4 lg:mr-0">
+                <input
+                  {...register(`students.${index}.studentName`)}
+                  placeholder="Student Name"
+                  className="w-full p-2 text-sm md:text-base rounded border border-gray-300 focus:outline-none focus:border-blue-500"
+                />
+                {errors?.students?.[index]?.studentName && (
+                  <p className="text-red-500">
+                    {errors.students[index]?.studentName?.message}
+                  </p>
+                )}
+              </div>
+              <div className="mt-3 md:mt-0">
+                <input
+                  {...register(`students.${index}.fatherName`)}
+                  placeholder="Father's Name"
+                  className="w-full p-2 rounded border text-sm md:text-base border-gray-300 focus:outline-none focus:border-blue-500"
+                />
+                {errors?.students?.[index]?.fatherName && (
+                  <p className="text-red-500">
+                    {errors.students[index]?.fatherName?.message}
+                  </p>
+                )}
+              </div>
+              <div className="mt-3 lg:mt-0 md:mr-4 lg:mr-0">
+                <Controller
+                  name={`students.${index}.class`}
+                  control={control}
+                  render={({ field }) => (
+                    <select
+                      {...field}
+                      onChange={(e) => {
+                        field.onChange(e); // Important: update the form state
+                        handleClassChange(e.target.value, index); // Update the level based on the class
+                      }}
+                      className="w-full p-2 text-xs md:text-base rounded border border-gray-300 focus:outline-none focus:border-blue-500"
+                    >
+                      <option value="">SELECT CLASS</option>
+                      <option value="01">ONE</option>
+                      <option value="02">TWO</option>
+                      <option value="03">THREE</option>
+                      <option value="04">FOUR</option>
+                      <option value="05">FIVE</option>
+                      <option value="06">SIX</option>
+                      <option value="07">SEVEN</option>
+                      <option value="08">EIGHT/O LEVEL-I</option>
+                      <option value="09">NINE/O LEVEL-I & II</option>
+                      <option value="10">TEN/O LEVEL-II & III</option>
+                      <option value="11">ELEVEN/O LEVEL-III & A LEVEL-I</option>
+                      <option value="12">TWELVE/A LEVEL-I & II</option>
+                    </select>
+                  )}
+                />
+                {errors?.students?.[index]?.class && (
+                  <p className="text-red-500">
+                    {errors.students[index]?.class?.message}
+                  </p>
+                )}
+              </div>
+              <div className="mt-3 lg:mt-0">
+                <Controller
+                  name={`students.${index}.level`}
+                  control={control}
+                  render={({ field }) => (
+                    <select
+                      disabled
+                      {...field}
+                      className="w-full p-2 rounded border text-xs md:text-base border-gray-300 focus:outline-none focus:border-blue-500"
+                    >
+                      <option value="">SELECT LEVEL</option>
+                      <option value="preecolier">PRE ECOLIER</option>
+                      <option value="ecolier">ECOLIER</option>
+                      <option value="benjamin">BENJAMIN</option>
+                      <option value="cadet">CADET</option>
+                      <option value="junior">JUNIOR</option>
+                      <option value="student">STUDENT</option>
+                    </select>
+                  )}
+                />
+                {errors?.students?.[index]?.level && (
+                  <p className="text-red-500">
+                    {errors.students[index]?.level?.message}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+        <div className="block sm:flex sm:justify-center space-x-2 sm:space-x-4 mt-4 mx-auto">
+          <div className="flex justify-center sm:block gap-5 sm:space-x-4">
+            <button
+              type="button"
+              onClick={() =>
+                append({
+                  studentName: "",
+                  fatherName: "",
+                  level: "",
+                  class: "",
+                })
+              }
+              className="bg-blue-500 hover:bg-blue-600 text-white p-3 text-xs sm:text-base sm:px-4 sm:py-2 rounded"
+            >
+              Add Another Student
+            </button>
+            <button
+              type="button"
+              onClick={() => remove(fields.length - 1)}
+              className="bg-red-500 hover:bg-red-600 text-white p-3 text-xs sm:text-base sm:px-4 sm:py-2 rounded"
+            >
+              Remove Student
+            </button>
+          </div>
+          <div className="flex justify-center sm:block mt-4 sm:mt-0">
+            <button
+              type="submit"
+              disabled={isSubmitting} // Disable the button if isSubmitting is true
+              className=" bg-green-500 hover:bg-green-600 text-white p-3 text-xs sm:text-base sm:px-4 sm:py-2 rounded"
+            >
+              {isSubmitting ? "Submitting..." : "Submit Form"}
+            </button>
+          </div>
+        </div>
+      </form>
+    </>
   );
 };
 
