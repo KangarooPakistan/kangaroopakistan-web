@@ -67,16 +67,29 @@ export function DataTable<TData, TValue>({
   return (
     <div>
       <div className="flex items-center py-4">
-        {/* <Input
+        <Input
           placeholder="Filter SchoolId..."
           value={
             (table.getColumn("schoolId")?.getFilterValue() as string) ?? ""
           }
-          onChange={(event) =>
-            table.getColumn("schoolId")?.setFilterValue(event.target.value)
-          }
+          onChange={(event) => {
+            const value = event.target.value;
+            table
+              .getColumn("schoolId")
+              ?.setFilterValue(value !== "" ? Number(value) : undefined);
+          }}
           className="max-w-sm"
-        /> */}
+        />
+        <Input
+          placeholder="Filter SchoolName..."
+          value={
+            (table.getColumn("schoolName")?.getFilterValue() as string) ?? ""
+          }
+          onChange={(event) =>
+            table.getColumn("schoolName")?.setFilterValue(event.target.value)
+          }
+          className="max-w-sm ml-4"
+        />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">

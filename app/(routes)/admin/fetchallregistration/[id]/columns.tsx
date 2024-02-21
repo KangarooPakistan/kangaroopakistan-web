@@ -96,6 +96,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
 export const columns: ColumnDef<Registration>[] = [
   {
     accessorKey: "schoolId",
+    filterFn: "equals",
     header: ({ column }) => {
       return (
         <Button
