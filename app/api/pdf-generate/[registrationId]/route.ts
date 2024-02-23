@@ -102,7 +102,7 @@ async function generatePdf(students: Student[]) {
         await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36');
         page.on('request', request => console.log('Request: ', request.url()));
         page.on('response', response => console.log('Response: ', response.status(), response.url()));
-        page.setDefaultNavigationTimeout(0)
+        page.setDefaultNavigationTimeout(30000)
         console.log(student)
         // const htmlContent = generateHTMLForPuppeteer();
         const htmlContent =generateHTMLForPuppeteerFunction(students)
