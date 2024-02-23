@@ -113,9 +113,9 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         <DropdownMenuItem onClick={handleDownloadPdf}>
           Download PDF
         </DropdownMenuItem>
-        {/* <DropdownMenuItem onClick={handleDownloadPdfPuppeteer}>
+        <DropdownMenuItem onClick={handleDownloadPdfPuppeteer}>
           Download Answer sheet
-        </DropdownMenuItem> */}
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
