@@ -82,9 +82,8 @@ export async function GET(request: Request, { params }: { params: { registration
 }
 
 async function generatePdf(students: Student[]) {
-    const browser = await puppeteer.launch({
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    });
+        const browser = await puppeteer.launch({ headless: true });
+
     const combinedPdfDoc = await PDFDocument.create();
     
     for (const student of students) {
