@@ -82,8 +82,19 @@ export async function GET(request: Request, { params }: { params: { registration
 }
 
 async function generatePdf(students: Student[]) {
-        const browser = await puppeteer.launch({ headless: true, args: ['--disable-dev-shm-usage'] });
-
+        const browser = await puppeteer.launch({
+                headless: true,
+                args: [
+                    '--no-sandbox',
+                    '--disable-setuid-sandbox',
+                    '--disable-dev-shm-usage',
+                    '--disable-accelerated-2d-canvas',
+                    '--no-first-run',
+                    '--no-zygote',
+                    '--single-process', // Remove this flag for multi-page / multi-tab scenarios
+                    '--disable-gpu'
+                ]
+            });
     const combinedPdfDoc = await PDFDocument.create();
 
     for (const student of students) {
