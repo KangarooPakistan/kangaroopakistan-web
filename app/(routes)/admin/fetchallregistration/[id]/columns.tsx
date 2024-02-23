@@ -208,9 +208,9 @@ const styles = StyleSheet.create({
     marginBottom: 1,
   },
   studentInfoTitle: {
-    fontSize: 8,
+    fontSize: "50px !important",
     width: "100px",
-    fontWeight: "heavy",
+    fontWeight: "black",
   },
   studentInfoContent: {
     fontSize: "50px !important",
