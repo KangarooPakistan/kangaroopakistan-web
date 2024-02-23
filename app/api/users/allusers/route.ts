@@ -1,4 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
+import { renderToStaticMarkup } from 'react-dom/server';
+
 import { getToken } from "next-auth/jwt";
 import { getServerSession } from "next-auth";
 import { db } from "@/app/lib/prisma";
