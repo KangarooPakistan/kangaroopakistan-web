@@ -82,7 +82,7 @@ export async function GET(request: Request, { params }: { params: { registration
 }
 
 async function generatePdf(students: Student[]) {
-        const browser = await puppeteer.launch({ headless: true });
+        const browser = await puppeteer.launch({ headless: true, args: ['--disable-dev-shm-usage'] });
 
     const combinedPdfDoc = await PDFDocument.create();
 
