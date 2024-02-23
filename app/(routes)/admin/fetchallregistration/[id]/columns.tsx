@@ -113,9 +113,9 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         <DropdownMenuItem onClick={handleDownloadPdf}>
           Download PDF
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleDownloadPdfPuppeteer}>
+        {/* <DropdownMenuItem onClick={handleDownloadPdfPuppeteer}>
           Download Answer sheet
-        </DropdownMenuItem>
+        </DropdownMenuItem> */}
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -213,8 +213,8 @@ const styles = StyleSheet.create({
     fontWeight: "heavy",
   },
   studentInfoContent: {
-    fontSize: 10,
-    fontWeight: "bold",
+    fontSize: "50px !important",
+    fontWeight: "black",
     marginLeft: "20px",
   },
   answerGrid: {
