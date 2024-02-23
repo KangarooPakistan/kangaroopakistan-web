@@ -109,6 +109,10 @@ async function generatePdf(students: Student[]) {
         await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
         const pdfBuffer = await page.pdf({ format: 'A4', printBackground: true  });
         const studentPdfDoc = await PDFDocument.load(pdfBuffer);
+        page.on('console', message => console.log(`Browser console: ${message.text()}`));
+        page.on('pageerror', error => console.error(`Page error: ${error.message}`));
+        page.on('response', response => console.log(`Network response: ${response.status()} ${response.url()}`));
+
         const [copiedPage] = await combinedPdfDoc.copyPages(studentPdfDoc, [0]);
         combinedPdfDoc.addPage(copiedPage);
 
