@@ -45,11 +45,13 @@ export function DataTable<TData, TValue>({
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
+  const [pageSize, setPageSize] = useState(100); // Add this line
+
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
+    getPaginationRowModel: getPaginationRowModel(), // Set page size to 100
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
@@ -61,6 +63,7 @@ export function DataTable<TData, TValue>({
       rowSelection,
       sorting,
       columnFilters,
+      pagination: { pageIndex: 0, pageSize }, // This line ensures pagination respects the pageSize
     },
   });
 
