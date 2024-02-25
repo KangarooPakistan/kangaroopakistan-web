@@ -111,7 +111,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <DropdownMenuItem onClick={handleView}>View</DropdownMenuItem>
         <DropdownMenuItem onClick={handleDownloadPdf}>
-          Download PDF
+          Print Answer Sheets
         </DropdownMenuItem>
         {/* <DropdownMenuItem onClick={handleDownloadPdfPuppeteer}>
           Download Answer sheet
@@ -146,7 +146,17 @@ export const columns: ColumnDef<Registration>[] = [
   },
   {
     accessorKey: "studentsLength",
-    header: "Total Students",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Total Student
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
   },
   {
     accessorKey: "paymentProof", // This should match the key from your data
