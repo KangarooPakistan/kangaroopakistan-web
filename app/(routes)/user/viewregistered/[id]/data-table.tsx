@@ -44,6 +44,7 @@ export function DataTable<TData, TValue>({
   const [rowSelection, setRowSelection] = useState({});
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [pageSize, setPageSize] = useState(500); // Add this line
 
   const table = useReactTable({
     data,
@@ -61,6 +62,8 @@ export function DataTable<TData, TValue>({
       rowSelection,
       sorting,
       columnFilters,
+      pagination: { pageIndex: 0, pageSize }, // This line ensures pagination respects the pageSize
+
     },
   });
 
