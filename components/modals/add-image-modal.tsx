@@ -179,9 +179,11 @@ const AddImageModal = () => {
             Add a new contest type
           </DialogTitle>
         </DialogHeader>
-        <DialogDescription className="text-center text-zinc-500">
-          Add an image and title to your contest type. You can always change it
-          later.
+        <DialogDescription className="text-center text-2xl font-bold text-zinc-500">
+          Please attach proof of payment. &nbsp; <br />
+          <span className="text-red-700">
+            Accepted images types are jpeg, png, webp, gif
+          </span>
         </DialogDescription>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
