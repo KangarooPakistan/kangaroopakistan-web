@@ -31,31 +31,7 @@ const ViewAllBySchool = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const registeredStudents = await axios.get(
-        `/api/users/registrations/${params.id}`
-      );
-      console.log(registeredStudents.data);
-      const levelCounts = registeredStudents.data.reduce(
-        (acc: LevelCounts, student: Student) => {
-          const { level } = student;
-          console.log(level);
-          acc[level] = (acc[level] || 0) + 1;
-          return acc;
-        },
-        {}
-      );
-      console.log(levelCounts);
-
-      setPreEculier(levelCounts["preecolier"] || 0);
-      setEculier(levelCounts["ecolier"] || 0);
-      setBenjamin(levelCounts["benjamin"] || 0);
-      setCadet(levelCounts["cadet"] || 0);
-      setJunior(levelCounts["junior"] || 0);
-      setStudent(levelCounts["student"] || 0);
-
-      setStudents(registeredStudents.data);
-
-      console.log(levelCounts);
+      const res = await axios.get(`/api/users/registrations/${params.id}`);
     };
     fetchData();
   }, []);
@@ -65,6 +41,28 @@ const ViewAllBySchool = () => {
         const registeredStudents = await axios.get(
           `/api/users/registrations/${params.id}`
         );
+        console.log(registeredStudents.data);
+        const levelCounts = registeredStudents.data.reduce(
+          (acc: LevelCounts, student: Student) => {
+            const { level } = student;
+            console.log(level);
+            acc[level] = (acc[level] || 0) + 1;
+            return acc;
+          },
+          {}
+        );
+        console.log(levelCounts);
+
+        setPreEculier(levelCounts["preecolier"] || 0);
+        setEculier(levelCounts["ecolier"] || 0);
+        setBenjamin(levelCounts["benjamin"] || 0);
+        setCadet(levelCounts["cadet"] || 0);
+        setJunior(levelCounts["junior"] || 0);
+        setStudent(levelCounts["student"] || 0);
+
+        setStudents(registeredStudents.data);
+
+        console.log(levelCounts);
 
         const data: ItemType[] = registeredStudents.data;
 
