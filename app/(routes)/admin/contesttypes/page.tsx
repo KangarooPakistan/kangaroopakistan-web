@@ -43,6 +43,9 @@ const ContestTypesPage = () => {
 
   return (
     <>
+      <h1 className="text-3xl text-center my-3 font-bold text-purple-600">
+        Contest Types
+      </h1>
       <div className="flex justify-end mr-16 mt-2">
         <Button variant="default" onClick={() => onOpen("createContest")}>
           Create Contest Type
