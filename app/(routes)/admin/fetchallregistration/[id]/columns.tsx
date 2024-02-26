@@ -209,13 +209,13 @@ const styles = StyleSheet.create({
   },
   studentInfoTitle: {
     fontSize: "14px",
-    width: "100px",
+    width: "150px",
     fontWeight: "heavy",
   },
   studentInfoContent: {
     fontSize: "14px",
     fontWeight: "bold",
-    maxWidth: "1000px", // Set maximum width to fit the container
+    width: "1000px", // Set maximum width to fit the container
     flexWrap: "wrap", // Allow text to wrap
     marginLeft: "20px",
   },
