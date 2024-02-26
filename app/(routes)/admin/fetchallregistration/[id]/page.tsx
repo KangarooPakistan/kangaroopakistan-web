@@ -1,6 +1,6 @@
 "use client";
 import axios from "axios";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { Registration, columns, PaymentProof } from "./columns";
 import { DataTable } from "./data-table";
@@ -42,6 +42,7 @@ const FetchAllRegistrations = () => {
   const [cadet, setCadet] = useState<number>(0);
   const [junior, setJunior] = useState<number>(0);
   const [student, setStudent] = useState<number>(0);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -141,7 +142,10 @@ const FetchAllRegistrations = () => {
       console.log("No data available to export");
     }
   };
-  
+  const handleBack = () => {
+    router.back();
+  };
+
   return (
     <>
       <div className="container mx-auto py-10">
@@ -189,7 +193,10 @@ const FetchAllRegistrations = () => {
             </div>
           </div>
         </div>
-        <div className="p-4 flex justify-end border-gray-300">
+        <div className="p-4 flex justify-between border-gray-300">
+          <Button variant="default" onClick={handleBack}>
+            Back
+          </Button>
           <Button className="" onClick={handleClick}>
             Export Data
           </Button>

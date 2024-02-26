@@ -68,6 +68,9 @@ const Login = () => {
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+  const handleClick = () => {
+    router.push("https://www.kangaroopakistan.org/");
+  };
   return (
     <section className="bg-white">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto h-screen lg:py-0">
@@ -146,6 +149,15 @@ const Login = () => {
                     className="px-4"
                   >
                     Sign In
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={handleClick}
+                    disabled={isLoading}
+                    variant="default"
+                    className="px-4 ml-3"
+                  >
+                    Back to website
                   </Button>
                 </div>
                 <p className="text-sm font-light text-gray-500 w-full text-center">

@@ -1,7 +1,8 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import axios from "axios";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface PaymentProof {
@@ -14,6 +15,7 @@ const ViewAllRecipts = () => {
   const [registrationId, setRegistrationId] = useState<string | null>();
   const [totalStudents, setTotalStudents] = useState<string>();
   const [paymentProof, setPaymentProof] = useState<PaymentProof[]>([]);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,6 +35,9 @@ const ViewAllRecipts = () => {
     };
     fetchData();
   }, []);
+  const handleBack = () => {
+    router.back();
+  };
 
   return (
     <>
@@ -46,6 +51,12 @@ const ViewAllRecipts = () => {
             Payment Proofs.
           </div>
         </div>
+        <div className="flex justify-start items-center">
+          <Button variant="default" onClick={handleBack}>
+            Back
+          </Button>
+        </div>
+
         <div className="flex justify-center items-center">
           {paymentProof.length > 0 &&
             paymentProof.map((item, index) => (

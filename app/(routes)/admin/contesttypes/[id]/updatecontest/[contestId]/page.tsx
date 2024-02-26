@@ -109,6 +109,9 @@ const UpdateContest = () => {
     };
     fetch();
   }, [form]);
+  const handleBack = () => {
+    router.back();
+  };
 
   const isLoading = form.formState.isSubmitting;
   const onSubmit = async (values: Contest) => {
@@ -152,7 +155,12 @@ const UpdateContest = () => {
     }
   };
   return (
-    <>
+    <div className="container mx-auto py-4">
+       <div className="flex justify-center items-center">
+       <Button variant="default" onClick={handleBack}>
+            Back
+          </Button>
+       </div>
       <section className="bg-white mb-12">
         <div className=" pt-10 h-screen grid grid-cols-1 md:grid-cols-2 gap-2 xl:gap-0">
           <div className="w-full rounded-lg shadow-2xl md:mt-0 sm:max-w-md xl:p-0 mx-auto">
@@ -287,7 +295,7 @@ const UpdateContest = () => {
         </div>
       </section>
       <ToastContainer />
-    </>
+    </div>
   );
 };
 

@@ -99,8 +99,8 @@ const ViewAllBySchool = () => {
     XLSX.utils.book_append_sheet(wb, ws, "Data");
     XLSX.writeFile(wb, `data.xlsx`);
   };
-  const handleClick = () => {
-    router.push(`/user/viewallrecipts/${params.id}`);
+  const handleBack = () => {
+    router.back();
   };
   return (
     <>
@@ -145,7 +145,10 @@ const ViewAllBySchool = () => {
             </div>
           </div>
         </div>
-        <div className="p-4 flex justify-end border-gray-300">
+        <div className="p-4 flex justify-between border-gray-300">
+          <Button variant="default" onClick={handleBack}>
+            Back
+          </Button>
           <Button className="" onClick={exportSheet}>
             Export Data
           </Button>

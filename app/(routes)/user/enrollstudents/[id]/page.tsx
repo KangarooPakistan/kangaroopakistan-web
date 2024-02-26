@@ -9,6 +9,7 @@ import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import * as XLSX from "xlsx";
+import { Button } from "@/components/ui/button";
 
 interface StudentData {
   studentName: string;
@@ -283,8 +284,11 @@ const Register = () => {
     console.log(`students.${index}.level`);
     setValue(`students.${index}.level`, levelValue);
   };
+  const handleBack = () => {
+    router.back();
+  };
   return (
-    <>
+    <div className="container mx-auto py-4">
       <p className="text-xl flex flex-col items-center justify-center text-purple-600 font-bold mb-3 mt-3">
         For Bulk Upload Please Download the Sample file, Fill it with
         StudentName, FatherName and Class and then upload it again. <br />
@@ -322,7 +326,11 @@ const Register = () => {
           </a>
         </div>
       </div>
-
+      <div className="flex justify-start w-full mt-4 mb-4">
+        <Button variant="default" onClick={handleBack}>
+          Back
+        </Button>
+      </div>
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="mx-auto p-4 border border-gray-300 rounded-lg"
@@ -457,7 +465,7 @@ const Register = () => {
           </div>
         </div>
       </form>
-    </>
+    </div>
   );
 };
 

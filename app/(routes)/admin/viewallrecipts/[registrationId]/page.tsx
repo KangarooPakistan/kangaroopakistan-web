@@ -1,7 +1,8 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import axios from "axios";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface PaymentProof {
@@ -11,6 +12,8 @@ interface PaymentProof {
 }
 const ViewAllRecipts = () => {
   const params = useParams();
+  const router = useRouter();
+
   const [registrationId, setRegistrationId] = useState<string | null>();
   const [paymentProof, setPaymentProof] = useState<PaymentProof[]>([]);
   const [totalStudents, setTotalStudents] = useState<string>();
@@ -31,7 +34,9 @@ const ViewAllRecipts = () => {
     };
     fetchData();
   }, [params.registrationId]);
-
+  const handleBack = () => {
+    router.back();
+  };
   return (
     <>
       <div className="container mx-auto py-4">
@@ -44,6 +49,9 @@ const ViewAllRecipts = () => {
             Payment Proofs.
           </div>
         </div>
+        <Button variant="default" onClick={handleBack}>
+          Back
+        </Button>
         <div>
           {paymentProof.length > 0 &&
             paymentProof.map((item, index) => (

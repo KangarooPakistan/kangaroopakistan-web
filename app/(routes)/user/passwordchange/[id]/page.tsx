@@ -89,9 +89,17 @@ const PasswordChange = () => {
   const toggleNewPasswordVisibility = () => {
     setShowNewPassword(!showNewPassword);
   };
+  const handleBack = () => {
+    router.back();
+  };
 
   return (
-    <>
+    <div className="container mx-auto py-4">
+      <div className="flex justify-start items-center">
+        <Button variant="default" onClick={handleBack}>
+          Back
+        </Button>
+      </div>
       <section className="bg-white mb-12">
         <div className=" pt-10  grid grid-cols-1 md:grid-cols-2 gap-2 xl:gap-0">
           <div className="w-full rounded-lg shadow-2xl md:mt-0 sm:max-w-md xl:p-0 mx-auto">
@@ -188,7 +196,7 @@ const PasswordChange = () => {
         </div>
       </section>
       <ToastContainer />
-    </>
+    </div>
   );
 };
 

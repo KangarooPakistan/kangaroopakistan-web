@@ -1,13 +1,15 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { DataTable } from "./data-table";
 import { Contest, columns } from "./columns";
+import { Button } from "@/components/ui/button";
 
 const ViewAllContests: React.FC = () => {
   const [contests, setContests] = useState<Contest[]>([]);
   const params = useParams();
+  const router = useRouter();
 
   useEffect(() => {
     async function fetchContestTypes() {
@@ -53,9 +55,14 @@ const ViewAllContests: React.FC = () => {
       weekday: "short",
     }).format(date)}`;
   };
-
+  const handleBack = () => {
+    router.back();
+  };
   return (
     <div className="container mx-auto py-10">
+      <Button variant="default" onClick={handleBack}>
+        Back
+      </Button>
       <DataTable columns={columns} data={contests} />
     </div>
   );

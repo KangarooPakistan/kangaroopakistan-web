@@ -57,8 +57,14 @@ const ViewRegistered = () => {
         setCadet(levelCounts["cadet"] || 0);
         setJunior(levelCounts["junior"] || 0);
         setStudent(levelCounts["student"] || 0);
-
+        console.log(registeredStudents.data);
         setStudents(registeredStudents.data);
+        const paymentProof = await axios.get(
+          `/api/users/paymentproof/${regId.data.id}`
+        );
+        setTotalPaymentDone(paymentProof.data.length);
+        console.log("paymentProof");
+        console.log(paymentProof);
       } catch (error) {
         console.error("Error:", error);
       }
@@ -68,14 +74,23 @@ const ViewRegistered = () => {
   const handleClick = () => {
     router.push(`/user/viewallrecipts/${registrationId}`);
   };
+  const handleBack = () => {
+    router.back();
+  };
   return (
-    <>
+    <div className="container mx-auto py-4">
       <div className="container mx-auto py-4">
         <div className="flex flex-wrap -mx-2">
           <div className="w-full md:w-1/2 px-2 mb-6 md:mb-0">
             <div className="bg-purple-400 rounded-lg shadow-lg p-6 text-white transform transition duration-500 hover:scale-105">
               <h2 className="font-bold text-2xl mb-4">Total Students</h2>
               <p className="text-lg font-semibold">{students.length}</p>
+              <h2 className="font-bold text-2xl mb-4">Payment Proof</h2>
+              <p className="text-lg font-semibold">
+                {totalPaymentDone === 0
+                  ? "No payment proof  uploaded"
+                  : "Payment Done"}
+              </p>
             </div>
           </div>
           <div className="w-full md:w-1/2 px-2">
@@ -120,7 +135,10 @@ const ViewRegistered = () => {
           </Button>
         </div>
       </div>
-      <div className="flex justify-center">
+      <div className="flex justify-between">
+        <Button variant="default" onClick={handleBack}>
+          Back
+        </Button>
         <Button
           variant="ghost"
           className="text-xl font-bold leading-tight tracking-tight text-purple-600  md:text-3xl"
@@ -133,7 +151,7 @@ const ViewRegistered = () => {
       <div className="container mx-auto py-10">
         <DataTable columns={columns} data={students} />
       </div>
-    </>
+    </div>
   );
 };
 
