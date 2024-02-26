@@ -25,6 +25,7 @@ import {
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { useState } from "react";
+import SchoolReportDocument from "./SchoolReportDocument";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -52,6 +53,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
   const handleView = () => {
     router.push(`/admin/viewallbyschool/${registration.id}`);
   };
+
   async function generatePdfBlob(students: Student[]) {
     const doc = <MyDocument students={students} />;
 
@@ -75,6 +77,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       setLoading(false);
     }
   };
+
   const handleDownloadPdfPuppeteer = async () => {
     try {
       setLoading(true);
@@ -99,6 +102,29 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
     }
   };
 
+  const handleSheet = async () => {
+    try {
+      const response = await axios.get(
+        `/api/users/pdfdownload/${registration.id}`
+      );
+      console.log(response.data);
+      const schoolData = response.data;
+      console.log(schoolData); // This should be an array of ClassData
+      const blob = await pdf(
+        <SchoolReportDocument schoolData={schoolData} />
+      ).toBlob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "school-report.pdf");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error generating the PDF:", error);
+    }
+  };
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -113,9 +139,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         <DropdownMenuItem onClick={handleDownloadPdf}>
           Download Answer Sheet
         </DropdownMenuItem>
-        {/* <DropdownMenuItem onClick={handleDownloadPdfPuppeteer}>
-          Download Answer sheet
-        </DropdownMenuItem> */}
+        {/* <DropdownMenuItem onClick={handleSheet}>Download Pdf</DropdownMenuItem> */}
       </DropdownMenuContent>
     </DropdownMenu>
   );

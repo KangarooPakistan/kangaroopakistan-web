@@ -46,6 +46,7 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
   const [pageSize, setPageSize] = useState(100); // Add this line
+  const [pageIndex, setPageIndex] = useState(0); // Add this line
 
   const table = useReactTable({
     data,
@@ -63,10 +64,31 @@ export function DataTable<TData, TValue>({
       rowSelection,
       sorting,
       columnFilters,
-      pagination: { pageIndex: 0, pageSize }, // This line ensures pagination respects the pageSize
+      pagination: { pageIndex: pageIndex, pageSize },
+      // This line ensures pagination respects the pageSize
     },
   });
 
+  const handleIncreasePageSize = () => {
+    setPageIndex((prevPageIndex) => prevPageIndex + 1); // Increase pageSize by 1
+  };
+
+  const handleDecreasePageSize = () => {
+    setPageIndex((prevPageIndex) => Math.max(1, prevPageIndex - 1)); // Decrease pageSize by 1, but not below 1
+    // Update the table's pageSize
+  };
+
+  const handlePreviousClick = () => {
+    handleDecreasePageSize(); // Decrease pageSize when going to the previous page
+    table.previousPage();
+  };
+
+  const handleNextClick = () => {
+    handleIncreasePageSize(); // Increase pageSize when going to the next page
+    table.nextPage();
+  };
+
+  console.log(table.getState().pagination);
   return (
     <div>
       <div className="flex items-center py-4">
@@ -174,7 +196,7 @@ export function DataTable<TData, TValue>({
         <Button
           variant="outline"
           size="sm"
-          onClick={() => table.previousPage()}
+          onClick={handlePreviousClick}
           disabled={!table.getCanPreviousPage()}
         >
           Previous
@@ -182,7 +204,7 @@ export function DataTable<TData, TValue>({
         <Button
           variant="outline"
           size="sm"
-          onClick={() => table.nextPage()}
+          onClick={handleNextClick}
           disabled={!table.getCanNextPage()}
         >
           Next
