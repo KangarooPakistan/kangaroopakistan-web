@@ -111,11 +111,11 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <DropdownMenuItem onClick={handleView}>View</DropdownMenuItem>
         <DropdownMenuItem onClick={handleDownloadPdf}>
-          Download PDF
+          Download Answer Sheet
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleDownloadPdfPuppeteer}>
+        {/* <DropdownMenuItem onClick={handleDownloadPdfPuppeteer}>
           Download Answer sheet
-        </DropdownMenuItem>
+        </DropdownMenuItem> */}
       </DropdownMenuContent>
     </DropdownMenu>
   );
