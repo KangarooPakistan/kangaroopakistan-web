@@ -42,7 +42,7 @@ const ViewAllBySchool = () => {
           `/api/users/registrations/${params.id}`
         );
         console.log(registeredStudents.data);
-        const levelCounts = registeredStudents.data.reduce(
+        const levelCounts = registeredStudents.data.students.reduce(
           (acc: LevelCounts, student: Student) => {
             const { level } = student;
             console.log(level);
