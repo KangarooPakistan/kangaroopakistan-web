@@ -41,7 +41,8 @@ const ViewAllBySchool = () => {
         const registeredStudents = await axios.get(
           `/api/users/registrations/${params.id}`
         );
-        console.log(registeredStudents.data);
+        console.log("registeredStudents.data");
+        console.log(registeredStudents.data.students);
         const levelCounts = registeredStudents.data.students.reduce(
           (acc: LevelCounts, student: Student) => {
             const { level } = student;
