@@ -111,11 +111,11 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <DropdownMenuItem onClick={handleView}>View</DropdownMenuItem>
         <DropdownMenuItem onClick={handleDownloadPdf}>
-          Print Answer Sheets
+          Download PDF
         </DropdownMenuItem>
-        {/* <DropdownMenuItem onClick={handleDownloadPdfPuppeteer}>
+        <DropdownMenuItem onClick={handleDownloadPdfPuppeteer}>
           Download Answer sheet
-        </DropdownMenuItem> */}
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -146,17 +146,7 @@ export const columns: ColumnDef<Registration>[] = [
   },
   {
     accessorKey: "studentsLength",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Total Student
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
+    header: "Total Students",
   },
   {
     accessorKey: "paymentProof", // This should match the key from your data
@@ -218,13 +208,13 @@ const styles = StyleSheet.create({
     marginBottom: 1,
   },
   studentInfoTitle: {
-    fontSize: "50px !important",
+    fontSize: 8,
     width: "100px",
-    fontWeight: "black",
+    fontWeight: "heavy",
   },
   studentInfoContent: {
-    fontSize: "50px !important",
-    fontWeight: "black",
+    fontSize: 10,
+    fontWeight: "bold",
     marginLeft: "20px",
   },
   answerGrid: {
@@ -696,4 +686,3 @@ const VerticalNumberGrid = ({ totalNumbers = 30 }) => {
     </View>
   );
 };
-
