@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
   },
   studentInfoTitle: {
     fontSize: "14px",
-    width: "150px",
+    width: "250px",
     fontWeight: "heavy",
   },
   studentInfoContent: {
