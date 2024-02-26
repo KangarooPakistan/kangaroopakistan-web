@@ -9,6 +9,10 @@ import * as XLSX from "xlsx";
 import { Student, columns } from "./columns";
 import { Button } from "@/components/ui/button";
 
+interface RegistrationEntry {
+  students: Student[];
+}
+
 interface ItemType {
   students: Student[];
   schoolId: number;
@@ -42,12 +46,19 @@ const ViewAllBySchool = () => {
           `/api/users/registrations/${params.id}`
         );
         console.log("registeredStudents.data");
-        console.log(registeredStudents.data.students);
-        const levelCounts = registeredStudents.data.students.reduce(
+        console.log(registeredStudents.data);
+        console.log(registeredStudents.data);
+        const allStudents: Student[] = registeredStudents.data.flatMap(
+          (reg: RegistrationEntry) => reg.students
+        ); // Flattens the array of student arrays
+
+        const levelCounts = allStudents.reduce(
           (acc: LevelCounts, student: Student) => {
-            const { level } = student;
-            console.log(level);
-            acc[level] = (acc[level] || 0) + 1;
+            const { level } = student; // Assuming each student has a 'level' attribute
+            if (level) {
+              
+              acc[level] = (acc[level] || 0) + 1; // Increment the count for this level
+            }
             return acc;
           },
           {}
