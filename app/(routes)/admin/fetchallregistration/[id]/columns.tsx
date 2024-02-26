@@ -208,12 +208,12 @@ const styles = StyleSheet.create({
     marginBottom: 1,
   },
   studentInfoTitle: {
-    fontSize: 8,
+    fontSize: "14px",
     width: "100px",
     fontWeight: "heavy",
   },
   studentInfoContent: {
-    fontSize: 10,
+    fontSize: "14px",
     fontWeight: "bold",
     marginLeft: "20px",
   },
