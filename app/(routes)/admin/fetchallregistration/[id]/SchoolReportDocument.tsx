@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     textAlign: "center", // Center align header text
   },
   tableCell: {
-    fontSize: "12px",
+    fontSize: "10px",
     width: "100%",
     flexWrap: "wrap",
     fontWeight: "bold",
