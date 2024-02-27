@@ -80,6 +80,7 @@ const styles = StyleSheet.create({
     borderRight: 1,
     borderColor: "#000",
     padding: 2,
+    flexWrap: "wrap",
   },
   tableCellHeader: {
     fontSize: 10,
@@ -87,7 +88,8 @@ const styles = StyleSheet.create({
     textAlign: "center", // Center align header text
   },
   tableCell: {
-    fontSize: "10px",
+    fontSize: "8px",
+    flexWrap: "wrap",
     fontWeight: "bold",
     textAlign: "center", // Center align cell text
   },
