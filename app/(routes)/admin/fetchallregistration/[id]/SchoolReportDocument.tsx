@@ -214,7 +214,6 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
               alignItems: "center",
               justifyContent: "center",
               display: "flex",
-              marginLeft: "50px",
               flexDirection: "column",
             }}
           >
