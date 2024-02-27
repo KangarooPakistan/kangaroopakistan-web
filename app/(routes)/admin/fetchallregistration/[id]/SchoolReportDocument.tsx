@@ -260,6 +260,11 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({ schoolData }) => {
             ))}
           </View>
         ))}
+        <View>
+          <Text style={styles.totalStudentsText}>
+            Total Number of Students : {schoolData.length}
+          </Text>
+        </View>
       </Page>
     </Document>
   );
