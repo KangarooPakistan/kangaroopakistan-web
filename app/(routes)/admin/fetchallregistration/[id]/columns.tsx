@@ -63,30 +63,30 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
-  useEffect(() => {
-    const fetchData = async () => {
-      const session = await getSession();
-      setMySession(session?.user.id);
-      console.log("session");
-      const res = await axios.get(
-        `/api/users/getuserbyemail/${session?.user.email}`
-      );
-      console.log(res.data);
-      const profileData: ProfileData = {
-        p_fName: res.data.p_fName,
-        p_mName: res.data.p_mName,
-        p_lName: res.data.p_lName,
-        c_fName: res.data.c_fName,
-        c_mName: res.data.c_mName,
-        c_lName: res.data.c_lName,
-      };
-      setData(profileData);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const session = await getSession();
+  //     setMySession(session?.user.id);
+  //     console.log("session");
+  //     const res = await axios.get(
+  //       `/api/users/getuserbyemail/${session?.user.email}`
+  //     );
+  //     console.log(res.data);
+  //     const profileData: ProfileData = {
+  //       p_fName: res.data.p_fName,
+  //       p_mName: res.data.p_mName,
+  //       p_lName: res.data.p_lName,
+  //       c_fName: res.data.c_fName,
+  //       c_mName: res.data.c_mName,
+  //       c_lName: res.data.c_lName,
+  //     };
+  //     setData(profileData);
 
-      console.log(res.data);
-      console.log(session);
-    };
-    fetchData();
-  }, []);
+  //     console.log(res.data);
+  //     console.log(session);
+  //   };
+  //   fetchData();
+  // }, []);
   const handleView = () => {
     router.push(`/admin/viewallbyschool/${registration.id}`);
   };
@@ -104,7 +104,6 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       const response = await axios.get(
         `/api/users/pdfdownload/${registration.id}`
       );
-
       const students: Student[] = response.data;
       const blob = await generatePdfBlob(students);
       saveAs(blob, "students.pdf");
@@ -146,12 +145,30 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         `/api/users/pdfdownload/${registration.id}`
       );
 
+      const res = await axios.get(
+        `/api/users/allusers/getschoolbyregid/${registration.id}`
+      );
+      console.log("res");
+      console.log(res.data.user.p_fName);
+      const profileData: ProfileData = {
+        p_fName: res.data.user.p_fName,
+        p_mName: res.data.user.p_mName,
+        p_lName: res.data.user.p_lName,
+        c_fName: res.data.user.c_fName,
+        c_mName: res.data.user.c_mName,
+        c_lName: res.data.user.c_lName,
+      };
+      setData(profileData);
+
       console.log(response.data);
       const schoolData = response.data;
       console.log("schoolData"); // This should be an array of ClassData
       console.log(schoolData); // This should be an array of ClassData
       const blob = await pdf(
-        <SchoolReportDocument schoolData={schoolData} profileData={data} />
+        <SchoolReportDocument
+          schoolData={schoolData}
+          profileData={profileData}
+        />
       ).toBlob();
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");

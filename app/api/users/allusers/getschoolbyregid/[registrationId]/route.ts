@@ -13,9 +13,14 @@ export async function GET(request: NextRequest,
                 user: true, // Include the related User record
             },
         });
+        return NextResponse.json(registration);
+
     } 
 
-        catch (error) {
+        catch (error: any) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
+            
+
         }
 
 }

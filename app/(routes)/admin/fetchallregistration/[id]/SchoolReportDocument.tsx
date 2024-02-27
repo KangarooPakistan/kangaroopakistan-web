@@ -222,12 +222,14 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
           </View>
         </View>
         <Text style={styles.subHeading}>
-          Principal Name: {profileData?.p_fName} &nbsp; {profileData?.p_mName}
-          &nbsp; {profileData?.p_lName}{" "}
+          Principal Name: {profileData?.p_fName} &nbsp;
+          {profileData?.p_mName !== null && profileData?.p_mName + " "}
+          {profileData?.p_lName}{" "}
         </Text>
         <Text style={styles.subHeading}>
-          Principal Name: {profileData?.c_fName} &nbsp; {profileData?.c_mName}
-          &nbsp; {profileData?.c_lName}{" "}
+          Coordinator Name: {profileData?.c_fName} &nbsp;
+          {profileData?.c_mName !== null && profileData?.c_mName + " "}
+          {profileData?.c_lName}
         </Text>
 
         {Object.entries(groupedStudents).map(([level, classes]) => (
