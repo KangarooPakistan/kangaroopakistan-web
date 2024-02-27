@@ -46,6 +46,8 @@ type ProfileData = {
   c_fName: string;
   c_mName: string;
   c_lName: string;
+  email: string;
+  phone: string;
 };
 export type PaymentProof = {
   id: number;
@@ -157,6 +159,8 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         c_fName: res.data.user.c_fName,
         c_mName: res.data.user.c_mName,
         c_lName: res.data.user.c_lName,
+        email: res.data.user.email,
+        phone: res.data.user.phone,
       };
       setData(profileData);
 

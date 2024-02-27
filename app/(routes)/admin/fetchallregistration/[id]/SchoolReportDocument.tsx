@@ -29,6 +29,8 @@ interface profileData {
   c_fName: string;
   c_mName: string;
   c_lName: string;
+  email: string;
+  phone: string;
 }
 
 interface SchoolReportProps {
@@ -232,6 +234,10 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
 
             <Text style={styles.subHeadingTwo}>
               List of registered students
+            </Text>
+            <Text style={styles.subHeadingTwo}>
+              School Contact: {profileData?.phone} EmailAddress:{" "}
+              {profileData?.email}
             </Text>
             <Text style={styles.subHeadingTwo}>
               Principal Name: {profileData?.p_fName} &nbsp;
