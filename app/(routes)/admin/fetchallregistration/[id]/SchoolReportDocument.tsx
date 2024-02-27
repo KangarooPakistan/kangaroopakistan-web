@@ -198,7 +198,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
 
   return (
     <Document>
-      <Page size="A4" style={styles.page}>
+      <Page size="LETTER" style={styles.page}>
         <View>
           <Image
             style={styles.image}
