@@ -33,13 +33,13 @@ const styles = StyleSheet.create({
     fontFamily: "Helvetica",
   },
   header: {
-    fontSize: "15px",
+    fontSize: "13px",
     textAlign: "center",
     // margin: ,
     fontWeight: "heavy",
   },
   subHeader: {
-    fontSize: "12px",
+    fontSize: "10px",
     fontWeight: "black",
 
     textAlign: "left",
