@@ -53,7 +53,8 @@ const styles = StyleSheet.create({
     fontSize: "13px",
     textAlign: "center",
     // margin: ,
-    fontWeight: "heavy",
+    fontWeight: "bold",
+    textDecoration: "underline",
   },
   subHeader: {
     fontSize: "10px",
