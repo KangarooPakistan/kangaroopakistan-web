@@ -84,6 +84,12 @@ const styles = StyleSheet.create({
     fontWeight: "black",
     marginVertical: "0px",
   },
+  subHeadingThree: {
+    fontSize: "12px",
+    textAlign: "center",
+    fontWeight: "black",
+    marginVertical: "5px",
+  },
   schoolInfo: {
     marginVertical: 3,
   },
@@ -245,7 +251,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
               {profileData?.c_mName !== null && profileData?.c_mName + " "}
               {profileData?.c_lName}
             </Text>
-            <Text style={styles.subHeadingTwo}>
+            <Text style={styles.subHeadingThree}>
               List of registered students
             </Text>
           </View>
