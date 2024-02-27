@@ -139,9 +139,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
   },
   tableCol: {
-    width: "12%",
-    borderRight: 1,
-    borderColor: "#000",
+    width: "15%",
     padding: 2,
     flexWrap: "wrap",
   },
