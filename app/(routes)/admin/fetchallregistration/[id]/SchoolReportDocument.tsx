@@ -199,7 +199,9 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({ schoolData }) => {
           >
             <Text style={styles.header}>{schoolData[0].schoolName}</Text>
             <Text style={styles.header}>{schoolData[0].address}</Text>
-            <Text style={styles.header}>{schoolData[0].schoolId}</Text>
+            <Text style={styles.header}>
+              Institution Code: {schoolData[0].schoolId}
+            </Text>
             <Text style={styles.subHeaderBelow}>
               34th International Kangaroo Mathematics Contest 2024
             </Text>
