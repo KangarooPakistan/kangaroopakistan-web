@@ -54,19 +54,21 @@ const styles = StyleSheet.create({
   header: {
     fontSize: "13px",
     textAlign: "center",
-    // margin: ,
+    marginVertical: "10px",
+
     fontWeight: "bold",
     textDecoration: "underline",
   },
   subHeader: {
     fontSize: "10px",
     fontWeight: "black",
+    marginVertical: "1px",
 
     textAlign: "left",
     textDecoration: "underline",
   },
   subHeaderBelow: {
-    marginVertical: "10px",
+    marginVertical: "0px",
     fontSize: "12px",
     textAlign: "center",
     textDecoration: "underline",
@@ -121,9 +123,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#eee", // Optional for header background
   },
   tableColHeader: {
-    width: "12%",
-    borderRight: 1,
-    borderColor: "#000",
+    width: "15%",
     padding: 2,
     backgroundColor: "#eee",
   },
