@@ -199,7 +199,13 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
   return (
     <Document>
       <Page size="LETTER" style={styles.page}>
-        <View>
+        <View
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
           <Image
             style={styles.image}
             src="/innovative-learning.jpg" // Replace with your image path or URL
