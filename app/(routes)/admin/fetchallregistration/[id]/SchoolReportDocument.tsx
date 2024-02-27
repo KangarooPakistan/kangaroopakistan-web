@@ -121,6 +121,7 @@ const styles = StyleSheet.create({
   },
   tableCell: {
     fontSize: "12px",
+    width: "100%",
     flexWrap: "wrap",
     fontWeight: "bold",
     textAlign: "center", // Center align cell text
@@ -139,6 +140,26 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({ schoolData }) => {
     }
     groupedStudents[student.studentLevel][student.studentClass].push(student);
   });
+  // Utility function to split text into lines based on max characters per line
+  function splitTextIntoLines(text: string, maxCharsPerLine: number) {
+    const words = text.split(" ");
+    const lines = [];
+    let currentLine = "";
+
+    words.forEach((word) => {
+      if ((currentLine + word).length > maxCharsPerLine) {
+        lines.push(currentLine.trim());
+        currentLine = word;
+      } else {
+        currentLine += ` ${word}`;
+      }
+    });
+
+    // Add the last line
+    lines.push(currentLine.trim());
+    return lines;
+  }
+  const MAX_CHARS_PER_LINE = 20; // Adjust this number based on your needs
 
   function getStudentLevel(classStr: string) {
     switch (classStr) {
@@ -196,14 +217,24 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({ schoolData }) => {
                         </Text>
                       </View>
                       <View style={styles.tableColMid}>
-                        <Text style={styles.tableCell}>
-                          {student.studentName}
-                        </Text>
+                        {splitTextIntoLines(
+                          student.studentName,
+                          MAX_CHARS_PER_LINE
+                        ).map((line, lineIdx) => (
+                          <Text key={lineIdx} style={styles.tableCell}>
+                            {line}
+                          </Text>
+                        ))}
                       </View>
                       <View style={styles.tableColMid}>
-                        <Text style={styles.tableCell}>
-                          {student.fatherName}
-                        </Text>
+                        {splitTextIntoLines(
+                          student.fatherName,
+                          MAX_CHARS_PER_LINE
+                        ).map((line, lineIdx) => (
+                          <Text key={lineIdx} style={styles.tableCell}>
+                            {line}
+                          </Text>
+                        ))}
                       </View>
                       <View style={styles.tableCol}>
                         <Text style={styles.tableCell}>
