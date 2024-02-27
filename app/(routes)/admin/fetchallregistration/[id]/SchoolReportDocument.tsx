@@ -189,7 +189,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
 
   return (
     <Document>
-      <Page size="A4" wrap={true} style={styles.page}>
+      <Page size="A4" style={styles.page}>
         <View
           style={{
             display: "flex",
