@@ -207,7 +207,6 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
               justifyContent: "center",
               display: "flex",
               flexDirection: "column",
-              marginLeft: "100px",
             }}
           >
             <Text style={styles.header}>{schoolData[0].schoolName}</Text>
