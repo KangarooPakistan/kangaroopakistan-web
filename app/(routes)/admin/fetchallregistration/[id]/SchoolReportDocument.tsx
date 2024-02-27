@@ -203,7 +203,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
         <View
           style={{
             display: "flex",
-            justifyContent: "center",
+            justifyContent: "space-between",
             alignItems: "center",
             flexDirection: "row",
           }}
