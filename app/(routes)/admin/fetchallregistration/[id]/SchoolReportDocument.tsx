@@ -46,6 +46,7 @@ const styles = StyleSheet.create({
   page: {
     flexDirection: "column",
     backgroundColor: "#FFF",
+
     padding: "20px",
     marginBottom: "20px",
     flexWrap: "wrap",
@@ -200,7 +201,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
 
   return (
     <Document>
-      <Page size="A4" style={styles.page}>
+      <Page size="A4" wrap={true} style={styles.page}>
         <View
           style={{
             display: "flex",
