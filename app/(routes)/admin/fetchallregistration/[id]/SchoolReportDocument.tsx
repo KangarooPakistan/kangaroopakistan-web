@@ -230,10 +230,6 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
               Institution Code: {schoolData[0].schoolId}
             </Text>
             <Text style={styles.subHeaderBelow}>{schoolData[0].address}</Text>
-
-            <Text style={styles.subHeadingTwo}>
-              List of registered students
-            </Text>
             <Text style={styles.subHeadingTwo}>
               School Contact: {profileData?.phone} EmailAddress:{" "}
               {profileData?.email}
@@ -247,6 +243,9 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
               Coordinator Name: {profileData?.c_fName} &nbsp;
               {profileData?.c_mName !== null && profileData?.c_mName + " "}
               {profileData?.c_lName}
+            </Text>
+            <Text style={styles.subHeadingTwo}>
+              List of registered students
             </Text>
           </View>
           <View></View>
