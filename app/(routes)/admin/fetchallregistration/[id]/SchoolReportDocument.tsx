@@ -157,6 +157,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center", // Center align cell text
   },
+  section: {
+    marginRight: "10px",
+  },
 });
 
 const SchoolReportDocument: React.FC<SchoolReportProps> = ({
@@ -242,7 +245,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
         </View>
 
         {Object.entries(groupedStudents).map(([level, classes]) => (
-          <View key={level}>
+          <View key={level} style={styles.section}>
             <Text style={styles.subHeader}>{getStudentLevel(level)} Level</Text>
             {Object.entries(classes).map(([cls, students]) => (
               <View key={cls} style={{ marginBottom: "0px" }}>
