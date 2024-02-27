@@ -220,14 +220,17 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
               flexDirection: "column",
             }}
           >
-            <Text style={styles.header}>{schoolData[0].schoolName}</Text>
-            <Text style={styles.header}>{schoolData[0].address}</Text>
             <Text style={styles.header}>
-              Institution Code: {schoolData[0].schoolId}
-            </Text>
-            <Text style={styles.subHeaderBelow}>
               34th International Kangaroo Mathematics Contest 2024
             </Text>
+            <Text style={styles.subHeaderBelow}>
+              {schoolData[0].schoolName}
+            </Text>
+            <Text style={styles.subHeaderBelow}>
+              Institution Code: {schoolData[0].schoolId}
+            </Text>
+            <Text style={styles.subHeaderBelow}>{schoolData[0].address}</Text>
+
             <Text style={styles.subHeadingTwo}>
               List of registered students
             </Text>
