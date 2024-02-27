@@ -44,6 +44,7 @@ const styles = StyleSheet.create({
     marginBottom: 10, // Optional: add some margin if needed
   },
   page: {
+    padding: "10px",
     flexDirection: "column",
     backgroundColor: "#FFF",
     fontFamily: "Helvetica",
