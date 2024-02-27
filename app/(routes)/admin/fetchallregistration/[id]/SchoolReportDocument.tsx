@@ -28,9 +28,8 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     backgroundColor: "#FFF",
     padding: "20px",
-    marginTop: "20px",
-    paddingBottom: "20px",
     marginBottom: "20px",
+    flexWrap: "wrap",
     fontFamily: "Helvetica",
   },
   header: {
