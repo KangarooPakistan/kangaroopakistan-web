@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     fontFamily: "Helvetica",
   },
   header: {
-    fontSize: "20px",
+    fontSize: "15px",
     textAlign: "center",
     // margin: ,
     fontWeight: "heavy",
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     textAlign: "center", // Center align header text
   },
   tableCell: {
-    fontSize: "12px",
+    fontSize: "10px",
     fontWeight: "bold",
     textAlign: "center", // Center align cell text
   },

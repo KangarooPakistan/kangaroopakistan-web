@@ -8,11 +8,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
   try {
     const today = new Date();
   const activeContests = await db.contest.findMany({
-    where: {
-      endDate: {
-        gt: today,
-      },
-    },
+    
     include: {
       contestType: true, // assuming you want to include details from the ContestType model
     },
