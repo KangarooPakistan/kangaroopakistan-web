@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
   subHeadingThree: {
     fontSize: "12px",
     textAlign: "center",
-    fontWeight: "black",
+    fontWeight: "extrabold",
     marginVertical: "5px",
   },
   schoolInfo: {
