@@ -46,17 +46,12 @@ const styles = StyleSheet.create({
   page: {
     flexDirection: "column",
     backgroundColor: "#FFF",
-    padding: "20px",
-    marginBottom: "20px",
-    flexWrap: "wrap",
-    width: "100%",
     fontFamily: "Helvetica",
   },
   header: {
     fontSize: "13px",
     textAlign: "center",
     marginVertical: "10px",
-
     fontWeight: "bold",
     textDecoration: "underline",
   },
