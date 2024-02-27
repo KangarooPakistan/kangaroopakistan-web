@@ -219,18 +219,18 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
               34th International Kangaroo Mathematics Contest 2024
             </Text>
             <Text style={styles.subHeading}>List of registered students</Text>
+            <Text style={styles.subHeading}>
+              Principal Name: {profileData?.p_fName} &nbsp;
+              {profileData?.p_mName !== null && profileData?.p_mName + " "}
+              {profileData?.p_lName}{" "}
+            </Text>
+            <Text style={styles.subHeading}>
+              Coordinator Name: {profileData?.c_fName} &nbsp;
+              {profileData?.c_mName !== null && profileData?.c_mName + " "}
+              {profileData?.c_lName}
+            </Text>
           </View>
         </View>
-        <Text style={styles.subHeading}>
-          Principal Name: {profileData?.p_fName} &nbsp;
-          {profileData?.p_mName !== null && profileData?.p_mName + " "}
-          {profileData?.p_lName}{" "}
-        </Text>
-        <Text style={styles.subHeading}>
-          Coordinator Name: {profileData?.c_fName} &nbsp;
-          {profileData?.c_mName !== null && profileData?.c_mName + " "}
-          {profileData?.c_lName}
-        </Text>
 
         {Object.entries(groupedStudents).map(([level, classes]) => (
           <View key={level}>
