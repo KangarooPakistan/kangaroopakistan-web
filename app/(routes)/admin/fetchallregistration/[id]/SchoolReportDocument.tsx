@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     marginVertical: 3,
   },
   totalStudentsText: {
-    fontSize: 10,
+    fontSize: "12px",
     marginVertical: "10px",
     textAlign: "right",
     textDecoration: "underline",
@@ -162,7 +162,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({ schoolData }) => {
 
   return (
     <Document>
-      <Page size="A4" style={styles.page}>
+      <Page size="A4" wrap={true} style={styles.page}>
         <Text style={styles.header}>{schoolData[0].schoolName}</Text>
         <Text style={styles.header}>{schoolData[0].address}</Text>
         <Text style={styles.subHeaderBelow}>
