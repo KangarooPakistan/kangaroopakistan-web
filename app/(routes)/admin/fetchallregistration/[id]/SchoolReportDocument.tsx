@@ -205,6 +205,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
+            marginRight: "20px",
             flexDirection: "row",
           }}
         >
