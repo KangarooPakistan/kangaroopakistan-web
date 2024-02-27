@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     textDecoration: "underline",
   },
   subHeaderBelow: {
-    marginVertical: "0px",
+    marginVertical: "5px",
     fontSize: "12px",
     textAlign: "center",
     textDecoration: "underline",
