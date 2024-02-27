@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
     textAlign: "center", // Center align cell text
   },
   section: {
-    marginRight: "10px",
+    // marginRight: "10px",
   },
 });
 
