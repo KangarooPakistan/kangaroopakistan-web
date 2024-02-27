@@ -37,8 +37,8 @@ interface SchoolReportProps {
 }
 const styles = StyleSheet.create({
   image: {
-    width: 100, // Set the width of your image
-    height: 100, // Set the height of your image
+    width: 80, // Set the width of your image
+    height: 80, // Set the height of your image
     marginBottom: 10, // Optional: add some margin if needed
   },
   page: {
@@ -74,6 +74,13 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontWeight: "black",
     textDecoration: "underline",
+  },
+
+  subHeadingTwo: {
+    fontSize: "12px",
+    textAlign: "center",
+    fontWeight: "black",
+    marginVertical: "0px",
   },
   schoolInfo: {
     marginVertical: 3,
@@ -206,6 +213,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
               alignItems: "center",
               justifyContent: "center",
               display: "flex",
+              marginLeft: "50px",
               flexDirection: "column",
             }}
           >
@@ -217,13 +225,15 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
             <Text style={styles.subHeaderBelow}>
               34th International Kangaroo Mathematics Contest 2024
             </Text>
-            <Text style={styles.subHeading}>List of registered students</Text>
-            <Text style={styles.subHeading}>
+            <Text style={styles.subHeadingTwo}>
+              List of registered students
+            </Text>
+            <Text style={styles.subHeadingTwo}>
               Principal Name: {profileData?.p_fName} &nbsp;
               {profileData?.p_mName !== null && profileData?.p_mName + " "}
               {profileData?.p_lName}{" "}
             </Text>
-            <Text style={styles.subHeading}>
+            <Text style={styles.subHeadingTwo}>
               Coordinator Name: {profileData?.c_fName} &nbsp;
               {profileData?.c_mName !== null && profileData?.c_mName + " "}
               {profileData?.c_lName}
