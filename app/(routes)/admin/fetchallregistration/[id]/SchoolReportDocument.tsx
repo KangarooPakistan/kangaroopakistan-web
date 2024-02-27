@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Font,
 } from "@react-pdf/renderer";
+import { Image } from "@react-pdf/renderer";
 
 // Create styles for the PDF
 
@@ -16,6 +17,7 @@ interface Student {
   fatherName: string;
   studentClass: string; // Assuming 'class' is a string like '1A', '2B', etc.
   studentLevel: string;
+  schoolId: number;
   schoolName: string;
   address: string; // Assuming 'class' is a string like '1A', '2B', etc.
 }
@@ -24,6 +26,11 @@ interface SchoolReportProps {
   schoolData: Student[];
 }
 const styles = StyleSheet.create({
+  image: {
+    width: 100, // Set the width of your image
+    height: 100, // Set the height of your image
+    marginBottom: 10, // Optional: add some margin if needed
+  },
   page: {
     flexDirection: "column",
     backgroundColor: "#FFF",
@@ -47,8 +54,15 @@ const styles = StyleSheet.create({
   },
   subHeaderBelow: {
     marginVertical: "10px",
-    fontSize: "15px",
+    fontSize: "12px",
     textAlign: "center",
+    textDecoration: "underline",
+  },
+  subHeading: {
+    marginVertical: "12px",
+    fontSize: "12px",
+    textAlign: "center",
+    fontWeight: "black",
     textDecoration: "underline",
   },
   schoolInfo: {
@@ -163,12 +177,35 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({ schoolData }) => {
   return (
     <Document>
       <Page size="A4" wrap={true} style={styles.page}>
-        <Text style={styles.header}>{schoolData[0].schoolName}</Text>
-        <Text style={styles.header}>{schoolData[0].address}</Text>
-        <Text style={styles.subHeaderBelow}>
-          34th International Kangaroo Mathematics Contest 2024
-        </Text>
-
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "flex-start",
+          }}
+        >
+          <Image
+            style={styles.image}
+            src="/ksfpakistan_logo.jpeg" // Replace with your image path or URL
+          />
+          <View
+            style={{
+              alignItems: "center",
+              justifyContent: "center",
+              display: "flex",
+              flexDirection: "column",
+              marginLeft: "100px",
+            }}
+          >
+            <Text style={styles.header}>{schoolData[0].schoolName}</Text>
+            <Text style={styles.header}>{schoolData[0].address}</Text>
+            <Text style={styles.header}>{schoolData[0].schoolId}</Text>
+            <Text style={styles.subHeaderBelow}>
+              34th International Kangaroo Mathematics Contest 2024
+            </Text>
+            <Text style={styles.subHeading}>List of registered students</Text>
+          </View>
+        </View>
         {Object.entries(groupedStudents).map(([level, classes]) => (
           <View key={level}>
             <Text style={styles.subHeader}>{getStudentLevel(level)} Level</Text>
