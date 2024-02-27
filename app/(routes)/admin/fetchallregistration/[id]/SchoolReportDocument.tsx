@@ -205,6 +205,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            flexDirection: "row",
           }}
         >
           <Image
@@ -214,7 +215,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
           <View
             style={{
               alignItems: "center",
-              justifyContent: "center",
+              justifyContent: "space-between",
               display: "flex",
               flexDirection: "column",
             }}
@@ -248,6 +249,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
               {profileData?.c_lName}
             </Text>
           </View>
+          <View></View>
         </View>
 
         {Object.entries(groupedStudents).map(([level, classes]) => (
