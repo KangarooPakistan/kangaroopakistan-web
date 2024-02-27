@@ -24,8 +24,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SchoolReportDocument from "./SchoolReportDocument";
+import { getSession } from "next-auth/react";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -37,6 +38,15 @@ export type Registration = {
   email: string;
   paymentProof?: PaymentProof[];
 };
+
+type ProfileData = {
+  p_fName: string;
+  p_mName: string;
+  p_lName: string;
+  c_fName: string;
+  c_mName: string;
+  c_lName: string;
+};
 export type PaymentProof = {
   id: number;
   imageUrl: string;
@@ -47,9 +57,36 @@ type RegistrationProps = {
 };
 const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
   const [students, setStudents] = useState([]);
+  const [mySession, setMySession] = useState<string | null>();
+  const [data, setData] = useState<ProfileData | null>();
+
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
+  useEffect(() => {
+    const fetchData = async () => {
+      const session = await getSession();
+      setMySession(session?.user.id);
+      console.log("session");
+      const res = await axios.get(
+        `/api/users/getuserbyemail/${session?.user.email}`
+      );
+      console.log(res.data);
+      const profileData: ProfileData = {
+        p_fName: res.data.p_fName,
+        p_mName: res.data.p_mName,
+        p_lName: res.data.p_lName,
+        c_fName: res.data.c_fName,
+        c_mName: res.data.c_mName,
+        c_lName: res.data.c_lName,
+      };
+      setData(profileData);
+
+      console.log(res.data);
+      console.log(session);
+    };
+    fetchData();
+  }, []);
   const handleView = () => {
     router.push(`/admin/viewallbyschool/${registration.id}`);
   };
@@ -67,6 +104,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       const response = await axios.get(
         `/api/users/pdfdownload/${registration.id}`
       );
+
       const students: Student[] = response.data;
       const blob = await generatePdfBlob(students);
       saveAs(blob, "students.pdf");
@@ -107,12 +145,13 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       const response = await axios.get(
         `/api/users/pdfdownload/${registration.id}`
       );
+
       console.log(response.data);
       const schoolData = response.data;
       console.log("schoolData"); // This should be an array of ClassData
       console.log(schoolData); // This should be an array of ClassData
       const blob = await pdf(
-        <SchoolReportDocument schoolData={schoolData} />
+        <SchoolReportDocument schoolData={schoolData} profileData={data} />
       ).toBlob();
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");

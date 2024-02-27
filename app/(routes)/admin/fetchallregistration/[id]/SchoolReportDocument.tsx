@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Page,
   Text,
@@ -8,6 +8,7 @@ import {
   Font,
 } from "@react-pdf/renderer";
 import { Image } from "@react-pdf/renderer";
+import axios from "axios";
 
 // Create styles for the PDF
 
@@ -21,9 +22,18 @@ interface Student {
   schoolName: string;
   address: string; // Assuming 'class' is a string like '1A', '2B', etc.
 }
+interface profileData {
+  p_fName: string;
+  p_mName: string;
+  p_lName: string;
+  c_fName: string;
+  c_mName: string;
+  c_lName: string;
+}
 
 interface SchoolReportProps {
   schoolData: Student[];
+  profileData: profileData | null | undefined;
 }
 const styles = StyleSheet.create({
   image: {
@@ -142,7 +152,10 @@ const styles = StyleSheet.create({
   },
 });
 
-const SchoolReportDocument: React.FC<SchoolReportProps> = ({ schoolData }) => {
+const SchoolReportDocument: React.FC<SchoolReportProps> = ({
+  schoolData,
+  profileData,
+}) => {
   const groupedStudents: Record<string, Record<string, Student[]>> = {};
 
   schoolData.forEach((student) => {
@@ -186,7 +199,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({ schoolData }) => {
         >
           <Image
             style={styles.image}
-            src="/ksfpakistan_logo.jpeg" // Replace with your image path or URL
+            src="/innovative-learning.jpg" // Replace with your image path or URL
           />
           <View
             style={{
@@ -208,6 +221,15 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({ schoolData }) => {
             <Text style={styles.subHeading}>List of registered students</Text>
           </View>
         </View>
+        <Text style={styles.subHeading}>
+          Principal Name: {profileData?.p_fName} &nbsp; {profileData?.p_mName}
+          &nbsp; {profileData?.p_lName}{" "}
+        </Text>
+        <Text style={styles.subHeading}>
+          Principal Name: {profileData?.c_fName} &nbsp; {profileData?.c_mName}
+          &nbsp; {profileData?.c_lName}{" "}
+        </Text>
+
         {Object.entries(groupedStudents).map(([level, classes]) => (
           <View key={level}>
             <Text style={styles.subHeader}>{getStudentLevel(level)} Level</Text>
