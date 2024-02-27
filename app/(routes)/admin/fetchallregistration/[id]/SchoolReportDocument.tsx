@@ -15,7 +15,9 @@ interface Student {
   studentName: string;
   fatherName: string;
   studentClass: string; // Assuming 'class' is a string like '1A', '2B', etc.
-  studentLevel: string; // Assuming 'class' is a string like '1A', '2B', etc.
+  studentLevel: string;
+  schoolName: string;
+  address: string; // Assuming 'class' is a string like '1A', '2B', etc.
 }
 
 interface SchoolReportProps {
@@ -24,48 +26,70 @@ interface SchoolReportProps {
 const styles = StyleSheet.create({
   page: {
     flexDirection: "column",
-    padding: 20,
-  },
-  section: {
-    padding: 10,
-    flexGrow: 1,
+    backgroundColor: "#FFF",
+    padding: "10px",
+    fontFamily: "Helvetica",
   },
   header: {
-    fontSize: 18,
+    fontSize: "20px",
     textAlign: "center",
-    marginBottom: 10,
+    // margin: ,
+    fontWeight: "heavy",
   },
   subHeader: {
-    fontSize: 16,
-    marginBottom: 5,
+    fontSize: 10,
+    textAlign: "left",
+    textDecoration: "underline",
+  },
+  subHeaderBelow: {
+    marginVertical: "10px",
+    fontSize: "15px",
+    textAlign: "center",
+    textDecoration: "underline",
+  },
+  schoolInfo: {
+    marginVertical: 3,
+  },
+  totalStudentsText: {
+    fontSize: 10,
+    marginVertical: "10px",
+    textAlign: "right",
+    textDecoration: "underline",
   },
   studentTable: {
-    flexDirection: "row",
-    borderWidth: 1,
+    marginVertical: "5px",
+    borderTop: 1,
     borderColor: "#000",
   },
   tableRow: {
     flexDirection: "row",
+    borderBottom: 1,
+    borderColor: "#000",
+    alignItems: "center",
+    height: 24, // Adjust the height as needed
   },
   tableColHeader: {
     width: "25%",
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderLeftWidth: 0,
-    borderTopWidth: 0,
-    fontWeight: "bold",
-    padding: 5,
+    borderRight: 1,
+    borderColor: "#000",
+    padding: 2,
+    backgroundColor: "#eee", // Optional for header background
   },
   tableCol: {
     width: "25%",
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderLeftWidth: 0,
-    borderTopWidth: 0,
-    padding: 5,
+    borderRight: 1,
+    borderColor: "#000",
+    padding: 2,
+  },
+  tableCellHeader: {
+    fontSize: 10,
+    fontWeight: "bold",
+    textAlign: "center", // Center align header text
   },
   tableCell: {
-    fontSize: 10,
+    fontSize: "12px",
+    fontWeight: "bold",
+    textAlign: "center", // Center align cell text
   },
 });
 
@@ -82,22 +106,39 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({ schoolData }) => {
     groupedStudents[student.studentLevel][student.studentClass].push(student);
   });
 
+  function getStudentLevel(classStr: string) {
+    switch (classStr) {
+      case "preecolier":
+        return "Pre Ecolier (class 01 and 02)";
+      case "ecolier":
+        return "Ecolier (class 03 and 04)";
+      case "benjamin":
+        return "Benjamin (class 05 and 06)";
+      case "cadet":
+        return "Cadet (class 07 and 08)";
+      case "junior":
+        return "Junior (class 09 and 10)";
+      case "student":
+        return "Student (class 11 and 12)";
+      default:
+        return "Unknown";
+    }
+  }
+
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        <Text style={styles.header}>
-          Divisional Public School & College Junior Section
-        </Text>
-        <Text style={styles.subHeader}>
+        <Text style={styles.header}>{schoolData[0].schoolName}</Text>
+        <Text style={styles.header}>{schoolData[0].address}</Text>
+        <Text style={styles.subHeaderBelow}>
           34th International Kangaroo Mathematics Contest 2024
         </Text>
 
         {Object.entries(groupedStudents).map(([level, classes]) => (
-          <View key={level} style={styles.section}>
-            <Text style={styles.subHeader}>{level} Level</Text>
-            {Object.entries(classes).map(([cls, students], index) => (
-              <View key={index}>
-                <Text style={styles.subHeader}>Class {cls}</Text>
+          <View key={level}>
+            <Text style={styles.subHeader}>{getStudentLevel(level)} Level</Text>
+            {Object.entries(classes).map(([cls, students]) => (
+              <View key={cls} style={{ marginBottom: "0px" }}>
                 <View style={styles.studentTable}>
                   <View style={styles.tableRow}>
                     <View style={styles.tableColHeader}>
@@ -138,15 +179,11 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({ schoolData }) => {
                     </View>
                   ))}
                 </View>
-                <Text style={styles.subHeader}>
-                  Total Students: {students.length}
+                <Text style={styles.totalStudentsText}>
+                  Total Students of Class {cls}: {students.length}
                 </Text>
-                {index < Object.entries(classes).length - 1 && (
-                  <View style={{ marginBottom: 10 }} />
-                )}
               </View>
             ))}
-            <View style={{ marginBottom: 20 }} />
           </View>
         ))}
       </Page>

@@ -109,6 +109,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       );
       console.log(response.data);
       const schoolData = response.data;
+      console.log("schoolData"); // This should be an array of ClassData
       console.log(schoolData); // This should be an array of ClassData
       const blob = await pdf(
         <SchoolReportDocument schoolData={schoolData} />
@@ -139,7 +140,9 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         <DropdownMenuItem onClick={handleDownloadPdf}>
           Download Answer Sheet
         </DropdownMenuItem>
-        {/* <DropdownMenuItem onClick={handleSheet}>Download Pdf</DropdownMenuItem> */}
+        <DropdownMenuItem onClick={handleSheet}>
+          Download Student Details
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
