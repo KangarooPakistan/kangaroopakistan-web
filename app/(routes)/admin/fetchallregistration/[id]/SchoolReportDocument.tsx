@@ -27,7 +27,10 @@ const styles = StyleSheet.create({
   page: {
     flexDirection: "column",
     backgroundColor: "#FFF",
-    padding: "10px",
+    padding: "20px",
+    marginTop: "20px",
+    paddingBottom: "20px",
+    marginBottom: "20px",
     fontFamily: "Helvetica",
   },
   header: {
@@ -37,7 +40,9 @@ const styles = StyleSheet.create({
     fontWeight: "heavy",
   },
   subHeader: {
-    fontSize: 10,
+    fontSize: "12px",
+    fontWeight: "black",
+
     textAlign: "left",
     textDecoration: "underline",
   },
@@ -68,15 +73,43 @@ const styles = StyleSheet.create({
     alignItems: "center",
     height: 24, // Adjust the height as needed
   },
-  tableColHeader: {
+  tableColHeaderMid: {
     width: "25%",
     borderRight: 1,
     borderColor: "#000",
     padding: 2,
     backgroundColor: "#eee", // Optional for header background
   },
-  tableCol: {
+  tableColHeaderLeft: {
+    width: "35%",
+    borderRight: 1,
+    borderColor: "#000",
+    padding: 2,
+    backgroundColor: "#eee", // Optional for header background
+  },
+  tableColHeader: {
+    width: "15%",
+    borderRight: 1,
+    borderColor: "#000",
+    padding: 2,
+    backgroundColor: "#eee",
+  },
+  tableColLeft: {
+    width: "35%",
+    borderRight: 1,
+    borderColor: "#000",
+    padding: 2,
+    flexWrap: "wrap",
+  },
+  tableColMid: {
     width: "25%",
+    borderRight: 1,
+    borderColor: "#000",
+    padding: 2,
+    flexWrap: "wrap",
+  },
+  tableCol: {
+    width: "15%",
     borderRight: 1,
     borderColor: "#000",
     padding: 2,
@@ -88,7 +121,7 @@ const styles = StyleSheet.create({
     textAlign: "center", // Center align header text
   },
   tableCell: {
-    fontSize: "8px",
+    fontSize: "12px",
     flexWrap: "wrap",
     fontWeight: "bold",
     textAlign: "center", // Center align cell text
@@ -143,13 +176,13 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({ schoolData }) => {
               <View key={cls} style={{ marginBottom: "0px" }}>
                 <View style={styles.studentTable}>
                   <View style={styles.tableRow}>
-                    <View style={styles.tableColHeader}>
+                    <View style={styles.tableColHeaderLeft}>
                       <Text style={styles.tableCell}>Roll No</Text>
                     </View>
-                    <View style={styles.tableColHeader}>
+                    <View style={styles.tableColHeaderMid}>
                       <Text style={styles.tableCell}>Student Name</Text>
                     </View>
-                    <View style={styles.tableColHeader}>
+                    <View style={styles.tableColHeaderMid}>
                       <Text style={styles.tableCell}>Father Name</Text>
                     </View>
                     <View style={styles.tableColHeader}>
@@ -158,17 +191,17 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({ schoolData }) => {
                   </View>
                   {students.map((student, idx) => (
                     <View key={idx} style={styles.tableRow}>
-                      <View style={styles.tableCol}>
+                      <View style={styles.tableColLeft}>
                         <Text style={styles.tableCell}>
                           {student.rollNumber}
                         </Text>
                       </View>
-                      <View style={styles.tableCol}>
+                      <View style={styles.tableColMid}>
                         <Text style={styles.tableCell}>
                           {student.studentName}
                         </Text>
                       </View>
-                      <View style={styles.tableCol}>
+                      <View style={styles.tableColMid}>
                         <Text style={styles.tableCell}>
                           {student.fatherName}
                         </Text>
