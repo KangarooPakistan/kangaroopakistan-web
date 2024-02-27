@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#eee", // Optional for header background
   },
   tableColHeader: {
-    width: "15%",
+    width: "12%",
     borderRight: 1,
     borderColor: "#000",
     padding: 2,
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
   },
   tableCol: {
-    width: "15%",
+    width: "12%",
     borderRight: 1,
     borderColor: "#000",
     padding: 2,
