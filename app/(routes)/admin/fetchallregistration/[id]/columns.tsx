@@ -37,6 +37,7 @@ export type Registration = {
   studentsLength: number;
   email: string;
   paymentProof?: PaymentProof[];
+  contestId: string;
 };
 
 type ProfileData = {
@@ -58,9 +59,6 @@ type RegistrationProps = {
   registration: Registration; // Use the Contest type here
 };
 const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
-  
-
-  
   const router = useRouter();
   // useEffect(() => {
   //   const fetchData = async () => {
@@ -89,7 +87,12 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
   const handleView = () => {
     router.push(`/admin/viewallbyschool/${registration.id}`);
   };
-
+  const handleRegister = () => {
+    console.log(registration);
+    router.push(
+      `/admin/enrollstudents/${registration.contestId}/registrationId/${registration.id}`
+    );
+  };
   async function generatePdfBlob(students: Student[]) {
     const doc = <MyDocument students={students} />;
 
@@ -99,7 +102,6 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
   }
   const handleDownloadPdf = async () => {
     try {
-
       const response = await axios.get(
         `/api/users/pdfdownload/${registration.id}`
       );
@@ -108,9 +110,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       saveAs(blob, "students.pdf");
     } catch (error) {
       console.error("Error downloading the PDF:", error);
-
     } finally {
-      
     }
   };
 
@@ -193,6 +193,9 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <DropdownMenuItem onClick={handleView}>View</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleRegister}>
+          Register Students
+        </DropdownMenuItem>
         <DropdownMenuItem onClick={handleDownloadPdf}>
           Download Answer Sheet
         </DropdownMenuItem>

@@ -45,6 +45,9 @@ const ViewAllBySchool = () => {
         const registeredStudents = await axios.get(
           `/api/users/registrations/${params.id}`
         );
+        console.log("-KKR-");
+        console.log("-KKR-");
+        console.log(registeredStudents.data[0].id);
         console.log("registeredStudents.data");
         console.log(registeredStudents.data);
         console.log(registeredStudents.data);
