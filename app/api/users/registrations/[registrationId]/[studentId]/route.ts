@@ -30,6 +30,7 @@ export async function PUT(request: Request, { params }: { params: { registration
                 class: updateData.class,
                 level: updateData.level,
                 fatherName: updateData.fatherName,
+                rollNumber: updateData.rollNumber
                 // Add or remove fields as needed
             };
     

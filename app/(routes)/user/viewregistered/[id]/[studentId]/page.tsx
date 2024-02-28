@@ -51,6 +51,7 @@ const initialData: Student = {
 
 const EditStudent = () => {
   const [data, setData] = useState<Student>(initialData);
+  const [lastNumber, setLastNumber] = useState<string>();
 
   const params = useParams();
   const router = useRouter();
@@ -71,12 +72,47 @@ const EditStudent = () => {
     control,
     formState: { isSubmitting },
   } = form;
+  const incrementRollNumber = (
+    rollNumber: string,
+    existingRollNumber: string,
+    newClass: string
+  ) => {
+    if (!rollNumber) {
+      // If roll number is undefined, generate a new roll number based on the pattern of the existing roll number
+      const parts = existingRollNumber.split("-");
+      // Update the class part of the roll number with the new class
+      parts[parts.length - 3] = newClass;
+      // Set the roll number to start with "001"
+      parts[parts.length - 2] = "001";
+      // Join the parts back together to form the new roll number
+      return parts.join("-");
+    }
+    // Split the roll number into its parts
+    const parts = rollNumber.split("-");
 
+    // Extract the part to be incremented (assuming it's always the second-to-last part)
+    let toIncrement = parseInt(parts[parts.length - 2]);
+
+    // Increment the value
+    toIncrement++;
+
+    // Pad the incremented value with leading zeros
+    const incremented = toIncrement.toString().padStart(3, "0");
+
+    // Replace the original part with the incremented value
+    parts[parts.length - 2] = incremented;
+
+    // Join the parts back together to form the new roll number
+    return parts.join("-");
+  };
   useEffect(() => {
     const fetchData = async () => {
+      console.log(params.id);
       const response = await axios.get(
         `/api/users/registrations/${params.id}/${params.studentId}`
       );
+      console.log("response.data");
+      console.log(response.data);
       form.reset({
         studentName: response.data.studentName,
         fatherName: response.data.fatherName,
@@ -91,8 +127,29 @@ const EditStudent = () => {
   const onSubmit = async (values: zod.infer<typeof formSchema>) => {
     const payload = {
       ...values,
+      rollNumber: data.rollNumber,
     };
     try {
+      if (values.class !== data.class) {
+        console.log("values.class");
+        console.log(values.class);
+        const lastStudent = await axios.get(
+          `/api/users/registrations/${params.id}/lastRollnumber/${values.class}`
+        );
+        console.log("lastStudent");
+        console.log(lastStudent);
+        console.log(payload.rollNumber);
+        const newRollNumber = incrementRollNumber(
+          lastStudent.data.data,
+          payload.rollNumber,
+          values.class
+        );
+        payload.rollNumber = newRollNumber; // Set the roll number here inside the asynchronous block
+
+        console.log("payloadd");
+        console.log(newRollNumber);
+        console.log(payload.rollNumber);
+      }
       const response = await axios.put(
         `/api/users/registrations/${params.id}/${params.studentId}`,
         payload
@@ -123,6 +180,7 @@ const EditStudent = () => {
       // Handle errors appropriately
     }
   };
+  
   const handleClassChange = (classValue: string) => {
     let levelValue = "";
     switch (classValue) {
