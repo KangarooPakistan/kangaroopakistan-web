@@ -5,6 +5,9 @@ import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 interface PaymentProof {
   id: string;
   imageUrl: string;
@@ -16,7 +19,53 @@ const ViewAllRecipts = () => {
   const [totalStudents, setTotalStudents] = useState<string>();
   const [paymentProof, setPaymentProof] = useState<PaymentProof[]>([]);
   const router = useRouter();
+  const [selectedImages, setSelectedImages] = useState<string[]>([]);
 
+  const handleSelectImage = (id: string) => {
+    const isSelected = selectedImages.includes(id);
+    if (isSelected) {
+      // If already selected, remove from selected images
+      setSelectedImages(selectedImages.filter((imageId) => imageId !== id));
+    } else {
+      // If not selected, add to selected images
+      setSelectedImages([...selectedImages, id]);
+    }
+  };
+  const handleDeleteSelectedImages = async () => {
+    // Perform deletion logic here, using selectedImages state
+    // For example, you can send a request to delete these images
+    try {
+      console.log("Selected images:", selectedImages);
+      const response = await axios.delete(
+        `/api/users/deleteimage/${selectedImages}`
+      );
+      router.refresh();
+      window.location.reload();
+      toast.success("🦄 Student Updated successfully", {
+        position: "bottom-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    } catch (error) {
+      toast.error("Error creating registration ", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+    // After deletion, you can update the UI accordingly
+    // For example, you can remove the deleted images from the UI
+  };
   useEffect(() => {
     const fetchData = async () => {
       const id = Array.isArray(params.registrationId)
@@ -55,29 +104,38 @@ const ViewAllRecipts = () => {
           <Button variant="default" onClick={handleBack}>
             Back
           </Button>
+          <Button variant="default" onClick={handleDeleteSelectedImages}>
+            Delete image
+          </Button>
         </div>
 
-        <div className="flex justify-center items-center">
-          {paymentProof.length > 0 &&
-            paymentProof.map((item, index) => (
-              <div
-                key={item.id}
-                className="h-[240px] w-[240px] rounded overflow-hidden shadow-lg flex justify-center items-center mx-2"
-              >
-                <div
-                  key={item.id}
-                  className="flex justify-center items-center mx-auto my-auto"
-                >
-                  <a href={item.imageUrl} target="_blank">
-                    <img
-                      src={item.imageUrl}
-                      alt={`Payment Proof ${index}`}
-                      className="h-[200px] w-[200px]"
-                    />
-                  </a>
+        <div className="grid grid-cols-3 gap-4">
+          {paymentProof.map((item, index) => (
+            <div
+              key={item.id}
+              className="relative rounded-lg overflow-hidden shadow-md"
+            >
+              {/* Checkbox to select image */}
+              <input
+                type="checkbox"
+                checked={selectedImages.includes(item.id)}
+                onChange={() => handleSelectImage(item.id)}
+                className="absolute top-2 right-2 z-10 cursor-pointer"
+              />
+              {/* Image */}
+              <a href={item.imageUrl} target="_blank" rel="noopener noreferrer">
+                <img
+                  src={item.imageUrl}
+                  alt={`Payment Proof ${index}`}
+                  className="h-40 w-full object-cover transition-transform duration-300 transform hover:scale-105"
+                />
+                {/* Hover effect */}
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300 bg-black bg-opacity-50 text-white text-lg font-bold">
+                  Click to view
                 </div>
-              </div>
-            ))}
+              </a>
+            </div>
+          ))}
         </div>
       </div>
     </>
