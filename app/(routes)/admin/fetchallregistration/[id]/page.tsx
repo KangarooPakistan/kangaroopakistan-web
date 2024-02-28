@@ -131,7 +131,7 @@ const FetchAllRegistrations = () => {
       setData(extractedData);
     };
     fetchData();
-  }, []);
+  }, [params.id]);
   const handleClick = () => {
     if (excel.length > 0) {
       const ws = XLSX.utils.json_to_sheet(excel);

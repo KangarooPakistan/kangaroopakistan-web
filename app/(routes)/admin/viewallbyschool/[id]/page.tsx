@@ -91,7 +91,7 @@ const ViewAllBySchool = () => {
     };
 
     fetch();
-  }, []);
+  }, [params.id]);
 
   const exportSheet = () => {
     const ws = XLSX.utils.json_to_sheet(students);

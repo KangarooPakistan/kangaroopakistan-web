@@ -98,7 +98,7 @@ const Register = () => {
       setSchoolEmail(response.data.id);
     };
     fetch();
-  }, []);
+  }, [params.id]);
 
   const {
     register,
