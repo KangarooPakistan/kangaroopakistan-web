@@ -58,12 +58,9 @@ type RegistrationProps = {
   registration: Registration; // Use the Contest type here
 };
 const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
-  const [students, setStudents] = useState([]);
-  const [mySession, setMySession] = useState<string | null>();
-  const [data, setData] = useState<ProfileData | null>();
+  
 
-  const [loading, setLoading] = useState(false);
-
+  
   const router = useRouter();
   // useEffect(() => {
   //   const fetchData = async () => {
@@ -102,7 +99,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
   }
   const handleDownloadPdf = async () => {
     try {
-      setLoading(true);
+
       const response = await axios.get(
         `/api/users/pdfdownload/${registration.id}`
       );
@@ -111,9 +108,9 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       saveAs(blob, "students.pdf");
     } catch (error) {
       console.error("Error downloading the PDF:", error);
-      setLoading(false);
+
     } finally {
-      setLoading(false);
+      
     }
   };
 
@@ -162,7 +159,6 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         email: res.data.user.email,
         contactNumber: res.data.user.contactNumber,
       };
-      setData(profileData);
 
       console.log(response.data);
       const schoolData = response.data;
