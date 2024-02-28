@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFF",
   },
   header: {
-    fontSize: "18px",
+    fontSize: "16px",
     textAlign: "center",
     marginVertical: "10px",
     fontFamily: "Open Sans",
