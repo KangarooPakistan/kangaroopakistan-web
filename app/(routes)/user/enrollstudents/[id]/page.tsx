@@ -308,8 +308,8 @@ const Register = () => {
             Registration Closed
           </h2>
           <p className="text-lg text-gray-800">
-            We're sorry, but you cannot register more students at this time. The
-            registration period has ended.
+            We&apos;re sorry, but you cannot register more students at this
+            time. The registration period has ended.
           </p>
           {/* Add any other elements or links you want here */}
         </div>
