@@ -49,6 +49,7 @@ const Register = () => {
   const [duplicateError, setDuplicateError] = useState<string | null>(null);
   const params = useParams();
   const router = useRouter();
+  const [isAvailable, setIsAvailable] = useState<boolean>();
   const [isSubmitting, setIsSubmitting] = useState(false); // State to track if the form is submitting
 
   const [contestCh, setContestCh] = useState<string | null>();
@@ -74,8 +75,15 @@ const Register = () => {
 
       setContestCh(resp.data.contestCh);
       const endDate = new Date(resp.data.endDate);
+      const currentDate = new Date();
+
+      const isContestEnded = currentDate > endDate;
+      console.log(isContestEnded);
+      setIsAvailable(isContestEnded);
+      console.log(endDate);
       const contestYear = getYearInTwoDigits(endDate);
       setYear(contestYear);
+      console.log("-KKR-");
       const session = await getSession();
       const response = await axios.get(
         `/api/users/getuserbyemail/${session?.user.email}`
@@ -287,7 +295,27 @@ const Register = () => {
   const handleBack = () => {
     router.back();
   };
-  return (
+  return isAvailable ? (
+    <div
+      style={{ height: "calc(100vh - 4rem)" }}
+      className="flex items-center justify-center bg-gray-100"
+    >
+      {" "}
+      {/* Adjust '4rem' to your navbar's actual height */}
+      <div className="py-8 px-10 bg-white shadow-lg rounded-lg max-w-md">
+        <div className="text-center">
+          <h2 className="text-3xl font-bold text-purple-600 mb-4">
+            Registration Closed
+          </h2>
+          <p className="text-lg text-gray-800">
+            We're sorry, but you cannot register more students at this time. The
+            registration period has ended.
+          </p>
+          {/* Add any other elements or links you want here */}
+        </div>
+      </div>
+    </div>
+  ) : (
     <div className="container mx-auto py-4">
       <p className="text-xl flex flex-col items-center justify-center text-purple-600 font-bold mb-3 mt-3">
         For Bulk Upload Please Download the Sample file, Fill it with

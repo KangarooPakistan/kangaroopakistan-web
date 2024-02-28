@@ -19,6 +19,7 @@ const ViewAllContests: React.FC = () => {
         const parsedContests = resp.data.map((contest) => {
           const startDate = new Date(contest.startDate);
           const endDate = new Date(contest.endDate);
+          
 
           // Format start date as DD/MM/YY Day
           const formattedStartDate = formatDate(startDate);
