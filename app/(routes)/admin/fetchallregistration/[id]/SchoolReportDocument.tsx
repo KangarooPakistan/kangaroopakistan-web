@@ -104,8 +104,8 @@ const styles = StyleSheet.create({
   },
   totalStudentsText: {
     fontSize: "12px",
-    marginVertical: "10px",
-    textAlign: "right",
+    marginVertical: "5px",
+    textAlign: "center",
   },
   studentTable: {
     marginVertical: "5px",
@@ -152,6 +152,20 @@ const styles = StyleSheet.create({
     padding: 2,
     flexWrap: "wrap",
   },
+  newView: {
+    borderColor: "#000",
+    border: "1px",
+    display: "flex",
+    justifyContent: "center",
+    flexDirection: "column",
+    alignItems: "center",
+    marginVertical: "10px",
+  },
+  newViewText: {
+    fontSize: "12px",
+    marginVertical: "5px",
+    textAlign: "left",
+  },
   tableCol: {
     width: "15%",
     padding: 2,
@@ -182,6 +196,13 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
 }) => {
   const groupedStudents: Record<string, Record<string, Student[]>> = {};
 
+  let preecolierCount = 0;
+  let ecolierCount = 0;
+  let benjaminCount = 0;
+  let cadetCount = 0;
+  let juniorCount = 0;
+  let studentCount = 0;
+
   schoolData.forEach((student) => {
     if (!groupedStudents[student.studentLevel]) {
       groupedStudents[student.studentLevel] = {};
@@ -190,6 +211,28 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
       groupedStudents[student.studentLevel][student.studentClass] = [];
     }
     groupedStudents[student.studentLevel][student.studentClass].push(student);
+    switch (student.studentLevel) {
+      case "preecolier":
+        preecolierCount++;
+        break;
+      case "ecolier":
+        ecolierCount++;
+        break;
+      case "benjamin":
+        benjaminCount++;
+        break;
+      case "cadet":
+        cadetCount++;
+        break;
+      case "junior":
+        juniorCount++;
+        break;
+      case "student":
+        studentCount++;
+        break;
+      default:
+        break;
+    }
   });
 
   function getStudentLevel(classStr: string) {
@@ -518,6 +561,27 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
             ))}
           </View>
         ))}
+        <View style={styles.newView}>
+          {/* <Text style={styles.totalStudentsText}>Total Students by Level</Text> */}
+          <Text style={styles.totalStudentsText}>
+            Total # Pre Ecolier: {preecolierCount}
+          </Text>
+          <Text style={styles.totalStudentsText}>
+            Total # Ecolier: {ecolierCount}
+          </Text>
+          <Text style={styles.totalStudentsText}>
+            Total # Benjamin: {benjaminCount}
+          </Text>
+          <Text style={styles.totalStudentsText}>
+            Total # Cadet: {cadetCount}
+          </Text>
+          <Text style={styles.totalStudentsText}>
+            Total # Junior: {juniorCount}
+          </Text>
+          <Text style={styles.totalStudentsText}>
+            Total # Student: {studentCount}
+          </Text>
+        </View>
         <View>
           <Text style={styles.totalStudentsText}>
             Total Number of Students : {schoolData.length}
