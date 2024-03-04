@@ -232,27 +232,7 @@ const EditStudent = () => {
     setValue("level", levelValue);
   };
 
-  return isAvailable ? (
-    <div
-      style={{ height: "calc(100vh - 4rem)" }}
-      className="flex items-center justify-center bg-gray-100"
-    >
-      {" "}
-      {/* Adjust '4rem' to your navbar's actual height */}
-      <div className="py-8 px-10 bg-white shadow-lg rounded-lg max-w-md">
-        <div className="text-center">
-          <h2 className="text-3xl font-bold text-purple-600 mb-4">
-            Registration Closed
-          </h2>
-          <p className="text-lg text-gray-800">
-            We&apos;re sorry, but you cannot Edit students at this time. The
-            registration period has ended.
-          </p>
-          {/* Add any other elements or links you want here */}
-        </div>
-      </div>
-    </div>
-  ) : (
+  return (
     <section className="bg-white mb-12">
       <div className=" pt-10  grid grid-cols-1">
         <div className="rounded-lg shadow-2xl md:mt-0 sm:max-w-md xl:p-0 mx-auto">

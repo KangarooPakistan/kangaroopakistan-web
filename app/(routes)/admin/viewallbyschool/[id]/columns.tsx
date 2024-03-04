@@ -42,6 +42,11 @@ const ContestActions: React.FC<StudentActionsProps> = ({ student }) => {
     console.log(student.registrationId);
     // router.push(`/admin/fetchallregistration/`);
   };
+  const editStudent = () => {
+    router.push(
+      `/admin/viewregistered/${student.registrationId}/${student.id}`
+    );
+  };
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -53,6 +58,7 @@ const ContestActions: React.FC<StudentActionsProps> = ({ student }) => {
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <DropdownMenuItem onClick={handleView}>View Receipts </DropdownMenuItem>
+        <DropdownMenuItem onClick={editStudent}>Edit Student </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => onOpen("deleteStudent", { id: student.id })}
         >
