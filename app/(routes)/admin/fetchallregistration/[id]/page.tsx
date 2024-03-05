@@ -18,10 +18,17 @@ interface Student {
   fatherName: string;
   level: string;
   class: string; // Changed from `class` to `studentClass`
-  schoolName: string | null;
+  schoolName: string;
   address: string | null;
   districtCode: string | null;
   schoolId: number;
+}
+interface StudentData {
+  rollNumber: string;
+  studentName: string;
+  fatherName: string;
+  level: string;
+  class: string;
 }
 type LevelCounts = Record<string, number>;
 
@@ -90,7 +97,8 @@ const FetchAllRegistrations = () => {
       console.log(res.data);
 
       const studentsForExcel = registrations.flatMap((reg: any) =>
-        reg.students.map((student: Student) => ({
+        reg.students.map((student: StudentData) => ({
+          schoolName: reg.user?.schoolName,
           bankTitle: reg.user?.bankTitle,
           contactNumber: reg.user?.contactNumber,
           schoolAddress: reg.user?.schoolAddress,
