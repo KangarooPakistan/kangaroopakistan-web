@@ -17,6 +17,8 @@ const ViewAllRecipts = () => {
   const [registrationId, setRegistrationId] = useState<string | null>();
   const [paymentProof, setPaymentProof] = useState<PaymentProof[]>([]);
   const [totalStudents, setTotalStudents] = useState<string>();
+  const [schoolName, setSchoolName] = useState();
+
   useEffect(() => {
     const fetchData = async () => {
       const id = Array.isArray(params.registrationId)
@@ -27,6 +29,9 @@ const ViewAllRecipts = () => {
         const registeredStudents = await axios.get(
           `/api/users/registrations/${id}`
         );
+        console.log(registeredStudents);
+        setSchoolName(registeredStudents.data[0].schoolName);
+
         setTotalStudents(registeredStudents.data[0].students.length);
         const response = await axios.get(`/api/users/paymentproof/${id}`);
         setPaymentProof(response.data);
@@ -40,6 +45,9 @@ const ViewAllRecipts = () => {
   return (
     <>
       <div className="container mx-auto py-4">
+        <h3 className="text-xl text-center my-3 font-bold text-purple-600">
+          School Name: {schoolName}
+        </h3>
         <div className="flex justify-center items-center">
           <div className="mx-auto	font-bold flex justify-center items-center p-3 bg-blue-500 w-[350px] text-white	text-2xl h-[100px] mb-10">
             <h1>Total # of students: &nbsp; </h1>

@@ -32,6 +32,7 @@ const ViewAllBySchool = () => {
   const [student, setStudent] = useState<number>(0);
   const [totalSchools, setTotalSchools] = useState<number>(0);
   const [allStudents, setAllStudents] = useState<Student[]>([]);
+  const [schoolName, setSchoolName] = useState();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -50,7 +51,10 @@ const ViewAllBySchool = () => {
         console.log(registeredStudents.data[0].id);
         console.log("registeredStudents.data");
         console.log(registeredStudents.data);
-        console.log(registeredStudents.data);
+        console.log(registeredStudents.data[0].schoolName);
+        setSchoolName(registeredStudents.data[0].schoolName);
+        console.log("registeredStudents.data");
+
         const allStudents: Student[] = registeredStudents.data.flatMap(
           (reg: RegistrationEntry) => reg.students
         ); // Flattens the array of student arrays
@@ -59,7 +63,6 @@ const ViewAllBySchool = () => {
           (acc: LevelCounts, student: Student) => {
             const { level } = student; // Assuming each student has a 'level' attribute
             if (level) {
-              
               acc[level] = (acc[level] || 0) + 1; // Increment the count for this level
             }
             return acc;
@@ -111,6 +114,9 @@ const ViewAllBySchool = () => {
         <h1 className="text-3xl text-center my-3 font-bold text-purple-600">
           Registered Students
         </h1>
+        <h3 className="text-xl text-center my-3 font-bold text-purple-600">
+          School Name: {schoolName}
+        </h3>
         <div className="flex flex-wrap -mx-2">
           <div className="w-full md:w-1/2 px-2 mb-6 md:mb-0">
             <div className="bg-purple-400 rounded-lg shadow-lg p-6 text-white transform transition duration-500 hover:scale-105">
