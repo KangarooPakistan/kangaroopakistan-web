@@ -91,7 +91,7 @@ export function DataTable<TData, TValue>({
           className="max-w-sm ml-4"
         />
         <Input
-          placeholder="Filter SchoolName..."
+          placeholder="Filter Contact Number..."
           value={
             (table.getColumn("contactNumber")?.getFilterValue() as string) ?? ""
           }
