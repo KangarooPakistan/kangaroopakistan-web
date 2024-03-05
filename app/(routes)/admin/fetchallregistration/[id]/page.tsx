@@ -145,6 +145,9 @@ const FetchAllRegistrations = () => {
   const handleBack = () => {
     router.back();
   };
+  const handleRegister = () => {
+    router.push(`/admin/registerincontest/${params.id}`);
+  };
 
   return (
     <>
@@ -197,9 +200,14 @@ const FetchAllRegistrations = () => {
           <Button variant="default" onClick={handleBack}>
             Back
           </Button>
-          <Button className="" onClick={handleClick}>
-            Export Data
-          </Button>
+          <div>
+            <Button className="mr-2" onClick={handleClick}>
+              Export Data
+            </Button>
+            <Button variant="default" onClick={handleRegister}>
+              Register a school
+            </Button>
+          </div>
         </div>
         <DataTable columns={columns} data={data} />;
       </div>
