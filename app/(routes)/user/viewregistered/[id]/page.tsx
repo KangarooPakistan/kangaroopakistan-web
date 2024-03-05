@@ -187,28 +187,34 @@ const ViewRegistered = () => {
             </div>
           </div>
         </div>
-        <div className="flex justify-end mt-4">
-          <Button className="mx-2" onClick={handleClick}>
+        <div className="flex flex-wrap justify-end mt-4">
+          <Button
+            className="w-full sm:w-auto mx-2 my-1 sm:my-0"
+            onClick={handleClick}
+          >
             View All Proof of Payments
           </Button>
-          <Button className="mx-2" onClick={handleSheet}>
+          <Button
+            className="w-full sm:w-auto mx-2 my-1 sm:my-0"
+            onClick={handleSheet}
+          >
             Download student Data
           </Button>
           <Button
-            className="mx-2"
+            className="w-full sm:w-auto mx-2 my-1 sm:my-0"
             onClick={() => onOpen("addImage", { registrationId })}
           >
             Add Proof of Payment
           </Button>
         </div>
       </div>
-      <div className="flex justify-between">
-        <Button variant="default" onClick={handleBack}>
+      <div className="flex flex-col sm:flex-row justify-between items-center sm:items-end">
+        <Button variant="default" className="mb-2 sm:mb-0" onClick={handleBack}>
           Back
         </Button>
         <Button
           variant="ghost"
-          className="text-xl font-bold leading-tight tracking-tight text-purple-600  md:text-3xl"
+          className="w-full sm:w-auto text-center sm:text-left text-xl font-bold leading-tight tracking-tight text-purple-600 md:text-3xl mb-2 sm:mb-0"
           onClick={() => onOpen("addImage", { registrationId })}
         >
           Attach Proof of Payment
