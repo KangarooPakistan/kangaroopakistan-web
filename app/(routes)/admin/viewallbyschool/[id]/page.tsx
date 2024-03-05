@@ -114,14 +114,14 @@ const ViewAllBySchool = () => {
         <h1 className="text-3xl text-center my-3 font-bold text-purple-600">
           Registered Students
         </h1>
-        <h3 className="text-xl text-center my-3 font-bold text-purple-600">
-          School Name: {schoolName}
-        </h3>
+
         <div className="flex flex-wrap -mx-2">
           <div className="w-full md:w-1/2 px-2 mb-6 md:mb-0">
             <div className="bg-purple-400 rounded-lg shadow-lg p-6 text-white transform transition duration-500 hover:scale-105">
               <h2 className="font-bold text-2xl ">Registered Students</h2>
               <p className="text-lg font-semibold">{students.length}</p>
+              <h2 className="font-bold text-2xl ">School Name:</h2>
+              <p className="text-lg font-semibold">{schoolName}</p>
             </div>
           </div>
           <div className="w-full md:w-1/2 px-2">
