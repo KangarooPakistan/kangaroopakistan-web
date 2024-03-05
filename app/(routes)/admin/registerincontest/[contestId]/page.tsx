@@ -25,6 +25,9 @@ const RegisterInContest = () => {
 
   return (
     <div className="container mx-auto py-10">
+      <h1 className="text-3xl text-center my-3 font-bold text-purple-600">
+        Register Schools
+      </h1>
       <div className="flex justify-start w-full mt-4 mb-4">
         <Button variant="default" onClick={handleBack}>
           Back
