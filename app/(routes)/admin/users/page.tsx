@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import { StringValidation } from "zod";
 
 type User = {
-  id: string;
+  
   email: string;
   password: string;
   role: string;
@@ -47,7 +47,7 @@ const Users = () => {
         setUsers(response.data);
         console.log(response.data);
         const usersForExcel = response.data.map((user: User) => ({
-          id: user.id,
+        
           email: user.email,
 
           role: user.role,
