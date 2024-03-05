@@ -60,30 +60,17 @@ type RegistrationProps = {
 };
 const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
   const router = useRouter();
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const session = await getSession();
-  //     setMySession(session?.user.id);
-  //     console.log("session");
-  //     const res = await axios.get(
-  //       `/api/users/getuserbyemail/${session?.user.email}`
-  //     );
-  //     console.log(res.data);
-  //     const profileData: ProfileData = {
-  //       p_fName: res.data.p_fName,
-  //       p_mName: res.data.p_mName,
-  //       p_lName: res.data.p_lName,
-  //       c_fName: res.data.c_fName,
-  //       c_mName: res.data.c_mName,
-  //       c_lName: res.data.c_lName,
-  //     };
-  //     setData(profileData);
-
-  //     console.log(res.data);
-  //     console.log(session);
-  //   };
-  //   fetchData();
-  // }, []);
+  const [data, setData] = useState();
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await axios.get(
+        `/api/users/getuserbyemail/${registration.email}`
+      );
+      console.log(res);
+      setData(res.data.id);
+    };
+    fetchData();
+  }, []);
   const handleView = () => {
     router.push(`/admin/viewallbyschool/${registration.id}`);
   };
@@ -137,6 +124,9 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
   //     setLoading(false);
   //   }
   // };
+  const handleSchoolDetails = () => {
+    router.push(`/admin/userprofile/${data}`);
+  };
 
   const handleSheet = async () => {
     try {
@@ -201,6 +191,9 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleSheet}>
           Download Student Details
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleSchoolDetails}>
+          View School Details
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
