@@ -7,6 +7,26 @@ import { DataTable } from "./data-table";
 import { Student, columns } from "./columns";
 import { Button } from "@/components/ui/button";
 import { useModal } from "@/hooks/use-modal-store";
+import SchoolReportDocument from "./SchoolReportDocument";
+import {
+  Page,
+  Text,
+  View,
+  Document,
+  StyleSheet,
+  pdf,
+} from "@react-pdf/renderer";
+
+type ProfileData = {
+  p_fName: string;
+  p_mName: string;
+  p_lName: string;
+  c_fName: string;
+  c_mName: string;
+  c_lName: string;
+  email: string;
+  contactNumber: string;
+};
 
 const ViewRegistered = () => {
   const [students, setStudents] = useState<Student[]>([]);
@@ -77,6 +97,50 @@ const ViewRegistered = () => {
   const handleBack = () => {
     router.back();
   };
+  const handleSheet = async () => {
+    try {
+      const response = await axios.get(
+        `/api/users/pdfdownload/${registrationId}`
+      );
+
+      const res = await axios.get(
+        `/api/users/allusers/getschoolbyregid/${registrationId}`
+      );
+      console.log("res");
+      console.log(res.data.user.p_fName);
+      const profileData: ProfileData = {
+        p_fName: res.data.user.p_fName,
+        p_mName: res.data.user.p_mName,
+        p_lName: res.data.user.p_lName,
+        c_fName: res.data.user.c_fName,
+        c_mName: res.data.user.c_mName,
+        c_lName: res.data.user.c_lName,
+        email: res.data.user.email,
+        contactNumber: res.data.user.contactNumber,
+      };
+
+      console.log(response.data);
+      const schoolData = response.data;
+      console.log("schoolData"); // This should be an array of ClassData
+      console.log(schoolData); // This should be an array of ClassData
+      const blob = await pdf(
+        <SchoolReportDocument
+          schoolData={schoolData}
+          profileData={profileData}
+        />
+      ).toBlob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "school-report.pdf");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error generating the PDF:", error);
+    }
+  };
   return (
     <div className="container mx-auto py-4">
       <div className="container mx-auto py-4">
@@ -126,6 +190,9 @@ const ViewRegistered = () => {
         <div className="flex justify-end mt-4">
           <Button className="mx-2" onClick={handleClick}>
             View All Proof of Payments
+          </Button>
+          <Button className="mx-2" onClick={handleSheet}>
+            Download student Data
           </Button>
           <Button
             className="mx-2"
