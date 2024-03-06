@@ -75,6 +75,7 @@ export const columns: ColumnDef<User>[] = [
   },
   {
     accessorKey: "schoolId",
+    filterFn: "equals",
     header: ({ column }) => {
       return (
         <Button
