@@ -227,7 +227,7 @@ const AdminNavbar = () => {
                   <li>
                     <button
                       className="block px-4 py-2 hover:bg-gray-100 rounded w-full text-left border-0"
-                      onClick={handleAdminUser}
+                      onClick={handleClickRegister}
                     >
                       Create Admin
                     </button>

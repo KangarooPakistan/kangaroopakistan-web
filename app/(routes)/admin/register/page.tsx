@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import * as z from "zod";
 import axios from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Eye, EyeOff } from "lucide-react";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -34,74 +35,17 @@ const formSchema = z.object({
       "Password must contain at least one special character"
     ),
 
-  schoolName: z.string(),
-  contactNumber: z
-    .string()
-    // .regex(/^\d{3}-\d{7}$/, "Phone number must be in the format 051-5194964")
-    .optional()
-    .or(z.literal("")),
-  district: z.string(),
-  tehsil: z.string(),
-  fax: z.string(),
-  bankTitle: z.string(),
-  p_fName: z.string(),
-  p_mName: z.string(),
-  p_lName: z.string(),
-  p_contact: z
-    .string()
-    // .regex(/^\d{4}-\d{7}$/, "Phone number must be in the format 0333-5194964")
-    .optional()
-    .or(z.literal("")),
-  p_phone: z
-    .string()
-    // .regex(/^\d{3}-\d{7}$/, "Phone number must be in the format 051-5194964")
-    .optional()
-    .or(z.literal("")),
-  p_email: z.string(),
-  c_fName: z.string(),
-  c_mName: z.string(),
-  c_lName: z.string(),
-  c_contact: z
-    .string()
-    // .regex(/^\d{4}-\d{7}$/, "Phone number must be in the format 0333-5194964")
-    .optional()
-    .or(z.literal("")),
-  c_phone: z
-    .string()
-    // .regex(/^\d{3}-\d{7}$/, "Phone number must be in the format 051-5194964")
-    .optional()
-    .or(z.literal("")),
-  c_email: z.string().email().optional().or(z.literal("")),
-  c_accountDetails: z.string(),
-
   // At least one special character
 });
 const UserRegister = () => {
   const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
       password: "",
-      schoolName: "",
-      contactNumber: "",
-      district: "",
-      tehsil: "",
-      fax: "",
-      bankTitle: "",
-      p_fName: "",
-      p_mName: "",
-      p_lName: "",
-      p_contact: "",
-      p_phone: "",
-      p_email: "",
-      c_fName: "",
-      c_mName: "",
-      c_lName: "",
-      c_contact: "",
-      c_phone: "",
-      c_email: "",
-      c_accountDetails: "",
     },
   });
   const isLoading = form.formState.isSubmitting;
@@ -109,7 +53,7 @@ const UserRegister = () => {
     try {
       const payload = {
         ...values, // Spread the form values
-        role: "User", // Add the additional string
+        role: "Admin", // Add the additional string
       };
       await axios.post("/api/users/signup", payload);
       form.reset();
@@ -137,14 +81,17 @@ const UserRegister = () => {
       });
     }
   };
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
   return (
     <>
       <section className="bg-white mb-12">
-        <div className=" pt-10 h-screen grid grid-cols-1 md:grid-cols-2 gap-2 xl:gap-0">
+        <div className=" pt-10 grid grid-cols-1 md:grid-cols-2 gap-2 xl:gap-0">
           <div className="w-full rounded-lg shadow-2xl md:mt-0 sm:max-w-md xl:p-0 mx-auto">
             <div className="p-6 space-y-3 md:space-y-6 sm:p-8">
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl ">
-                Create account
+                Create Admin Account
               </h1>
 
               <Form {...form}>
@@ -174,398 +121,29 @@ const UserRegister = () => {
                     control={form.control}
                     name="password"
                     render={({ field }) => (
-                      <FormItem className="">
-                        <FormLabel className="label mt-5">Password</FormLabel>
+                      <FormItem>
+                        <FormLabel className="label">Password</FormLabel>
                         <FormControl>
-                          <Input
-                            type="password"
-                            disabled={isLoading}
-                            className="input"
-                            placeholder="Enter your password"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="schoolName"
-                    render={({ field }) => (
-                      <FormItem className="">
-                        <FormLabel className="label mt-5">
-                          School Name
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            type="text"
-                            disabled={isLoading}
-                            className="input"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="contactNumber"
-                    render={({ field }) => (
-                      <FormItem className="">
-                        <FormLabel className="label mt-5">
-                          Contact Number
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            type="text"
-                            placeholder="051-1234567"
-                            disabled={isLoading}
-                            className="input"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="district"
-                    render={({ field }) => (
-                      <FormItem className="">
-                        <FormLabel className="label mt-5">
-                          District Code
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            type="text"
-                            disabled={isLoading}
-                            className="input"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="tehsil"
-                    render={({ field }) => (
-                      <FormItem className="">
-                        <FormLabel className="label mt-5">Tehsil</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="text"
-                            disabled={isLoading}
-                            className="input"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="fax"
-                    render={({ field }) => (
-                      <FormItem className="">
-                        <FormLabel className="label mt-5">Fax</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="text"
-                            disabled={isLoading}
-                            className="input"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="bankTitle"
-                    render={({ field }) => (
-                      <FormItem className="">
-                        <FormLabel className="label mt-5">
-                          OFFICIAL BANK TITLE OF THE INSTITUTION&apos;s BANK
-                          ACCOUNT FOR HONORARIUM
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            type="text"
-                            disabled={isLoading}
-                            className="input"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="p_fName"
-                    render={({ field }) => (
-                      <FormItem className="">
-                        <FormLabel className="label mt-5">
-                          Principal&apos;s First Name
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            type="text"
-                            disabled={isLoading}
-                            className="input"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="p_mName"
-                    render={({ field }) => (
-                      <FormItem className="">
-                        <FormLabel className="label mt-5">
-                          Principal&apos;s Middle Name
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            type="text"
-                            disabled={isLoading}
-                            className="input"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="p_lName"
-                    render={({ field }) => (
-                      <FormItem className="">
-                        <FormLabel className="label mt-5">
-                          Principal&apos;s Last Name
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            type="text"
-                            disabled={isLoading}
-                            className="input"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="p_contact"
-                    render={({ field }) => (
-                      <FormItem className="">
-                        <FormLabel className="label mt-5">
-                          Principal&apos;s Cell #
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            type="text"
-                            placeholder="0333-1234567"
-                            disabled={isLoading}
-                            className="input"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="p_phone"
-                    render={({ field }) => (
-                      <FormItem className="">
-                        <FormLabel className="label mt-5">
-                          Principal&apos;s Phone Number
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="051-1234567"
-                            type="text"
-                            disabled={isLoading}
-                            className="input"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="p_email"
-                    render={({ field }) => (
-                      <FormItem className="">
-                        <FormLabel className="label mt-5">
-                          Principal&apos;s Email
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            type="text"
-                            disabled={isLoading}
-                            className="input"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="c_fName"
-                    render={({ field }) => (
-                      <FormItem className="">
-                        <FormLabel className="label mt-5">
-                          Coordinator&apos;s first Name
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            type="text"
-                            disabled={isLoading}
-                            className="input"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="c_mName"
-                    render={({ field }) => (
-                      <FormItem className="">
-                        <FormLabel className="label mt-5">
-                          Coordinator&apos;s Middle Name
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            type="text"
-                            disabled={isLoading}
-                            className="input"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="c_lName"
-                    render={({ field }) => (
-                      <FormItem className="">
-                        <FormLabel className="label mt-5">
-                          Coordinator&apos;s Last Name
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            type="text"
-                            disabled={isLoading}
-                            className="input"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="c_contact"
-                    render={({ field }) => (
-                      <FormItem className="">
-                        <FormLabel className="label mt-5">
-                          Coordinator&apos;s Cell number
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            type="text"
-                            placeholder="0333-1234567"
-                            disabled={isLoading}
-                            className="input"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="c_phone"
-                    render={({ field }) => (
-                      <FormItem className="">
-                        <FormLabel className="label mt-5">
-                          Coordinator&apos;s Phone number
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            type="text"
-                            placeholder="051-1234567"
-                            disabled={isLoading}
-                            className="input"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="c_email"
-                    render={({ field }) => (
-                      <FormItem className="">
-                        <FormLabel className="label mt-5">
-                          Coordinator&apos;s Email
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            type="text"
-                            disabled={isLoading}
-                            className="input"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="c_accountDetails"
-                    render={({ field }) => (
-                      <FormItem className="">
-                        <FormLabel className="label mt-5">
-                          Coordinator&apos;s Account Details
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            type="text"
-                            disabled={isLoading}
-                            className="input"
-                            {...field}
-                          />
+                          <div className="relative">
+                            <Input
+                              type={showPassword ? "text" : "password"}
+                              disabled={isLoading}
+                              className="input pl-10" // Adjust padding to accommodate the icon
+                              placeholder="Enter your password"
+                              {...field}
+                            />
+                            {showPassword ? (
+                              <Eye
+                                className="absolute top-3 right-3 cursor-pointer"
+                                onClick={togglePasswordVisibility}
+                              />
+                            ) : (
+                              <EyeOff
+                                className="absolute top-3 right-3 cursor-pointer"
+                                onClick={togglePasswordVisibility}
+                              />
+                            )}
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
