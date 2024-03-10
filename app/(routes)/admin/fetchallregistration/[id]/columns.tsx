@@ -156,6 +156,8 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         const extractNumeric = (rollNumber: string) => {
           const parts = rollNumber.split("-");
           const lastPart = parts[parts.length - 1];
+          console.log(lastPart);
+          console.log(parseInt(lastPart, 10));
           return parseInt(lastPart, 10);
         };
 
