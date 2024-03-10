@@ -177,7 +177,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       // This should be an array of ClassData
       const blob = await pdf(
         <SchoolReportDocument
-          schoolData={schoolData}
+          schoolData={schoolArray}
           profileData={profileData}
         />
       ).toBlob();
