@@ -153,18 +153,22 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       console.log(response.data);
       const schoolData = response.data;
       const schoolArray = schoolData.sort((a: Student, b: Student) => {
-        const rollNumberA = a.rollNumber.toUpperCase(); // Convert to uppercase for case-insensitive sorting
-        const rollNumberB = b.rollNumber.toUpperCase();
+        const extractNumeric = (rollNumber: string) => {
+          const parts = rollNumber.split("-");
+          const lastPart = parts[parts.length - 1];
+          return parseInt(lastPart, 10);
+        };
 
-        if (rollNumberA < rollNumberB) {
-          return -1;
-        }
-        if (rollNumberA > rollNumberB) {
-          return 1;
-        }
-        return 0;
+        const numericValueA = extractNumeric(a.rollNumber);
+        const numericValueB = extractNumeric(b.rollNumber);
+
+        return numericValueA - numericValueB;
       });
 
+      console.log("Sorted schoolData by rollNumber:");
+      console.log(schoolArray);
+  
+  
       console.log("schoolData"); // This should be an array of ClassData
       console.log("schoolData"); // This should be an array of ClassData
       console.log(schoolData); // This should be an array of ClassData
