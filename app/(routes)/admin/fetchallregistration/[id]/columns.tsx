@@ -155,7 +155,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
      schoolData.sort((a: Student, b: Student) => {
        const extractNumeric = (rollNumber: string) => {
          const parts = rollNumber.split("-");
-         const lastPart = parts[parts.length - 1];
+         const lastPart = parts[parts.length - 2];
          console.log(lastPart);
          console.log(parseInt(lastPart, 10));
          return parseInt(lastPart, 10);
