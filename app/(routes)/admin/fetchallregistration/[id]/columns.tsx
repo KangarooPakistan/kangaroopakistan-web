@@ -152,37 +152,34 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
 
       console.log(response.data);
       const schoolData = response.data;
-      const schoolArray = schoolData.sort((a: Student, b: Student) => {
-        const extractNumeric = (rollNumber: string) => {
-          const parts = rollNumber.split("-");
-          const lastPart = parts[parts.length - 1];
-          console.log(lastPart);
-          console.log(parseInt(lastPart, 10));
-          return parseInt(lastPart, 10);
-        };
+     schoolData.sort((a: Student, b: Student) => {
+       const extractNumeric = (rollNumber: string) => {
+         const parts = rollNumber.split("-");
+         const lastPart = parts[parts.length - 1];
+         console.log(lastPart);
+         console.log(parseInt(lastPart, 10));
+         return parseInt(lastPart, 10);
+       };
 
-        const numericValueA = extractNumeric(a.rollNumber);
-        const numericValueB = extractNumeric(b.rollNumber);
+       const numericValueA = extractNumeric(a.rollNumber);
+       const numericValueB = extractNumeric(b.rollNumber);
 
-        return numericValueA - numericValueB;
-      });
+       return numericValueA - numericValueB;
+     });
 
-      console.log("Sorted schoolData by rollNumber:");
-      console.log(schoolArray);
-  
-  
-      console.log("schoolData"); // This should be an array of ClassData
-      console.log("schoolData"); // This should be an array of ClassData
-      console.log(schoolData); // This should be an array of ClassData
-      console.log("schoolData");
-      console.log(schoolArray);
-      // This should be an array of ClassData
-      const blob = await pdf(
-        <SchoolReportDocument
-          schoolData={schoolArray}
-          profileData={profileData}
-        />
-      ).toBlob();
+     console.log("Sorted schoolData by rollNumber:");
+     console.log(schoolData);
+
+     console.log("schoolData"); // This should be an array of ClassData
+     console.log("schoolData"); // This should be an array of ClassData
+     console.log(schoolData);
+     // This should be an array of ClassData
+     const blob = await pdf(
+       <SchoolReportDocument
+         schoolData={schoolData}
+         profileData={profileData}
+       />
+     ).toBlob();
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
