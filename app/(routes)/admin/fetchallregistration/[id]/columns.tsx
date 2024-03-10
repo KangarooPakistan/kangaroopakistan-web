@@ -152,8 +152,25 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
 
       console.log(response.data);
       const schoolData = response.data;
+      const schoolArray = schoolData.sort((a: Student, b: Student) => {
+        const rollNumberA = a.rollNumber.toUpperCase(); // Convert to uppercase for case-insensitive sorting
+        const rollNumberB = b.rollNumber.toUpperCase();
+
+        if (rollNumberA < rollNumberB) {
+          return -1;
+        }
+        if (rollNumberA > rollNumberB) {
+          return 1;
+        }
+        return 0;
+      });
+
+      console.log("schoolData"); // This should be an array of ClassData
       console.log("schoolData"); // This should be an array of ClassData
       console.log(schoolData); // This should be an array of ClassData
+      console.log("schoolData");
+      console.log(schoolArray);
+      // This should be an array of ClassData
       const blob = await pdf(
         <SchoolReportDocument
           schoolData={schoolData}
