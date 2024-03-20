@@ -84,12 +84,8 @@ export async function GET(request: Request, { params }: { params: { registration
 
 async function generatePdf(students: Student[]) {
         const browser = await puppeteer.launch({
-                headless: true, args: [
-                        '--no-sandbox',
-                        '--disable-setuid-sandbox',
-                        '--ignore-certificate-errors',
-                        '--ignore-certificate-errors-spki-list',
-                        '--user-data-dir']
+                executablePath: '/usr/bin/chromium-browser', // Specify your Chromium executable path
+                args: ['--no-sandbox', '--headless', '--disable-gpu']
         });
 
 
