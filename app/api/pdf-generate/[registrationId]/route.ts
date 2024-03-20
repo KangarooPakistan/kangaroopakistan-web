@@ -35,12 +35,13 @@ export async function GET(request: Request, { params }: { params: { registration
                     // Add other related fields if necessary
                 },
             });
+            console.log(registrations)
         
 
             // Loop through registrations
             for (const registration of registrations) {
               const { user, students } = registration;
-        
+                    console.log(students)
               const { district, schoolName, schoolAddress, schoolId } = user;
               for (const student of students) {
                 const {
@@ -83,13 +84,27 @@ export async function GET(request: Request, { params }: { params: { registration
 }
 
 async function generatePdf(students: Student[]) {
+        console.log('----------------------------')
         const browser = await puppeteer.launch({
-
-                executablePath: '/usr/bin/chromium-browser', // Specify your Chromium executable path
-                args: ['--no-sandbox', "--disable-setuid-sandbox", "--disable-dev-shm-usage", "--disable-accelerated-2d-canvas", "--no-first-run", "--no-zygote", '--headless', '--disable-gpu']
-
+                executablePath:
+                        process.env.NODE_ENV === "production"
+                                ? "/usr/bin/chromium-browser"
+                                : "",
+                args: [
+                        "--no-sandbox",
+                        "--disable-setuid-sandbox",
+                        "--disable-dev-shm-usage",
+                        "--disable-accelerated-2d-canvas",
+                        "--no-first-run",
+                        "--no-zygote",
+                        "--single-process",
+                        "--disable-gpu",
+                ],
+                headless: true,
+                timeout: 6000,
         });
 
+        console.log('----------------------------')
 
     const combinedPdfDoc = await PDFDocument.create();
 
