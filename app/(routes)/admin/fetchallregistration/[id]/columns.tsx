@@ -92,6 +92,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       const response = await axios.get(
         `/api/users/pdfdownload/${registration.id}`
       );
+      console.log(response)
       const students: Student[] = response.data;
       const blob = await generatePdfBlob(students);
       saveAs(blob, "students.pdf");
