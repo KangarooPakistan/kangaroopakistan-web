@@ -189,6 +189,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         `/api/users/allusers/getschoolbyregid/${registration.id}`
       );
       console.log("res");
+      const pdfName = `${res.data.user.schoolId}_Student Summary.pdf`
       console.log(res.data.user.p_fName);
       const profileData: ProfileData = {
         p_fName: res.data.user.p_fName,
@@ -203,14 +204,14 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
 
       console.log(response.data);
       const schoolData = response.data;
-     schoolData.sort((a: Student, b: Student) => {
-       const extractNumeric = (rollNumber: string) => {
-         const parts = rollNumber.split("-");
-         const lastPart = parts[parts.length - 2];
-         console.log(lastPart);
-         console.log(parseInt(lastPart, 10));
-         return parseInt(lastPart, 10);
-       };
+      schoolData.sort((a: Student, b: Student) => {
+        const extractNumeric = (rollNumber: string) => {
+          const parts = rollNumber.split("-");
+          const lastPart = parts[parts.length - 2];
+          console.log(lastPart);
+          console.log(parseInt(lastPart, 10));
+          return parseInt(lastPart, 10);
+        };
 
        const numericValueA = extractNumeric(a.rollNumber);
        const numericValueB = extractNumeric(b.rollNumber);
@@ -234,7 +235,8 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", "school-report.pdf");
+      
+      link.setAttribute("download", pdfName);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
