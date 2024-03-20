@@ -189,7 +189,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         `/api/users/allusers/getschoolbyregid/${registration.id}`
       );
       console.log("res");
-      const pdfName = `${res.data.user.schoolId}_Student Summary.pdf`
+      const pdfName = `${res.data.user.schoolId}_Students Summary.pdf`
       console.log(res.data.user.p_fName);
       const profileData: ProfileData = {
         p_fName: res.data.user.p_fName,
