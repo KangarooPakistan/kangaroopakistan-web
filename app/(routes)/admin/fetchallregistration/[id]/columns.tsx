@@ -116,6 +116,8 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       }
 
       const blob = await generatePdfBlob(students);
+      const pdfName = `answersheet_${response.data[0].schoolId}_part1.pdf`
+
       saveAs(blob, "students.pdf");
     } catch (error) {
       console.error("Error downloading the PDF:", error);
@@ -140,7 +142,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       }
 
       const blob = await generatePdfBlob(additionalStudents);
-      const pdfName = `additional_students_${response.data[0].schoolName}.pdf`
+      const pdfName = `answersheet_${response.data[0].schoolId}_part2.pdf`
       saveAs(blob,pdfName);
     } catch (error) {
       console.error("Error downloading the additional PDF:", error);
