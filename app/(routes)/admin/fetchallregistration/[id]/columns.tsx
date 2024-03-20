@@ -152,29 +152,30 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
 };
 
 
-  // const handleDownloadPdfPuppeteer = async () => {
-  //   try {
-  //     setLoading(true);
-  //     const response = await axios.get(`/api/pdf-generate/${registration.id}`, {
-  //       responseType: "blob", // This tells Axios to expect a binary response
-  //     });
-  //     const file = new Blob([response.data], { type: "application/pdf" });
-  //     const fileURL = URL.createObjectURL(file);
-  //     const link = document.createElement("a");
-  //     link.href = fileURL;
-  //     link.setAttribute("download", "students.pdf"); // or any other name
-  //     document.body.appendChild(link);
-  //     link.click();
+  const handleDownloadPdfPuppeteer = async () => {
+    try {
+      const response = await axios.get(`/api/pdf-generate/${registration.id}`, {
+        responseType: "blob", // This tells Axios to expect a binary response
+      });
+      console.log("response")
+      console.log(response)
+      const file = new Blob([response.data], { type: "application/pdf" });
+      const fileURL = URL.createObjectURL(file);
+      const link = document.createElement("a");
+      link.href = fileURL;
+      link.setAttribute("download", "students.pdf"); // or any other name
+      document.body.appendChild(link);
+      link.click();
 
-  //     // Clean up and revoke the URL object
-  //     URL.revokeObjectURL(link.href);
-  //     document.body.removeChild(link);
-  //   } catch (error) {
-  //     console.error("Error downloading the PDF:", error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+      // Clean up and revoke the URL object
+      URL.revokeObjectURL(link.href);
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Error downloading the PDF:", error);
+    } finally {
+      // setLoading(false);
+    }
+  };
   const handleSchoolDetails = () => {
     router.push(`/admin/userprofile/${data}`);
   };
@@ -267,6 +268,9 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleSheet}>
           Download Student Details
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleDownloadPdfPuppeteer}>
+          Download Student Details--Pddf
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleSchoolDetails}>
           View School Details

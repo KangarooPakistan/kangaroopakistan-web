@@ -82,37 +82,19 @@ export async function GET(request: Request, { params }: { params: { registration
 }
 
 async function generatePdf(students: Student[]) {
-        const browser = await puppeteer.launch({
-                headless: true,
-                args: [
-                    '--no-sandbox',
-                    '--disable-setuid-sandbox',
-                    '--disable-dev-shm-usage',
-                    '--disable-accelerated-2d-canvas',
-                    '--no-first-run',
-                    '--no-zygote',
-                    '--single-process', // Remove this flag for multi-page / multi-tab scenarios
-                    '--disable-gpu'
-                ]
-            });
+        const browser = await puppeteer.launch({ headless: true });
+
     const combinedPdfDoc = await PDFDocument.create();
 
     for (const student of students) {
         const page = await browser.newPage();
-        await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36');
-        page.on('request', request => console.log('Request: ', request.url()));
-        page.on('response', response => console.log('Response: ', response.status(), response.url()));
-        page.setDefaultNavigationTimeout(30000)
+
         console.log(student)
         // const htmlContent = generateHTMLForPuppeteer();
         const htmlContent =generateHTMLForPuppeteerFunction(students)
         await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
         const pdfBuffer = await page.pdf({ format: 'A4', printBackground: true  });
-        const studentPdfDoc = await PDFDocument.load(pdfBuffer);
-        page.on('console', message => console.log(`Browser console: ${message.text()}`));
-        page.on('pageerror', error => console.error(`Page error: ${error.message}`));
-        page.on('response', response => console.log(`Network response: ${response.status()} ${response.url()}`));
-
+            const studentPdfDoc = await PDFDocument.load(pdfBuffer);
         const [copiedPage] = await combinedPdfDoc.copyPages(studentPdfDoc, [0]);
         combinedPdfDoc.addPage(copiedPage);
 
@@ -468,5 +450,3 @@ function generateHTMLForPuppeteerFunction(students: Student[]) {
     
         return htmlContent;
     }
-    
-
