@@ -70,6 +70,9 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       const response = await axios.get(`/api/users/pdfdownload/${registration.id}`);
       console.log(response.data.length)
       if(response.data.length > 200){
+        setActive(false)
+      }
+      else{
         setActive(true)
       }
       console.log(res);
