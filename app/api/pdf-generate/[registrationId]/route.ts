@@ -2,6 +2,7 @@ import { db } from "@/app/lib/prisma";
 import { NextResponse } from "next/server";
 import puppeteer from 'puppeteer';
 
+
 // Assuming PDFDocument from 'pdf-lib' is used for combining PDFs if necessary
 import { PDFDocument } from 'pdf-lib';
 
@@ -82,7 +83,15 @@ export async function GET(request: Request, { params }: { params: { registration
 }
 
 async function generatePdf(students: Student[]) {
-        const browser = await puppeteer.launch({ headless: true });
+        const browser = await puppeteer.launch({
+                headless: true, args: [
+                        '--no-sandbox',
+                        '--disable-setuid-sandbox',
+                        '--ignore-certificate-errors',
+                        '--ignore-certificate-errors-spki-list',
+                        '--user-data-dir']
+        });
+
 
     const combinedPdfDoc = await PDFDocument.create();
 
