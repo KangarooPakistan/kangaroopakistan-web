@@ -61,11 +61,17 @@ type RegistrationProps = {
 const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
   const router = useRouter();
   const [data, setData] = useState();
+  const [active, setActive] = useState(false);
   useEffect(() => {
     const fetchData = async () => {
       const res = await axios.get(
         `/api/users/getuserbyemail/${registration.email}`
       );
+      const response = await axios.get(`/api/users/pdfdownload/${registration.id}`);
+      console.log(response.data.length)
+      if(response.data.length > 200){
+        setActive(true)
+      }
       console.log(res);
       setData(res.data.id);
     };
@@ -93,7 +99,19 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         `/api/users/pdfdownload/${registration.id}`
       );
       console.log(response)
-      const students: Student[] = response.data;
+      console.log(response.data.length)
+      let students: Student[];
+      
+      // Check if the response contains more than 200 students
+      if (response.data.length > 200) {
+        // If yes, slice the array to keep only the first 200 students
+        students = response.data.slice(0, 200);
+      } else {
+        
+        // If no, or if the number is 200 or less, use the full array
+        students = response.data;
+      }
+
       const blob = await generatePdfBlob(students);
       saveAs(blob, "students.pdf");
     } catch (error) {
@@ -101,6 +119,33 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
     } finally {
     }
   };
+  const handleDownloadAdditionalPdf = async () => {
+    try {
+      const response = await axios.get(`/api/users/pdfdownload/${registration.id}`);
+      console.log(response);
+      
+      let additionalStudents: Student[] = [];
+      
+      // Check if the response contains more than 200 students
+      if (response.data.length > 200) {
+        // If yes, slice the array to keep only the students from 201 onwards
+        additionalStudents = response.data.slice(200); // Starts from index 200, which is the 201st student
+      } else {
+        // If there are not more than 200 students, there's no additional data to process
+        console.log("No additional students to download.");
+        return; // Exit the function as there's nothing more to process
+      }
+
+      const blob = await generatePdfBlob(additionalStudents);
+      const pdfName = `additional_students_${response.data[0].schoolName}.pdf`
+      saveAs(blob,pdfName);
+    } catch (error) {
+      console.error("Error downloading the additional PDF:", error);
+    } finally {
+      // You can add any cleanup code here if necessary
+    }
+};
+
 
   // const handleDownloadPdfPuppeteer = async () => {
   //   try {
@@ -209,6 +254,9 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleDownloadPdf}>
           Download Answer Sheet
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleDownloadAdditionalPdf} disabled={active}>
+          Download Answer Sheet Part2
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleSheet}>
           Download Student Details
