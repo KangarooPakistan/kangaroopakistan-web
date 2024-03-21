@@ -84,10 +84,11 @@ export async function GET(request: Request, { params }: { params: { registration
 }
 
 async function generatePdf(students: Student[]) {
-        console.log('----------------------------')
-        const browser = await puppeteer.launch({
-                executablePath: "/usr/bin/chromium-browser",
-
+        let browser;
+        try {
+                console.log('----------------------------');
+                browser = await puppeteer.launch({
+                        executablePath: "/usr/bin/chromium-browser",
                 args: [
                         "--proxy-server=34.236.95.111:3000",
                         "--no-sandbox",
@@ -103,30 +104,38 @@ async function generatePdf(students: Student[]) {
                 timeout: 6000,
         });
 
-        console.log('----------------------------')
+            console.log('----------------------------');
+            const combinedPdfDoc = await PDFDocument.create();
 
-    const combinedPdfDoc = await PDFDocument.create();
+            for (const student of students) {
+                let page;
+                try {
+                        page = await browser.newPage();
+                        console.log(student);
+                        const htmlContent = generateHTMLForPuppeteerFunction([student]); // Assuming this should be for each student
+                        await page.setContent(htmlContent, { waitUntil: 'networkidle0', timeout: 0 }); // Set timeout as needed
+                        const pdfBuffer = await page.pdf({ format: 'A4', printBackground: true });
+                        const studentPdfDoc = await PDFDocument.load(pdfBuffer);
+                        const [copiedPage] = await combinedPdfDoc.copyPages(studentPdfDoc, [0]);
+                        combinedPdfDoc.addPage(copiedPage);
+            } catch (err) {
+                    console.error(`Error processing student ${student.rollNumber}: ${err}`);
+            } finally {
+                    if (page) await page.close();
+            }
+        }
 
-    for (const student of students) {
-        const page = await browser.newPage();
-
-        console.log(student)
-        // const htmlContent = generateHTMLForPuppeteer();
-        const htmlContent =generateHTMLForPuppeteerFunction(students)
-        await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
-        const pdfBuffer = await page.pdf({ format: 'A4', printBackground: true  });
-            const studentPdfDoc = await PDFDocument.load(pdfBuffer);
-        const [copiedPage] = await combinedPdfDoc.copyPages(studentPdfDoc, [0]);
-        combinedPdfDoc.addPage(copiedPage);
-
-        await page.close();
+            const pdfBytes = await combinedPdfDoc.save();
+            return pdfBytes;
+    } catch (err) {
+            console.error(`An error occurred: ${err}`);
+            throw new Error('Failed to generate PDF'); // Propagate error or handle as needed
+    } finally {
+            if (browser) await browser.close();
     }
-    await browser.close();
-
-    // Serialize the combined PDF to a Uint8Array (buffer)
-    const pdfBytes = await combinedPdfDoc.save();
-    return pdfBytes;
 }
+
+
 function generateHTMLForPuppeteerFunction(students: Student[]) {
         // Start of HTML content
         let htmlContent = `
