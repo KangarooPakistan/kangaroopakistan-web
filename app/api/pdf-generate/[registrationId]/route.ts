@@ -86,11 +86,10 @@ export async function GET(request: Request, { params }: { params: { registration
 async function generatePdf(students: Student[]) {
         console.log('----------------------------')
         const browser = await puppeteer.launch({
-                executablePath:
-                        process.env.NODE_ENV === "production"
-                                ? "/usr/bin/chromium-browser"
-                                : "",
+                executablePath: "/usr/bin/chromium-browser",
+
                 args: [
+                        "--proxy-server=34.236.95.111:3000",
                         "--no-sandbox",
                         "--disable-setuid-sandbox",
                         "--disable-dev-shm-usage",
