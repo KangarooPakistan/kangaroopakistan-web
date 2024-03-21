@@ -101,7 +101,7 @@ async function generatePdf(students: Student[]) {
                         "--disable-gpu",
                 ],
                 headless: true,
-                timeout: 6000,
+                timeout: 60000000,
         });
 
             console.log('----------------------------');
