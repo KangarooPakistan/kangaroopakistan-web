@@ -155,7 +155,11 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
   const handleDownloadPdfPuppeteer = async () => {
     try {
       const response = await axios.get(`/api/pdf-generate/${registration.id}`, {
-        responseType: "blob", // This tells Axios to expect a binary response
+        responseType: "blob", 
+        timeout: 600000000, 
+        timeoutErrorMessage: "hello",// Set your desired timeout value in milliseconds (e.g., 5000ms or 5 seconds)
+
+        // This tells Axios to expect a binary response
       });
       console.log("response")
       console.log(response)
