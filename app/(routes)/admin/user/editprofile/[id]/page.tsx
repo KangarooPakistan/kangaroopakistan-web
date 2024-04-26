@@ -210,7 +210,7 @@ const UserRegister = () => {
       };
       await axios.put(`/api/users/editprofile/${params.id}`, payload);
       form.reset();
-      router.push(`/admin/userprofile/${params.id}`);
+      router.push(`/admin/users`);
       toast.success("🦄 Profile Updated successfully", {
         position: "bottom-center",
         autoClose: 5000,
