@@ -32,6 +32,9 @@ const RoleActions: React.FC<UserActionsProps> = ({ user }) => {
   const handleView = () => {
     router.push(`/admin/userprofile/${user.id}`);
   };
+  const handleEdit = () => {
+    router.push(`/admin/user/editprofile/${user.id}`);
+  };
   
   return (
     <DropdownMenu>
@@ -44,6 +47,7 @@ const RoleActions: React.FC<UserActionsProps> = ({ user }) => {
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <DropdownMenuItem onClick={handleView}>View School </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleEdit}>Edit School </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => onOpen("deleteSchool", { id: user.id })}
         >
