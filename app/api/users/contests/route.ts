@@ -20,14 +20,22 @@ export async function POST(request: NextRequest) {
   if (session && token?.role === "Admin") {
     try {
       const reqBody = await request.json();
-      const { name, startDate, endDate, contestTypeId, contestDate, resultDate, contestCh } = reqBody;
+      const {
+        name,
+        startDate,
+        endDate,
+        contestTypeId,
+        contestDate,
+        resultDate,
+        contestCh,
+      } = reqBody;
 
       const contestData: ContestData = {
         name,
         startDate: new Date(startDate),
         endDate: new Date(endDate),
         contestDate: contestDate || null,
-        resultDate: resultDate || null, 
+        resultDate: resultDate || null,
         contestCh: contestCh || null,
         contestTypeId,
       };
@@ -38,7 +46,10 @@ export async function POST(request: NextRequest) {
       });
 
       if (!existingContestType) {
-        return NextResponse.json({ error: "Contest Type not found" }, { status: 404 });
+        return NextResponse.json(
+          { error: "Contest Type not found" },
+          { status: 404 }
+        );
       }
 
       const newContest = await db.contest.create({
@@ -54,27 +65,36 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export  async function GET(req: NextRequest, res: NextResponse, ) {
+export async function GET(req: NextRequest, res: NextResponse) {
   try {
-    const url = new URL(req.url)
+    const url = new URL(req.url);
 
-    const contestTypeId = url.searchParams.get("contestTypeId")
+    const contestTypeId = url.searchParams.get("contestTypeId");
     // const take = url.searchParams.get("take")
-   
+
     // Optionally, you can validate if contestTypeId is provided
     if (!contestTypeId) {
-      return NextResponse.json({ error: "Missing contestTypeId" }, { status: 401 });
-     }
+      return NextResponse.json(
+        { error: "Missing contestTypeId" },
+        { status: 401 }
+      );
+    }
 
     // Query the database to get contests with the specified contestTypeId
     const contests = await db.contest.findMany({
       where: { contestTypeId: contestTypeId },
     });
-    return NextResponse.json(contests);
-
+    const sanitizedContests = contests.map((contest) => ({
+      // Other fields you need
+      contestType: contest.contestTypeId ?? "Unknown", // Use 'Unknown' if contestType is null
+    }));
+    return NextResponse.json(sanitizedContests);
   } catch (error) {
-    console.error('Error:', error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    console.error("Error:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }
 
@@ -91,7 +111,10 @@ export async function PUT(request: NextRequest) {
     });
 
     if (!existingContest) {
-      return NextResponse.json({ error: "Contest type not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Contest type not found" },
+        { status: 404 }
+      );
     }
 
     // Update the contest type with the new data
@@ -112,5 +135,3 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
-
-
