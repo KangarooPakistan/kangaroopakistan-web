@@ -67,13 +67,14 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       const res = await axios.get(
         `/api/users/getuserbyemail/${registration.email}`
       );
-      const response = await axios.get(`/api/users/pdfdownload/${registration.id}`);
-      console.log(response.data.length)
-      if(response.data.length > 200){
-        setActive(false)
-      }
-      else{
-        setActive(true)
+      const response = await axios.get(
+        `/api/users/pdfdownload/${registration.id}`
+      );
+      console.log(response.data.length);
+      if (response.data.length > 200) {
+        setActive(false);
+      } else {
+        setActive(true);
       }
       console.log(res);
       setData(res.data.id);
@@ -101,22 +102,21 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       const response = await axios.get(
         `/api/users/pdfdownload/${registration.id}`
       );
-      console.log(response)
-      console.log(response.data.length)
+      console.log(response);
+      console.log(response.data.length);
       let students: Student[];
-      
+
       // Check if the response contains more than 200 students
       if (response.data.length > 200) {
         // If yes, slice the array to keep only the first 200 students
         students = response.data.slice(0, 200);
       } else {
-        
         // If no, or if the number is 200 or less, use the full array
         students = response.data;
       }
 
       const blob = await generatePdfBlob(students);
-      const pdfName = `answersheet_${response.data[0].schoolId}_part1.pdf`
+      const pdfName = `answersheet_${response.data[0].schoolId}_part1.pdf`;
 
       saveAs(blob, "students.pdf");
     } catch (error) {
@@ -126,11 +126,13 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
   };
   const handleDownloadAdditionalPdf = async () => {
     try {
-      const response = await axios.get(`/api/users/pdfdownload/${registration.id}`);
+      const response = await axios.get(
+        `/api/users/pdfdownload/${registration.id}`
+      );
       console.log(response);
-      
+
       let additionalStudents: Student[] = [];
-      
+
       // Check if the response contains more than 200 students
       if (response.data.length > 200) {
         // If yes, slice the array to keep only the students from 201 onwards
@@ -142,27 +144,26 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       }
 
       const blob = await generatePdfBlob(additionalStudents);
-      const pdfName = `answersheet_${response.data[0].schoolId}_part2.pdf`
-      saveAs(blob,pdfName);
+      const pdfName = `answersheet_${response.data[0].schoolId}_part2.pdf`;
+      saveAs(blob, pdfName);
     } catch (error) {
       console.error("Error downloading the additional PDF:", error);
     } finally {
       // You can add any cleanup code here if necessary
     }
-};
-
+  };
 
   const handleDownloadPdfPuppeteer = async () => {
     try {
       const response = await axios.get(`/api/pdf-generate/${registration.id}`, {
-        responseType: "blob", 
-        timeout: 600000000, 
-        timeoutErrorMessage: "hello",// Set your desired timeout value in milliseconds (e.g., 5000ms or 5 seconds)
+        responseType: "blob",
+        timeout: 600000000,
+        timeoutErrorMessage: "hello", // Set your desired timeout value in milliseconds (e.g., 5000ms or 5 seconds)
 
         // This tells Axios to expect a binary response
       });
-      console.log("response")
-      console.log(response)
+      console.log("response");
+      console.log(response);
       const file = new Blob([response.data], { type: "application/pdf" });
       const fileURL = URL.createObjectURL(file);
       const link = document.createElement("a");
@@ -194,7 +195,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         `/api/users/allusers/getschoolbyregid/${registration.id}`
       );
       console.log("res");
-      const pdfName = `${res.data.user.schoolId}_Students Summary.pdf`
+      const pdfName = `${res.data.user.schoolId}_Students Summary.pdf`;
       console.log(res.data.user.p_fName);
       const profileData: ProfileData = {
         p_fName: res.data.user.p_fName,
@@ -218,29 +219,29 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
           return parseInt(lastPart, 10);
         };
 
-       const numericValueA = extractNumeric(a.rollNumber);
-       const numericValueB = extractNumeric(b.rollNumber);
+        const numericValueA = extractNumeric(a.rollNumber);
+        const numericValueB = extractNumeric(b.rollNumber);
 
-       return numericValueA - numericValueB;
-     });
+        return numericValueA - numericValueB;
+      });
 
-     console.log("Sorted schoolData by rollNumber:");
-     console.log(schoolData);
+      console.log("Sorted schoolData by rollNumber:");
+      console.log(schoolData);
 
-     console.log("schoolData"); // This should be an array of ClassData
-     console.log("schoolData"); // This should be an array of ClassData
-     console.log(schoolData);
-     // This should be an array of ClassData
-     const blob = await pdf(
-       <SchoolReportDocument
-         schoolData={schoolData}
-         profileData={profileData}
-       />
-     ).toBlob();
+      console.log("schoolData"); // This should be an array of ClassData
+      console.log("schoolData"); // This should be an array of ClassData
+      console.log(schoolData);
+      // This should be an array of ClassData
+      const blob = await pdf(
+        <SchoolReportDocument
+          schoolData={schoolData}
+          profileData={profileData}
+        />
+      ).toBlob();
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      
+
       link.setAttribute("download", pdfName);
       document.body.appendChild(link);
       link.click();
@@ -267,7 +268,9 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         <DropdownMenuItem onClick={handleDownloadPdf}>
           Download Answer Sheet
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleDownloadAdditionalPdf} disabled={active}>
+        <DropdownMenuItem
+          onClick={handleDownloadAdditionalPdf}
+          disabled={active}>
           Download Answer Sheet Part2
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleSheet}>
@@ -291,8 +294,7 @@ export const columns: ColumnDef<Registration>[] = [
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           SchoolId
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -830,8 +832,7 @@ const VerticalNumberGrid = ({ totalNumbers = 30 }) => {
             flexDirection: "row",
             justifyContent: "space-around",
             marginVertical: "1px",
-          }}
-        >
+          }}>
           {row.map((number, colIndex) => (
             <View key={colIndex} style={styles.answerRow}>
               <View style={styles.questionNumberBox}>

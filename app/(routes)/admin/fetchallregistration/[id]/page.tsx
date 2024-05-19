@@ -12,6 +12,31 @@ type Register = {
   id: string;
   students: Student[];
 };
+interface UserData {
+  email: string;
+  password: string;
+  role: string;
+  contactNumber?: string | null; // Optional field
+  schoolName?: string | null; // Optional field
+  district?: string | null; // Optional field
+  tehsil?: string | null; // Optional field
+  fax?: string | null; // Optional field
+  bankTitle?: string | null; // Optional field
+  p_fName?: string | null; // Optional field
+  p_mName?: string | null; // Optional field
+  p_lName?: string | null; // Optional field
+  p_contact?: string | null; // Optional field
+  p_phone?: string | null; // Optional field
+  p_email?: string | null; // Optional field
+  c_fName?: string | null; // Optional field
+  c_mName?: string | null; // Optional field
+  c_lName?: string | null; // Optional field
+  c_contact?: string | null; // Optional field
+  c_phone?: string | null; // Optional field
+  c_email?: string | null; // Optional field
+  c_accountDetails?: string | null; // Optional field
+  schoolAddress?: string | null; // Optional field
+}
 interface Student {
   rollNumber: string;
   studentName: string;
@@ -56,6 +81,8 @@ const FetchAllRegistrations = () => {
       const res = await axios.get(
         `/api/users/fetchallregistrations/${params.id}`
       );
+      console.log("res");
+      console.log(res.data);
 
       const registrations = res.data;
       setTotalSchools(res.data.length);
@@ -123,11 +150,26 @@ const FetchAllRegistrations = () => {
         }))
       );
       setExcel(studentsForExcel);
-      console.log(studentsForExcel);
-      setData(res.data);
+      console.log("studentsForExcel");
+      res.data.forEach((item: any) => {
+        console.log(item.user.schoolName);
+      });
+
+      setData(
+        res.data.map((item: any) => ({
+          id: item.id,
+          schoolId: item.schoolId,
+          schoolName: item.user.schoolName,
+          studentsLength: item.studentsLength,
+          email: item.email,
+          paymentProof: item.paymentProof,
+          contestId: item.contestId,
+        }))
+      );
+
       const extractedData = res.data.map((obj: any) => ({
         contestId: obj.contestId,
-        schoolName: obj.schoolName,
+        schoolName: obj.user.schoolName,
         schoolId: obj.schoolId,
         id: obj.id,
         registeredBy: obj.registeredBy,
