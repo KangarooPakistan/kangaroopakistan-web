@@ -239,17 +239,13 @@ const ViewRegistered = () => {
           </div>
         </div>
         <div className="flex flex-wrap justify-end mt-4">
-          {pdfUrl && (
-            <Button>
-              <Link
-                href={pdfUrl}
-                className="w-full sm:w-auto mx-2 my-1 sm:my-0"
-                target="_blank"
-                rel="noopener noreferrer">
-                View Results
-              </Link>
-            </Button>
-          )}
+          <Link
+            href={pdfUrl}
+            className="w-full bg-purple-600 sm:w-auto mx-2 my-1 sm:my-0"
+            target="_blank"
+            rel="noopener noreferrer">
+            View Results
+          </Link>
 
           <Button
             className="w-full sm:w-auto mx-2 my-1 sm:my-0"
