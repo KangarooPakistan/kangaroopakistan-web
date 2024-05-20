@@ -45,6 +45,7 @@ export async function POST(request: NextRequest) {
         pass: process.env.NODEMAILER_PASS,
       },
     });
+    console.log(transporter);
 
     const resetLink = `https://enrollments.kangaroopakistan.org/new-password/${token}`;
 
