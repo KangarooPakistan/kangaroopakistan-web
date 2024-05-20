@@ -42,9 +42,9 @@ const ViewRegistered = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const session = await getSession();
-
       try {
+        const session = await getSession();
+
         const response = await axios.get(
           `/api/users/getuserbyemail/${session?.user.email}`
         );
