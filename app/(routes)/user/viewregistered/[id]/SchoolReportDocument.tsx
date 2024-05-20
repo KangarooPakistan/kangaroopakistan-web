@@ -194,6 +194,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
   schoolData,
   profileData,
 }) => {
+  console.log("----------------------------------------");
   const groupedStudents: Record<string, Record<string, Student[]>> = {};
 
   let preecolierCount = 0;

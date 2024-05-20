@@ -8,14 +8,8 @@ import { Student, columns } from "./columns";
 import { Button } from "@/components/ui/button";
 import { useModal } from "@/hooks/use-modal-store";
 import SchoolReportDocument from "./SchoolReportDocument";
-import {
-  Page,
-  Text,
-  View,
-  Document,
-  StyleSheet,
-  pdf,
-} from "@react-pdf/renderer";
+import { pdf } from "@react-pdf/renderer";
+import { saveAs } from "file-saver";
 
 type ProfileData = {
   p_fName: string;
@@ -123,20 +117,47 @@ const ViewRegistered = () => {
       const schoolData = response.data;
       console.log("schoolData"); // This should be an array of ClassData
       console.log(schoolData); // This should be an array of ClassData
-      const blob = await pdf(
+      const promise = pdf(
         <SchoolReportDocument
           schoolData={schoolData}
           profileData={profileData}
         />
       ).toBlob();
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", "school-report.pdf");
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+
+      const blob = await Promise.race([
+        promise,
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout")), 1000000)
+        ), // Timeout after 10 seconds
+      ]);
+      // pdf(
+      //   <SchoolReportDocument
+      //     schoolData={schoolData}
+      //     profileData={profileData}
+      //   />
+      // )
+      //   .toBlob()
+      //   .then((blob) => {
+      //     console.log("PDF Blob created:", blob);
+
+      //     // Create URL from the Blob
+      //     const url = URL.createObjectURL(blob);
+      //     console.log("Generated PDF URL:", url);
+
+      //     // Trigger download
+      //     const link = document.createElement("a");
+      //     link.href = url;
+      //     link.setAttribute("download", "school-report.pdf");
+      //     document.body.appendChild(link);
+      //     link.click();
+      //     document.body.removeChild(link);
+
+      //     // Revoke the created URL to free up resources
+      //     URL.revokeObjectURL(url);
+      //   })
+      //   .catch((error) => {
+      //     console.error("Error generating the PDF:", error);
+      //   });
     } catch (error) {
       console.error("Error generating the PDF:", error);
     }
