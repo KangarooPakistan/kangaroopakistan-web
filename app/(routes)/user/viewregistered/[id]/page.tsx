@@ -195,7 +195,7 @@ const ViewRegistered = () => {
   };
   return (
     <div className="container mx-auto py-4">
-      <div className="container mx-auto py-4">
+      <div className="py-4">
         <div className="flex flex-wrap -mx-2">
           <div className="w-full md:w-1/2 px-2 mb-6 md:mb-0">
             <div className="bg-purple-400 rounded-lg shadow-lg p-6 text-white transform transition duration-500 hover:scale-105">
@@ -241,30 +241,35 @@ const ViewRegistered = () => {
         </div>
         <div className="flex flex-wrap justify-end mt-4">
           {pdfUrl ? (
-            <Button>
-              <Link href={pdfUrl} target="_blank" rel="noopener noreferrer">
-                View Results
-              </Link>
-            </Button>
+            <div className="w-1/4 p-1">
+              <Button className="w-full">
+                <Link href={pdfUrl} target="_blank" rel="noopener noreferrer">
+                  View Results
+                </Link>
+              </Button>
+            </div>
           ) : (
-            <Button>No results found</Button>
+            <div className="w-1/4 p-1">
+              <Button className="w-full">No results found</Button>
+            </div>
           )}
-
-          <Button
-            className="w-full sm:w-auto mx-2 my-1 sm:my-0"
-            onClick={handleClick}>
-            View All Proof of Payments
-          </Button>
-          <Button
-            className="w-full sm:w-auto mx-2 my-1 sm:my-0"
-            onClick={handleSheet}>
-            Download student Data
-          </Button>
-          <Button
-            className="w-full sm:w-auto mx-2 my-1 sm:my-0"
-            onClick={() => onOpen("addImage", { registrationId })}>
-            Add Proof of Payment
-          </Button>
+          <div className="w-1/4 p-1">
+            <Button className="w-full" onClick={handleClick}>
+              View All Proof of Payments
+            </Button>
+          </div>
+          <div className="w-1/4 p-1">
+            <Button className="w-full" onClick={handleSheet}>
+              Download student Data
+            </Button>
+          </div>
+          <div className="w-1/4 p-1">
+            <Button
+              className="w-full"
+              onClick={() => onOpen("addImage", { registrationId })}>
+              Add Proof of Payment
+            </Button>
+          </div>
         </div>
       </div>
       <div className="flex flex-col sm:flex-row justify-between items-center sm:items-end">

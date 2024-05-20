@@ -104,8 +104,7 @@ const UpdateContest = () => {
           contestDate: response.data.contestDate ?? "",
           resultDate: response.data.resultDate ?? "",
         });
-      } catch (error) {
-      }
+      } catch (error) {}
     };
     fetch();
   }, [form]);
@@ -115,8 +114,6 @@ const UpdateContest = () => {
 
   const isLoading = form.formState.isSubmitting;
   const onSubmit = async (values: Contest) => {
-
-
     const payload = {
       id: contestId,
       name: values.name, // Spread the form values
@@ -141,7 +138,6 @@ const UpdateContest = () => {
         theme: "light",
       });
     } catch (error) {
-      
       toast.error(" " + error, {
         position: "top-right",
         autoClose: 5000,
@@ -156,11 +152,11 @@ const UpdateContest = () => {
   };
   return (
     <div className="container mx-auto py-4">
-       <div className="flex justify-center items-center">
-       <Button variant="default" onClick={handleBack}>
-            Back
-          </Button>
-       </div>
+      <div className="flex justify-center items-center">
+        <Button variant="default" onClick={handleBack}>
+          Back
+        </Button>
+      </div>
       <section className="bg-white mb-12">
         <div className=" pt-10 h-screen grid grid-cols-1 md:grid-cols-2 gap-2 xl:gap-0">
           <div className="w-full rounded-lg shadow-2xl md:mt-0 sm:max-w-md xl:p-0 mx-auto">
@@ -172,8 +168,7 @@ const UpdateContest = () => {
               <Form {...form}>
                 <form
                   onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-4 md:space-y-6"
-                >
+                  className="space-y-4 md:space-y-6">
                   <FormField
                     control={form.control}
                     name="name"
@@ -283,8 +278,7 @@ const UpdateContest = () => {
                     <Button
                       disabled={isLoading}
                       variant="default"
-                      className="px-10"
-                    >
+                      className="px-10">
                       Update
                     </Button>
                   </div>
