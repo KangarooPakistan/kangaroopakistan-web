@@ -8,7 +8,6 @@ import { Student, columns } from "./columns";
 import { Button } from "@/components/ui/button";
 import { useModal } from "@/hooks/use-modal-store";
 import SchoolReportDocument from "./SchoolReportDocument";
-import SchoolResultDocument from "./SchoolResultDocument";
 import {
   Page,
   Text,
@@ -18,40 +17,6 @@ import {
   pdf,
 } from "@react-pdf/renderer";
 
-interface UserData {
-  email: string;
-  role: string;
-  schoolId: number;
-  schoolName: string;
-  contactNumber: string;
-  schoolAddress: string;
-  district: string;
-  tehsil: string;
-  fax: string;
-  p_fName: string;
-  p_mName: string;
-  p_lName: string;
-  p_contact: string;
-  p_phone: string;
-  p_email: string;
-  c_fName: string;
-  c_mName: string;
-  c_lName: string;
-  c_contact: string;
-  c_phone: string;
-  c_email: string;
-  c_accountDetails: string;
-}
-interface ResultType {
-  PERCENTAGE: string;
-  SCORE: string;
-  class: string;
-  fatherName: string; // Assuming 'class' is a string like '1A', '2B', etc.
-  rollNumber: string;
-  schoolName: number;
-  studentName: string;
-  // address: string; // Assuming 'class' is a string like '1A', '2B', etc.
-}
 type ProfileData = {
   p_fName: string;
   p_mName: string;
@@ -62,7 +27,6 @@ type ProfileData = {
   email: string;
   contactNumber: string;
 };
-const padNumber = (num: number) => String(num).padStart(5, "0");
 
 const ViewRegistered = () => {
   const [students, setStudents] = useState<Student[]>([]);
@@ -76,8 +40,6 @@ const ViewRegistered = () => {
   const [cadet, setCadet] = useState<number>(0);
   const [junior, setJunior] = useState<number>(0);
   const [student, setStudent] = useState<number>(0);
-  const [schoolId, setSchoolId] = useState<number>(0);
-  const [user, setUser] = useState<UserData | null>(null);
 
   const params = useParams();
   type LevelCounts = Record<string, number>;
@@ -90,9 +52,6 @@ const ViewRegistered = () => {
         const response = await axios.get(
           `/api/users/getuserbyemail/${session?.user.email}`
         );
-        console.log(response);
-        setSchoolId(response.data.schoolId);
-        setUser(response.data);
 
         const regId = await axios.get(
           `/api/users/contests/${params.id}/${response.data.schoolId}`
@@ -135,94 +94,6 @@ const ViewRegistered = () => {
   const handleClick = () => {
     router.push(`/user/viewallrecipts/${registrationId}`);
   };
-  const handleResults = async () => {
-    try {
-      const goldenresponse = await axios.get("/api/results/golden/");
-      const silverresponse = await axios.get("/api/results/silver/");
-      const bronzeresponse = await axios.get("/api/results/bronze/");
-      const threestarresponse = await axios.get("/api/results/threestar/");
-      const twostarresponse = await axios.get("/api/results/twostar/");
-      const onestarresponse = await axios.get("/api/results/onestar/");
-      const specialresponse = await axios.get("/api/results/specialballpoint/");
-      console.log(goldenresponse);
-      const paddedSchoolId = padNumber(267);
-
-      // Assuming response.data is an array of objects with a 'rollNumber' property
-      const matchingRollNumbersGolden = goldenresponse.data.filter(
-        (item: ResultType) => {
-          const rollNumberParts = item.rollNumber.split("-");
-          return rollNumberParts[2] === paddedSchoolId;
-        }
-      );
-      const matchingRollNumbersSilver = silverresponse.data.filter(
-        (item: ResultType) => {
-          const rollNumberParts = item.rollNumber.split("-");
-          return rollNumberParts[2] === paddedSchoolId;
-        }
-      );
-      const matchingRollNumbersBronze = bronzeresponse.data.filter(
-        (item: ResultType) => {
-          const rollNumberParts = item.rollNumber.split("-");
-          return rollNumberParts[2] === paddedSchoolId;
-        }
-      );
-      const matchingRollNumbersThreeStar = threestarresponse.data.filter(
-        (item: ResultType) => {
-          const rollNumberParts = item.rollNumber.split("-");
-          return rollNumberParts[2] === paddedSchoolId;
-        }
-      );
-      const matchingRollNumbersTwoStar = twostarresponse.data.filter(
-        (item: ResultType) => {
-          const rollNumberParts = item.rollNumber.split("-");
-          return rollNumberParts[2] === paddedSchoolId;
-        }
-      );
-      const matchingRollNumbersOneStar = onestarresponse.data.filter(
-        (item: ResultType) => {
-          const rollNumberParts = item.rollNumber.split("-");
-          return rollNumberParts[2] === paddedSchoolId;
-        }
-      );
-      const matchingRollNumbersSpecial = specialresponse.data.filter(
-        (item: ResultType) => {
-          const rollNumberParts = item.rollNumber.split("-");
-          return rollNumberParts[2] === paddedSchoolId;
-        }
-      );
-      console.log("Matching Roll Numbers:");
-      console.log(matchingRollNumbersGolden);
-      console.log(matchingRollNumbersSilver);
-      console.log(matchingRollNumbersBronze);
-      console.log(matchingRollNumbersThreeStar);
-      console.log(matchingRollNumbersTwoStar);
-      console.log(matchingRollNumbersOneStar);
-      console.log(matchingRollNumbersSpecial);
-      const blob = await pdf(
-        <SchoolResultDocument
-          user={user}
-          goldmedal={matchingRollNumbersGolden}
-          silvermedal={matchingRollNumbersSilver}
-          bronzemedal={matchingRollNumbersBronze}
-          threestar={matchingRollNumbersThreeStar}
-          twostar={matchingRollNumbersTwoStar}
-          onestar={matchingRollNumbersOneStar}
-          specialballpoint={matchingRollNumbersSpecial}
-        />
-      ).toBlob();
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", "school-report.pdf");
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error("Error fetching results:", error);
-    }
-  };
-
   const handleBack = () => {
     router.back();
   };
@@ -258,7 +129,6 @@ const ViewRegistered = () => {
           profileData={profileData}
         />
       ).toBlob();
-
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
@@ -318,11 +188,6 @@ const ViewRegistered = () => {
           </div>
         </div>
         <div className="flex flex-wrap justify-end mt-4">
-          <Button
-            className="w-full sm:w-auto mx-2 my-1 sm:my-0"
-            onClick={handleResults}>
-            View Results
-          </Button>
           <Button
             className="w-full sm:w-auto mx-2 my-1 sm:my-0"
             onClick={handleClick}>

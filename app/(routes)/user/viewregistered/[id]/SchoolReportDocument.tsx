@@ -264,8 +264,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
             alignItems: "flex-start",
             marginRight: "20px",
             flexDirection: "row",
-          }}
-        >
+          }}>
           <Image
             style={styles.image}
             src="/innovative-learning.jpg" // Replace with your image path or URL
@@ -278,8 +277,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
               display: "flex",
               marginLeft: "20px",
               flexDirection: "column",
-            }}
-          >
+            }}>
             <Text style={styles.header}>
               34<Text style={{ verticalAlign: "super", fontSize: 10 }}>th</Text>{" "}
               International Kangaroo Mathematics Contest 2024
@@ -292,8 +290,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                   marginVertical: "1px",
                   fontFamily: "Open Sans",
                   fontWeight: 900,
-                }}
-              >
+                }}>
                 {schoolData[0].schoolName}
               </Text>
             </View>
@@ -302,8 +299,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                 display: "flex",
                 justifyContent: "flex-start",
                 flexDirection: "row",
-              }}
-            >
+              }}>
               <Text
                 style={{
                   fontSize: "10px",
@@ -312,8 +308,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                   fontFamily: "Open Sans",
                   fontWeight: 600, // Keep the label text bold
                   display: "flex",
-                }}
-              >
+                }}>
                 Institution Code:{" "}
               </Text>
               <Text
@@ -324,8 +319,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                   fontFamily: "Open Sans",
                   fontWeight: "normal", // Set fontWeight to normal for the school ID
                   display: "flex",
-                }}
-              >
+                }}>
                 {schoolData[0].schoolId}
               </Text>
             </View>
@@ -334,8 +328,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                 display: "flex",
                 justifyContent: "flex-start",
                 flexDirection: "row",
-              }}
-            >
+              }}>
               <Text
                 style={{
                   fontSize: "10px",
@@ -344,8 +337,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                   fontFamily: "Open Sans",
                   fontWeight: 600, // Keep the label text bold
                   display: "flex",
-                }}
-              >
+                }}>
                 Address:{" "}
               </Text>
               <Text
@@ -356,8 +348,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                   fontFamily: "Open Sans",
                   fontWeight: "normal", // Set fontWeight to normal for the school ID
                   display: "flex",
-                }}
-              >
+                }}>
                 {schoolData[0].address}
               </Text>
             </View>
@@ -366,8 +357,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                 display: "flex",
                 justifyContent: "flex-start",
                 flexDirection: "row",
-              }}
-            >
+              }}>
               <Text
                 style={{
                   fontSize: "10px",
@@ -376,8 +366,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                   fontFamily: "Open Sans",
                   fontWeight: 600, // Keep the label text bold
                   display: "flex",
-                }}
-              >
+                }}>
                 Contact Number:{" "}
               </Text>
               <Text
@@ -388,8 +377,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                   fontFamily: "Open Sans",
                   fontWeight: "normal", // Set fontWeight to normal for the school ID
                   display: "flex",
-                }}
-              >
+                }}>
                 {profileData?.contactNumber}
               </Text>
             </View>
@@ -398,8 +386,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                 display: "flex",
                 justifyContent: "flex-start",
                 flexDirection: "row",
-              }}
-            >
+              }}>
               <Text
                 style={{
                   fontSize: "10px",
@@ -408,8 +395,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                   fontFamily: "Open Sans",
                   fontWeight: 600, // Keep the label text bold
                   display: "flex",
-                }}
-              >
+                }}>
                 Email Address:{" "}
               </Text>
               <Text
@@ -420,8 +406,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                   fontFamily: "Open Sans",
                   fontWeight: "normal", // Set fontWeight to normal for the school ID
                   display: "flex",
-                }}
-              >
+                }}>
                 {profileData?.email}
               </Text>
             </View>
@@ -430,8 +415,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                 display: "flex",
                 justifyContent: "flex-start",
                 flexDirection: "row",
-              }}
-            >
+              }}>
               <Text
                 style={{
                   fontSize: "10px",
@@ -440,8 +424,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                   fontFamily: "Open Sans",
                   fontWeight: 600, // Keep the label text bold
                   display: "flex",
-                }}
-              >
+                }}>
                 Principal Name:{" "}
               </Text>
               <Text
@@ -452,8 +435,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                   fontFamily: "Open Sans",
                   fontWeight: "normal", // Set fontWeight to normal for the school ID
                   display: "flex",
-                }}
-              >
+                }}>
                 {profileData?.p_fName}{" "}
                 {profileData?.p_mName !== null && profileData?.p_mName + " "}
                 {profileData?.p_lName}{" "}
@@ -464,8 +446,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                 display: "flex",
                 justifyContent: "flex-start",
                 flexDirection: "row",
-              }}
-            >
+              }}>
               <Text
                 style={{
                   fontSize: "10px",
@@ -474,8 +455,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                   fontFamily: "Open Sans",
                   fontWeight: 600, // Keep the label text bold
                   display: "flex",
-                }}
-              >
+                }}>
                 Coordinator Name:{" "}
               </Text>
               <Text
@@ -486,8 +466,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                   fontFamily: "Open Sans",
                   fontWeight: "normal", // Set fontWeight to normal for the school ID
                   display: "flex",
-                }}
-              >
+                }}>
                 {profileData?.c_fName}{" "}
                 {profileData?.c_mName !== null && profileData?.c_mName + " "}
                 {profileData?.c_lName}
@@ -504,8 +483,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
             fontFamily: "Open Sans",
             fontWeight: 600, // Keep the label text bold
             display: "flex",
-          }}
-        >
+          }}>
           List of registered students
         </Text>
 
