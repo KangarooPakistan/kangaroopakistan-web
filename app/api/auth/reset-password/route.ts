@@ -55,6 +55,7 @@ export async function POST(request: NextRequest) {
       subject: "Password Reset Request",
       html: `<p>You requested a password reset. Click <a href="${resetLink}">here</a> to reset your password. This link will expire in 30 minutes.</p>`,
     });
+    console.log("-------------------");
 
     return NextResponse.json({
       message: "If the email is registered, a reset link has been sent.",
