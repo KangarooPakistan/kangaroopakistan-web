@@ -61,6 +61,7 @@ export async function POST(request: NextRequest) {
       message: "If the email is registered, a reset link has been sent.",
     });
   } catch (error: any) {
+    console.log(error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
