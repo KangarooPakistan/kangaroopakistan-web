@@ -53,7 +53,7 @@ const ViewRegistered = () => {
 
         // Optionally check if the PDF exists
         try {
-          await axios.head(potentialPdfUrl);
+          // await axios.head(potentialPdfUrl);
           setPdfUrl(potentialPdfUrl); // Set the URL if the file exists
         } catch (error) {
           console.error("PDF does not exist:", error);
