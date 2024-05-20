@@ -254,6 +254,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
         return "Unknown";
     }
   }
+  console.log("----------------------------------------");
 
   return (
     <Document>

@@ -10,6 +10,7 @@ import { useModal } from "@/hooks/use-modal-store";
 import SchoolReportDocument from "./SchoolReportDocument";
 import { pdf } from "@react-pdf/renderer";
 import { saveAs } from "file-saver";
+import Link from "next/link";
 
 type ProfileData = {
   p_fName: string;
@@ -34,10 +35,36 @@ const ViewRegistered = () => {
   const [cadet, setCadet] = useState<number>(0);
   const [junior, setJunior] = useState<number>(0);
   const [student, setStudent] = useState<number>(0);
+  const [pdfUrl, setPdfUrl] = useState("");
 
   const params = useParams();
   type LevelCounts = Record<string, number>;
 
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const session = await getSession();
+
+      try {
+        const response = await axios.get(
+          `/api/users/getuserbyemail/${session?.user.email}`
+        );
+        const schoolId = response.data.schoolId;
+        const potentialPdfUrl = `https://kangaroopakistan-prod.s3.amazonaws.com/Results/${schoolId}.pdf`;
+
+        // Optionally check if the PDF exists
+        try {
+          await axios.head(potentialPdfUrl);
+          setPdfUrl(potentialPdfUrl); // Set the URL if the file exists
+        } catch (error) {
+          console.error("PDF does not exist:", error);
+        }
+      } catch (error) {
+        console.error("Failed to fetch user data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
   useEffect(() => {
     const fetch = async () => {
       try {
@@ -91,6 +118,9 @@ const ViewRegistered = () => {
   const handleBack = () => {
     router.back();
   };
+  const handleResults = () => {
+    router.back();
+  };
   const handleSheet = async () => {
     try {
       const response = await axios.get(
@@ -127,7 +157,7 @@ const ViewRegistered = () => {
       const blob = await Promise.race([
         promise,
         new Promise((_, reject) =>
-          setTimeout(() => reject(new Error("Timeout")), 1000000)
+          setTimeout(() => reject(new Error("Timeout")), 200000)
         ), // Timeout after 10 seconds
       ]);
       // pdf(
@@ -209,6 +239,18 @@ const ViewRegistered = () => {
           </div>
         </div>
         <div className="flex flex-wrap justify-end mt-4">
+          {pdfUrl && (
+            <Button>
+              <Link
+                href={pdfUrl}
+                className="w-full sm:w-auto mx-2 my-1 sm:my-0"
+                target="_blank"
+                rel="noopener noreferrer">
+                View Results
+              </Link>
+            </Button>
+          )}
+
           <Button
             className="w-full sm:w-auto mx-2 my-1 sm:my-0"
             onClick={handleClick}>
