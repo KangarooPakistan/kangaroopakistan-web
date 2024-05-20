@@ -84,11 +84,8 @@ export async function GET(req: NextRequest, res: NextResponse) {
     const contests = await db.contest.findMany({
       where: { contestTypeId: contestTypeId },
     });
-    const sanitizedContests = contests.map((contest) => ({
-      // Other fields you need
-      contestType: contest.contestTypeId ?? "Unknown", // Use 'Unknown' if contestType is null
-    }));
-    return NextResponse.json(sanitizedContests);
+
+    return NextResponse.json(contests);
   } catch (error) {
     console.error("Error:", error);
     return NextResponse.json(
