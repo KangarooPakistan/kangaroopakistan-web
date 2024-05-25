@@ -126,7 +126,7 @@ const Frontend = () => {
           <div className="p-4 border-t border-gray-300">
             <Button
               className="text-sm md:text-base lg:text-lg"
-              onClick={showFlashMessage}>
+              onClick={handleProfile}>
               View Profile
             </Button>
           </div>
