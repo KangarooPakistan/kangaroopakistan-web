@@ -1,11 +1,15 @@
-import { ContestType,  } from "@prisma/client";
+import { ContestType } from "@prisma/client";
 import { create } from "zustand";
 
-export type ModalType = "createContest" | "addImage" | "deleteStudent" | "deleteSchool";
+export type ModalType =
+  | "createContest"
+  | "addImage"
+  | "deleteStudent"
+  | "deleteSchool"
+  | "upload-notification";
 interface ModalData {
   registrationId?: string;
-  id?: number
-  
+  id?: number;
 }
 
 interface ModalStore {
@@ -21,5 +25,5 @@ export const useModal = create<ModalStore>((set) => ({
   isOpen: false,
   data: {},
   onOpen: (type, data) => set({ isOpen: true, type, data }),
-  onClose: () => set({ type: null, isOpen: false })
+  onClose: () => set({ type: null, isOpen: false }),
 }));

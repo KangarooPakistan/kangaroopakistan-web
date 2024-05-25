@@ -18,20 +18,25 @@ generator client {
     schoolAddress String?
     district String?
     tehsil String?
+    city String? @db.VarChar(255)
     fax String?
     bankTitle String?
     p_fName String?
     p_mName String?
     p_lName String?
+    p_Name String? @db.VarChar(255)
     p_contact String?
     p_phone String?
     p_email String?
     c_fName String?
     c_mName String?
     c_lName String?
+    c_Name String? @db.VarChar(255)
     c_contact String?
     c_phone String?
     c_email String?
+    districtCode String? @db.VarChar(255)
+    districtName String? @db.VarChar(250)
     c_accountDetails String?
 
     createdAt     DateTime @default(now())
@@ -87,7 +92,9 @@ model Contest {
   contestCh String?
   contestTypeId String
   contestType   ContestType @relation(fields: [contestTypeId], references: [id], onDelete: Cascade)
-
+  sheetScans SheetScan[]
+  scores Score[]
+  correctAnswers CorrectAnswer[]
 
   @@index([contestTypeId])
 }
@@ -112,4 +119,87 @@ model PaymentProof{
   registrationId String
   @@index([registrationId])
 }
+model Notification{
+  id Int @id @default(autoincrement())
+  imageUrl String
+  createdAt     DateTime @default(now())
+
+}
+
+
+model CorrectAnswer {
+  id          BigInt       @id @default(autoincrement()) @map("ID")
+  updatedAt   DateTime  @map("UPDATED_ON") @updatedAt
+  answers     String? @map("ANSWERS") @db.VarChar(1500)
+  classId     Int?       @map("CLASS_ID")
+  contestId   String   @db.VarChar(255) @map("CONTEST_ID") @default("defaultContestId")
+  contest     Contest   @relation(fields: [contestId], references: [id])
+
+  @@map("u_correct_answers")
+}
+
+model Login {
+  id        BigInt       @id @default(autoincrement()) @map("ID")
+  updatedAt DateTime  @map("UPDATED_ON") @updatedAt 
+  email     String? @map("EMAIL") @db.VarChar(255)
+  name      String? @map("NAME") @db.VarChar(255)
+  password  String? @map("PASSWORD") @db.VarChar(255)
+  status    String? @map("STATUS") @db.VarChar(255)
+  username  String? @map("USERNAME") @db.VarChar(255)
+
+  @@map("u_logins")
+}
+
+model Position {
+  id           BigInt      @id @default(autoincrement()) @map("ID")
+  updatedAt    DateTime @map("UPDATED_ON") @updatedAt 
+  class        String?   @map("CLASS") @db.VarChar(255)
+  district     String?  @map("DISTRICT") @db.VarChar(255)
+  noOfStudents Int?      @map("NO_OF_STUDENTS")
+  position     Int? @map("POSITION")
+  schoolId     Int?      @map("school_Id")
+  score        Decimal?  @map("SCORE")  @db.Decimal(19,2)
+  type         String? @map("TYPE") @db.VarChar(255)
+
+  @@map("u_positions")
+}
+
+model Score {
+  id            BigInt      @id @default(autoincrement())  @map("ID")
+  updatedAt     DateTime @map("UPDATED_ON") @updatedAt
+  cRow1         Int?      @map("C_ROW1") 
+  cRow2         Int?      @map("C_ROW2")
+  cRow3         Int?      @map("C_ROW3")
+  cTotal        Int?      @map("C_TOTAL")
+  contestId     String   @map("CONTEST_ID")
+  creditScore   Int?      @map("CREDIT_SCORE")
+  description   String? @map("DESCRIPTION") @db.VarChar(1000)
+  missing       Int? @map("MISSING")
+  percentage    Decimal?  @map("PERCENTAGE") @db.Decimal(19,2)
+  rollNo        String?   @map("ROLL_NO") @db.VarChar(255)
+  score         BigInt?   @map("SCORE")
+  totalMarks    BigInt?   @map("TOTAL_MARKS")
+  wrong         Int? @map("WRONG")
+
+  contest       Contest  @relation(fields: [contestId], references: [id])
+
+  @@map("u_scores")
+}
+
+model SheetScan {
+  id          BigInt       @id @default(autoincrement()) @map("ID")
+  updatedAt   DateTime  @map("UPDATED_ON") @updatedAt
+  answers     String? @map("ANSWERS") @db.VarChar(1500)
+  fileName    String?    @map("FILE_NAME") @db.VarChar(255)
+  keyLogs     String?   @map("KEY_LOGS") @db.VarChar(1500) // Nullable because there are NULL entries in 
+  reason      String? @map("REASON") @db.VarChar(1500)
+  rollNo      String?    @map("ROLL_NO") @db.VarChar(255)
+  status      String? @map("STATUS") @db.VarChar(255)
+  contestId   String    @map("CONTEST_ID") @db.VarChar(255)
+
+  contest     Contest   @relation(fields: [contestId], references: [id])
+
+  @@map("u_sheet_scans")
+}
+
 

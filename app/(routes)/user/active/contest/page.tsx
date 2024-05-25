@@ -16,10 +16,12 @@ const ViewAllContests: React.FC = () => {
       try {
         const contestTypeId = params.id;
         const resp = await axios.get<Contest[]>(`/api/users/contests/active`);
+        console.log("resp");
+        console.log(resp);
+        console.log("resp");
         const parsedContests = resp.data.map((contest) => {
           const startDate = new Date(contest.startDate);
           const endDate = new Date(contest.endDate);
-          
 
           // Format start date as DD/MM/YY Day
           const formattedStartDate = formatDate(startDate);

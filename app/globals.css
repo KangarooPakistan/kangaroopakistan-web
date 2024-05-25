@@ -94,3 +94,26 @@
 .register-height-style {
   height: 103vh;
 }
+@keyframes ticker {
+  from {
+    transform: translateX(300%);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+.ticker-wrap {
+  position: relative;
+  background: #7e22ce; /* Purple background */
+  overflow: hidden;
+  height: 40px;
+  color: white;
+  display: flex;
+  align-items: center;
+}
+
+.ticker-move {
+  white-space: nowrap;
+  animation: ticker 50s linear infinite;
+}
