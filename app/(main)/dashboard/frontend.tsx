@@ -101,13 +101,16 @@ const Frontend = () => {
       <h1 className="text-3xl text-center my-3 font-bold text-purple-600">
         Notice Board
       </h1>
-      <Ticker message="This is a moving message! Stay tuned for more updates." />
-
-      <div className="flex justify-end mt-2">
-        <Button variant="default" onClick={() => onOpen("upload-notification")}>
-          Upload Image for Notification
-        </Button>
-      </div>
+      {/* <Ticker message="This is a moving message! Stay tuned for more updates." /> */}
+      {mySession && role === "Admin" && (
+        <div className="flex justify-end mt-2">
+          <Button
+            variant="default"
+            onClick={() => onOpen("upload-notification")}>
+            Upload Image for Notification
+          </Button>
+        </div>
+      )}
       <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 mx-auto py-10">
         <div className="flex-1 bg-white shadow-lg rounded-lg overflow-hidden">
           <div className="p-4">
