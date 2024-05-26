@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { signOut, useSession } from "next-auth/react";
 import { Button } from "../../components/ui/button";
 import { useRouter } from "next/navigation";
@@ -15,6 +15,8 @@ const AdminNavbar = () => {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { data: session } = useSession();
+  const [email, setEmail] = useState<string | null | undefined>("");
+  const [name, setName] = useState<string | null | undefined>("");
 
   const router = useRouter();
 
@@ -24,6 +26,7 @@ const AdminNavbar = () => {
 
   const goToProfile = () => {
     if (session && session.user && session.user.id) {
+      console.log(session.user);
       router.push(`/admin/profile/${session.user.id}`); // Use session.user.id directly
       toggleProfile();
     }
@@ -53,6 +56,11 @@ const AdminNavbar = () => {
     toggleDropdown();
     router.push("/users");
   };
+  useEffect(() => {
+    setEmail(session?.user.email);
+    setName(session?.user.role);
+    console.log(session?.user);
+  }, [session]);
 
   return (
     <nav className="bg-purple-600 text-white">
@@ -70,8 +78,7 @@ const AdminNavbar = () => {
             id="user-menu-button"
             aria-expanded={isProfileOpen}
             data-dropdown-toggle="user-dropdown"
-            data-dropdown-placement="bottom"
-          >
+            data-dropdown-placement="bottom">
             <span className="sr-only">Open user menu</span>
             <img
               className="w-8 h-8 rounded-full"
@@ -84,12 +91,11 @@ const AdminNavbar = () => {
             className={`z-50 ${
               isProfileOpen ? "block" : "hidden"
             } text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow absolute mt-[11.2rem] right-[4.5rem] md:mt-48 md:right-8`}
-            id="user-dropdown"
-          >
+            id="user-dropdown">
             <div className="px-4 py-3">
-              <span className="block text-sm text-gray-900 ">Name</span>
+              <span className="block text-sm text-gray-900 ">{name}</span>
               <span className="block text-sm text-gray-500 truncate ">
-                email@email.com
+                {email}
               </span>
             </div>
             <ul className="py-2" aria-labelledby="user-menu-button">
@@ -97,8 +103,7 @@ const AdminNavbar = () => {
                 <Button
                   onClick={goToProfile}
                   variant="outline"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full border-0 text-left"
-                >
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full border-0 text-left">
                   Profile
                 </Button>
               </li>
@@ -106,8 +111,7 @@ const AdminNavbar = () => {
                 <Button
                   variant="outline"
                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full border-0 text-left"
-                  onClick={logOut}
-                >
+                  onClick={logOut}>
                   Sign out
                 </Button>
               </li>
@@ -120,16 +124,14 @@ const AdminNavbar = () => {
             onClick={toggleMobileMenu}
             className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 }"
             aria-controls="navbar-user"
-            aria-expanded={isMobileMenuOpen}
-          >
+            aria-expanded={isMobileMenuOpen}>
             <span className="sr-only">Open main menu</span>
             <svg
               className="w-5 h-5"
               aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
-              viewBox="0 0 17 14"
-            >
+              viewBox="0 0 17 14">
               <path
                 stroke="currentColor"
                 strokeLinecap="round"
@@ -144,15 +146,13 @@ const AdminNavbar = () => {
           className={`items-center justify-between w-full md:flex md:w-auto md:order-1${
             isMobileMenuOpen ? "block" : "hidden"
           }`}
-          id="navbar-user"
-        >
+          id="navbar-user">
           <ul className="flex flex-col font-medium p-4 md:p-0 mt-4 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 ">
             <li>
               <Link
                 href="/dashboard"
                 className="block py-2 px-3 md:p-0 "
-                aria-current="page"
-              >
+                aria-current="page">
                 Dashboard
               </Link>
             </li>
@@ -167,8 +167,7 @@ const AdminNavbar = () => {
             <li>
               <Link
                 href="/admin/contesttypes"
-                className="block py-2 px-3 md:p-0 "
-              >
+                className="block py-2 px-3 md:p-0 ">
                 Contest
               </Link>
             </li>
@@ -178,16 +177,14 @@ const AdminNavbar = () => {
                 onClick={toggleDropdown}
                 className={
                   "flex items-center justify-between w-full py-2 px-3 md:p-0 md:w-auto"
-                }
-              >
+                }>
                 Manage Schools
                 <svg
                   className="w-2.5 h-2.5 ms-2.5"
                   aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
-                  viewBox="0 0 10 6"
-                >
+                  viewBox="0 0 10 6">
                   <path
                     stroke="currentColor"
                     strokeLinecap="round"
@@ -202,12 +199,10 @@ const AdminNavbar = () => {
                 id="dropdownNavbar"
                 className={`z-10 ${
                   isDropdownOpen ? "block" : "hidden"
-                } font-normal bg-white divide-y divide-gray-100 rounded-lg shadow w-44 absolute top-8 -left-8`}
-              >
+                } font-normal bg-white divide-y divide-gray-100 rounded-lg shadow w-44 absolute top-8 -left-8`}>
                 <ul
                   className="py-2 text-sm text-gray-700 "
-                  aria-labelledby="dropdownLargeButton"
-                >
+                  aria-labelledby="dropdownLargeButton">
                   {/* <li>
                     <button
                       className="block px-4 py-2 hover:bg-gray-100 rounded w-full text-left border-0"
@@ -219,16 +214,14 @@ const AdminNavbar = () => {
                   <li>
                     <button
                       className="block px-4 py-2 hover:bg-gray-100 rounded w-full text-left border-0"
-                      onClick={handleClickUser}
-                    >
+                      onClick={handleClickUser}>
                       View All Schools
                     </button>
                   </li>
                   <li>
                     <button
                       className="block px-4 py-2 hover:bg-gray-100 rounded w-full text-left border-0"
-                      onClick={handleClickRegister}
-                    >
+                      onClick={handleClickRegister}>
                       Create Admin
                     </button>
                   </li>
