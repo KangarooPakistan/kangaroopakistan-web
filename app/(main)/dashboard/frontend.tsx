@@ -134,7 +134,20 @@ const Frontend = () => {
             </Button>
           </div>
         </div>
-        <div className="flex-1 flex justify-center items-center">
+        <div className="flex-1 flex justify-center items-center bg-gray-200 rounded-md p-3 ">
+          <div className="relative w-50 h-50">
+            <video
+              src={imageUrl}
+              autoPlay
+              style={{ maxWidth: "350px", maxHeight: "350px" }}
+              loop
+              muted
+              className="w-full h-full object-cover"
+            />
+          </div>
+        </div>
+
+        {/* <div className="flex-1 flex justify-center items-center">
           <div className="relative w-full h-full">
             <Image
               src={imageUrl}
@@ -143,7 +156,7 @@ const Frontend = () => {
               objectFit="cover" // Change to "contain" if you do not want the image to be cropped
             />
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

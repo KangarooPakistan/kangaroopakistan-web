@@ -10,8 +10,7 @@ import {
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation"; // Use 'next/router' instead of 'next/navigation'
+import { useRef, useState } from "react";
 import axios from "axios";
 import {
   Form,
@@ -21,13 +20,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 import { getSignedURL } from "@/app/api/s3-upload/actions";
 import { useModal } from "@/hooks/use-modal-store";
 import { X, Upload } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   hasFile: z.boolean().refine((val) => val, {
@@ -38,11 +37,10 @@ const formSchema = z.object({
 const UploadNotification = () => {
   const [file, setFile] = useState<File | undefined>(undefined);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { isOpen, onClose, type, data } = useModal();
+  const { isOpen, onClose, type } = useModal();
+  const router = useRouter();
 
-  const [uploadedFileUrl, setUploadedFileUrl] = useState<string | undefined>(
-    undefined
-  );
+  const [fileUrl, setFileUrl] = useState<string | undefined>(undefined);
   const s3BucketUrl =
     process.env.AWS_BUCKET_NAME ??
     "https://kangaroopakistan-prod.s3.us-east-1.amazonaws.com/";
@@ -51,15 +49,13 @@ const UploadNotification = () => {
     const timestamp = Date.now();
     const extension = fileNameString.split(".").pop();
     const fileNameWithoutExtension = fileNameString.replace(/\.[^/.]+$/, "");
-    const fileName = `notificationimage/${fileNameWithoutExtension}_${timestamp}.${extension}`;
+    const fileName = `notificationvideo/${fileNameWithoutExtension}_${timestamp}.${extension}`;
     return fileName;
   };
+
   const handleFileButtonClick = () => {
     fileInputRef.current?.click(); // Trigger the file input when the button is clicked
   };
-
-  const [fileUrl, setFileUrl] = useState<string | undefined>(undefined);
-  const router = useRouter();
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -69,7 +65,7 @@ const UploadNotification = () => {
   });
   const isModalOpen = isOpen && type === "upload-notification";
 
-  const handleChange = (e: any) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     setFile(selectedFile);
     if (fileUrl) {
@@ -87,6 +83,7 @@ const UploadNotification = () => {
   };
 
   const isLoading = form.formState.isSubmitting;
+
   const computeSHA256 = async (file: File) => {
     const buffer = await file.arrayBuffer();
     const hashBuffer = await crypto.subtle.digest("SHA-256", buffer);
@@ -129,17 +126,17 @@ const UploadNotification = () => {
         console.log(awsUrl);
         const payload = {
           imageUrl: awsUrl,
-          // registrationId: data.registrationId,
         };
 
-        await axios.post("/api/users/notificationimage", payload);
+        console.log(payload);
+        await axios.post("/api/users/notificationimage/", payload);
+
         form.reset();
         if (fileInputRef.current) {
           fileInputRef.current.value = "";
           setFileUrl("");
         }
-        // handleClose();
-        toast.success("🦄 Image added successfully", {
+        toast.success("🦄 Video added successfully", {
           position: "bottom-center",
           autoClose: 5000,
           hideProgressBar: false,
@@ -151,7 +148,7 @@ const UploadNotification = () => {
         });
       }
     } catch (error) {
-      toast.error("Error Updating Profile ", {
+      toast.error("Error uploading video", {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -163,14 +160,10 @@ const UploadNotification = () => {
       });
       console.error(error);
     }
-    // router.refresh();
-    // window.location.reload();
   };
+
   const handleClose = () => {
     form.reset();
-
-    // onClose();
-    // router.refresh(); // Reload the page when the modal is closed
   };
 
   return (
@@ -178,31 +171,25 @@ const UploadNotification = () => {
       <DialogContent className="bg-white text-black p-0 overflow-hidden">
         <DialogHeader className="pt-8 px-6">
           <DialogTitle className="text-2xl text-center font-bold">
-            Notification Banner
+            Notification Video
           </DialogTitle>
         </DialogHeader>
         <DialogDescription className="text-center text-2xl font-bold text-zinc-500">
-          Please Upload Notification Banner. &nbsp; <br />
+          Please Upload Notification Video. &nbsp; <br />
           <span className="text-red-700">
-            Accepted images types are jpeg, png, webp, gif
+            Accepted video types are mp4, mov, avi, mkv
           </span>
         </DialogDescription>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <div className="space-y-8 px-6">
               <div className="flex flex-col items-center justify-center text-center space-y-4">
-                <div className="relative    overflow-hidden">
-                  <div className="h-40 w-40 rounded-full">
-                    {fileUrl && (
-                      <Image
-                        src={fileUrl}
-                        alt="Uploaded Image"
-                        className="rounded-full"
-                        layout="fill"
-                        objectFit="contain"
-                      />
-                    )}
-                  </div>
+                <div className="relative overflow-hidden">
+                  {fileUrl && (
+                    <video width="300" height="200" controls>
+                      <source src={fileUrl} />
+                    </video>
+                  )}
                   {fileUrl && (
                     <button
                       onClick={() => setFileUrl("")}
@@ -222,17 +209,16 @@ const UploadNotification = () => {
                           <label
                             htmlFor="fileInput"
                             className="bg-transparent flex-1 border-none outline-none cursor-pointer">
-                            {/* Style the label to look like a button */}
-                            <div className="bg-blue-500 text-white py-2 px-4 rounded-full shadow-md hover:bg-blue-600 transition duration-300 flex items-center  space-x-2">
+                            <div className="bg-blue-500 text-white py-2 px-4 rounded-full shadow-md hover:bg-blue-600 transition duration-300 flex items-center space-x-2">
                               <Upload className="h-6 w-6" />
-                              <span>Select Image</span>
+                              <span>Select Video</span>
                             </div>
                             <input
                               type="file"
                               id="fileInput"
                               ref={fileInputRef}
                               name="imageUrl"
-                              accept="image/jpeg, image/png, image/webp, image/gif"
+                              accept="video/mp4, video/mov, video/avi, video/mkv"
                               onChange={handleChange}
                               className="hidden"
                             />
@@ -246,7 +232,7 @@ const UploadNotification = () => {
             </div>
             <DialogFooter className="bg-gray-100 px-6 py-4">
               <Button type="submit" variant="default">
-                Add Image
+                Add Video
               </Button>
             </DialogFooter>
           </form>
