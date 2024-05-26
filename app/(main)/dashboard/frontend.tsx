@@ -107,7 +107,7 @@ const Frontend = () => {
           <Button
             variant="default"
             onClick={() => onOpen("upload-notification")}>
-            Upload Image for Notification
+            Upload Video for Notification
           </Button>
         </div>
       )}
