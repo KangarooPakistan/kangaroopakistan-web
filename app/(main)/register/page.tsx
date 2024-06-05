@@ -1118,6 +1118,18 @@ const UserRegister = () => {
               </Form>
             </div>
           </div>
+          <div className="xl:w-3/4 mt-20">
+            <div className="bg-gray-100 py-2 px-5 rounded text-xs md:text-base mx-2 xl:mx-0">
+              <h2 className="font-bold">Instructions</h2>
+              <ul className="list-disc mt-4 list-inside">
+                <li>Password must be at least 8 characters long.</li>
+                <li>Password must contain at least one uppercase letter.</li>
+                <li>Password must contain at least one lowercase letter.</li>
+                <li>Password must contain at least one number.</li>
+                <li>Password must contain at least one special character.</li>
+              </ul>
+            </div>
+          </div>
         </div>
       </section>
 
