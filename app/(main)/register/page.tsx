@@ -129,36 +129,36 @@ const UserRegister = () => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log(values);
-    // try {
-    //   const payload = {
-    //     ...values, // Spread the form values
-    //     role: "User", // Add the additional string
-    //   };
-    //   await axios.post("/api/users/signup", payload);
-    //   form.reset();
-    //   await router.push("/dashboard");
-    //   toast.success("🦄 Account successfully created", {
-    //     position: "bottom-center",
-    //     autoClose: 5000,
-    //     hideProgressBar: false,
-    //     closeOnClick: true,
-    //     pauseOnHover: true,
-    //     draggable: true,
-    //     progress: undefined,
-    //     theme: "light",
-    //   });
-    // } catch (error) {
-    //   toast.error(" " + error, {
-    //     position: "top-right",
-    //     autoClose: 5000,
-    //     hideProgressBar: false,
-    //     closeOnClick: true,
-    //     pauseOnHover: true,
-    //     draggable: true,
-    //     progress: undefined,
-    //     theme: "light",
-    //   });
-    // }
+    try {
+      const payload = {
+        ...values, // Spread the form values
+        role: "User", // Add the additional string
+      };
+      await axios.post("/api/users/signup", payload);
+      form.reset();
+      await router.push("/dashboard");
+      toast.success("🦄 Account successfully created", {
+        position: "bottom-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    } catch (error) {
+      toast.error(" " + error, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
   };
   const handleClassChange = (cityValue: string) => {
     console.log(cityValue);
