@@ -1,4 +1,5 @@
 "use client";
+
 import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -6,6 +7,13 @@ import { Registration, columns, PaymentProof } from "./columns";
 import { DataTable } from "./data-table";
 import { Button } from "@/components/ui/button";
 import * as XLSX from "xlsx";
+
+export const dynamic = "force-dynamic"; // Ensures this page is always rendered server-side
+
+async function fetchData(id: string) {
+  const res = await axios.get(`/api/users/fetchallregistrations/${id}`);
+  return res.data;
+}
 
 // Define a type for Registration, including the students array
 type Register = {
@@ -60,11 +68,12 @@ type LevelCounts = Record<string, number>;
 interface RegistrationWithPaymentProof extends Registration {
   paymentProof: PaymentProof[];
 }
+
 const FetchAllRegistrations = () => {
   const params = useParams();
-  const [data, setData] = useState<Registration[]>([]);
+  const router = useRouter();
+  const [regData, setRegData] = useState<Registration[]>([]);
   const [excel, setExcel] = useState([]); // This makes sure `excel` is an array
-
   const [totalSchools, setTotalSchools] = useState<number>(0);
   const [allStudents, setAllStudents] = useState<Student[]>([]);
   const [preEculier, setPreEculier] = useState<number>(0);
@@ -74,19 +83,13 @@ const FetchAllRegistrations = () => {
   const [cadet, setCadet] = useState<number>(0);
   const [junior, setJunior] = useState<number>(0);
   const [student, setStudent] = useState<number>(0);
-  const router = useRouter();
 
   useEffect(() => {
-    const fetchData = async () => {
-      const res = await axios.get(
-        `/api/users/fetchallregistrations/${params.id}`
-      );
-      console.log("res");
-      console.log(res.data);
+    const fetchAndSetData = async (id: string) => {
+      const registrations = await fetchData(id);
 
-      const registrations = res.data;
-      setTotalSchools(res.data.length);
-      console.log(res.data.length);
+      setTotalSchools(registrations.length);
+
       const totalPayments = registrations.reduce(
         (acc: number, curr: Registration) => {
           return (
@@ -95,16 +98,12 @@ const FetchAllRegistrations = () => {
         },
         0
       );
-
-      setTotalPaymentDone(totalPayments); //
+      setTotalPaymentDone(totalPayments);
 
       const studentsArrays = registrations.map((reg: Register) => reg.students);
       const flattenedStudents = studentsArrays.flat();
-
-      // Flatten the array of students arrays into a single array of students
       setAllStudents(flattenedStudents);
 
-      // Count students at each level
       const levelCounts = flattenedStudents.reduce(
         (acc: LevelCounts, student: Student) => {
           const { level } = student;
@@ -114,14 +113,12 @@ const FetchAllRegistrations = () => {
         {}
       );
 
-      // Set state for each level
       setPreEculier(levelCounts["preecolier"] || 0);
       setEculier(levelCounts["ecolier"] || 0);
       setBenjamin(levelCounts["benjamin"] || 0);
       setCadet(levelCounts["cadet"] || 0);
       setJunior(levelCounts["junior"] || 0);
       setStudent(levelCounts["student"] || 0);
-      console.log(res.data);
 
       const studentsForExcel = registrations.flatMap((reg: any) =>
         reg.students.map((student: StudentData) => ({
@@ -150,24 +147,8 @@ const FetchAllRegistrations = () => {
         }))
       );
       setExcel(studentsForExcel);
-      console.log("studentsForExcel");
-      res.data.forEach((item: any) => {
-        console.log(item.user.schoolName);
-      });
 
-      setData(
-        res.data.map((item: any) => ({
-          id: item.id,
-          schoolId: item.schoolId,
-          schoolName: item.user.schoolName,
-          studentsLength: item.studentsLength,
-          email: item.email,
-          paymentProof: item.paymentProof,
-          contestId: item.contestId,
-        }))
-      );
-
-      const extractedData = res.data.map((obj: any) => ({
+      const extractedData = registrations.map((obj: any) => ({
         contestId: obj.contestId,
         schoolName: obj.user.schoolName,
         schoolId: obj.schoolId,
@@ -178,10 +159,14 @@ const FetchAllRegistrations = () => {
         paymentProof: obj.paymentProof, // This assumes paymentProof is within the user object
       }));
 
-      setData(extractedData);
+      setRegData(extractedData);
     };
-    fetchData();
+
+    if (typeof params.id === "string") {
+      fetchAndSetData(params.id);
+    }
   }, [params.id]);
+
   const handleClick = () => {
     if (excel.length > 0) {
       const ws = XLSX.utils.json_to_sheet(excel);
@@ -192,76 +177,74 @@ const FetchAllRegistrations = () => {
       console.log("No data available to export");
     }
   };
+
   const handleBack = () => {
     router.back();
   };
+
   const handleRegister = () => {
     router.push(`/admin/registerincontest/${params.id}`);
   };
 
   return (
-    <>
-      <div className="container mx-auto py-10">
-        <h1 className="text-3xl text-center my-3 font-bold text-purple-600">
-          Registered Schools
-        </h1>
-        <div className="flex flex-wrap -mx-2">
-          <div className="w-full md:w-1/2 px-2 mb-6 md:mb-0">
-            <div className="bg-purple-400 rounded-lg shadow-lg p-6 text-white transform transition duration-500 hover:scale-105">
-              <h2 className="font-bold text-2xl ">Registered Students</h2>
-              <p className="text-lg font-semibold">{allStudents.length}</p>
-              <h2 className="font-bold text-2xl ">Registered Schools</h2>
-              <p className="text-lg font-semibold">{totalSchools}</p>
-              <h2 className="font-bold text-2xl ">Total Payments</h2>
-              <p className="text-lg font-semibold">{totalPaymentDone}</p>
-            </div>
-          </div>
-          <div className="w-full md:w-1/2 px-2">
-            <div className="bg-purple-400 rounded-lg shadow-lg p-6 text-white transform transition duration-500 hover:scale-105">
-              <h2 className="font-bold text-2xl">Levels</h2>
-              <ul>
-                <li className=" text-lg mv font-medium">
-                  Total # of Preecolier:{" "}
-                  <span className="font-bold">{preEculier}</span>
-                </li>
-                <li className=" text-lg font-medium">
-                  Total # of Ecolier:{" "}
-                  <span className="font-bold">{eculier}</span>
-                </li>
-                <li className=" text-lg font-medium">
-                  Total # of Benjamin:{" "}
-                  <span className="font-bold">{benjamin}</span>
-                </li>
-                <li className=" text-lg font-medium">
-                  Total # of Cadet: <span className="font-bold">{cadet}</span>
-                </li>
-                <li className=" text-lg font-medium">
-                  Total # of Junior: <span className="font-bold">{junior}</span>
-                </li>
-                <li className=" text-lg font-medium">
-                  Total # of Student:{" "}
-                  <span className="font-bold">{student}</span>
-                </li>
-              </ul>
-            </div>
+    <div className="container mx-auto py-10">
+      <h1 className="text-3xl text-center my-3 font-bold text-purple-600">
+        Registered Schools
+      </h1>
+      <div className="flex flex-wrap -mx-2">
+        <div className="w-full md:w-1/2 px-2 mb-6 md:mb-0">
+          <div className="bg-purple-400 rounded-lg shadow-lg p-6 text-white transform transition duration-500 hover:scale-105">
+            <h2 className="font-bold text-2xl">Registered Students</h2>
+            <p className="text-lg font-semibold">{allStudents.length}</p>
+            <h2 className="font-bold text-2xl">Registered Schools</h2>
+            <p className="text-lg font-semibold">{totalSchools}</p>
+            <h2 className="font-bold text-2xl">Total Payments</h2>
+            <p className="text-lg font-semibold">{totalPaymentDone}</p>
           </div>
         </div>
-        <div className="p-4 flex justify-between border-gray-300">
-          <Button variant="default" onClick={handleBack}>
-            Back
-          </Button>
-          <div>
-            <Button className="mr-2" onClick={handleClick}>
-              Export Data
-            </Button>
-            <Button variant="default" onClick={handleRegister}>
-              Register a school
-            </Button>
+        <div className="w-full md:w-1/2 px-2">
+          <div className="bg-purple-400 rounded-lg shadow-lg p-6 text-white transform transition duration-500 hover:scale-105">
+            <h2 className="font-bold text-2xl">Levels</h2>
+            <ul>
+              <li className="text-lg mv font-medium">
+                Total # of Preecolier:{" "}
+                <span className="font-bold">{preEculier}</span>
+              </li>
+              <li className="text-lg font-medium">
+                Total # of Ecolier: <span className="font-bold">{eculier}</span>
+              </li>
+              <li className="text-lg font-medium">
+                Total # of Benjamin:{" "}
+                <span className="font-bold">{benjamin}</span>
+              </li>
+              <li className="text-lg font-medium">
+                Total # of Cadet: <span className="font-bold">{cadet}</span>
+              </li>
+              <li className="text-lg font-medium">
+                Total # of Junior: <span className="font-bold">{junior}</span>
+              </li>
+              <li className="text-lg font-medium">
+                Total # of Student: <span className="font-bold">{student}</span>
+              </li>
+            </ul>
           </div>
         </div>
-        <DataTable columns={columns} data={data} />;
       </div>
-    </>
+      <div className="p-4 flex justify-between border-gray-300">
+        <Button variant="default" onClick={handleBack}>
+          Back
+        </Button>
+        <div>
+          <Button className="mr-2" onClick={handleClick}>
+            Export Data
+          </Button>
+          <Button variant="default" onClick={handleRegister}>
+            Register a school
+          </Button>
+        </div>
+      </div>
+      <DataTable columns={columns} data={regData} />
+    </div>
   );
 };
 
