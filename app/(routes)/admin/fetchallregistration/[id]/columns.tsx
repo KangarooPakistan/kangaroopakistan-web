@@ -65,30 +65,40 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
   useEffect(() => {
     const controller = new AbortController();
     const signal = controller.signal;
-    const fetchData = async () => {
-      const res = await axios.get(
-        `/api/users/getuserbyemail/${registration.email}`,
-        { signal }
-      );
-      const response = await axios.get(
-        `/api/users/pdfdownload/${registration.id}`,
-        { signal }
-      );
 
-      console.log(response.data.length);
-      if (response.data.length > 200) {
-        setActive(false);
-      } else {
-        setActive(true);
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(
+          `/api/users/getuserbyemail/${registration.email}`,
+          { signal }
+        );
+        const response = await axios.get(
+          `/api/users/pdfdownload/${registration.id}`,
+          { signal }
+        );
+        console.log(response.data.length);
+        if (response.data.length > 200) {
+          setActive(false);
+        } else {
+          setActive(true);
+        }
+        console.log(res);
+        setData(res.data.id);
+      } catch (error) {
+        if (axios.isCancel(error)) {
+          console.log("Request canceled:", error.message);
+        } else {
+          console.error("Another error happened:", error);
+        }
       }
-      console.log(res);
-      setData(res.data.id);
     };
+
     fetchData();
     return () => {
       controller.abort();
     };
   }, []);
+
   const handleView = () => {
     router.push(`/admin/viewallbyschool/${registration.id}`);
   };
@@ -161,34 +171,29 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
     }
   };
 
-  const handleDownloadPdfPuppeteer = async () => {
-    try {
-      const response = await axios.get(`/api/pdf-generate/${registration.id}`, {
-        responseType: "blob",
-        timeout: 600000000,
-        timeoutErrorMessage: "hello", // Set your desired timeout value in milliseconds (e.g., 5000ms or 5 seconds)
+  // const handleDownloadPdfPuppeteer = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const response = await axios.get(`/api/pdf-generate/${registration.id}`, {
+  //       responseType: "blob", // This tells Axios to expect a binary response
+  //     });
+  //     const file = new Blob([response.data], { type: "application/pdf" });
+  //     const fileURL = URL.createObjectURL(file);
+  //     const link = document.createElement("a");
+  //     link.href = fileURL;
+  //     link.setAttribute("download", "students.pdf"); // or any other name
+  //     document.body.appendChild(link);
+  //     link.click();
 
-        // This tells Axios to expect a binary response
-      });
-      console.log("response");
-      console.log(response);
-      const file = new Blob([response.data], { type: "application/pdf" });
-      const fileURL = URL.createObjectURL(file);
-      const link = document.createElement("a");
-      link.href = fileURL;
-      link.setAttribute("download", "students.pdf"); // or any other name
-      document.body.appendChild(link);
-      link.click();
-
-      // Clean up and revoke the URL object
-      URL.revokeObjectURL(link.href);
-      document.body.removeChild(link);
-    } catch (error) {
-      console.error("Error downloading the PDF:", error);
-    } finally {
-      // setLoading(false);
-    }
-  };
+  //     // Clean up and revoke the URL object
+  //     URL.revokeObjectURL(link.href);
+  //     document.body.removeChild(link);
+  //   } catch (error) {
+  //     console.error("Error downloading the PDF:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
   const handleSchoolDetails = () => {
     router.push(`/admin/userprofile/${data}`);
   };
@@ -246,12 +251,18 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
           profileData={profileData}
         />
       ).toBlob();
+      console.log("link");
+
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
 
       link.setAttribute("download", pdfName);
+      console.log("link");
+      console.log(link);
       document.body.appendChild(link);
+      console.log(link);
+
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
@@ -283,9 +294,6 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleSheet}>
           Download Student Details
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleDownloadPdfPuppeteer}>
-          Download Student Details--Pddf
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleSchoolDetails}>
           View School Details

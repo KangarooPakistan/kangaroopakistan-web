@@ -1,144 +1,152 @@
 import { db } from "@/app/lib/prisma";
 import { NextResponse } from "next/server";
-import puppeteer from 'puppeteer';
-
+import puppeteer from "puppeteer";
 
 // Assuming PDFDocument from 'pdf-lib' is used for combining PDFs if necessary
-import { PDFDocument } from 'pdf-lib';
+import { PDFDocument } from "pdf-lib";
 
 interface Student {
-    rollNumber: string;
-    studentName: string;
-    fatherName: string;
-    studentLevel: string;
-    studentClass: string;
-    schoolName: string | null;
-    address: string | null;
-    districtCode: string | null;
-    schoolId: number;
+  rollNumber: string;
+  studentName: string;
+  fatherName: string;
+  studentLevel: string;
+  studentClass: string;
+  schoolName: string | null;
+  address: string | null;
+  districtCode: string | null;
+  schoolId: number;
 }
 
-export async function GET(request: Request, { params }: { params: { registrationId: string } }) {
-    try {
-        // Your database query and data manipulation here
-        // ...
-        const studentsArray: Student[] = []; // Assume this is filled from your database logic
+export async function GET(
+  request: Request,
+  { params }: { params: { registrationId: string } }
+) {
+  try {
+    // Your database query and data manipulation here
+    // ...
+    const studentsArray: Student[] = []; // Assume this is filled from your database logic
 
-        const registrations = await db.registration.findMany({
-                where: {
-                    id:params.registrationId
-                },
-                include: {
-                    students: true, // Include related students
-                    // paymentProof: true, // Include related payment proofs
-                    user: true, // Include the related user
-                    // Add other related fields if necessary
-                },
-            });
-            console.log(registrations)
-        
+    const registrations = await db.registration.findMany({
+      where: {
+        id: params.registrationId,
+      },
+      include: {
+        students: true, // Include related students
+        // paymentProof: true, // Include related payment proofs
+        user: true, // Include the related user
+        // Add other related fields if necessary
+      },
+    });
+    console.log(registrations);
 
-            // Loop through registrations
-            for (const registration of registrations) {
-              const { user, students } = registration;
-                    console.log(students)
-              const { district, schoolName, schoolAddress, schoolId } = user;
-              for (const student of students) {
-                const {
-                  rollNumber,
-                  studentName,
-                  fatherName,
-                  level: studentLevel,
-                  class: studentClass // Changed to `studentClass`
-                } = student;
-        
-                // Create student object and push to array
-                const studentObj: Student = {
-                  rollNumber,
-                  studentLevel,
-                  studentName,
-                  fatherName,
-                  studentClass,
-                  schoolId,
-                  schoolName, // Use extracted schoolName
-                  address: schoolAddress, // Use extracted schoolAddress
-                  districtCode: district // Use extracted district
-                };
-        
-                studentsArray.push(studentObj);
-              }
-            }
-        if (studentsArray.length === 0) {
-            throw new Error("No students found for this registration.");
-        }
-        const combinedPdfBuffer = await generatePdf(studentsArray);
-        return new Response(combinedPdfBuffer, {
-            headers: {
-                'Content-Type': 'application/pdf',
-                'Content-Disposition': `attachment; filename="students_${params.registrationId}.pdf"`
-            }
-        });
-    } catch (error:any) {
-        return new Response(JSON.stringify({ message: error.message }), { status: 400 });
+    // Loop through registrations
+    for (const registration of registrations) {
+      const { user, students } = registration;
+      console.log(students);
+      const { district, schoolName, schoolAddress, schoolId } = user;
+      for (const student of students) {
+        const {
+          rollNumber,
+          studentName,
+          fatherName,
+          level: studentLevel,
+          class: studentClass, // Changed to `studentClass`
+        } = student;
+
+        // Create student object and push to array
+        const studentObj: Student = {
+          rollNumber,
+          studentLevel,
+          studentName,
+          fatherName,
+          studentClass,
+          schoolId,
+          schoolName, // Use extracted schoolName
+          address: schoolAddress, // Use extracted schoolAddress
+          districtCode: district, // Use extracted district
+        };
+
+        studentsArray.push(studentObj);
+      }
     }
+    if (studentsArray.length === 0) {
+      throw new Error("No students found for this registration.");
+    }
+    const combinedPdfBuffer = await generatePdf(studentsArray);
+    return new Response(combinedPdfBuffer, {
+      headers: {
+        "Content-Type": "application/pdf",
+        "Content-Disposition": `attachment; filename="students_${params.registrationId}.pdf"`,
+      },
+    });
+  } catch (error: any) {
+    return new Response(JSON.stringify({ message: error.message }), {
+      status: 400,
+    });
+  }
 }
 
 async function generatePdf(students: Student[]) {
-        let browser;
-        try {
-                console.log('----------------------------');
-                browser = await puppeteer.launch({
-                        executablePath: "/usr/bin/chromium-browser",
-                args: [
-                        "--proxy-server=34.236.95.111:3000",
-                        "--no-sandbox",
-                        "--disable-setuid-sandbox",
-                        "--disable-dev-shm-usage",
-                        "--disable-accelerated-2d-canvas",
-                        "--no-first-run",
-                        "--no-zygote",
-                        "--single-process",
-                        "--disable-gpu",
-                ],
-                headless: true,
-                timeout: 60000000,
+  let browser;
+  try {
+    console.log("----------------------------");
+    browser = await puppeteer.launch({
+      executablePath: "/usr/bin/chromium-browser",
+      args: [
+        "--proxy-server=34.236.95.111:3000",
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
+        "--disable-accelerated-2d-canvas",
+        "--no-first-run",
+        "--no-zygote",
+        "--single-process",
+        "--disable-gpu",
+      ],
+      headless: true,
+      timeout: 6000,
+    });
+
+    console.log("----------------------------");
+    const combinedPdfDoc = await PDFDocument.create();
+
+    for (const student of students) {
+      let page;
+      try {
+        page = await browser.newPage();
+        console.log(student);
+        const htmlContent = generateHTMLForPuppeteerFunction([student]); // Assuming this should be for each student
+        await page.setContent(htmlContent, {
+          waitUntil: "networkidle0",
+          timeout: 0,
+        }); // Set timeout as needed
+        const pdfBuffer = await page.pdf({
+          format: "A4",
+          printBackground: true,
         });
-
-            console.log('----------------------------');
-            const combinedPdfDoc = await PDFDocument.create();
-
-            for (const student of students) {
-                let page;
-                try {
-                        page = await browser.newPage();
-                        console.log(student);
-                        const htmlContent = generateHTMLForPuppeteerFunction([student]); // Assuming this should be for each student
-                        await page.setContent(htmlContent, { waitUntil: 'networkidle0', timeout: 0 }); // Set timeout as needed
-                        const pdfBuffer = await page.pdf({ format: 'A4', printBackground: true });
-                        const studentPdfDoc = await PDFDocument.load(pdfBuffer);
-                        const [copiedPage] = await combinedPdfDoc.copyPages(studentPdfDoc, [0]);
-                        combinedPdfDoc.addPage(copiedPage);
-            } catch (err) {
-                    console.error(`Error processing student ${student.rollNumber}: ${err}`);
-            } finally {
-                    if (page) await page.close();
-            }
-        }
-
-            const pdfBytes = await combinedPdfDoc.save();
-            return pdfBytes;
-    } catch (err) {
-            console.error(`An error occurred: ${err}`);
-            throw new Error('Failed to generate PDF'); // Propagate error or handle as needed
-    } finally {
-            if (browser) await browser.close();
+        const studentPdfDoc = await PDFDocument.load(pdfBuffer);
+        const [copiedPage] = await combinedPdfDoc.copyPages(studentPdfDoc, [0]);
+        combinedPdfDoc.addPage(copiedPage);
+      } catch (err) {
+        console.error(`Error processing student ${student.rollNumber}: ${err}`);
+      } finally {
+        if (page) await page.close();
+      }
     }
+
+    const pdfBytes = await combinedPdfDoc.save();
+    return pdfBytes;
+  } catch (err) {
+    console.error(`An error occurred: ${err}`);
+    throw new Error("Failed to generate PDF"); // Propagate error or handle as needed
+  } finally {
+    if (browser) await browser.close();
+  }
 }
 
-
 function generateHTMLForPuppeteerFunction(students: Student[]) {
-        // Start of HTML content
-        let htmlContent = `
+  // Start of HTML content
+  let htmlContent = `
             <!DOCTYPE html>
             <html lang="en">
             <head>
@@ -341,26 +349,44 @@ function generateHTMLForPuppeteerFunction(students: Student[]) {
                 </style>
             </head>
             <body>`;
-    
-        // Iterate over students array to create PDF for each student
-        students.forEach(student => {
-            // Determine the number of questions based on student level
-            const numberOfQuestions = (student.studentLevel === 'preecolier' || student.studentLevel === 'ecolier') ? 24 : 30;
-    
-            // Student information section
-            htmlContent += `
+
+  // Iterate over students array to create PDF for each student
+  students.forEach((student) => {
+    // Determine the number of questions based on student level
+    const numberOfQuestions =
+      student.studentLevel === "preecolier" ||
+      student.studentLevel === "ecolier"
+        ? 24
+        : 30;
+
+    // Student information section
+    htmlContent += `
                 <div class="header">
                     <h3>INTERNATIONAL KANGAROO MATHEMATICS CONTEST</h3>
                     <p>Answer Sheet</p>
-                    <p>${student.studentLevel.toUpperCase()} (CLASS ${student.studentClass})</p>
+                    <p>${student.studentLevel.toUpperCase()} (CLASS ${
+      student.studentClass
+    })</p>
                 </div>
                 <div class="info-section">
-                    <div class="info-row"><div class="info-title">Roll No:</div><div class="info-content">${student.rollNumber}</div></div>
-                    <div class="info-row"><div class="info-title">Student Name:</div><div class="info-content">${student.studentName}</div></div>
-                    <div class="info-row"><div class="info-title">Father Name:</div><div class="info-content">${student.fatherName}</div></div>
-                    <div class="info-row"><div class="info-title">Class/Grade:</div><div class="info-content">${student.studentClass}</div></div>
-                    <div class="info-row"><div class="info-title">School Name:</div><div class="info-content">${student.schoolName || ''}</div></div>
-                    <div class="info-row"><div class="info-title">District:</div><div class="info-content">${student.districtCode || ''}</div></div>
+                    <div class="info-row"><div class="info-title">Roll No:</div><div class="info-content">${
+                      student.rollNumber
+                    }</div></div>
+                    <div class="info-row"><div class="info-title">Student Name:</div><div class="info-content">${
+                      student.studentName
+                    }</div></div>
+                    <div class="info-row"><div class="info-title">Father Name:</div><div class="info-content">${
+                      student.fatherName
+                    }</div></div>
+                    <div class="info-row"><div class="info-title">Class/Grade:</div><div class="info-content">${
+                      student.studentClass
+                    }</div></div>
+                    <div class="info-row"><div class="info-title">School Name:</div><div class="info-content">${
+                      student.schoolName || ""
+                    }</div></div>
+                    <div class="info-row"><div class="info-title">District:</div><div class="info-content">${
+                      student.districtCode || ""
+                    }</div></div>
                     <!-- Add more student information if necessary -->
                 </div>
                 <div class="inst-box">
@@ -456,13 +482,12 @@ function generateHTMLForPuppeteerFunction(students: Student[]) {
                                 </div>
                                 <p class="option-text">Wrong filling</p>
                         </div>
-                </div>`
-                ;
-    
-            // Questions section
-            htmlContent += `<div class="answer-box"><div class="answer-grid">`;
-            for (let i = 1; i <= numberOfQuestions; i++) {
-                htmlContent += `
+                </div>`;
+
+    // Questions section
+    htmlContent += `<div class="answer-box"><div class="answer-grid">`;
+    for (let i = 1; i <= numberOfQuestions; i++) {
+      htmlContent += `
                     <div class="question-row">
                         <div class="question-cell">${i}</div>
                         <div class="answer-cell"><span>A</span></div>
@@ -471,12 +496,12 @@ function generateHTMLForPuppeteerFunction(students: Student[]) {
                         <div class="answer-cell"><span>D</span></div>
                         <div class="answer-cell"><span>E</span></div>
                     </div>`;
-            }
-            htmlContent += `</div></div><div class="page-break"></div>`; // Close answer-box and answer-grid divs
-        });
-    
-        // End of HTML content
-        htmlContent += `</body></html>`;
-    
-        return htmlContent;
     }
+    htmlContent += `</div></div><div class="page-break"></div>`; // Close answer-box and answer-grid divs
+  });
+
+  // End of HTML content
+  htmlContent += `</body></html>`;
+
+  return htmlContent;
+}
