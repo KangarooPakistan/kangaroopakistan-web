@@ -10,7 +10,7 @@ import * as XLSX from "xlsx";
 
 export const dynamic = "force-dynamic"; // Ensures this page is always rendered server-side
 
-async function fetchData(id: string) {
+async function fetchData(id: string, signal: AbortSignal) {
   const res = await axios.get(`/api/users/fetchallregistrations/${id}`);
   return res.data;
 }
@@ -85,8 +85,10 @@ const FetchAllRegistrations = () => {
   const [student, setStudent] = useState<number>(0);
 
   useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
     const fetchAndSetData = async (id: string) => {
-      const registrations = await fetchData(id);
+      const registrations = await fetchData(id, signal);
 
       setTotalSchools(registrations.length);
 
@@ -165,6 +167,10 @@ const FetchAllRegistrations = () => {
     if (typeof params.id === "string") {
       fetchAndSetData(params.id);
     }
+
+    return () => {
+      controller.abort(); // Cleanup by aborting the ongoing request
+    };
   }, [params.id]);
 
   const handleClick = () => {

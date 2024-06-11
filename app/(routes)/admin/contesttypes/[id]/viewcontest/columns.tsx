@@ -31,15 +31,16 @@ const ContestActions: React.FC<ContestActionsProps> = ({ contest }) => {
   const router = useRouter();
   const params = useParams();
   const handleView = () => {
+    console.log("called");
     router.push(`/admin/viewregistered/${contest.id}`);
   };
+
   const handleAllRegistrationsView = () => {
+    console.log("called");
     router.push(`/admin/fetchallregistration/${contest.id}`);
   };
   const handleEdit = () => {
-    router.push(
-      `/admin/contesttypes/${params.id}/updatecontest/${contest.id}`
-    );
+    router.push(`/admin/contesttypes/${params.id}/updatecontest/${contest.id}`);
   };
 
   return (

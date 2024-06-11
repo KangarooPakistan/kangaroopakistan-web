@@ -63,13 +63,18 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
   const [data, setData] = useState();
   const [active, setActive] = useState(false);
   useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
     const fetchData = async () => {
       const res = await axios.get(
-        `/api/users/getuserbyemail/${registration.email}`
+        `/api/users/getuserbyemail/${registration.email}`,
+        { signal }
       );
       const response = await axios.get(
-        `/api/users/pdfdownload/${registration.id}`
+        `/api/users/pdfdownload/${registration.id}`,
+        { signal }
       );
+
       console.log(response.data.length);
       if (response.data.length > 200) {
         setActive(false);
@@ -80,6 +85,9 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       setData(res.data.id);
     };
     fetchData();
+    return () => {
+      controller.abort();
+    };
   }, []);
   const handleView = () => {
     router.push(`/admin/viewallbyschool/${registration.id}`);
