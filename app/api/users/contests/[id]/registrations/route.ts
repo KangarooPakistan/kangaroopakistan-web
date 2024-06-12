@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/app/lib/prisma";
 import nodemailer from "nodemailer";
-import Error from "next/error";
 
 const padNumber = (num: number) => String(num).padStart(3, "0");
 const padNumber5 = (num: number) => String(num).padStart(5, "0");
@@ -243,7 +242,19 @@ export async function POST(
       });
       console.log("-------------------");
     } catch (error) {
-      return NextResponse.json(error, { status: 401 });
+      console.error("Error sending email:", error);
+
+      if (error instanceof Error) {
+        return NextResponse.json(
+          { error: `Failed to send email: ${error.message}`, details: error },
+          { status: 500 }
+        );
+      } else {
+        return NextResponse.json(
+          { error: "An unknown error occurred while sending email" },
+          { status: 500 }
+        );
+      }
     }
     return NextResponse.json(createdStudents, { status: 201 });
   } catch (error) {
