@@ -161,6 +161,7 @@ const UserRegister = () => {
     const fetchData = async () => {
       const response = await axios.get(`/api/users/editprofile/${params.id}`);
       setData(response.data);
+      console.log(response.data);
       setSchoolIdFromBE(response.data.schoolId);
 
       form.reset({
@@ -189,38 +190,39 @@ const UserRegister = () => {
 
   const isLoading = form.formState.isSubmitting;
   const onSubmit = async (values: UserData) => {
-    try {
-      const payload = {
-        ...values,
-        schooldId: schoolIdFromBE,
-        // Spread the form values
-        role: "User", // Add the additional string
-      };
-      await axios.put(`/api/users/editprofile/${params.id}`, payload);
-      form.reset();
-      router.push(`/admin/users`);
-      toast.success("🦄 Profile Updated successfully", {
-        position: "bottom-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-    } catch (error) {
-      toast.error("Error Updating Profile ", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-    }
+    console.log(values);
+    // try {
+    //   const payload = {
+    //     ...values,
+    //     schooldId: schoolIdFromBE,
+    //     // Spread the form values
+    //     role: "User", // Add the additional string
+    //   };
+    //   await axios.put(`/api/users/editprofile/${params.id}`, payload);
+    //   form.reset();
+    //   router.push(`/admin/users`);
+    //   toast.success("🦄 Profile Updated successfully", {
+    //     position: "bottom-center",
+    //     autoClose: 5000,
+    //     hideProgressBar: false,
+    //     closeOnClick: true,
+    //     pauseOnHover: true,
+    //     draggable: true,
+    //     progress: undefined,
+    //     theme: "light",
+    //   });
+    // } catch (error) {
+    //   toast.error("Error Updating Profile ", {
+    //     position: "top-right",
+    //     autoClose: 5000,
+    //     hideProgressBar: false,
+    //     closeOnClick: true,
+    //     pauseOnHover: true,
+    //     draggable: true,
+    //     progress: undefined,
+    //     theme: "light",
+    //   });
+    // }
   };
   const handleBack = () => {
     router.back();
