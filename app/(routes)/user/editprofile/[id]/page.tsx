@@ -189,6 +189,7 @@ const UserRegister = () => {
 
   const isLoading = form.formState.isSubmitting;
   const onSubmit = async (values: UserData) => {
+    console.log(values);
     try {
       const payload = {
         ...values,
