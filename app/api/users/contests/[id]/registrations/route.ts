@@ -207,15 +207,16 @@ export async function POST(
 
     tableHtml += `</tbody>
 </table>`;
-    await transporter.sendMail({
-      from: "info@kangaroopakistan.org",
-      to: "kainatkiranrashid2@gmail.com",
-      subject:
-        "Verification of Registration Details for " +
-        contestNameShort +
-        " 20" +
-        year,
-      html: `
+    try {
+      await transporter.sendMail({
+        from: "info@kangaroopakistan.org",
+        to: "kainatkiranrashid2@gmail.com",
+        subject:
+          "Verification of Registration Details for " +
+          contestNameShort +
+          " 20" +
+          year,
+        html: `
       <p><b>Dear Principal,</b></p>
       <p>Congratulations on registering for the ${contestName}  20${year}!
       </p>
@@ -238,9 +239,11 @@ export async function POST(
       <p> Total Number of students Registered: ${totalStudents.length}</p>
       ${tableHtml}
     `,
-    });
-    console.log("-------------------");
-
+      });
+      console.log("-------------------");
+    } catch (error) {
+      console.log(error);
+    }
     return NextResponse.json(createdStudents, { status: 201 });
   } catch (error) {
     console.error("Request error", error);
