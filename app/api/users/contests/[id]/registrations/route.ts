@@ -240,22 +240,27 @@ export async function POST(
       ${tableHtml}
     `,
       });
-      console.log("-------------------");
     } catch (error) {
       console.error("Error sending email:", error);
 
+      // Check if the error is an instance of Error and has a message property
       if (error instanceof Error) {
         return NextResponse.json(
-          { error: `Failed to send email: ${error.message}`, details: error },
+          {
+            error: `Failed to send email: ${error.message}`,
+            details: error.stack,
+          },
           { status: 500 }
         );
       } else {
+        // Return a generic message if the error is not an instance of Error
         return NextResponse.json(
           { error: "An unknown error occurred while sending email" },
           { status: 500 }
         );
       }
     }
+
     return NextResponse.json(createdStudents, { status: 201 });
   } catch (error) {
     console.error("Request error", error);
