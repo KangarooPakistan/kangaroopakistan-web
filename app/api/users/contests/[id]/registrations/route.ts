@@ -73,9 +73,8 @@ export async function POST(
       port: 465,
       secure: true,
       pool: true,
-      tls: {
-        ciphers: "SSLv3",
-      },
+      debug: true, // Enable debug logging
+
       auth: {
         user: process.env.NODEMAILER_EMAIL,
         pass: process.env.NODEMAILER_PASS,
