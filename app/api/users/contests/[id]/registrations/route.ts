@@ -72,7 +72,9 @@ export async function POST(
       host: "smtpout.secureserver.net",
       port: 465,
       secure: true,
+      tls: { rejectUnauthorized: false },
 
+      connectionTimeout: 10000,
       auth: {
         user: process.env.NODEMAILER_EMAIL,
         pass: process.env.NODEMAILER_PASS,
