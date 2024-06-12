@@ -209,7 +209,7 @@ export async function POST(
 </table>`;
     await transporter.sendMail({
       from: "info@kangaroopakistan.org",
-      to: schoolDetails?.email,
+      to: "kainatkiranrashid2@gmail.com",
       subject:
         "Verification of Registration Details for " +
         contestNameShort +
