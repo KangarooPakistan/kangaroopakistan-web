@@ -72,8 +72,6 @@ export async function POST(
       host: "smtpout.secureserver.net",
       port: 465,
       secure: true,
-      pool: true,
-      debug: true, // Enable debug logging
 
       auth: {
         user: process.env.NODEMAILER_EMAIL,
