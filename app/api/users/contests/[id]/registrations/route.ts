@@ -68,9 +68,10 @@ export async function POST(
       },
     });
     console.log(schoolDetails);
-    const transporter = await nodemailer.createTransport({
+    const transporter = nodemailer.createTransport({
       host: "smtpout.secureserver.net",
       port: 465,
+      connectionTimeout: 10000,
       secure: true,
 
       auth: {
