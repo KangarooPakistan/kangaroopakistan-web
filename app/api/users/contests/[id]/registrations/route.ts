@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/app/lib/prisma";
 import nodemailer from "nodemailer";
+import Error from "next/error";
 
 const padNumber = (num: number) => String(num).padStart(3, "0");
 const padNumber5 = (num: number) => String(num).padStart(5, "0");
@@ -242,7 +243,7 @@ export async function POST(
       });
       console.log("-------------------");
     } catch (error) {
-      console.log(error);
+      return NextResponse.json(error, { status: 401 });
     }
     return NextResponse.json(createdStudents, { status: 201 });
   } catch (error) {
