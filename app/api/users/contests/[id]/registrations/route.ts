@@ -210,7 +210,11 @@ export async function POST(
     await transporter.sendMail({
       from: "info@kangaroopakistan.org",
       to: schoolDetails?.email,
-      subject: "New Registrations " + contestNameShort + " 20" + year,
+      subject:
+        "Verification of Registration Details for " +
+        contestNameShort +
+        " 20" +
+        year,
       html: `
       <p><b>Dear Principal,</b></p>
       <p>Congratulations on registering for the ${contestName}  20${year}!
