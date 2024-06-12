@@ -167,16 +167,19 @@ const Register = () => {
         );
 
         router.push(`/user/viewregistered/${params.id}`);
-        toast.success("🦄 Student registered successfully", {
-          position: "bottom-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
+        toast.success(
+          "🦄 Student registered successfully, Please check your email",
+          {
+            position: "bottom-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          }
+        );
         setIsSubmitting(false);
 
         // Handle successful registration creation
@@ -298,8 +301,7 @@ const Register = () => {
   return isAvailable ? (
     <div
       style={{ height: "calc(100vh - 4rem)" }}
-      className="flex items-center justify-center bg-gray-100"
-    >
+      className="flex items-center justify-center bg-gray-100">
       {" "}
       {/* Adjust '4rem' to your navbar's actual height */}
       <div className="py-8 px-10 bg-white shadow-lg rounded-lg max-w-md">
@@ -329,8 +331,7 @@ const Register = () => {
         <div className="flex mr-8">
           <label
             htmlFor="file-input"
-            className="flex items-center px-4 py-2 border border-dashed mr-4 bg-purple-500 text-white border-gray-400 rounded-md cursor-pointer hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800"
-          >
+            className="flex items-center px-4 py-2 border border-dashed mr-4 bg-purple-500 text-white border-gray-400 rounded-md cursor-pointer hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800">
             <span className="text-sm font-medium truncate mr-2">
               Upload Excel File
             </span>
@@ -346,8 +347,7 @@ const Register = () => {
           <a
             href="https://docs.google.com/spreadsheets/d/1SzmgA9fbOd9lA72jJCRrJcTw7UbN8wpr/export?format=xlsx"
             download="sample.xlsx"
-            className="flex items-center px-4 py-2 border border-dashed bg-purple-500 text-white border-gray-400 rounded-md cursor-pointer hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800"
-          >
+            className="flex items-center px-4 py-2 border border-dashed bg-purple-500 text-white border-gray-400 rounded-md cursor-pointer hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800">
             <span className="text-sm font-medium truncate">
               Download Sample File
             </span>
@@ -361,14 +361,12 @@ const Register = () => {
       </div>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="mx-auto p-4 border border-gray-300 rounded-lg"
-      >
+        className="mx-auto p-4 border border-gray-300 rounded-lg">
         {duplicateError && <p className="text-red-500">{duplicateError}</p>}
         {fields.map((field, index) => (
           <div
             key={field.id}
-            className="mb-4 p-2 border-solid border-2 border-grey-600 "
-          >
+            className="mb-4 p-2 border-solid border-2 border-grey-600 ">
             <div className="grid items-center lg:space-x-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
               <div className="md:mr-4 lg:mr-0">
                 <input
@@ -405,8 +403,7 @@ const Register = () => {
                         field.onChange(e); // Important: update the form state
                         handleClassChange(e.target.value, index); // Update the level based on the class
                       }}
-                      className="w-full p-2 text-xs md:text-base rounded border border-gray-300 focus:outline-none focus:border-blue-500"
-                    >
+                      className="w-full p-2 text-xs md:text-base rounded border border-gray-300 focus:outline-none focus:border-blue-500">
                       <option value="">SELECT CLASS</option>
                       <option value="01">ONE</option>
                       <option value="02">TWO</option>
@@ -437,8 +434,7 @@ const Register = () => {
                     <select
                       disabled
                       {...field}
-                      className="w-full p-2 rounded border text-xs md:text-base border-gray-300 focus:outline-none focus:border-blue-500"
-                    >
+                      className="w-full p-2 rounded border text-xs md:text-base border-gray-300 focus:outline-none focus:border-blue-500">
                       <option value="">SELECT LEVEL</option>
                       <option value="preecolier">PRE ECOLIER</option>
                       <option value="ecolier">ECOLIER</option>
@@ -470,15 +466,13 @@ const Register = () => {
                   class: "",
                 })
               }
-              className="bg-blue-500 hover:bg-blue-600 text-white p-3 text-xs sm:text-base sm:px-4 sm:py-2 rounded"
-            >
+              className="bg-blue-500 hover:bg-blue-600 text-white p-3 text-xs sm:text-base sm:px-4 sm:py-2 rounded">
               Add Another Student
             </button>
             <button
               type="button"
               onClick={() => remove(fields.length - 1)}
-              className="bg-red-500 hover:bg-red-600 text-white p-3 text-xs sm:text-base sm:px-4 sm:py-2 rounded"
-            >
+              className="bg-red-500 hover:bg-red-600 text-white p-3 text-xs sm:text-base sm:px-4 sm:py-2 rounded">
               Remove Student
             </button>
           </div>
@@ -486,8 +480,7 @@ const Register = () => {
             <button
               type="submit"
               disabled={isSubmitting} // Disable the button if isSubmitting is true
-              className=" bg-green-500 hover:bg-green-600 text-white p-3 text-xs sm:text-base sm:px-4 sm:py-2 rounded"
-            >
+              className=" bg-green-500 hover:bg-green-600 text-white p-3 text-xs sm:text-base sm:px-4 sm:py-2 rounded">
               {isSubmitting ? "Submitting..." : "Submit Form"}
             </button>
           </div>

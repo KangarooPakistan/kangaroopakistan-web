@@ -158,7 +158,7 @@ const Register = () => {
         );
 
         router.back();
-        toast.success("🦄 Student registered successfully", {
+        toast.success("🦄 Student registered successfully, Please check your email", {
           position: "bottom-center",
           autoClose: 5000,
           hideProgressBar: false,
