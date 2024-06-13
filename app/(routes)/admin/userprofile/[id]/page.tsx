@@ -22,12 +22,14 @@ interface UserData {
   district: string;
   tehsil: string;
   fax: string;
+  p_Name: string;
   p_fName: string;
   p_mName: string;
   p_lName: string;
   p_contact: string;
   p_phone: string;
   p_email: string;
+  c_Name: string;
   c_fName: string;
   c_mName: string;
   c_lName: string;
@@ -183,9 +185,7 @@ function UserProfile({ params }: UserProfileProps) {
                       <td className="px-2 py-2 text-gray-500 font-semibold">
                         Principal Name
                       </td>
-                      <td className="px-2 py-2">
-                        {userData.p_fName} {userData.p_mName} {userData.p_lName}
-                      </td>
+                      <td className="px-2 py-2">{userData.p_Name}</td>
                     </tr>
                     <tr>
                       <td className="px-2 py-2 text-gray-500 font-semibold">
@@ -216,9 +216,7 @@ function UserProfile({ params }: UserProfileProps) {
                       <td className="px-2 py-2 text-gray-500 font-semibold">
                         Coordinator Name
                       </td>
-                      <td className="px-2 py-2">
-                        {userData.c_fName} {userData.c_mName} {userData.c_lName}
-                      </td>
+                      <td className="px-2 py-2">{userData.c_Name}</td>
                     </tr>
                     <tr>
                       <td className="px-2 py-2 text-gray-500 font-semibold">
