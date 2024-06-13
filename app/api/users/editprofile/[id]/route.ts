@@ -12,6 +12,7 @@ interface UserData {
   district?: string | null; // Optional field
   tehsil?: string | null; // Optional field
   fax?: string | null; // Optional field
+  city?: string | null; // Optional field
   bankTitle?: string | null; // Optional field
   p_Name?: string | null;
   p_fName?: string | null; // Optional field
@@ -45,6 +46,7 @@ export async function PUT(
       schoolId,
       schoolName,
       contactNumber,
+      city,
       district,
       tehsil,
       fax,
@@ -87,6 +89,7 @@ export async function PUT(
       schoolName,
       district,
       tehsil,
+      city,
       fax,
       bankTitle,
       schoolAddress,

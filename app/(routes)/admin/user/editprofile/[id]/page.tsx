@@ -4,6 +4,8 @@ import * as z from "zod";
 import axios from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+import { useForm, useFieldArray, Controller } from "react-hook-form";
+
 import {
   Form,
   FormControl,
@@ -13,8 +15,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { toast, ToastContainer } from "react-toastify";
-import { useForm, useFieldArray, Controller } from "react-hook-form";
-
 import "react-toastify/dist/ReactToastify.css";
 import { useParams, useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
@@ -23,12 +23,11 @@ import { Button } from "@/components/ui/button";
 interface UserData {
   email: string;
   schoolId: number;
-  schoolName: string;
   city: string;
+  schoolName: string;
   contactNumber: string;
   district: string;
-  tehsil: string;
-  fax: string;
+
   bankTitle: string;
   p_Name: string;
   p_contact: string;
@@ -46,9 +45,6 @@ const formSchema = z.object({
   email: z.string().email({
     message: "Email is required",
   }),
-  p_Name: z.string().refine((data) => data.trim() !== "", {
-    message: "Principal's First Name cannot be empty",
-  }),
   schoolName: z.string().refine((data) => data.trim() !== "", {
     message: "SchoolName cannot be empty",
   }),
@@ -60,14 +56,15 @@ const formSchema = z.object({
   district: z.string().refine((data) => data.trim() !== "", {
     message: "District cannot be empty",
   }),
-  tehsil: z.string().refine((data) => data.trim() !== "", {
-    message: "Tehsil cannot be empty",
+  city: z.string().refine((data) => data.trim() !== "", {
+    message: "City cannot be empty",
   }),
-  fax: z.string(),
   bankTitle: z.string().refine((data) => data.trim() !== "", {
     message: "BankTitle cannot be empty",
   }),
-
+  p_Name: z.string().refine((data) => data.trim() !== "", {
+    message: "Principal's Name cannot be empty",
+  }),
   p_contact: z.string().refine((data) => data.trim() !== "", {
     message: "Phone number cannot be empty",
   }),
@@ -81,8 +78,9 @@ const formSchema = z.object({
   p_email: z.string().refine((data) => data.trim() !== "", {
     message: "Principal's email cannot be empty",
   }),
+
   c_Name: z.string().refine((data) => data.trim() !== "", {
-    message: "Coordinator's firstname cannot be empty",
+    message: "Coordinator's  Name cannot be empty",
   }),
   c_contact: z.string().refine((data) => data.trim() !== "", {
     message: "Phone number cannot be empty",
@@ -112,13 +110,11 @@ const initialData: UserData = {
   schoolName: "",
   contactNumber: "",
   district: "",
-  tehsil: "",
   city: "",
-  fax: "",
   bankTitle: "",
+  p_Name: "",
   p_contact: "",
   p_phone: "",
-  p_Name: "",
   p_email: "",
   c_Name: "",
   c_contact: "",
@@ -136,13 +132,11 @@ const UserRegister = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: data.email,
-      // password: "",
       schoolId: data.schoolId,
       schoolName: data.schoolName,
       contactNumber: data.contactNumber,
       district: data.district,
-      tehsil: data.tehsil,
-      fax: data.fax,
+      city: data.city,
       bankTitle: data.bankTitle,
       p_Name: data.p_Name,
       p_contact: data.p_contact,
@@ -152,7 +146,6 @@ const UserRegister = () => {
       c_contact: data.c_contact,
       c_phone: data.c_phone,
       c_email: data.c_email,
-      city: data.city,
       schoolAddress: data.schoolAddress,
       c_accountDetails: data.c_accountDetails,
     },
@@ -161,6 +154,7 @@ const UserRegister = () => {
     const fetchData = async () => {
       const response = await axios.get(`/api/users/editprofile/${params.id}`);
       setData(response.data);
+      console.log(response.data);
       setSchoolIdFromBE(response.data.schoolId);
 
       form.reset({
@@ -168,15 +162,13 @@ const UserRegister = () => {
         schoolName: response.data.schoolName ?? "",
         contactNumber: response.data.contactNumber ?? "",
         district: response.data.district ?? "",
-        tehsil: response.data.tehsil ?? "",
-        fax: response.data.fax ?? "",
+        city: response.data.city ?? "",
         schoolAddress: response.data.schoolAddress ?? "",
         bankTitle: response.data.bankTitle ?? "",
         p_Name: response.data.p_Name ?? "",
         p_contact: response.data.p_contact ?? "",
         p_phone: response.data.p_phone ?? "",
         p_email: response.data.p_email ?? "",
-        city: response.data.city ?? "",
         c_Name: response.data.c_Name ?? "",
         c_contact: response.data.c_contact ?? "",
         c_phone: response.data.c_phone ?? "",
@@ -186,45 +178,6 @@ const UserRegister = () => {
     };
     fetchData();
   }, [form]);
-
-  const isLoading = form.formState.isSubmitting;
-  const onSubmit = async (values: UserData) => {
-    try {
-      const payload = {
-        ...values,
-        schooldId: schoolIdFromBE,
-        // Spread the form values
-        role: "User", // Add the additional string
-      };
-      await axios.put(`/api/users/editprofile/${params.id}`, payload);
-      form.reset();
-      router.push(`/admin/users`);
-      toast.success("🦄 Profile Updated successfully", {
-        position: "bottom-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-    } catch (error) {
-      toast.error("Error Updating Profile ", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-    }
-  };
-  const handleBack = () => {
-    router.back();
-  };
   const handleClassChange = (cityValue: string) => {
     console.log(cityValue);
     let districtValue = "";
@@ -639,6 +592,45 @@ const UserRegister = () => {
     console.log(districtValue);
     form.setValue(`district`, districtValue);
   };
+  const isLoading = form.formState.isSubmitting;
+  const onSubmit = async (values: UserData) => {
+    try {
+      const payload = {
+        ...values,
+        schooldId: schoolIdFromBE,
+        // Spread the form values
+        role: "User", // Add the additional string
+      };
+      console.log(payload);
+      await axios.put(`/api/users/editprofile/${params.id}`, payload);
+      form.reset();
+      router.push(`/user/profile/${params.id}`);
+      toast.success("🦄 Profile Updated successfully", {
+        position: "bottom-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    } catch (error) {
+      toast.error("Error Updating Profile ", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  };
+  const handleBack = () => {
+    router.back();
+  };
   return (
     <div className="container mx-auto py-4">
       <div className="flex justify-start items-center">
@@ -678,11 +670,11 @@ const UserRegister = () => {
                   />
                   <FormField
                     control={form.control}
-                    name="schoolName"
+                    name="schoolAddress"
                     render={({ field }) => (
                       <FormItem className="">
                         <FormLabel className="label mt-5">
-                          School Name
+                          School Address
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -698,11 +690,11 @@ const UserRegister = () => {
                   />
                   <FormField
                     control={form.control}
-                    name="schoolAddress"
+                    name="schoolName"
                     render={({ field }) => (
                       <FormItem className="">
                         <FormLabel className="label mt-5">
-                          School Address
+                          School Name
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -737,6 +729,27 @@ const UserRegister = () => {
                       </FormItem>
                     )}
                   />
+                  <FormField
+                    control={form.control}
+                    name="district"
+                    render={({ field }) => (
+                      <FormItem className="">
+                        <FormLabel className="label mt-5">
+                          District Code
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="text"
+                            disabled={isLoading}
+                            className="input"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
                   <FormLabel className="label mt-5">City</FormLabel>
                   <div className="">
                     <Controller
@@ -934,7 +947,6 @@ const UserRegister = () => {
                       )}
                     />
                   </div>
-
                   <FormField
                     control={form.control}
                     name="bankTitle"
@@ -956,6 +968,7 @@ const UserRegister = () => {
                       </FormItem>
                     )}
                   />
+
                   <FormField
                     control={form.control}
                     name="p_Name"
@@ -976,34 +989,13 @@ const UserRegister = () => {
                       </FormItem>
                     )}
                   />
-
-                  {/* <FormField
-                    control={form.control}
-                    name="p_lName"
-                    render={({ field }) => (
-                      <FormItem className="">
-                        <FormLabel className="label mt-5">
-                          Principal&apos;s Last Name
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            type="text"
-                            disabled={isLoading}
-                            className="input"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  /> */}
                   <FormField
                     control={form.control}
                     name="p_contact"
                     render={({ field }) => (
                       <FormItem className="">
                         <FormLabel className="label mt-5">
-                          Principal&apos;s Cell No.
+                          Principal&apos;s Cell #
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -1024,7 +1016,7 @@ const UserRegister = () => {
                     render={({ field }) => (
                       <FormItem className="">
                         <FormLabel className="label mt-5">
-                          Principal&apos;s Phone No.
+                          Principal&apos;s Phone Number
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -1085,12 +1077,33 @@ const UserRegister = () => {
                     render={({ field }) => (
                       <FormItem className="">
                         <FormLabel className="label mt-5">
-                          Coordinator&apos;s Cell No.
+                          Coordinator&apos;s Cell #
                         </FormLabel>
                         <FormControl>
                           <Input
                             type="text"
                             placeholder="0333-1234567"
+                            disabled={isLoading}
+                            className="input"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="c_phone"
+                    render={({ field }) => (
+                      <FormItem className="">
+                        <FormLabel className="label mt-5">
+                          Coordinator&apos;s Phone number
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="text"
+                            placeholder="051-1234567"
                             disabled={isLoading}
                             className="input"
                             {...field}
@@ -1145,7 +1158,7 @@ const UserRegister = () => {
                       disabled={isLoading}
                       variant="default"
                       className="px-10">
-                      Update Profile
+                      Update Account
                     </Button>
                   </div>
                 </form>

@@ -22,19 +22,16 @@ interface UserData {
   district: string;
   tehsil: string;
   fax: string;
-  p_fName: string;
-  p_mName: string;
-  p_lName: string;
+  p_Name: string;
   p_contact: string;
   p_phone: string;
   p_email: string;
-  c_fName: string;
-  c_mName: string;
-  c_lName: string;
+  c_Name: string;
   c_contact: string;
   c_phone: string;
   c_email: string;
   c_accountDetails: string;
+  city: string;
 }
 
 function UserProfile({ params }: UserProfileProps) {
@@ -107,8 +104,7 @@ function UserProfile({ params }: UserProfileProps) {
                 </div>
                 <Button
                   onClick={handleClick}
-                  className="ml-[3.3rem] sm: md:ml-20 text-xs rounded-full  py-1 sm:px-4 sm:py-2"
-                >
+                  className="ml-[3.3rem] sm: md:ml-20 text-xs rounded-full  py-1 sm:px-4 sm:py-2">
                   Edit Profile
                 </Button>
               </div>
@@ -161,15 +157,9 @@ function UserProfile({ params }: UserProfileProps) {
                     </tr>
                     <tr>
                       <td className="px-2 py-2 text-gray-500 font-semibold">
-                        Tehsil
+                        City
                       </td>
-                      <td className="px-2 py-2">{userData.tehsil}</td>
-                    </tr>
-                    <tr>
-                      <td className="px-2 py-2 text-gray-500 font-semibold">
-                        Fax
-                      </td>
-                      <td className="px-2 py-2">{userData.fax}</td>
+                      <td className="px-2 py-2">{userData.city}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -182,9 +172,7 @@ function UserProfile({ params }: UserProfileProps) {
                       <td className="px-2 py-2 text-gray-500 font-semibold">
                         Principal Name
                       </td>
-                      <td className="px-2 py-2">
-                        {userData.p_fName} {userData.p_mName} {userData.p_lName}
-                      </td>
+                      <td className="px-2 py-2">{userData.p_Name}</td>
                     </tr>
                     <tr>
                       <td className="px-2 py-2 text-gray-500 font-semibold">
@@ -215,9 +203,7 @@ function UserProfile({ params }: UserProfileProps) {
                       <td className="px-2 py-2 text-gray-500 font-semibold">
                         Coordinator Name
                       </td>
-                      <td className="px-2 py-2">
-                        {userData.c_fName} {userData.c_mName} {userData.c_lName}
-                      </td>
+                      <td className="px-2 py-2">{userData.c_Name}</td>
                     </tr>
                     <tr>
                       <td className="px-2 py-2 text-gray-500 font-semibold">

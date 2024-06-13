@@ -23,19 +23,14 @@ interface UserData {
   tehsil: string;
   fax: string;
   p_Name: string;
-  p_fName: string;
-  p_mName: string;
-  p_lName: string;
   p_contact: string;
   p_phone: string;
   p_email: string;
   c_Name: string;
-  c_fName: string;
-  c_mName: string;
-  c_lName: string;
   c_contact: string;
   c_phone: string;
   c_email: string;
+  city: string;
   c_accountDetails: string;
 }
 
@@ -164,15 +159,9 @@ function UserProfile({ params }: UserProfileProps) {
                     </tr>
                     <tr>
                       <td className="px-2 py-2 text-gray-500 font-semibold">
-                        Tehsil
+                        City
                       </td>
-                      <td className="px-2 py-2">{userData.tehsil}</td>
-                    </tr>
-                    <tr>
-                      <td className="px-2 py-2 text-gray-500 font-semibold">
-                        Fax
-                      </td>
-                      <td className="px-2 py-2">{userData.fax}</td>
+                      <td className="px-2 py-2">{userData.city}</td>
                     </tr>
                   </tbody>
                 </table>

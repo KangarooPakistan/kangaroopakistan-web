@@ -28,6 +28,7 @@ interface UserData {
   c_email?: string | null; // Optional field
   c_accountDetails?: string | null; // Optional field
   schoolAddress?: string | null; // Optional field
+  city?: string | null; // Optional field
 }
 export async function POST(request: NextRequest) {
   try {
@@ -55,6 +56,7 @@ export async function POST(request: NextRequest) {
       c_mName,
       c_lName,
       c_contact,
+      city,
       c_phone,
       c_email,
       c_accountDetails,
@@ -115,6 +117,7 @@ export async function POST(request: NextRequest) {
       c_email: c_email || null, // Use null if not provided
       c_accountDetails: c_accountDetails || null, // Use null if not provided
       district: district || null, // Use null if not provided
+      city: city || null, // Use null if not provided
     };
 
     const user = await db.user.create({
@@ -143,6 +146,7 @@ export async function PUT(
       contactNumber,
       district,
       tehsil,
+      city,
       fax,
       bankTitle,
       p_fName,
@@ -200,6 +204,7 @@ export async function PUT(
       c_contact,
       c_phone,
       c_email,
+      city,
       c_accountDetails,
     };
 
