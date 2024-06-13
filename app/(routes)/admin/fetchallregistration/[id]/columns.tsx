@@ -2,6 +2,8 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -270,6 +272,35 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       console.error("Error generating the PDF:", error);
     }
   };
+  const handleEmail = async () => {
+    const res = await axios.get(`/api/users/sendemail/${registration.id}`);
+    if (res.status == 200) {
+      toast.success("🦄 Email Sent Successfully 😍", {
+        position: "bottom-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    } else {
+      toast.error(
+        "Error sending email, Please try again later 😒 " +
+          {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          }
+      );
+    }
+  };
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -284,6 +315,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         <DropdownMenuItem onClick={handleRegister}>
           Register Students
         </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleEmail}>Send Email</DropdownMenuItem>
         <DropdownMenuItem onClick={handleDownloadPdf}>
           Download Answer Sheet
         </DropdownMenuItem>
