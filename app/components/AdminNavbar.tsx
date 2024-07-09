@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { signOut, useSession } from "next-auth/react";
 import { Button } from "../../components/ui/button";
 import { useRouter } from "next/navigation";
+// import { useSession } from "next-auth/react";
 
 // interface SessionData {
 //   role: string;
@@ -26,7 +27,6 @@ const AdminNavbar = () => {
 
   const goToProfile = () => {
     if (session && session.user && session.user.id) {
-      console.log(session.user);
       router.push(`/admin/profile/${session.user.id}`); // Use session.user.id directly
       toggleProfile();
     }
@@ -50,7 +50,11 @@ const AdminNavbar = () => {
   };
   const handleClickUser = () => {
     toggleDropdown();
-    router.push("/admin/users");
+    if (session?.user.role === "Admin") {
+      router.push("/admin/users");
+    } else {
+      router.push("/employee/users");
+    }
   };
   const handleAdminUser = () => {
     toggleDropdown();
@@ -59,7 +63,6 @@ const AdminNavbar = () => {
   useEffect(() => {
     setEmail(session?.user.email);
     setName(session?.user.role);
-    console.log(session?.user);
   }, [session]);
 
   return (
@@ -164,13 +167,24 @@ const AdminNavbar = () => {
                 Resources
               </Link>
             </li> */}
-            <li>
-              <Link
-                href="/admin/contesttypes"
-                className="block py-2 px-3 md:p-0 ">
-                Contest
-              </Link>
-            </li>
+            {session?.user.role === "Admin" && (
+              <li>
+                <Link
+                  href="/admin/contesttypes"
+                  className="block py-2 px-3 md:p-0 ">
+                  Contest
+                </Link>
+              </li>
+            )}
+            {session?.user.role === "Employee" && (
+              <li>
+                <Link
+                  href="/employee/contesttypes"
+                  className="block py-2 px-3 md:p-0 ">
+                  Contest
+                </Link>
+              </li>
+            )}
             <li className="relative">
               <button
                 id="dropdownNavbarLink"
@@ -218,13 +232,15 @@ const AdminNavbar = () => {
                       View All Schools
                     </button>
                   </li>
-                  <li>
-                    <button
-                      className="block px-4 py-2 hover:bg-gray-100 rounded w-full text-left border-0"
-                      onClick={handleClickRegister}>
-                      Create Admin
-                    </button>
-                  </li>
+                  {session?.user.role === "Admin" && (
+                    <li>
+                      <button
+                        className="block px-4 py-2 hover:bg-gray-100 rounded w-full text-left border-0"
+                        onClick={handleClickRegister}>
+                        Create Admin
+                      </button>
+                    </li>
+                  )}
                 </ul>
               </div>
             </li>

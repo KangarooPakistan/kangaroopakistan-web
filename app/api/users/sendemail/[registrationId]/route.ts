@@ -86,7 +86,6 @@ export async function GET(
         pass: process.env.NODEMAILER_PASS,
       },
     });
-    console.log(transporter);
     let tableHtml = `
     <table style="border: 1px solid #ddd; border-collapse: collapse;">
       <thead>
@@ -115,16 +114,12 @@ export async function GET(
     tableHtml += `</tbody>
     </table>`;
     try {
-      console.log("contestDate?.startDate");
-
       const startDateString = contestDate?.startDate;
       let year = 0;
       if (startDateString) {
         const date = new Date(startDateString);
         year = date.getFullYear();
-        console.log(year); // Output: 2024
       } else {
-        console.log("startDate is undefined");
       }
 
       console.log(year);

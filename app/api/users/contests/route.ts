@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
   const session = await getServerSession();
   const token = await getToken({ req: request });
 
-  if (session && token?.role === "Admin") {
+  if ((session && token?.role === "Admin") || token?.role === "Employee") {
     try {
       const reqBody = await request.json();
       const {

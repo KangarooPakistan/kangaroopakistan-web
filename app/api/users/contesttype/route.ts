@@ -5,7 +5,7 @@ import { db } from "@/app/lib/prisma";
 
 interface ContestTypeData {
   contestName: string;
-  imageUrl: string; 
+  imageUrl: string;
   contestCh: string; // Optional field
 }
 
@@ -14,33 +14,36 @@ export async function POST(request: NextRequest) {
   const token = await getToken({ req: request });
 
   if (session) {
-    if (token?.role === "Admin") {
+    if (token?.role === "Admin" || token?.role === "Employee") {
       try {
         const reqBody = await request.json();
         const { contestName, imageUrl, contestCh } = reqBody;
-        const isLowercase = (contestCh: string) => contestCh === contestCh.toLowerCase();
-        let uppercaseContestCh; 
+        const isLowercase = (contestCh: string) =>
+          contestCh === contestCh.toLowerCase();
+        let uppercaseContestCh;
         if (isLowercase(contestCh)) {
           // If contestCh is lowercase, convert it to uppercase
-           uppercaseContestCh = contestCh.toUpperCase();
+          uppercaseContestCh = contestCh.toUpperCase();
           // Use uppercaseContestCh in your code as needed
-        } else{
+        } else {
           uppercaseContestCh = contestCh;
         }
         const contestTypeData: ContestTypeData = {
           contestName: contestName,
           imageUrl: imageUrl,
           contestCh: uppercaseContestCh,
-        };        
+        };
         const existingContest = await db.contestType.findUnique({
-            where: {
-                contestName: contestTypeData.contestName,
-            },
+          where: {
+            contestName: contestTypeData.contestName,
+          },
         });
-        if(existingContest)
-            {
-                return NextResponse.json({error: "User Already Exists"}, {status: 400})
-            }
+        if (existingContest) {
+          return NextResponse.json(
+            { error: "User Already Exists" },
+            { status: 400 }
+          );
+        }
         const contestType = await db.contestType.create({
           data: contestTypeData,
         });
@@ -56,17 +59,16 @@ export async function POST(request: NextRequest) {
   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 }
 export async function GET(request: NextRequest) {
-    try {
-      // Fetch all rows from the contestType table
-      const contestTypes = await db.contestType.findMany();
-      // Return the contestTypes as JSON response
-      return NextResponse.json(contestTypes);
-    } catch (error: any) {
-      // Handle errors and return an appropriate response
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
+  try {
+    // Fetch all rows from the contestType table
+    const contestTypes = await db.contestType.findMany();
+    // Return the contestTypes as JSON response
+    return NextResponse.json(contestTypes);
+  } catch (error: any) {
+    // Handle errors and return an appropriate response
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
-
+}
 
 export async function PUT(request: NextRequest) {
   try {
@@ -81,7 +83,10 @@ export async function PUT(request: NextRequest) {
     });
 
     if (!existingContest) {
-      return NextResponse.json({ error: "Contest type not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Contest type not found" },
+        { status: 404 }
+      );
     }
 
     // Update the contest type with the new data
@@ -102,4 +107,3 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
-

@@ -122,13 +122,9 @@ const UploadNotification = () => {
           })
           .then((resp) => {});
         awsUrl = `${s3BucketUrl}${fileName}`;
-
-        console.log(awsUrl);
         const payload = {
           imageUrl: awsUrl,
         };
-
-        console.log(payload);
         await axios.post("/api/users/notificationimage/", payload);
 
         form.reset();

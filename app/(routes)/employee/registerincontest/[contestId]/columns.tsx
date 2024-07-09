@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useModal } from "@/hooks/use-modal-store";
 export type User = {
   id: number;
@@ -27,13 +27,13 @@ type UserActionsProps = {
 
 const RoleActions: React.FC<UserActionsProps> = ({ user }) => {
   const router = useRouter();
+  const params = useParams();
   const { onOpen } = useModal();
 
-  const handleView = () => {
-    router.push(`/admin/userprofile/${user.id}`);
-  };
-  const handleEdit = () => {
-    router.push(`/admin/user/editprofile/${user.id}`);
+  const handleRegister = () => {
+    router.push(
+      `/employee/enrollstudents/${params.contestId}/byschool/${user.schoolId}`
+    );
   };
 
   return (
@@ -46,11 +46,8 @@ const RoleActions: React.FC<UserActionsProps> = ({ user }) => {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <DropdownMenuItem onClick={handleView}>View School </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleEdit}>Edit School </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => onOpen("deleteSchool", { id: user.id })}>
-          Delete School
+        <DropdownMenuItem onClick={handleRegister}>
+          Register Students{" "}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -62,19 +59,7 @@ export const columns: ColumnDef<User>[] = [
     accessorKey: "email",
     header: "Email",
   },
-  {
-    accessorKey: "role",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Role
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-  },
+
   {
     accessorKey: "schoolId",
     filterFn: "equals",

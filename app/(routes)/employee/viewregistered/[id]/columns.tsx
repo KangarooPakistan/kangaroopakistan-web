@@ -30,7 +30,7 @@ type StudentActionsProps = {
 const ContestActions: React.FC<StudentActionsProps> = ({ student }) => {
   const router = useRouter();
   const handleView = () => {
-    router.push(`/admin/viewallrecipts/${student.registrationId}`);
+    router.push(`/employee/viewallrecipts/${student.registrationId}`);
   };
 
   const handleEdit = () => {};

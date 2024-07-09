@@ -94,6 +94,9 @@ const Frontend = () => {
     if (mySession && role === "Admin") {
       router.push(`/admin/profile/${mySession}`);
     }
+    if (mySession && role === "Employee") {
+      router.push(`/employee/profile/${mySession}`);
+    }
   };
 
   return (

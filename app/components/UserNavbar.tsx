@@ -42,7 +42,6 @@ const UserNavbar = () => {
   useEffect(() => {
     setEmail(session?.user.email);
     setName(session?.user.role);
-    console.log(session?.user);
   }, [session]);
 
   const logOut = () => {

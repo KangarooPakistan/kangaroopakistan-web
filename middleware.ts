@@ -6,8 +6,6 @@ export async function middleware(request: NextRequest) {
   try {
     const { pathname } = request.nextUrl;
     const token = await getToken({ req: request });
-    console.log("token");
-    console.log(token);
     const userRole = token?.role as string;
 
     const publicRoutes = ["/login", "/register"];

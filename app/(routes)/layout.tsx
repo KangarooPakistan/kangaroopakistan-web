@@ -10,12 +10,12 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   const session = await getServerSession(authOptions);
-  let isAdmin = session?.user?.role === "Admin";
+  let isUser = session?.user?.role === "User";
   // isAdmin = false;
 
   return (
     <>
-      {isAdmin ? <AdminNavbar /> : <UserNavbar />}
+      {isUser ? <UserNavbar /> : <AdminNavbar />}
       {children}
     </>
   );

@@ -30,10 +30,10 @@ const RoleActions: React.FC<UserActionsProps> = ({ user }) => {
   const { onOpen } = useModal();
 
   const handleView = () => {
-    router.push(`/admin/userprofile/${user.id}`);
+    router.push(`/employee/userprofile/${user.id}`);
   };
   const handleEdit = () => {
-    router.push(`/admin/user/editprofile/${user.id}`);
+    router.push(`/employee/user/editprofile/${user.id}`);
   };
 
   return (
@@ -48,10 +48,6 @@ const RoleActions: React.FC<UserActionsProps> = ({ user }) => {
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <DropdownMenuItem onClick={handleView}>View School </DropdownMenuItem>
         <DropdownMenuItem onClick={handleEdit}>Edit School </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => onOpen("deleteSchool", { id: user.id })}>
-          Delete School
-        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
