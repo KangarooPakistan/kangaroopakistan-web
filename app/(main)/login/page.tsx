@@ -87,8 +87,7 @@ const Login = () => {
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-4 md:space-y-6"
-              >
+                className="space-y-4 md:space-y-6">
                 <FormField
                   control={form.control}
                   name="email"
@@ -146,8 +145,7 @@ const Login = () => {
                     type="submit"
                     disabled={isLoading}
                     variant="default"
-                    className="px-4"
-                  >
+                    className="px-4">
                     Sign In
                   </Button>
                   <Button
@@ -155,16 +153,14 @@ const Login = () => {
                     onClick={handleClick}
                     disabled={isLoading}
                     variant="default"
-                    className="px-4 ml-3"
-                  >
+                    className="px-4 ml-3">
                     Back to website
                   </Button>
                 </div>
                 <p className="text-sm font-light text-gray-500 w-full text-center">
                   <Link
                     className="font-medium text-blue-600 hover:underline"
-                    href="/reset-password"
-                  >
+                    href="/reset-password">
                     Forgot password? &nbsp;
                   </Link>
                 </p>
@@ -172,8 +168,7 @@ const Login = () => {
                   Dont have an account? &nbsp;
                   <Link
                     className="font-medium text-blue-600 hover:underline"
-                    href="/register"
-                  >
+                    href="/register">
                     Sign up here
                   </Link>
                 </p>

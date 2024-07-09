@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import { ModalProvider } from "@/components/providers/modal-provider";
+import AuthRedirect from "./components/AuthRedirect";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,6 +22,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <Providers>
           <ModalProvider />
+          <AuthRedirect />
           {children}
         </Providers>
       </body>

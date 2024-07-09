@@ -6,6 +6,8 @@ import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useModal } from "@/hooks/use-modal-store";
 import Skeleton from "@/app/components/Skeleton";
+import { useSession, signIn, signOut } from "next-auth/react";
+
 import { useRouter } from "next/navigation";
 
 interface ContestType {
@@ -19,6 +21,11 @@ const ContestTypesPage = () => {
   const { onOpen } = useModal();
   const router = useRouter();
 
+  const { data: session, status } = useSession();
+
+  console.log("session");
+  console.log(status);
+  console.log("session");
   useEffect(() => {
     async function fetchContestTypes() {
       try {
@@ -58,8 +65,7 @@ const ContestTypesPage = () => {
           contestTypes.map((contestType) => (
             <div
               className="w-64 bg-white shadow-xl rounded-xl duration-500 hover:scale-105 hover:shadow-2xl"
-              key={contestType.id}
-            >
+              key={contestType.id}>
               <img
                 src={contestType.imageUrl}
                 alt="contest image"
@@ -77,16 +83,14 @@ const ContestTypesPage = () => {
                     className="px-5 py-2  rounded-xl mr-2 text-xs"
                     onClick={() => {
                       handleViewClick(contestType.id);
-                    }}
-                  >
+                    }}>
                     View Contest
                   </Button>
                   <Button
                     className="px-5 py-2 font-bold rounded-xl text-xs"
                     onClick={() => {
                       handleCardClick(contestType.id);
-                    }}
-                  >
+                    }}>
                     Add Contest
                   </Button>
                 </div>
