@@ -10,7 +10,7 @@ import {
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation"; // Use 'next/router' instead of 'next/navigation'
 import axios from "axios";
 import {
@@ -184,7 +184,6 @@ const CreateContestTypeModal = () => {
     }
     router.refresh();
     window.location.reload();
-    
   };
   const handleClose = () => {
     form.reset();
@@ -226,8 +225,7 @@ const CreateContestTypeModal = () => {
                       <button
                         onClick={() => setFileUrl("")}
                         className="absolute z-20 top-2 right-2 bg-red-500 text-white p-2 rounded-full shadow-md hover:bg-red-600 transition duration-300"
-                        type="button"
-                      >
+                        type="button">
                         <X className="h-6 w-6" />
                       </button>
                     )}
@@ -241,8 +239,7 @@ const CreateContestTypeModal = () => {
                           <FormControl>
                             <label
                               htmlFor="fileInput"
-                              className="bg-transparent flex-1 border-none outline-none cursor-pointer"
-                            >
+                              className="bg-transparent flex-1 border-none outline-none cursor-pointer">
                               {/* Style the label to look like a button */}
                               <div className="bg-blue-500 text-white py-2 px-4 rounded-full shadow-md hover:bg-blue-600 transition duration-300 flex items-center  space-x-2">
                                 <Upload className="h-6 w-6" />

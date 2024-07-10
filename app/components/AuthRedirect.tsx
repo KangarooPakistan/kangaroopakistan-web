@@ -11,10 +11,14 @@ const AuthRedirect = () => {
   const pathname = usePathname();
   const router = useRouter();
   useEffect(() => {
-    if (status === "loading") return; // Do nothing while loading
+    // if (status === "loading") return; // Do nothing while loading
     if (status === "authenticated" && pathname === "/") {
       router.replace("/dashboard"); // Redirect to dashboard if authenticated and on login page
-    } else if (status === "unauthenticated" && pathname !== "/") {
+    } else if (
+      status === "unauthenticated" &&
+      pathname !== "/" &&
+      pathname !== "/register"
+    ) {
       router.replace("/"); // Redirect to login if not authenticated and not on login page
     }
   }, [status, router, pathname]);

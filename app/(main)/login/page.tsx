@@ -65,6 +65,7 @@ const Login = () => {
       console.log("User's role:", session.user.role);
     }
   }, [session]);
+
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
