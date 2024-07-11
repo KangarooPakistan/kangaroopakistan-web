@@ -72,28 +72,28 @@ const ContestActions: React.FC<StudentActionsProps> = ({ student }) => {
   const handleDownloadPdf = async () => {
     // console.log(student)
     try {
-      
       const registrationResponse = await axios.get(
         // `/api/users/pdfdownload/${registration.id}`
         `/api/users/registrations/${student.registrationId}`
       );
-      console.log(registrationResponse.data[0])
+      console.log(registrationResponse.data[0]);
       const apiStudentData = await axios.get(
         // `/api/users/pdfdownload/${registration.id}`
         `/api/users/registrations/${student.registrationId}/${student.id}`
       );
-      console.log(apiStudentData)
+      console.log(apiStudentData);
       const studentData: StudentData = {
         rollNumber: apiStudentData.data.rollNumber,
         studentName: apiStudentData.data.studentName,
         fatherName: apiStudentData.data.fatherName,
         studentLevel: apiStudentData.data.level,
         studentClass: apiStudentData.data.class, // Note the mapping from `class` to `studentClass`
-        schoolName:registrationResponse.data[0].schoolName , // Use the `schoolName` from the previous API response
+        schoolName: registrationResponse.data[0].schoolName, // Use the `schoolName` from the previous API response
         address: registrationResponse.data[0].user.schoolAddress, // Set these as null if they are optional and not available
         districtCode: registrationResponse.data[0].user.district,
-        schoolId: registrationResponse.data[0].user.schoolId
-      };      const blob = await generatePdfBlob(studentData);
+        schoolId: registrationResponse.data[0].user.schoolId,
+      };
+      const blob = await generatePdfBlob(studentData);
       saveAs(blob, "students.pdf");
     } catch (error) {
       console.error("Error downloading the PDF:", error);
@@ -110,12 +110,14 @@ const ContestActions: React.FC<StudentActionsProps> = ({ student }) => {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
+
         <DropdownMenuItem onClick={handleView}>View Receipts </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleDownloadPdf}>Download Answer Sheet</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleDownloadPdf}>
+          Download Answer Sheet
+        </DropdownMenuItem>
         <DropdownMenuItem onClick={editStudent}>Edit Student </DropdownMenuItem>
         <DropdownMenuItem
-          onClick={() => onOpen("deleteStudent", { id: student.id })}
-        >
+          onClick={() => onOpen("deleteStudent", { id: student.id })}>
           Delete Student{" "}
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -134,8 +136,7 @@ export const columns: ColumnDef<Student>[] = [
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Roll Number
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -148,8 +149,7 @@ export const columns: ColumnDef<Student>[] = [
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Student Name
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -162,8 +162,7 @@ export const columns: ColumnDef<Student>[] = [
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Father Name
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -176,8 +175,7 @@ export const columns: ColumnDef<Student>[] = [
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Class
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -190,8 +188,7 @@ export const columns: ColumnDef<Student>[] = [
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Level
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -203,8 +200,6 @@ export const columns: ColumnDef<Student>[] = [
     cell: ({ row }) => <ContestActions student={row.original} />,
   },
 ];
-
-
 
 const numColumns = 2; // Number of columns
 const optionWidth = `${100 / numColumns}%`; // Calculate the width of each option
@@ -478,172 +473,167 @@ interface MyDocumentProps {
 
 const MyDocument: React.FC<MyDocumentProps> = ({ student }) => (
   <Document>
-      <Page size="A4" style={styles.page} >
-        <Text style={styles.header}>
-          International Kangaroo Mathematics Contest
-        </Text>
-        <Text style={styles.subHeaderBetween}>Answer Sheet</Text>
+    <Page size="A4" style={styles.page}>
+      <Text style={styles.header}>
+        International Kangaroo Mathematics Contest
+      </Text>
+      <Text style={styles.subHeaderBetween}>Answer Sheet</Text>
 
-        <Text style={styles.subHeader}>
-          {student.studentLevel == "preecolier" &&
-            "PRE ECOLIER (Class 01 & 02)"}
-          {student.studentLevel == "ecolier" && "ECOLIER (Class 03 & 04)"}
-          {student.studentLevel == "benjamin" && "BENJAMIN (Class 05 & 06)"}
-          {/* {student.studentLevel === "BENJAMIN" && "BENJAMIN(Class 05 & 06)"} */}
-          {student.studentLevel == "cadet" && "CADET (Class 07 & 08)"}
-          {student.studentLevel == "junior" && "JUNIOR (Class 09 & 10)"}
-          {student.studentLevel == "student" && "STUDENT (Class 11 & 12)"}
-        </Text>
+      <Text style={styles.subHeader}>
+        {student.studentLevel == "preecolier" && "PRE ECOLIER (Class 01 & 02)"}
+        {student.studentLevel == "ecolier" && "ECOLIER (Class 03 & 04)"}
+        {student.studentLevel == "benjamin" && "BENJAMIN (Class 05 & 06)"}
+        {/* {student.studentLevel === "BENJAMIN" && "BENJAMIN(Class 05 & 06)"} */}
+        {student.studentLevel == "cadet" && "CADET (Class 07 & 08)"}
+        {student.studentLevel == "junior" && "JUNIOR (Class 09 & 10)"}
+        {student.studentLevel == "student" && "STUDENT (Class 11 & 12)"}
+      </Text>
 
-        {/* Student Info */}
-        <View style={styles.studentInfo}>
-          {/* Repeat this View for each piece of student information */}
-          <View style={styles.studentInfoRow}>
-            <Text style={styles.studentInfoTitle}>Roll No</Text>
-            <Text style={styles.studentInfoContent}>{student.rollNumber}</Text>
-          </View>
-
-          <View style={styles.studentInfoRow}>
-            <Text style={styles.studentInfoTitle}>District</Text>
-            <Text style={styles.studentInfoContent}>
-              {student.districtCode}
-            </Text>
-          </View>
-          <View style={styles.studentInfoRow}>
-            <Text style={styles.studentInfoTitle}>Student Name</Text>
-            <Text style={styles.studentInfoContent}>{student.studentName}</Text>
-          </View>
-
-          <View style={styles.studentInfoRow}>
-            <Text style={styles.studentInfoTitle}>Father Name</Text>
-            <Text style={styles.studentInfoContent}>{student.fatherName}</Text>
-          </View>
-
-          <View style={styles.studentInfoRow}>
-            <Text style={styles.studentInfoTitle}>Class/Grade</Text>
-            <Text style={styles.studentInfoContent}>
-              {student.studentClass}
-            </Text>
-          </View>
-          <View style={styles.studentInfoRow}>
-            <Text style={styles.studentInfoTitle}>Institution Name</Text>
-            <Text style={styles.studentInfoContent}>{student.schoolName}</Text>
-          </View>
-          <View style={styles.studentInfoRow}>
-            <Text style={styles.studentInfoTitle}>Address</Text>
-            <Text style={styles.studentInfoContent}>{student.address}</Text>
-          </View>
-          <View style={styles.studentInfoRow}>
-            <Text style={styles.studentInfoTitle}>Institution Code</Text>
-            <Text style={styles.studentInfoContent}>{student.schoolId}</Text>
-          </View>
-
-          {/* ... other student info rows */}
+      {/* Student Info */}
+      <View style={styles.studentInfo}>
+        {/* Repeat this View for each piece of student information */}
+        <View style={styles.studentInfoRow}>
+          <Text style={styles.studentInfoTitle}>Roll No</Text>
+          <Text style={styles.studentInfoContent}>{student.rollNumber}</Text>
         </View>
-        <View style={styles.instBox}>
-          {/* Row with correct filling example */}
-          <Text style={styles.optionText}>
-            Choose only one of the five proposed answers[A,B,C,D,E] and fill in
-            the box with your answer. Example of correctly filled table of
-            answer is.
-          </Text>
-          <View style={styles.correctBox}>
-            <View style={styles.answerRowInst}>
-              <View style={styles.optionBox}>
-                <Text style={styles.optionText}>A</Text>
+
+        <View style={styles.studentInfoRow}>
+          <Text style={styles.studentInfoTitle}>District</Text>
+          <Text style={styles.studentInfoContent}>{student.districtCode}</Text>
+        </View>
+        <View style={styles.studentInfoRow}>
+          <Text style={styles.studentInfoTitle}>Student Name</Text>
+          <Text style={styles.studentInfoContent}>{student.studentName}</Text>
+        </View>
+
+        <View style={styles.studentInfoRow}>
+          <Text style={styles.studentInfoTitle}>Father Name</Text>
+          <Text style={styles.studentInfoContent}>{student.fatherName}</Text>
+        </View>
+
+        <View style={styles.studentInfoRow}>
+          <Text style={styles.studentInfoTitle}>Class/Grade</Text>
+          <Text style={styles.studentInfoContent}>{student.studentClass}</Text>
+        </View>
+        <View style={styles.studentInfoRow}>
+          <Text style={styles.studentInfoTitle}>Institution Name</Text>
+          <Text style={styles.studentInfoContent}>{student.schoolName}</Text>
+        </View>
+        <View style={styles.studentInfoRow}>
+          <Text style={styles.studentInfoTitle}>Address</Text>
+          <Text style={styles.studentInfoContent}>{student.address}</Text>
+        </View>
+        <View style={styles.studentInfoRow}>
+          <Text style={styles.studentInfoTitle}>Institution Code</Text>
+          <Text style={styles.studentInfoContent}>{student.schoolId}</Text>
+        </View>
+
+        {/* ... other student info rows */}
+      </View>
+      <View style={styles.instBox}>
+        {/* Row with correct filling example */}
+        <Text style={styles.optionText}>
+          Choose only one of the five proposed answers[A,B,C,D,E] and fill in
+          the box with your answer. Example of correctly filled table of answer
+          is.
+        </Text>
+        <View style={styles.correctBox}>
+          <View style={styles.answerRowInst}>
+            <View style={styles.optionBox}>
+              <Text style={styles.optionText}>A</Text>
+            </View>
+            <View style={styles.optionBox}>
+              <Text style={styles.optionText}>B</Text>
+            </View>
+            <View style={[styles.optionBox, styles.correctFilling]}></View>
+            <View style={styles.optionBox}>
+              <Text style={styles.optionText}>D</Text>
+            </View>
+            <View style={styles.optionBox}>
+              <Text style={styles.optionText}>E</Text>
+            </View>
+          </View>
+          <Text style={styles.optionText}>Correct filling</Text>
+        </View>
+        <View style={styles.wrongBox}>
+          <View style={styles.answerRowInst}>
+            <View style={styles.optionBox}>
+              <Text style={styles.optionText}>A</Text>
+              <View style={styles.cross}>
+                <View style={styles.crossLine}></View>
+                <View style={styles.crossLineReverse}></View>
               </View>
+            </View>
+            <View style={styles.optionBox}>
+              <Text style={styles.optionText}>B</Text>
+            </View>
+            <View style={styles.optionBox}>
+              <Text style={styles.optionText}>C</Text>
+            </View>
+            <View style={styles.optionBox}>
+              <Text style={styles.optionText}>D</Text>
+            </View>
+            <View style={styles.optionBox}>
+              <Text style={styles.optionText}>E</Text>
+            </View>
+            {/* ... other options ... */}
+          </View>
+          <Text style={styles.optionText}>Wrong filling</Text>
+        </View>
+        <View style={styles.wrongBox}>
+          <View style={styles.answerRowInst}>
+            <View style={styles.optionBox}>
+              <Text style={styles.optionText}>A</Text>
+            </View>
+            <View style={styles.optionBox}>
+              <Text style={styles.optionTextWrong}>B</Text>
+              <View style={styles.tick}></View>
+            </View>
+            <View style={styles.optionBox}>
+              <Text style={styles.optionText}>C</Text>
+            </View>
+            <View style={styles.optionBox}>
+              <Text style={styles.optionText}>D</Text>
+            </View>
+            <View style={styles.optionBox}>
+              <Text style={styles.optionText}>E</Text>
+            </View>
+          </View>
+          <Text style={styles.optionText}>Wrong filling</Text>
+        </View>
+        <View style={styles.wrongBox}>
+          <View style={styles.answerRowInst}>
+            <View style={styles.optionBox}>
+              <Text style={styles.optionText}>A</Text>
+            </View>
+            <View style={[styles.gradientBox]}>
               <View style={styles.optionBox}>
                 <Text style={styles.optionText}>B</Text>
               </View>
-              <View style={[styles.optionBox, styles.correctFilling]}></View>
-              <View style={styles.optionBox}>
-                <Text style={styles.optionText}>D</Text>
-              </View>
-              <View style={styles.optionBox}>
-                <Text style={styles.optionText}>E</Text>
-              </View>
-            </View>
-            <Text style={styles.optionText}>Correct filling</Text>
-          </View>
-          <View style={styles.wrongBox}>
-            <View style={styles.answerRowInst}>
-              <View style={styles.optionBox}>
-                <Text style={styles.optionText}>A</Text>
-                <View style={styles.cross}>
-                  <View style={styles.crossLine}></View>
-                  <View style={styles.crossLineReverse}></View>
-                </View>
-              </View>
-              <View style={styles.optionBox}>
-                <Text style={styles.optionText}>B</Text>
-              </View>
+              <View style={styles.halfBlack} />
               <View style={styles.optionBox}>
                 <Text style={styles.optionText}>C</Text>
               </View>
-              <View style={styles.optionBox}>
-                <Text style={styles.optionText}>D</Text>
-              </View>
-              <View style={styles.optionBox}>
-                <Text style={styles.optionText}>E</Text>
-              </View>
-              {/* ... other options ... */}
             </View>
-            <Text style={styles.optionText}>Wrong filling</Text>
-          </View>
-          <View style={styles.wrongBox}>
-            <View style={styles.answerRowInst}>
-              <View style={styles.optionBox}>
-                <Text style={styles.optionText}>A</Text>
-              </View>
-              <View style={styles.optionBox}>
-                <Text style={styles.optionTextWrong}>B</Text>
-                <View style={styles.tick}></View>
-              </View>
-              <View style={styles.optionBox}>
-                <Text style={styles.optionText}>C</Text>
-              </View>
-              <View style={styles.optionBox}>
-                <Text style={styles.optionText}>D</Text>
-              </View>
-              <View style={styles.optionBox}>
-                <Text style={styles.optionText}>E</Text>
-              </View>
+            <View style={styles.optionBox}>
+              <Text style={styles.optionText}>D</Text>
             </View>
-            <Text style={styles.optionText}>Wrong filling</Text>
-          </View>
-          <View style={styles.wrongBox}>
-            <View style={styles.answerRowInst}>
-              <View style={styles.optionBox}>
-                <Text style={styles.optionText}>A</Text>
-              </View>
-              <View style={[styles.gradientBox]}>
-                <View style={styles.optionBox}>
-                  <Text style={styles.optionText}>B</Text>
-                </View>
-                <View style={styles.halfBlack} />
-                <View style={styles.optionBox}>
-                  <Text style={styles.optionText}>C</Text>
-                </View>
-              </View>
-              <View style={styles.optionBox}>
-                <Text style={styles.optionText}>D</Text>
-              </View>
-              <View style={styles.optionBox}>
-                <Text style={styles.optionText}>E</Text>
-              </View>
+            <View style={styles.optionBox}>
+              <Text style={styles.optionText}>E</Text>
             </View>
-            <Text style={styles.optionText}>Wrong filling</Text>
           </View>
+          <Text style={styles.optionText}>Wrong filling</Text>
         </View>
-        {student.studentLevel === "preecolier" ||
-        student.studentLevel === "ecolier" ? (
-          <VerticalNumberGrid totalNumbers={24} />
-        ) : (
-          <VerticalNumberGrid totalNumbers={30} />
-        )}
+      </View>
+      {student.studentLevel === "preecolier" ||
+      student.studentLevel === "ecolier" ? (
+        <VerticalNumberGrid totalNumbers={24} />
+      ) : (
+        <VerticalNumberGrid totalNumbers={30} />
+      )}
 
-        {/* Answer Grid */}
-        {/* <View style={styles.answerGrid}>
+      {/* Answer Grid */}
+      {/* <View style={styles.answerGrid}>
           {[...Array(30)].map((_, questionIndex) => (
             <View style={styles.answerRow} key={questionIndex}>
               <View style={styles.questionNumberBox}>
@@ -668,8 +658,8 @@ const MyDocument: React.FC<MyDocumentProps> = ({ student }) => (
           ))}
         </View> */}
 
-        {/* Add other elements such as instructions, footer, etc. */}
-      </Page>
+      {/* Add other elements such as instructions, footer, etc. */}
+    </Page>
   </Document>
 );
 
@@ -699,8 +689,7 @@ const VerticalNumberGrid = ({ totalNumbers = 30 }) => {
             flexDirection: "row",
             justifyContent: "space-around",
             marginVertical: "1px",
-          }}
-        >
+          }}>
           {row.map((number, colIndex) => (
             <View key={colIndex} style={styles.answerRow}>
               <View style={styles.questionNumberBox}>

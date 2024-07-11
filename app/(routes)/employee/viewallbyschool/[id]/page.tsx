@@ -8,6 +8,7 @@ import * as XLSX from "xlsx";
 
 import { Student, columns } from "./columns";
 import { Button } from "@/components/ui/button";
+import { useModal } from "@/hooks/use-modal-store";
 
 interface RegistrationEntry {
   students: Student[];
@@ -22,6 +23,8 @@ type LevelCounts = Record<string, number>;
 const ViewAllBySchool = () => {
   const [students, setStudents] = useState<Student[]>([]);
   const params = useParams();
+  const { onOpen } = useModal();
+
   const router = useRouter();
   const [preEculier, setPreEculier] = useState<number>(0);
   const [totalPaymentDone, setTotalPaymentDone] = useState<number>(0);
@@ -33,13 +36,17 @@ const ViewAllBySchool = () => {
   const [totalSchools, setTotalSchools] = useState<number>(0);
   const [allStudents, setAllStudents] = useState<Student[]>([]);
   const [schoolName, setSchoolName] = useState();
+  const [registrationId, setRegistratonId] = useState<string>();
 
   useEffect(() => {
     const fetchData = async () => {
+      const id = Array.isArray(params?.id) ? params.id[0] : params?.id;
+
+      setRegistratonId(id);
       const res = await axios.get(`/api/users/registrations/${params.id}`);
     };
     fetchData();
-  }, []);
+  }, [params.id]);
   useEffect(() => {
     const fetch = async () => {
       try {
@@ -108,6 +115,11 @@ const ViewAllBySchool = () => {
   const handleBack = () => {
     router.back();
   };
+  const handleAddImage = () => {
+    onOpen("addImage", {
+      registrationId,
+    });
+  };
   return (
     <>
       <div className="container mx-auto py-10">
@@ -157,6 +169,11 @@ const ViewAllBySchool = () => {
         <div className="p-4 flex justify-between border-gray-300">
           <Button variant="default" onClick={handleBack}>
             Back
+          </Button>
+          <Button
+            className="bg-transparent text-purple-600 text-xl"
+            onClick={handleAddImage}>
+            Add Proof of Payment
           </Button>
           <Button className="" onClick={exportSheet}>
             Export Data
