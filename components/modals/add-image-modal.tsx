@@ -37,9 +37,10 @@ const formSchema = z.object({
 
 const AddImageModal = () => {
   const [file, setFile] = useState<File | undefined>(undefined);
+  const [loading, setLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { isOpen, onClose, type, data } = useModal();
-  
+
   const [uploadedFileUrl, setUploadedFileUrl] = useState<string | undefined>(
     undefined
   );
@@ -99,7 +100,9 @@ const AddImageModal = () => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>, e: any) => {
     e.preventDefault();
+
     try {
+      setLoading(true);
       if (file) {
         const fileName = generateUniqueFileName(file.name);
         const checksum = await computeSHA256(file);
@@ -148,7 +151,9 @@ const AddImageModal = () => {
           theme: "light",
         });
       }
+      setLoading(false);
     } catch (error) {
+      setLoading(true);
       toast.error("Error Updating Profile ", {
         position: "top-right",
         autoClose: 5000,
@@ -159,6 +164,7 @@ const AddImageModal = () => {
         progress: undefined,
         theme: "light",
       });
+      setLoading(false);
       console.error(error);
     }
     router.refresh();
@@ -205,8 +211,7 @@ const AddImageModal = () => {
                     <button
                       onClick={() => setFileUrl("")}
                       className="absolute z-20 top-2 right-2 bg-red-500 text-white p-2 rounded-full shadow-md hover:bg-red-600 transition duration-300"
-                      type="button"
-                    >
+                      type="button">
                       <X className="h-6 w-6" />
                     </button>
                   )}
@@ -220,8 +225,7 @@ const AddImageModal = () => {
                         <FormControl>
                           <label
                             htmlFor="fileInput"
-                            className="bg-transparent flex-1 border-none outline-none cursor-pointer"
-                          >
+                            className="bg-transparent flex-1 border-none outline-none cursor-pointer">
                             {/* Style the label to look like a button */}
                             <div className="bg-blue-500 text-white py-2 px-4 rounded-full shadow-md hover:bg-blue-600 transition duration-300 flex items-center  space-x-2">
                               <Upload className="h-6 w-6" />
@@ -245,7 +249,10 @@ const AddImageModal = () => {
               </div>
             </div>
             <DialogFooter className="bg-gray-100 px-6 py-4">
-              <Button type="submit" variant="default">
+              <Button
+                type="submit"
+                disabled={loading}
+                className="bg-purple-700 text-white text-md disabled:bg-slate-100 disabled:text-black">
                 Add Image
               </Button>
             </DialogFooter>

@@ -36,6 +36,7 @@ const ViewAllBySchool = () => {
   const [allStudents, setAllStudents] = useState<Student[]>([]);
   const [schoolName, setSchoolName] = useState();
   const [registrationId, setRegistratonId] = useState<string>();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -113,9 +114,11 @@ const ViewAllBySchool = () => {
   };
 
   const handleAddImage = () => {
+    setLoading(true);
     onOpen("addImage", {
       registrationId,
     });
+    setLoading(false);
   };
   return (
     <>
@@ -168,7 +171,8 @@ const ViewAllBySchool = () => {
             Back
           </Button>
           <Button
-            className="bg-transparent text-purple-600 text-xl"
+            className="bg-transparent text-purple-600 text-xl disabled:bg-slate-100"
+            disabled={loading}
             onClick={handleAddImage}>
             Add Proof of Payment
           </Button>

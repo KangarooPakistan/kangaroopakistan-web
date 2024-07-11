@@ -36,6 +36,7 @@ const ViewAllBySchool = () => {
   const [totalSchools, setTotalSchools] = useState<number>(0);
   const [allStudents, setAllStudents] = useState<Student[]>([]);
   const [schoolName, setSchoolName] = useState();
+  const [loading, setLoading] = useState(false);
   const [registrationId, setRegistratonId] = useState<string>();
 
   useEffect(() => {
@@ -116,9 +117,11 @@ const ViewAllBySchool = () => {
     router.back();
   };
   const handleAddImage = () => {
+    setLoading(true);
     onOpen("addImage", {
       registrationId,
     });
+    setLoading(false);
   };
   return (
     <>
@@ -172,6 +175,7 @@ const ViewAllBySchool = () => {
           </Button>
           <Button
             className="bg-transparent text-purple-600 text-xl"
+            disabled={loading}
             onClick={handleAddImage}>
             Add Proof of Payment
           </Button>
