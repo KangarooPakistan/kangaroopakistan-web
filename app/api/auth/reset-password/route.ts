@@ -37,8 +37,8 @@ export async function POST(request: NextRequest) {
     });
     console.log(resetToken);
     const transporter = nodemailer.createTransport({
-      host: "smtpout.secureserver.net",
-      port: 465,
+      host: "smtp.office364.com",
+      port: 587,
       secure: true,
       auth: {
         user: process.env.NODEMAILER_EMAIL,
