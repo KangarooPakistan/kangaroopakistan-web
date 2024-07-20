@@ -3,8 +3,8 @@ import nodemailer from "nodemailer";
 const transporter = nodemailer.createTransport({
   host: "smtpout.secureserver.net",
   port: 587,
-  secure: false, // Use SSL
-  connectionTimeout: 100000,
+  secure: false,
+  connectionTimeout: 30000, // Reduced to 30 seconds
   auth: {
     user: process.env.NODEMAILER_EMAIL,
     pass: process.env.NODEMAILER_PASS,
@@ -12,15 +12,13 @@ const transporter = nodemailer.createTransport({
   tls: {
     rejectUnauthorized: false,
     minVersion: "TLSv1.2",
-    maxVersion: "TLSv1.3",
   },
-  greetingTimeout: 30000, // 30 seconds
-  socketTimeout: 60000, // 60 seconds
+  greetingTimeout: 30000,
+  socketTimeout: 60000,
   pool: true,
   maxConnections: 1,
   maxMessages: 1,
-
-  debug: true, // Enable debug logs
+  debug: true,
 });
 
 export default transporter;
