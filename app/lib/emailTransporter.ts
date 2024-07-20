@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
-  host: "smtpout.secureserver.net",
+  host: "smtp.office364.com",
   port: 587,
   secure: false,
   connectionTimeout: 30000, // Reduced to 30 seconds
