@@ -3,7 +3,7 @@ console.log(process.env.NODEMAILER_EMAIL);
 console.log(process.env.NODEMAILER_PASS);
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.office365.com",
+  host: "smtpout.secureserver.net",
   port: 587,
   secure: false,
   connectionTimeout: 30000, // Reduced to 30 seconds
