@@ -1,19 +1,20 @@
 import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.office365.com",
+  host: "smtpout.secureserver.net",
   port: 587,
-  secure: false,
-  auth: {
-    user: process.env.NODEMAILER_EMAIL,
-    pass: process.env.NODEMAILER_PASS,
-  },
+  secure: false, // Use SSL
   connectionTimeout: 100000,
-  tls: {
-    minVersion: "TLSv1.2",
-    ciphers:
-      "HIGH:MEDIUM:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!SRP:!CAMELLIA",
+  auth: {
+    user: "info@kangaroopakistan.org",
+    pass: "Alphabravo@2347",
   },
+  tls: {
+    rejectUnauthorized: false,
+    minVersion: "TLSv1.2",
+    maxVersion: "TLSv1.3",
+  },
+  debug: true, // Enable debug logs
 });
 
 export default transporter;
