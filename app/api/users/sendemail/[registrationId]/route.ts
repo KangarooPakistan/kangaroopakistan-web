@@ -126,7 +126,7 @@ export async function GET(
       }
     };
 
-    const emailResult = await sendEmailWithRetry(mailOptions, 1);
+    const emailResult = await sendEmailWithRetry(mailOptions, 3);
     if (emailResult.success) {
       return NextResponse.json("Email sent Successfully", { status: 200 });
     }
