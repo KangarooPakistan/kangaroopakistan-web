@@ -45,9 +45,9 @@ export async function POST(request: NextRequest) {
         pass: process.env.NODEMAILER_PASS,
       },
       tls: {
-        rejectUnauthorized: false
-      }
-    
+        rejectUnauthorized: false,
+        minVersion: "TLSv1.2",
+      },
     });
     console.log(transporter);
 
