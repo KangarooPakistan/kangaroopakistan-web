@@ -14,6 +14,12 @@ const transporter = nodemailer.createTransport({
     minVersion: "TLSv1.2",
     maxVersion: "TLSv1.3",
   },
+  greetingTimeout: 30000, // 30 seconds
+  socketTimeout: 60000, // 60 seconds
+  pool: true,
+  maxConnections: 1,
+  maxMessages: 1,
+
   debug: true, // Enable debug logs
 });
 
