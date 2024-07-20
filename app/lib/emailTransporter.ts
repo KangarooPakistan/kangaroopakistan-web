@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.office364.com",
+  host: "smtp.office365.com",
   port: 587,
   secure: false,
   connectionTimeout: 30000, // Reduced to 30 seconds
@@ -9,6 +9,7 @@ const transporter = nodemailer.createTransport({
     user: process.env.NODEMAILER_EMAIL,
     pass: process.env.NODEMAILER_PASS,
   },
+
   tls: {
     rejectUnauthorized: false,
     minVersion: "TLSv1.2",
