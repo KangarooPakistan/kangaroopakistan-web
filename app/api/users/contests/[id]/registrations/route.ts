@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/app/lib/prisma";
+import transporter from "@/app/lib/emailTransporter";
 import nodemailer from "nodemailer";
 
 const padNumber = (num: number) => String(num).padStart(3, "0");
@@ -68,19 +69,6 @@ export async function POST(
       },
     });
     console.log(schoolDetails);
-    const transporter = nodemailer.createTransport({
-      host: "smtpout.secureserver.net",
-      port: 465,
-      secure: true,
-      tls: { rejectUnauthorized: false },
-
-      connectionTimeout: 10000,
-      auth: {
-        user: process.env.NODEMAILER_EMAIL,
-        pass: process.env.NODEMAILER_PASS,
-      },
-    });
-    console.log(transporter);
 
     const createdStudents = [];
 

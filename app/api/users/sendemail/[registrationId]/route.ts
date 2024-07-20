@@ -1,5 +1,7 @@
 import { db } from "@/app/lib/prisma";
 import { NextResponse } from "next/server";
+import transporter from "@/app/lib/emailTransporter";
+
 import nodemailer from "nodemailer";
 
 export async function GET(
@@ -74,18 +76,7 @@ export async function GET(
         { status: 404 }
       );
     }
-    const transporter = nodemailer.createTransport({
-      host: "smtpout.secureserver.net",
-      port: 465,
-      secure: true,
-      tls: { rejectUnauthorized: false },
 
-      connectionTimeout: 10000,
-      auth: {
-        user: process.env.NODEMAILER_EMAIL,
-        pass: process.env.NODEMAILER_PASS,
-      },
-    });
     let tableHtml = `
     <table style="border: 1px solid #ddd; border-collapse: collapse;">
       <thead>
