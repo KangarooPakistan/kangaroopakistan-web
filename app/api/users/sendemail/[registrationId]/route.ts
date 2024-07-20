@@ -112,7 +112,7 @@ export async function GET(
     const sendEmailWithRetry = async (
       mailOptions: nodemailer.SendMailOptions,
       retries = 1
-    ) => {
+    ): Promise<{ success: boolean }> => {
       try {
         await transporter.sendMail(mailOptions);
         return { success: true };
