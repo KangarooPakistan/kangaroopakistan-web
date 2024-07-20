@@ -6,8 +6,8 @@ const transporter = nodemailer.createTransport({
   secure: false, // Use SSL
   connectionTimeout: 100000,
   auth: {
-    user: "info@kangaroopakistan.org",
-    pass: "Alphabravo@2347",
+    user: process.env.NODEMAILER_EMAIL,
+    pass: process.env.NODEMAILER_PASS,
   },
   tls: {
     rejectUnauthorized: false,
