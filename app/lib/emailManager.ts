@@ -27,7 +27,7 @@ class EmailManager {
       },
     ];
     this.currentAccountIndex = 0;
-    this.dailyLimit = 490;
+    this.dailyLimit = 5;
   }
 
   private createTransporter(account: EmailAccount): Transporter {
@@ -58,10 +58,13 @@ class EmailManager {
   }
 
   private switchAccount(): void {
-    this.currentAccountIndex = (this.currentAccountIndex + 1) % this.emailAccounts.length;
+    this.currentAccountIndex =
+      (this.currentAccountIndex + 1) % this.emailAccounts.length;
   }
 
-  public async sendEmail(options: SendMailOptions): Promise<nodemailer.SentMessageInfo> {
+  public async sendEmail(
+    options: SendMailOptions
+  ): Promise<nodemailer.SentMessageInfo> {
     let currentAccount = this.getCurrentAccount();
 
     if (currentAccount.sentCount >= this.dailyLimit) {
@@ -86,7 +89,7 @@ class EmailManager {
   }
 
   public resetCounters(): void {
-    this.emailAccounts.forEach(account => account.sentCount = 0);
+    this.emailAccounts.forEach((account) => (account.sentCount = 0));
   }
 }
 
