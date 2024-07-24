@@ -102,13 +102,13 @@ const CheckList: React.FC<CheckListProps> = ({ name, year, contestHeader }) => (
           {/* Table Header */}
           <View style={styles.tableRow}>
             <View style={styles.tableColHeader}>
-              <Text style={styles.tableCellHeader}>S#</Text>
+              <Text style={styles.tableCellHeader}>Sr. # </Text>
             </View>
             <View style={[styles.tableColHeader, { width: "65%" }]}>
               <Text style={styles.tableCellHeader}>List of Awards</Text>
             </View>
             <View style={[styles.tableColHeader, { width: "25%" }]}>
-              <Text style={styles.tableCellHeader}>No of medals</Text>
+              <Text style={styles.tableCellHeader}>Total number</Text>
             </View>
           </View>
           {/* Table Body */}
