@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/app/lib/prisma";
-import transporter from "@/app/lib/emailTransporter";
-import nodemailer from "nodemailer";
+import { SendMailOptions } from "nodemailer";
+import emailManager from "@/app/lib/emailManager";
 
 const padNumber = (num: number) => String(num).padStart(3, "0");
 const padNumber5 = (num: number) => String(num).padStart(5, "0");
@@ -17,23 +17,23 @@ interface StudentData {
   level: string;
 }
 
-const sendEmailWithRetry = async (
-  mailOptions: nodemailer.SendMailOptions,
-  retries = 3
-): Promise<{ success: boolean }> => {
-  try {
-    await transporter.sendMail(mailOptions);
-    return { success: true };
-  } catch (error) {
-    if (retries > 0) {
-      console.log(`Retrying to send email... Attempts left: ${retries}`);
-      return sendEmailWithRetry(mailOptions, retries - 1);
-    } else {
-      console.error(`Failed to send email after multiple attempts: ${error}`);
-      throw error;
-    }
-  }
-};
+// const sendEmailWithRetry = async (
+//   mailOptions: nodemailer.SendMailOptions,
+//   retries = 3
+// ): Promise<{ success: boolean }> => {
+//   try {
+//     await transporter.sendMail(mailOptions);
+//     return { success: true };
+//   } catch (error) {
+//     if (retries > 0) {
+//       console.log(`Retrying to send email... Attempts left: ${retries}`);
+//       return sendEmailWithRetry(mailOptions, retries - 1);
+//     } else {
+//       console.error(`Failed to send email after multiple attempts: ${error}`);
+//       throw error;
+//     }
+//   }
+// };
 
 export async function POST(
   request: Request,
@@ -205,34 +205,40 @@ export async function POST(
 
     tableHtml += `</tbody></table>`;
 
-    const mailOptions: nodemailer.SendMailOptions = {
-      from: "info@kangaroopakistan.org",
-      to: schoolDetails.email,
-      subject: `Verification of Registration Details for ${contestNameShort} 20${year}`,
-      html: `
-        <p><b>Dear Principal,</b></p>
-        <p>Congratulations on registering for the ${contestName} 20${year}!</p>
-        <p>The contest will be held on ${contestDate?.contestDate} in your institute under your supervision.</p>
-        <p>Below are the details of your institute. Please verify, as these details will be mentioned in all official documents:</p>
-        <p> School ID: ${schoolDetails.schoolId}</p>
-        <p> School Name: ${schoolDetails.schoolName}</p>
-        <p> School Address: ${schoolDetails.schoolAddress}</p>
-        <p> Official Login Email Address: ${schoolDetails.email}</p>
-        <p> Principal Name: ${schoolDetails.p_Name}</p>
-        <p> Principal Email: ${schoolDetails.p_email}</p>
-        <p> Principal Phone: ${schoolDetails.p_phone}</p>
-        <p> Principal Cell: ${schoolDetails.p_contact}</p>
-        <p> Coordinator Name: ${schoolDetails.c_Name}</p>
-        <p> Coordinator Email: ${schoolDetails.c_email}</p>
-        <p> Coordinator Phone: ${schoolDetails.c_phone}</p>
-        <p> Coordinator Cell: ${schoolDetails.c_contact}</p>
-        <p> Coordinator Account Details: ${schoolDetails.c_accountDetails}</p>
-        <p> Total Number of students Registered: ${totalStudents.length}</p>
-        ${tableHtml}
-      `,
+    const mailOptions: SendMailOptions = {
+      to: schoolDetails?.email,
+      subject: `Verification of Registration Details for ${contestNameShort} ${year}`,
+      html: `<p><b>Dear Principal,</b></p>
+      <p>Congratulations on registering for the ${contestName} ${year}</p>
+      <p>The contest will be held on ${contestDate?.contestDate} in your institute under your supervision.</p>
+      <p>Below are the details of your institute. Please verify, as these details will be mentioned in all official documents:</p>
+      <p> School ID: ${schoolDetails?.schoolId}</p>
+      <p> School Name: ${schoolDetails?.schoolName}</p>
+      <p> School Address: ${schoolDetails?.schoolAddress}</p>
+      <p> Official Login Email Address: ${schoolDetails?.email}</p>
+      <p> Principal Name: ${schoolDetails?.p_Name}</p>
+      <p> Principal Email: ${schoolDetails?.p_email}</p>
+      <p> Principal Phone: ${schoolDetails?.p_phone}</p>
+      <p> Principal Cell: ${schoolDetails?.p_contact}</p>
+      <p> Coordinator Name: ${schoolDetails?.c_Name}</p>
+      <p> Coordinator Email: ${schoolDetails?.c_email}</p>
+      <p> Coordinator Phone: ${schoolDetails?.c_phone}</p>
+      <p> Coordinator Cell: ${schoolDetails?.c_contact}</p>
+      <p> Coordinator Account Details: ${schoolDetails?.c_accountDetails}</p>
+      <p> Total Number of students Registered: ${totalStudents.length}</p>
+      ${tableHtml}`,
     };
 
-    await sendEmailWithRetry(mailOptions, 3);
+    try {
+      await emailManager.sendEmail(mailOptions);
+      return NextResponse.json("Email sent Successfully", { status: 200 });
+    } catch (error) {
+      console.error("Failed to send email:", error);
+      return NextResponse.json(
+        { error: "Failed to send email" },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json(createdStudents, { status: 201 });
   } catch (error) {

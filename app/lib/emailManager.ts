@@ -1,16 +1,13 @@
 import nodemailer from "nodemailer";
-import { SendMailOptions } from 'nodemailer';
-import fs from 'fs/promises';
-import path from 'path';
-
-
+import { SendMailOptions } from "nodemailer";
+import fs from "fs/promises";
+import path from "path";
 
 interface EmailAccount {
   email: string;
   password: string;
   sentCount: number;
   lastResetDate: Date;
-  
 }
 
 class EmailManager {
@@ -19,9 +16,8 @@ class EmailManager {
   private dailyLimit: number;
   private storageFile: string;
 
-
   constructor() {
-    this.storageFile = path.join(process.cwd(), 'email_counts.json');
+    this.storageFile = path.join(process.cwd(), "email_counts.json");
 
     this.emailAccounts = [
       {
@@ -36,11 +32,15 @@ class EmailManager {
         sentCount: 0,
         lastResetDate: new Date(),
       },
-    ];
+    ].filter((account) => account.email && account.password); // Filter out accounts with empty credentials
+
+    if (this.emailAccounts.length === 0) {
+      throw new Error("No valid email accounts configured");
+    }
+
     this.currentAccountIndex = 0;
     this.dailyLimit = 500;
     this.loadCounts();
-
   }
   private async loadCounts() {
     try {
@@ -56,14 +56,17 @@ class EmailManager {
           };
           return acc;
         }, {} as { [key: string]: { sentCount: number; lastResetDate: string } });
-  
-        await fs.writeFile(this.storageFile, JSON.stringify(defaultCounts, null, 2));
-        console.log('Created new email_counts.json file with default values');
+
+        await fs.writeFile(
+          this.storageFile,
+          JSON.stringify(defaultCounts, null, 2)
+        );
+        console.log("Created new email_counts.json file with default values");
         return; // Exit the method as we've just created a new file with default values
       }
-  
+
       // If the file exists, read and parse it
-      const data = await fs.readFile(this.storageFile, 'utf8');
+      const data = await fs.readFile(this.storageFile, "utf8");
       const counts = JSON.parse(data);
       this.emailAccounts.forEach((account) => {
         if (counts[account.email]) {
@@ -71,26 +74,32 @@ class EmailManager {
           account.lastResetDate = new Date(counts[account.email].lastResetDate);
         }
       });
-      console.log('Loaded email counts from file');
+      console.log("Loaded email counts from file");
     } catch (error) {
-      console.error('Error loading email counts:', error);
+      console.error("Error loading email counts:", error);
     }
   }
   private async saveCounts() {
-    const counts = this.emailAccounts.reduce((acc: { [key: string]: { sentCount: number; lastResetDate: string } }, account) => {
-      acc[account.email] = {
-        sentCount: account.sentCount,
-        lastResetDate: account.lastResetDate.toISOString(),
-      };
-      console.log('countsssss')
-      console.log(acc)
-      return acc;
-    }, {});
-  
+    const counts = this.emailAccounts.reduce(
+      (
+        acc: { [key: string]: { sentCount: number; lastResetDate: string } },
+        account
+      ) => {
+        acc[account.email] = {
+          sentCount: account.sentCount,
+          lastResetDate: account.lastResetDate.toISOString(),
+        };
+        console.log("countsssss");
+        console.log(acc);
+        return acc;
+      },
+      {}
+    );
+
     try {
       await fs.writeFile(this.storageFile, JSON.stringify(counts, null, 2));
     } catch (error) {
-      console.error('Error saving email counts:', error);
+      console.error("Error saving email counts:", error);
     }
   }
 
@@ -114,23 +123,32 @@ class EmailManager {
   }
 
   private switchAccount(): void {
-    this.currentAccountIndex = (this.currentAccountIndex + 1) % this.emailAccounts.length;
+    this.currentAccountIndex =
+      (this.currentAccountIndex + 1) % this.emailAccounts.length;
   }
 
   private async resetIfNecessary(account: EmailAccount): Promise<void> {
     const now = new Date();
-    const pakistanTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Karachi" }));
-    
-    if (pakistanTime.getHours() >= 18 && account.lastResetDate.getDate() !== pakistanTime.getDate()) {
+    const pakistanTime = new Date(
+      now.toLocaleString("en-US", { timeZone: "Asia/Karachi" })
+    );
+
+    if (
+      pakistanTime.getHours() >= 18 &&
+      account.lastResetDate.getDate() !== pakistanTime.getDate()
+    ) {
       account.sentCount = 0;
       account.lastResetDate = pakistanTime;
-      console.log(`Reset counter for ${account.email} at ${pakistanTime.toISOString()}`);      
+      console.log(
+        `Reset counter for ${account.email} at ${pakistanTime.toISOString()}`
+      );
       await this.saveCounts();
-
     }
   }
 
-  public async sendEmail(options: SendMailOptions): Promise<nodemailer.SentMessageInfo> {
+  public async sendEmail(
+    options: SendMailOptions
+  ): Promise<nodemailer.SentMessageInfo> {
     for (let i = 0; i < this.emailAccounts.length; i++) {
       let currentAccount = this.getCurrentAccount();
       this.resetIfNecessary(currentAccount);
@@ -139,11 +157,20 @@ class EmailManager {
         this.switchAccount();
         continue;
       }
-      
+
+      if (!currentAccount.email || !currentAccount.password) {
+        console.error(
+          `Invalid credentials for account at index ${this.currentAccountIndex}`
+        );
+        this.switchAccount();
+        continue;
+      }
 
       const transporter = this.createTransporter(currentAccount);
-      const fullMailOptions: SendMailOptions = { ...options, from: currentAccount.email };
-
+      const fullMailOptions: SendMailOptions = {
+        ...options,
+        from: currentAccount.email,
+      };
 
       for (let attempt = 0; attempt < 3; attempt++) {
         try {
@@ -151,10 +178,19 @@ class EmailManager {
           currentAccount.sentCount++;
           await this.saveCounts();
 
-          console.log(`Email sent successfully from ${currentAccount.email} & sentCount ${currentAccount.sentCount}. Attempt: ${attempt + 1}`);
+          console.log(
+            `Email sent successfully from ${currentAccount.email} & sentCount ${
+              currentAccount.sentCount
+            }. Attempt: ${attempt + 1}`
+          );
           return info;
         } catch (error) {
-          console.error(`Error sending email from ${currentAccount.email}. Attempt: ${attempt + 1}`, error);
+          console.error(
+            `Error sending email from ${currentAccount.email}. Attempt: ${
+              attempt + 1
+            }`,
+            error
+          );
           if (attempt === 2) {
             console.log(`Switching to next account after 3 failed attempts`);
             break;
@@ -176,7 +212,10 @@ class EmailManager {
   }
 
   public getTotalEmailsSent(): number {
-    return this.emailAccounts.reduce((total, account) => total + account.sentCount, 0);
+    return this.emailAccounts.reduce(
+      (total, account) => total + account.sentCount,
+      0
+    );
   }
 
   public getDailyLimit(): number {
