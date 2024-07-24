@@ -16,7 +16,7 @@
 # production
 /build
 
-# misc
+# misgc
 .DS_Store
 *.pem
 
@@ -35,6 +35,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-
+# Added email_counts.json
 
 email_counts.json
