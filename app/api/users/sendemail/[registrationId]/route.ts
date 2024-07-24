@@ -1,8 +1,6 @@
 import { db } from "@/app/lib/prisma";
 import { NextResponse } from "next/server";
 import transporter from "@/app/lib/emailTransporter";
-import {sendEmail} from "@/app/lib/emailService";
-
 import nodemailer from "nodemailer";
 import { SendMailOptions } from 'nodemailer';
 import emailManager from "@/app/lib/emailManager";
@@ -134,32 +132,7 @@ export async function GET(
     //     }
     //   }
     // };
-    const sendEmailWithRetry = async (
-      mailOptions: SendMailOptions,
-      retries : number
-    ): Promise<{ success: boolean }> => {
-      try {
-        // Get the current account email address
-        const currentAccount = emailManager.getCurrentAccount();
-        
-        // Set the from address using the current account
-        const fullMailOptions: SendMailOptions = {
-          ...mailOptions,
-          from: currentAccount.email
-        };
-
-        await emailManager.sendEmail(fullMailOptions);
-        return { success: true };
-      } catch (error) {
-        console.error("Error sending email:", error);
-        if (retries > 0) {
-          console.log(`Retrying to send email... Attempts left: ${retries}`);
-          return sendEmailWithRetry(mailOptions, retries - 1);
-        } else {
-          throw error;
-        }
-      }
-    };
+    
 
     const mailOptions: SendMailOptions = {
       to: schoolDetails?.email,
@@ -186,12 +159,14 @@ export async function GET(
     };
 
 
-
-
-    const emailResult = await sendEmailWithRetry(mailOptions, 4);
-    if (emailResult.success) {
+    try {
+      await emailManager.sendEmail(mailOptions);
       return NextResponse.json("Email sent Successfully", { status: 200 });
+    } catch (error) {
+      console.error("Failed to send email:", error);
+      return NextResponse.json({ error: "Failed to send email" }, { status: 500 });
     }
+    
   } catch (error: any) {
     console.error("Error in GET function:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
