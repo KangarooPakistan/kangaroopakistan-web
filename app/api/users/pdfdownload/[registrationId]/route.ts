@@ -27,7 +27,9 @@ export async function GET(request: Request,
                     // Add other related fields if necessary
                 },
             });
-        
+
+
+            console.log(registrations)
             const studentsArray: Student[] = [];
 
             // Loop through registrations

@@ -29,6 +29,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import SchoolReportDocument from "./SchoolReportDocument";
 import { getSession } from "next-auth/react";
+import CheckList from "./CheckList";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -117,6 +118,38 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
     const blob = await asPdf.toBlob();
     return blob;
   }
+  async function generateCLBlob(name: string, year: string) {
+    console.log(name)
+    console.log(year)
+    const doc = <CheckList  name={name} year={year}/>;
+
+    const asPdf = pdf(doc); // Create an empty PDF instance
+    const blob = await asPdf.toBlob();
+    return blob;
+  }
+  const handleDownloadCheckList = async () => {
+    // const response = await axios.get(`/api/users/contests/${contestId}`)
+    try {
+      
+      const regData = await axios.get(
+        `/api/registration/${registration.id}`
+      );
+    const response = await axios.get(`/api/users/contests/${regData.data.contestId}`)
+      const name = response.data.name
+      const dateString = response.data.startDate;
+      const year = dateString.substring(0, 4);
+      
+
+      const blob = await generateCLBlob(name, year);
+      const pdfName = `CheckList_${regData.data.schoolId}.pdf`;
+
+      saveAs(blob, pdfName);
+    } catch (error) {
+      console.error("Error downloading the PDF:", error);
+    } finally {
+    }
+  };
+
   const handleDownloadPdf = async () => {
     try {
       const response = await axios.get(
@@ -316,6 +349,9 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
           Register Students
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleEmail}>Send Email</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleDownloadCheckList}>
+          Download CheckList
+        </DropdownMenuItem>
         <DropdownMenuItem onClick={handleDownloadPdf}>
           Download Answer Sheet
         </DropdownMenuItem>
@@ -630,11 +666,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginLeft: "20px",
   },
-  // halfTransparent: {
-  //   width: "15px", // Half of the optionBox width
-  //   height: "30px", // Same as the optionBox height
-  //   backgroundColor: "transparent",
-  // },
+  
 });
 
 interface Student {

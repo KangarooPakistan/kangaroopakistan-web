@@ -9,6 +9,7 @@ export async function GET(request: Request,
                     id:params.registrationId
                 },
                 include: {
+                    
                     students: true, // Include related students
                     paymentProof: true, // Include related payment proofs
                     user: true, // Include the related user
@@ -21,5 +22,4 @@ export async function GET(request: Request,
             return NextResponse.json(params.registrationId,  { status: 400 });
             
         }
-
 }
