@@ -103,12 +103,12 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
   }, []);
 
   const handleView = () => {
-    router.push(`/employee/viewallbyschool/${registration.id}`);
+    router.push(`/admin/viewallbyschool/${registration.id}`);
   };
   const handleRegister = () => {
     console.log(registration);
     router.push(
-      `/employee/enrollstudents/${registration.contestId}/registrationId/${registration.id}`
+      `/admin/enrollstudents/${registration.contestId}/registrationId/${registration.id}`
     );
   };
   async function generatePdfBlob(students: Student[]) {
@@ -243,7 +243,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
   //   }
   // };
   const handleSchoolDetails = () => {
-    router.push(`/employee/userprofile/${data}`);
+    router.push(`/admin/userprofile/${data}`);
   };
 
   const handleSheet = async () => {
