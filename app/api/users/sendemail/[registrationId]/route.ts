@@ -1,7 +1,12 @@
 import { db } from "@/app/lib/prisma";
 import { NextResponse } from "next/server";
 import transporter from "@/app/lib/emailTransporter";
+import {sendEmail} from "@/app/lib/emailService";
+
 import nodemailer from "nodemailer";
+import { SendMailOptions } from 'nodemailer';
+import emailManager from "@/app/lib/emailManager";
+
 
 export async function GET(
   request: Request,
@@ -84,8 +89,79 @@ export async function GET(
     const startDateString = contestDate?.startDate;
     let year = startDateString ? new Date(startDateString).getFullYear() : 0;
 
-    const mailOptions: nodemailer.SendMailOptions = {
-      from: "info@kangaroopakistan.org",
+    // const mailOptions: nodemailer.SendMailOptions = {
+    //   from: "info@kangaroopakistan.org",
+    //   to: schoolDetails?.email,
+    //   subject: `Verification of Registration Details for ${contestNameShort} ${year}`,
+    //   html: `<p><b>Dear Principal,</b></p>
+    //   <p>Congratulations on registering for the ${contestName} ${year}</p>
+    //   <p>The contest will be held on ${contestDate?.contestDate} in your institute under your supervision.</p>
+    //   <p>Below are the details of your institute. Please verify, as these details will be mentioned in all official documents:</p>
+    //   <p> School ID: ${schoolDetails?.schoolId}</p>
+    //   <p> School Name: ${schoolDetails?.schoolName}</p>
+    //   <p> School Address: ${schoolDetails?.schoolAddress}</p>
+    //   <p> Official Login Email Address: ${schoolDetails?.email}</p>
+    //   <p> Principal Name: ${schoolDetails?.p_Name}</p>
+    //   <p> Principal Email: ${schoolDetails?.p_email}</p>
+    //   <p> Principal Phone: ${schoolDetails?.p_phone}</p>
+    //   <p> Principal Cell: ${schoolDetails?.p_contact}</p>
+    //   <p> Coordinator Name: ${schoolDetails?.c_Name}</p>
+    //   <p> Coordinator Email: ${schoolDetails?.c_email}</p>
+    //   <p> Coordinator Phone: ${schoolDetails?.c_phone}</p>
+    //   <p> Coordinator Cell: ${schoolDetails?.c_contact}</p>
+    //   <p> Coordinator Account Details: ${schoolDetails?.c_accountDetails}</p>
+    //   <p> Total Number of students Registered: ${totalStudents.length}</p>
+    //   ${tableHtml}`,
+    // };
+
+
+  
+  
+
+    // const sendEmailWithRetry = async (
+    //   mailOptions: nodemailer.SendMailOptions,
+    //   retries = 1
+    // ): Promise<{ success: boolean }> => {
+    //   try {
+    //     await transporter.sendMail(mailOptions);
+    //     return { success: true };
+    //   } catch (error) {
+    //     if (retries > 0) {
+    //       console.log(`Retrying to send email... Attempts left: ${retries}`);
+    //       return sendEmailWithRetry(mailOptions, retries - 1);
+    //     } else {
+    //       throw error;
+    //     }
+    //   }
+    // };
+    const sendEmailWithRetry = async (
+      mailOptions: SendMailOptions,
+      retries = 1
+    ): Promise<{ success: boolean }> => {
+      try {
+        // Get the current account email address
+        const currentAccount = emailManager.getCurrentAccount();
+        
+        // Set the from address using the current account
+        const fullMailOptions: SendMailOptions = {
+          ...mailOptions,
+          from: currentAccount.email
+        };
+
+        await emailManager.sendEmail(fullMailOptions);
+        return { success: true };
+      } catch (error) {
+        console.error("Error sending email:", error);
+        if (retries > 0) {
+          console.log(`Retrying to send email... Attempts left: ${retries}`);
+          return sendEmailWithRetry(mailOptions, retries - 1);
+        } else {
+          throw error;
+        }
+      }
+    };
+
+    const mailOptions: SendMailOptions = {
       to: schoolDetails?.email,
       subject: `Verification of Registration Details for ${contestNameShort} ${year}`,
       html: `<p><b>Dear Principal,</b></p>
@@ -109,22 +185,8 @@ export async function GET(
       ${tableHtml}`,
     };
 
-    const sendEmailWithRetry = async (
-      mailOptions: nodemailer.SendMailOptions,
-      retries = 1
-    ): Promise<{ success: boolean }> => {
-      try {
-        await transporter.sendMail(mailOptions);
-        return { success: true };
-      } catch (error) {
-        if (retries > 0) {
-          console.log(`Retrying to send email... Attempts left: ${retries}`);
-          return sendEmailWithRetry(mailOptions, retries - 1);
-        } else {
-          throw error;
-        }
-      }
-    };
+
+
 
     const emailResult = await sendEmailWithRetry(mailOptions, 3);
     if (emailResult.success) {
