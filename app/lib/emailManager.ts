@@ -27,7 +27,7 @@ class EmailManager {
       },
     ];
     this.currentAccountIndex = 0;
-    this.dailyLimit = 5;
+    this.dailyLimit = 490;
   }
 
   private createTransporter(account: EmailAccount): Transporter {
