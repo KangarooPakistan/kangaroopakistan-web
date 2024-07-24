@@ -1,10 +1,8 @@
 import { NextResponse, NextRequest } from "next/server";
 import { db } from "@/app/lib/prisma";
-import bcrypt from "bcryptjs";
 import { randomUUID } from "crypto";
-import nodemailer from "nodemailer";
-import transporter from "@/app/lib/emailTransporter"; // Import the transporter
-
+import { SendMailOptions } from "nodemailer";
+import emailManager from "@/app/lib/emailManager";
 interface UserResetData {
   email: string;
 }
@@ -39,18 +37,25 @@ export async function POST(request: NextRequest) {
     console.log(resetToken);
 
     const resetLink = `https://enrollments.kangaroopakistan.org/new-password/${token}`;
-
-    await transporter.sendMail({
-      from: "info@kangaroopakistan.org",
+    const mailOptions: SendMailOptions = {
       to: email,
       subject: "Password Reset Request",
       html: `<p>You requested a password reset. Click <a href="${resetLink}">here</a> to reset your password. This link will expire in 30 minutes.</p>`,
-    });
-    console.log("-------------------");
+    };
 
-    return NextResponse.json({
-      message: "If the email is registered, a reset link has been sent.",
-    });
+    try {
+      await emailManager.sendEmail(mailOptions);
+      return NextResponse.json(
+        "If the email is registered, a reset link has been sent.",
+        { status: 200 }
+      );
+    } catch (error) {
+      console.error("Failed to send email:", error);
+      return NextResponse.json(
+        { error: "Failed to send email" },
+        { status: 500 }
+      );
+    }
   } catch (error: any) {
     console.log(error);
     return NextResponse.json({ error: error.message }, { status: 500 });
