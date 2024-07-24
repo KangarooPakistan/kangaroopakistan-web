@@ -136,7 +136,7 @@ export async function GET(
     // };
     const sendEmailWithRetry = async (
       mailOptions: SendMailOptions,
-      retries = 1
+      retries : number
     ): Promise<{ success: boolean }> => {
       try {
         // Get the current account email address
@@ -188,7 +188,7 @@ export async function GET(
 
 
 
-    const emailResult = await sendEmailWithRetry(mailOptions, 3);
+    const emailResult = await sendEmailWithRetry(mailOptions, 4);
     if (emailResult.success) {
       return NextResponse.json("Email sent Successfully", { status: 200 });
     }
