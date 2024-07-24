@@ -3,6 +3,7 @@ import { db } from "@/app/lib/prisma";
 import bcrypt from "bcryptjs";
 import { randomUUID } from "crypto";
 import nodemailer from "nodemailer";
+import transporter from "@/app/lib/emailTransporter"; // Import the transporter
 
 interface UserResetData {
   email: string;
@@ -36,16 +37,6 @@ export async function POST(request: NextRequest) {
       },
     });
     console.log(resetToken);
-    const transporter = nodemailer.createTransport({
-      host: "smtp.office364.com",
-      port: 587,
-      secure: true,
-      auth: {
-        user: process.env.NODEMAILER_EMAIL,
-        pass: process.env.NODEMAILER_PASS,
-      },
-    });
-    console.log(transporter);
 
     const resetLink = `https://enrollments.kangaroopakistan.org/new-password/${token}`;
 

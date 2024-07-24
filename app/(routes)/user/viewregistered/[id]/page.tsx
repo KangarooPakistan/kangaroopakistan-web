@@ -112,7 +112,7 @@ const ViewRegistered = () => {
       }
     };
     fetch();
-  }, []);
+  }, [params.id]);
   const handleClick = () => {
     router.push(`/user/viewallrecipts/${registrationId}`);
   };
