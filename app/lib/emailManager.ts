@@ -172,7 +172,7 @@ class EmailManager {
         from: currentAccount.email,
       };
 
-      for (let attempt = 0; attempt < 3; attempt++) {
+      for (let attempt = 0; attempt < 4; attempt++) {
         try {
           const info = await transporter.sendMail(fullMailOptions);
           currentAccount.sentCount++;
@@ -191,7 +191,7 @@ class EmailManager {
             }`,
             error
           );
-          if (attempt === 2) {
+          if (attempt === 3) {
             console.log(`Switching to next account after 3 failed attempts`);
             break;
           }
