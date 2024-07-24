@@ -145,10 +145,16 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
     } finally {
     }
   };
-  async function generateCLBlob(name: string, year: string) {
-    console.log(name)
-    console.log(year)
-    const doc = <CheckList  name={name} year={year}/>;
+  async function generateCLBlob(
+    name: string,
+    year: string,
+    contestHeader: string
+  ) {
+    console.log(name);
+    console.log(year);
+    const doc = (
+      <CheckList name={name} year={year} contestHeader={contestHeader} />
+    );
 
     const asPdf = pdf(doc); // Create an empty PDF instance
     const blob = await asPdf.toBlob();
@@ -157,17 +163,25 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
   const handleDownloadCheckList = async () => {
     // const response = await axios.get(`/api/users/contests/${contestId}`)
     try {
-      
-      const regData = await axios.get(
-        `/api/registration/${registration.id}`
+      const regData = await axios.get(`/api/registration/${registration.id}`);
+      const response = await axios.get(
+        `/api/users/contests/${regData.data.contestId}`
       );
-    const response = await axios.get(`/api/users/contests/${regData.data.contestId}`)
-      const name = response.data.name
+      const name = response.data.name;
+      const inputString = response.data.contestCh;
       const dateString = response.data.startDate;
       const year = dateString.substring(0, 4);
-      
+      let contestHeader = "";
 
-      const blob = await generateCLBlob(name, year);
+      if (inputString === "M") {
+        contestHeader = "IKMC";
+      } else if (inputString === "L") {
+        contestHeader = "IKLC";
+      } else if (inputString === "S") {
+        contestHeader = "IKSC";
+      }
+
+      const blob = await generateCLBlob(name, year, contestHeader);
       const pdfName = `CheckList_${regData.data.schoolId}.pdf`;
 
       saveAs(blob, pdfName);

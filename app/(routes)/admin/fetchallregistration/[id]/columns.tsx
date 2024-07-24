@@ -103,12 +103,12 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
   }, []);
 
   const handleView = () => {
-    router.push(`/admin/viewallbyschool/${registration.id}`);
+    router.push(`/employee/viewallbyschool/${registration.id}`);
   };
   const handleRegister = () => {
     console.log(registration);
     router.push(
-      `/admin/enrollstudents/${registration.contestId}/registrationId/${registration.id}`
+      `/employee/enrollstudents/${registration.contestId}/registrationId/${registration.id}`
     );
   };
   async function generatePdfBlob(students: Student[]) {
@@ -118,38 +118,6 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
     const blob = await asPdf.toBlob();
     return blob;
   }
-  async function generateCLBlob(name: string, year: string) {
-    console.log(name)
-    console.log(year)
-    const doc = <CheckList  name={name} year={year}/>;
-
-    const asPdf = pdf(doc); // Create an empty PDF instance
-    const blob = await asPdf.toBlob();
-    return blob;
-  }
-  const handleDownloadCheckList = async () => {
-    // const response = await axios.get(`/api/users/contests/${contestId}`)
-    try {
-      
-      const regData = await axios.get(
-        `/api/registration/${registration.id}`
-      );
-    const response = await axios.get(`/api/users/contests/${regData.data.contestId}`)
-      const name = response.data.name
-      const dateString = response.data.startDate;
-      const year = dateString.substring(0, 4);
-      
-
-      const blob = await generateCLBlob(name, year);
-      const pdfName = `CheckList_${regData.data.schoolId}.pdf`;
-
-      saveAs(blob, pdfName);
-    } catch (error) {
-      console.error("Error downloading the PDF:", error);
-    } finally {
-    }
-  };
-
   const handleDownloadPdf = async () => {
     try {
       const response = await axios.get(
@@ -172,6 +140,51 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       const pdfName = `answersheet_${response.data[0].schoolId}_part1.pdf`;
 
       saveAs(blob, "students.pdf");
+    } catch (error) {
+      console.error("Error downloading the PDF:", error);
+    } finally {
+    }
+  };
+  async function generateCLBlob(
+    name: string,
+    year: string,
+    contestHeader: string
+  ) {
+    console.log(name);
+    console.log(year);
+    const doc = (
+      <CheckList name={name} year={year} contestHeader={contestHeader} />
+    );
+
+    const asPdf = pdf(doc); // Create an empty PDF instance
+    const blob = await asPdf.toBlob();
+    return blob;
+  }
+  const handleDownloadCheckList = async () => {
+    // const response = await axios.get(`/api/users/contests/${contestId}`)
+    try {
+      const regData = await axios.get(`/api/registration/${registration.id}`);
+      const response = await axios.get(
+        `/api/users/contests/${regData.data.contestId}`
+      );
+      const name = response.data.name;
+      const inputString = response.data.contestCh;
+      const dateString = response.data.startDate;
+      const year = dateString.substring(0, 4);
+      let contestHeader = "";
+
+      if (inputString === "M") {
+        contestHeader = "IKMC";
+      } else if (inputString === "L") {
+        contestHeader = "IKLC";
+      } else if (inputString === "S") {
+        contestHeader = "IKSC";
+      }
+
+      const blob = await generateCLBlob(name, year, contestHeader);
+      const pdfName = `CheckList_${regData.data.schoolId}.pdf`;
+
+      saveAs(blob, pdfName);
     } catch (error) {
       console.error("Error downloading the PDF:", error);
     } finally {
@@ -230,7 +243,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
   //   }
   // };
   const handleSchoolDetails = () => {
-    router.push(`/admin/userprofile/${data}`);
+    router.push(`/employee/userprofile/${data}`);
   };
 
   const handleSheet = async () => {
@@ -348,10 +361,10 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         <DropdownMenuItem onClick={handleRegister}>
           Register Students
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleEmail}>Send Email</DropdownMenuItem>
         <DropdownMenuItem onClick={handleDownloadCheckList}>
           Download CheckList
         </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleEmail}>Send Email</DropdownMenuItem>
         <DropdownMenuItem onClick={handleDownloadPdf}>
           Download Answer Sheet
         </DropdownMenuItem>
@@ -666,7 +679,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginLeft: "20px",
   },
-  
+  // halfTransparent: {
+  //   width: "15px", // Half of the optionBox width
+  //   height: "30px", // Same as the optionBox height
+  //   backgroundColor: "transparent",
+  // },
 });
 
 interface Student {

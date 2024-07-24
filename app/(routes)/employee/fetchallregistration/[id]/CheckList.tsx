@@ -1,6 +1,5 @@
 import React from "react";
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
-import { PDFDownloadLink } from "@react-pdf/renderer";
 
 // Create styles
 const styles = StyleSheet.create({
@@ -22,12 +21,52 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginBottom: 10,
   },
-  list: {
-    marginLeft: 20,
+  table: {
+    display: "flex",
+    width: "auto",
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderColor: "#bfbfbf",
+    marginBottom: 10,
   },
-  listItem: {
+  tableRow: {
+    margin: "auto",
+    flexDirection: "row",
+  },
+  tableColHeader: {
+    width: "10%",
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderColor: "#bfbfbf",
+    backgroundColor: "#f0f0f0",
+    padding: 5,
+  },
+  tableCol1: {
+    width: "10%",
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderColor: "#bfbfbf",
+  },
+  tableCol2: {
+    width: "65%",
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderColor: "#bfbfbf",
+  },
+  tableCol3: {
+    width: "25%",
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderColor: "#bfbfbf",
+  },
+  tableCellHeader: {
+    margin: 5,
     fontSize: 12,
-    marginBottom: 5,
+    fontWeight: 500,
+  },
+  tableCell: {
+    margin: 5,
+    fontSize: 10,
   },
   signature: {
     marginTop: 30,
@@ -38,15 +77,17 @@ const styles = StyleSheet.create({
 
 interface CheckListProps {
   name: string;
+  contestHeader: string;
   year: string;
 }
 
-// Create Document Component
-const CheckList: React.FC<CheckListProps> = ({ name, year }) => (
+const CheckList: React.FC<CheckListProps> = ({ name, year, contestHeader }) => (
   <Document>
     <Page size="A4" style={styles.page}>
       <View style={styles.section}>
-        <Text style={styles.title}>IKMC 2024 Results</Text>
+        <Text style={styles.title}>
+          {contestHeader} {year} Results
+        </Text>
         <Text style={styles.text}>Dear Principal,</Text>
         <Text style={styles.text}>
           We hope this letter finds you well. On behalf of Innovative Learning -
@@ -57,40 +98,49 @@ const CheckList: React.FC<CheckListProps> = ({ name, year }) => (
           Enclosed, you will find the following items (if applicable to your
           school):
         </Text>
-        <View style={styles.list}>
-          <Text style={styles.listItem}>• Shield for Principal</Text>
-          <Text style={styles.listItem}>• Shield for Coordinator</Text>
-          <Text style={styles.listItem}>
-            • Certificates for Principal and Coordinator
-          </Text>
-          <Text style={styles.listItem}>• Cash Prize for Coordinator</Text>
-          <Text style={styles.listItem}>
-            • Gold Medal and Red Digital Bottle
-          </Text>
-          <Text style={styles.listItem}>
-            • Silver Medal and Black Digital Bottle
-          </Text>
-          <Text style={styles.listItem}>
-            • Bronze Medal and Math Magnet (for grades 1-4)
-          </Text>
-          <Text style={styles.listItem}>
-            • Bronze Medal and Rubik Cube (for grades 5-12)
-          </Text>
-          <Text style={styles.listItem}>• 3-Star Badge</Text>
-          <Text style={styles.listItem}>• 2-Star Badge</Text>
-          <Text style={styles.listItem}>• 1-Star Badge</Text>
-          <Text style={styles.listItem}>
-            • Participation Prize - 2 in 1 mobile holder pen
-          </Text>
-          <Text style={styles.listItem}>
-            • 2 in 1 mobile holder pen for the absent students
-          </Text>
-          <Text style={styles.listItem}>
-            • Total No. of Certificates for all the Participants
-          </Text>
-          <Text style={styles.listItem}>
-            • Individual Report of all the Participants
-          </Text>
+        <View style={styles.table}>
+          {/* Table Header */}
+          <View style={styles.tableRow}>
+            <View style={styles.tableColHeader}>
+              <Text style={styles.tableCellHeader}>S#</Text>
+            </View>
+            <View style={[styles.tableColHeader, { width: "65%" }]}>
+              <Text style={styles.tableCellHeader}>List of Awards</Text>
+            </View>
+            <View style={[styles.tableColHeader, { width: "25%" }]}>
+              <Text style={styles.tableCellHeader}>No of medals</Text>
+            </View>
+          </View>
+          {/* Table Body */}
+          {[
+            "Shield for Principal",
+            "Shield for Coordinator",
+            "Certificates for Principal and Coordinator",
+            "Cash Prize for Coordinator",
+            "Gold Medal and Red Digital Bottle",
+            "Silver Medal and Black Digital Bottle",
+            "Bronze Medal and Math Magnet (for grades 1-4)",
+            "Bronze Medal and Rubik Cube (for grades 5-12)",
+            "3-Star Badge",
+            "2-Star Badge",
+            "1-Star Badge",
+            "Participation Prize - 2 in 1 mobile holder pen",
+            "2 in 1 mobile holder pen for the absent students",
+            "Total No. of Certificates for all the Participants",
+            "Individual Report of all the Participants",
+          ].map((item, index) => (
+            <View style={styles.tableRow} key={index}>
+              <View style={styles.tableCol1}>
+                <Text style={styles.tableCell}>{index + 1}</Text>
+              </View>
+              <View style={styles.tableCol2}>
+                <Text style={styles.tableCell}>{item}</Text>
+              </View>
+              <View style={styles.tableCol3}>
+                <Text style={styles.tableCell}></Text>
+              </View>
+            </View>
+          ))}
         </View>
         <Text style={styles.text}>
           Please review the enclosed materials to ensure that all items have
