@@ -1,205 +1,317 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider     = "mysql"
   url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
 
-generator client {
-  provider = "prisma-client-js"
+model UserNew {
+  id                  String            @id @unique @default(uuid())
+  email               String            @unique
+  password            String
+  role                String            @default("Admin")
+  schoolId            Int               @unique @default(autoincrement())
+  schoolName          String?
+  contactNumber       String?
+  schoolAddress       String?
+  district            String?
+  tehsil              String?
+  city                String?           @db.VarChar(255)
+  fax                 String?
+  bankTitle           String?
+  p_fName             String?
+  p_mName             String?
+  p_lName             String?
+  p_Name              String?           @db.VarChar(255)
+  p_contact           String?
+  p_phone             String?
+  p_email             String?
+  c_fName             String?
+  c_mName             String?
+  c_lName             String?
+  c_Name              String?           @db.VarChar(255)
+  c_contact           String?
+  c_phone             String?
+  c_email             String?
+  districtCode        String?           @db.VarChar(255)
+  districtName        String?           @db.VarChar(250)
+  c_accountDetails    String?
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+  passwordResetTokens ResetNew[]
+  registrations       RegistrationNew[]
+
+  @@map("user_new")
 }
-  model User {
-    id            String      @id @default(uuid()) @unique
-    email         String   @unique
-    password      String
-    role          String   @default("Admin") // 'admin', 'user', etc.
-    schoolId      Int     @unique  @default(autoincrement())
-    schoolName    String?  // Optional: only for non-admin users
-    contactNumber String?
-    schoolAddress String?
-    district String?
-    tehsil String?
-    city String? @db.VarChar(255)
-    fax String?
-    bankTitle String?
-    p_fName String?
-    p_mName String?
-    p_lName String?
-    p_Name String? @db.VarChar(255)
-    p_contact String?
-    p_phone String?
-    p_email String?
-    c_fName String?
-    c_mName String?
-    c_lName String?
-    c_Name String? @db.VarChar(255)
-    c_contact String?
-    c_phone String?
-    c_email String?
-    districtCode String? @db.VarChar(255)
-    districtName String? @db.VarChar(250)
-    c_accountDetails String?
 
-    createdAt     DateTime @default(now())
-    updatedAt     DateTime @updatedAt
-    passwordResetTokens Reset[]
-
-    registrations Registration[]
-  }
-model Reset {
+model ResetNew {
   id        Int       @id @default(autoincrement())
   token     String    @unique
   createdAt DateTime  @default(now())
   resetAt   DateTime?
-  userId String
+  userId    String
+  user      UserNew   @relation(fields: [userId], references: [id])
 
-  user   User @relation(fields: [userId], references: [id])
   @@index([userId])
-
+  @@map("reset_new")
 }
 
-
-model Registration {
-  id          String       @id @default(uuid())
+model RegistrationNew {
+  id           String            @id @default(uuid())
   contestId    String
   schoolId     Int
-  schoolName    String?
-  students     Student[]
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-  registeredBy   String
-  paymentProof PaymentProof[]
-  user          User     @relation(fields: [registeredBy], references: [id],  onDelete: Cascade)
-  @@index([contestId])
+  schoolName   String?
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  registeredBy String
+  students     StudentNew[]
+  paymentProof PaymentProofNew[]
+  user         UserNew           @relation(fields: [registeredBy], references: [id], onDelete: Cascade)
+
   @@unique([contestId, schoolId])
+  @@index([contestId])
   @@index([registeredBy])
   @@index([schoolId])
+  @@map("registration_new")
 }
 
 model ContestType {
-  id       String     @id @default(uuid())
-  contestName     String  @unique
-  imageUrl String @db.VarChar(10000)
-  contestCh String
-  contests      Contest[]
+  id          String    @id @default(uuid())
+  contestName String    @unique
+  imageUrl    String    @db.VarChar(10000)
+  contestCh   String
+  contests    Contest[]
+
+  @@map("contesttype")
 }
+
+model ContestTypeNew {
+  id          String       @id @default(uuid())
+  contestName String       @unique
+  imageUrl    String       @db.VarChar(10000)
+  contestCh   String
+  contests    ContestNew[]
+
+  @@map("contesttype_new")
+}
+
 model Contest {
-  id            String   @id @default(uuid())
+  id            String      @id @default(uuid())
   name          String
   startDate     DateTime
   endDate       DateTime
-  contestDate String?
-  resultDate String?
-  contestCh String?
+  contestDate   String?
+  resultDate    String?
+  contestCh     String?
   contestTypeId String
   contestType   ContestType @relation(fields: [contestTypeId], references: [id], onDelete: Cascade)
-  sheetScans SheetScan[]
-  scores Score[]
+
+  @@index([contestTypeId])
+  @@map("contest")
+}
+
+model ContestNew {
+  id             String          @id @default(uuid())
+  name           String
+  startDate      DateTime
+  endDate        DateTime
+  contestDate    String?
+  resultDate     String?
+  contestCh      String?
+  contestTypeId  String
+  contestType    ContestTypeNew  @relation(fields: [contestTypeId], references: [id], onDelete: Cascade)
+  sheetScans     SheetScan[]
+  scores         Score[]
   correctAnswers CorrectAnswer[]
 
   @@index([contestTypeId])
+  @@map("contest_new")
 }
 
 model Student {
-  id           Int      @id @default(autoincrement())
-  registration Registration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+  id             Int    @id @default(autoincrement())
   registrationId String
   rollNumber     String
-  studentName  String
-  fatherName   String
-  class        String
-  level        String
+  studentName    String
+  fatherName     String
+  class          String
+  level          String
 
   @@index([registrationId])
+  @@map("student")
 }
 
-model PaymentProof{
-  id Int @id @default(autoincrement())
-  imageUrl String
-  registration Registration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+model StudentNew {
+  id             Int             @id @default(autoincrement())
   registrationId String
+  rollNumber     String
+  studentName    String
+  fatherName     String
+  class          String
+  level          String
+  registration   RegistrationNew @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+
   @@index([registrationId])
-}
-model Notification{
-  id Int @id @default(autoincrement())
-  imageUrl String
-  createdAt     DateTime @default(now())
-
+  @@map("student_new")
 }
 
+model PaymentProof {
+  id             Int    @id @default(autoincrement())
+  imageUrl       String
+  registrationId String
+
+  @@index([registrationId])
+  @@map("paymentproof")
+}
+
+model PaymentProofNew {
+  id             Int             @id @default(autoincrement())
+  imageUrl       String
+  registrationId String
+  registration   RegistrationNew @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+
+  @@index([registrationId])
+  @@map("paymentproof_new")
+}
 
 model CorrectAnswer {
-  id          BigInt       @id @default(autoincrement()) @map("ID")
-  updatedAt   DateTime  @map("UPDATED_ON") @updatedAt
-  answers     String? @map("ANSWERS") @db.VarChar(1500)
-  classId     Int?       @map("CLASS_ID")
-  contestId   String   @db.VarChar(255) @map("CONTEST_ID") @default("defaultContestId")
-  contest     Contest   @relation(fields: [contestId], references: [id])
+  id        BigInt     @id @default(autoincrement()) @map("ID")
+  updatedAt DateTime   @updatedAt @map("UPDATED_ON")
+  answers   String?    @map("ANSWERS") @db.VarChar(1500)
+  classId   Int?       @map("CLASS_ID")
+  contestId String     @default("defaultContestId") @map("CONTEST_ID") @db.VarChar(255)
+  contest   ContestNew @relation(fields: [contestId], references: [id])
 
   @@map("u_correct_answers")
 }
 
 model Login {
-  id        BigInt       @id @default(autoincrement()) @map("ID")
-  updatedAt DateTime  @map("UPDATED_ON") @updatedAt 
-  email     String? @map("EMAIL") @db.VarChar(255)
-  name      String? @map("NAME") @db.VarChar(255)
-  password  String? @map("PASSWORD") @db.VarChar(255)
-  status    String? @map("STATUS") @db.VarChar(255)
-  username  String? @map("USERNAME") @db.VarChar(255)
+  id        BigInt   @id @default(autoincrement()) @map("ID")
+  updatedAt DateTime @updatedAt @map("UPDATED_ON")
+  email     String?  @map("EMAIL") @db.VarChar(255)
+  name      String?  @map("NAME") @db.VarChar(255)
+  password  String?  @map("PASSWORD") @db.VarChar(255)
+  status    String?  @map("STATUS") @db.VarChar(255)
+  username  String?  @map("USERNAME") @db.VarChar(255)
 
   @@map("u_logins")
 }
 
 model Position {
-  id           BigInt      @id @default(autoincrement()) @map("ID")
-  updatedAt    DateTime @map("UPDATED_ON") @updatedAt 
-  class        String?   @map("CLASS") @db.VarChar(255)
+  id           BigInt   @id @default(autoincrement()) @map("ID")
+  updatedAt    DateTime @updatedAt @map("UPDATED_ON")
+  class        String?  @map("CLASS") @db.VarChar(255)
   district     String?  @map("DISTRICT") @db.VarChar(255)
-  noOfStudents Int?      @map("NO_OF_STUDENTS")
-  position     Int? @map("POSITION")
-  schoolId     Int?      @map("school_Id")
-  score        Decimal?  @map("SCORE")  @db.Decimal(19,2)
-  type         String? @map("TYPE") @db.VarChar(255)
+  noOfStudents Int?     @map("NO_OF_STUDENTS")
+  position     Int?     @map("POSITION")
+  schoolId     Int?     @map("school_Id")
+  score        Decimal? @map("SCORE") @db.Decimal(19, 2)
+  type         String?  @map("TYPE") @db.VarChar(255)
 
   @@map("u_positions")
 }
 
 model Score {
-  id            BigInt      @id @default(autoincrement())  @map("ID")
-  updatedAt     DateTime @map("UPDATED_ON") @updatedAt
-  cRow1         Int?      @map("C_ROW1") 
-  cRow2         Int?      @map("C_ROW2")
-  cRow3         Int?      @map("C_ROW3")
-  cTotal        Int?      @map("C_TOTAL")
-  contestId     String   @map("CONTEST_ID")
-  creditScore   Int?      @map("CREDIT_SCORE")
-  description   String? @map("DESCRIPTION") @db.VarChar(1000)
-  missing       Int? @map("MISSING")
-  percentage    Decimal?  @map("PERCENTAGE") @db.Decimal(19,2)
-  rollNo        String?   @map("ROLL_NO") @db.VarChar(255)
-  score         BigInt?   @map("SCORE")
-  totalMarks    BigInt?   @map("TOTAL_MARKS")
-  wrong         Int? @map("WRONG")
-
-  contest       Contest  @relation(fields: [contestId], references: [id])
+  id          BigInt     @id @default(autoincrement()) @map("ID")
+  updatedAt   DateTime   @updatedAt @map("UPDATED_ON")
+  cRow1       Int?       @map("C_ROW1")
+  cRow2       Int?       @map("C_ROW2")
+  cRow3       Int?       @map("C_ROW3")
+  cTotal      Int?       @map("C_TOTAL")
+  contestId   String     @map("CONTEST_ID")
+  creditScore Int?       @map("CREDIT_SCORE")
+  description String?    @map("DESCRIPTION") @db.VarChar(1000)
+  missing     Int?       @map("MISSING")
+  percentage  Decimal?   @map("PERCENTAGE") @db.Decimal(19, 2)
+  rollNo      String?    @map("ROLL_NO") @db.VarChar(255)
+  score       BigInt?    @map("SCORE")
+  totalMarks  BigInt?    @map("TOTAL_MARKS")
+  wrong       Int?       @map("WRONG")
+  contest     ContestNew @relation(fields: [contestId], references: [id])
 
   @@map("u_scores")
 }
 
 model SheetScan {
-  id          BigInt       @id @default(autoincrement()) @map("ID")
-  updatedAt   DateTime  @map("UPDATED_ON") @updatedAt
-  answers     String? @map("ANSWERS") @db.VarChar(1500)
-  fileName    String?    @map("FILE_NAME") @db.VarChar(255)
-  keyLogs     String?   @map("KEY_LOGS") @db.VarChar(1500) // Nullable because there are NULL entries in 
-  reason      String? @map("REASON") @db.VarChar(1500)
-  rollNo      String?    @map("ROLL_NO") @db.VarChar(255)
-  status      String? @map("STATUS") @db.VarChar(255)
-  contestId   String    @map("CONTEST_ID") @db.VarChar(255)
-
-  contest     Contest   @relation(fields: [contestId], references: [id])
+  id        BigInt     @id @default(autoincrement()) @map("ID")
+  updatedAt DateTime   @updatedAt @map("UPDATED_ON")
+  answers   String?    @map("ANSWERS") @db.VarChar(1500)
+  fileName  String?    @map("FILE_NAME") @db.VarChar(255)
+  keyLogs   String?    @map("KEY_LOGS") @db.VarChar(1500)
+  reason    String?    @map("REASON") @db.VarChar(1500)
+  rollNo    String?    @map("ROLL_NO") @db.VarChar(255)
+  status    String?    @map("STATUS") @db.VarChar(255)
+  contestId String     @map("CONTEST_ID") @db.VarChar(255)
+  contest   ContestNew @relation(fields: [contestId], references: [id])
 
   @@map("u_sheet_scans")
 }
 
+model notification {
+  id        Int      @id @default(autoincrement())
+  imageUrl  String
+  createdAt DateTime @default(now())
+}
 
+model registration {
+  id           String   @id
+  contestId    String
+  schoolId     Int
+  schoolName   String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime
+  registeredBy String
+
+  @@unique([contestId, schoolId], map: "Registration_contestId_schoolId_key")
+  @@index([contestId], map: "Registration_contestId_idx")
+  @@index([registeredBy], map: "Registration_registeredBy_idx")
+  @@index([schoolId], map: "Registration_schoolId_idx")
+}
+
+model reset {
+  id        Int       @id @default(autoincrement())
+  token     String    @unique(map: "Reset_token_key")
+  createdAt DateTime  @default(now())
+  resetAt   DateTime?
+  userId    String
+
+  @@index([userId], map: "Reset_userId_idx")
+}
+
+model user {
+  id               String   @id @unique(map: "User_id_key")
+  email            String   @unique(map: "User_email_key")
+  password         String
+  role             String   @default("Admin")
+  schoolId         Int      @unique(map: "User_schoolId_key") @default(autoincrement())
+  schoolName       String?
+  contactNumber    String?
+  schoolAddress    String?
+  district         String?
+  tehsil           String?
+  city             String?  @db.VarChar(255)
+  fax              String?
+  bankTitle        String?
+  p_fName          String?
+  p_mName          String?
+  p_lName          String?
+  p_Name           String?  @db.VarChar(255)
+  p_contact        String?
+  p_phone          String?
+  p_email          String?
+  c_fName          String?
+  c_mName          String?
+  c_lName          String?
+  c_Name           String?  @db.VarChar(255)
+  c_contact        String?
+  c_phone          String?
+  c_email          String?
+  districtCode     String?  @db.VarChar(255)
+  districtName     String?  @db.VarChar(250)
+  c_accountDetails String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime
+}
