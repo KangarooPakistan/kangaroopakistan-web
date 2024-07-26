@@ -301,7 +301,7 @@ model Score {
   cRow2         Int?      @map("C_ROW2")
   cRow3         Int?      @map("C_ROW3")
   cTotal        Int?      @map("C_TOTAL")
-  contestId     String   @map("CONTEST_ID")
+  contestId     String   @map("CONTEST_ID") @db.VarChar(500)
   creditScore   Int?      @map("CREDIT_SCORE")
   description   String? @map("DESCRIPTION") @db.VarChar(1000)
   missing       Int? @map("MISSING")
