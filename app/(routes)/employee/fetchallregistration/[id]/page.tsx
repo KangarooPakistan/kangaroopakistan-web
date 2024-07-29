@@ -7,6 +7,10 @@ import { Registration, columns, PaymentProof } from "./columns";
 import { DataTable } from "./data-table";
 import { Button } from "@/components/ui/button";
 import * as XLSX from "xlsx";
+import AllLabels, { SchoolDetails } from "./AllLabels";
+import { pdf } from "@react-pdf/renderer";
+import { saveAs } from "file-saver";
+
 
 export const dynamic = "force-dynamic"; // Ensures this page is always rendered server-side
 
@@ -83,6 +87,8 @@ const FetchAllRegistrations = () => {
   const [cadet, setCadet] = useState<number>(0);
   const [junior, setJunior] = useState<number>(0);
   const [student, setStudent] = useState<number>(0);
+  const [labelsData, setLabelsData] = useState<SchoolDetails[]>([]);
+
 
   useEffect(() => {
     const controller = new AbortController();
@@ -156,6 +162,13 @@ const FetchAllRegistrations = () => {
         email: obj.user.email,
         paymentProof: obj.paymentProof, // This assumes paymentProof is within the user object
       }));
+      const schoolsData = registrations.map((obj: any) => ({
+        schoolName: obj.user.schoolName,
+        schoolId: obj.user.schoolId,
+        schoolAddress: obj.user.schoolAddress,
+        schoolPrinPhone: obj.user.p_phone,
+        schoolCorPhone: obj.user.c_phone, })).sort((a: SchoolDetails, b: SchoolDetails) => a.schoolId - b.schoolId);
+          setLabelsData(schoolsData)
 
       setRegData(extractedData);
     };
@@ -187,6 +200,23 @@ const FetchAllRegistrations = () => {
   const handleRegister = () => {
     router.push(`/employee/registerincontest/${params.id}`);
   };
+  const handleDownloadAllLabel = async () => {
+    console.log('kkr')
+    try {
+  
+      const blob = await pdf(
+        <AllLabels
+        schoolDetails={labelsData}
+        />
+      ).toBlob();
+  
+      const pdfName = `labelsForAll.pdf`;
+      saveAs(blob, pdfName);
+    } catch (error) {
+      console.error("Error downloading the PDF:", error);
+    }  
+
+  }
 
   return (
     <div className="container mx-auto py-10">
@@ -240,8 +270,11 @@ const FetchAllRegistrations = () => {
           <Button className="mr-2" onClick={handleClick}>
             Export Data
           </Button>
-          <Button variant="default" onClick={handleRegister}>
+          <Button variant="default" className="mr-2" onClick={handleRegister}>
             Register a school
+          </Button>
+          <Button variant="default" onClick={handleDownloadAllLabel}>
+            Download Labels
           </Button>
         </div>
       </div>

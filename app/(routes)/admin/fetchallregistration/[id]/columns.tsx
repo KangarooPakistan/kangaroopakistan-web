@@ -30,6 +30,7 @@ import { useEffect, useState } from "react";
 import SchoolReportDocument from "./SchoolReportDocument";
 import { getSession } from "next-auth/react";
 import CheckList from "./CheckList";
+import AllLabels from "./AllLabels";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -364,6 +365,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         <DropdownMenuItem onClick={handleDownloadCheckList}>
           Download CheckList
         </DropdownMenuItem>
+
         <DropdownMenuItem onClick={handleEmail}>Send Email</DropdownMenuItem>
         <DropdownMenuItem onClick={handleDownloadPdf}>
           Download Answer Sheet
@@ -442,14 +444,14 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: 14,
+    textTransform: 'uppercase',
     marginBottom: 10,
     fontWeight: "bold",
-
     textAlign: "center",
-    textTransform: "uppercase",
   },
   subHeaderBetween: {
     fontSize: 10,
+    textTransform: 'uppercase',
     fontWeight: "bold",
     marginBottom: 10,
     textAlign: "center",
@@ -472,11 +474,13 @@ const styles = StyleSheet.create({
   studentInfoTitle: {
     fontSize: "14px",
     width: "250px",
+    textTransform: 'uppercase',
     fontWeight: "heavy",
   },
   studentInfoContent: {
     fontSize: "14px",
     fontWeight: "bold",
+    textTransform: 'uppercase',
     width: "700px", // Set maximum width to fit the container
     flexWrap: "wrap", // Allow text to wrap
     marginLeft: "20px",
@@ -509,10 +513,12 @@ const styles = StyleSheet.create({
   questionNumber: {},
   option: {
     fontSize: 13,
+    textTransform: 'uppercase',
     fontWeight: "bold",
   },
   optionNumber: {
     fontSize: 15,
+    textTransform: 'uppercase',
     marginTop: 2,
   },
   optionsRow: {
@@ -564,6 +570,7 @@ const styles = StyleSheet.create({
   },
   optionText: {
     fontSize: 8,
+    textTransform: 'uppercase',
     textAlign: "center",
   },
   correctFilling: {
@@ -632,6 +639,7 @@ const styles = StyleSheet.create({
   },
   optionTextWrong: {
     fontSize: "10px",
+    textTransform: 'uppercase',
     position: "relative",
     zIndex: "1",
   },

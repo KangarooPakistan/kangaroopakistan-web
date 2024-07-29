@@ -441,6 +441,7 @@ const styles = StyleSheet.create({
     padding: 30,
   },
   header: {
+    
     fontSize: 14,
     marginBottom: 10,
     fontWeight: "bold",
@@ -451,6 +452,7 @@ const styles = StyleSheet.create({
   subHeaderBetween: {
     fontSize: 10,
     fontWeight: "bold",
+    textTransform: 'uppercase',
     marginBottom: 10,
     textAlign: "center",
   },
@@ -471,11 +473,13 @@ const styles = StyleSheet.create({
   },
   studentInfoTitle: {
     fontSize: "14px",
+    textTransform: 'uppercase',
     width: "250px",
     fontWeight: "heavy",
   },
   studentInfoContent: {
     fontSize: "14px",
+    textTransform: 'uppercase',
     fontWeight: "bold",
     width: "700px", // Set maximum width to fit the container
     flexWrap: "wrap", // Allow text to wrap
@@ -509,9 +513,11 @@ const styles = StyleSheet.create({
   questionNumber: {},
   option: {
     fontSize: 13,
+    textTransform: 'uppercase',
     fontWeight: "bold",
   },
   optionNumber: {
+    textTransform: 'uppercase',
     fontSize: 15,
     marginTop: 2,
   },
@@ -564,6 +570,7 @@ const styles = StyleSheet.create({
   },
   optionText: {
     fontSize: 8,
+    textTransform: 'uppercase',
     textAlign: "center",
   },
   correctFilling: {
@@ -632,6 +639,7 @@ const styles = StyleSheet.create({
   },
   optionTextWrong: {
     fontSize: "10px",
+    textTransform: 'uppercase',
     position: "relative",
     zIndex: "1",
   },
