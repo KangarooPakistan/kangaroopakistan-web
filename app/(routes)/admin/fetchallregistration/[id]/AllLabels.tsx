@@ -43,9 +43,12 @@ const styles = StyleSheet.create({
   page: {
     flexDirection: "column",
     backgroundColor: "#ffffff",
-    justifyContent: "space-between",
+    // justifyContent: "space-between",
     alignItems: "stretch",
-    padding: 30,
+    paddingTop: '115pt',
+    paddingLeft: '43pt',
+    paddingRight: '43pt',
+
   },
   header: {
     flexDirection: "row",
@@ -103,7 +106,6 @@ const styles = StyleSheet.create({
             src="/KSF_PAK.jpeg"
           />
         </View>
-        <View style={styles.empty}></View>
 
         
         <View style={styles.addressBlock}>
