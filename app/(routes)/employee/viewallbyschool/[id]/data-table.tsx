@@ -44,7 +44,8 @@ export function DataTable<TData, TValue>({
   const [rowSelection, setRowSelection] = useState({});
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [pageSize, setPageSize] = useState(500); // Add this line
+  const [pageSize, setPageSize] = useState(200); // Add this line
+  const [pageIndex, setPageIndex] = useState(0); // Add this line
 
   const table = useReactTable({
     data,
@@ -62,10 +63,26 @@ export function DataTable<TData, TValue>({
       rowSelection,
       sorting,
       columnFilters,
-      pagination: { pageIndex: 0, pageSize }, // This line ensures pagination respects the pageSize
+      pagination: { pageIndex: pageIndex, pageSize },
     },
   });
+  const handleIncreasePageSize = () => {
+    setPageIndex((prevPageIndex) => prevPageIndex + 1); // Increase pageSize by 1
+  };
 
+  const handleDecreasePageSize = () => {
+    setPageIndex((prevPageIndex) => Math.max(1, prevPageIndex - 1)); // Decrease pageSize by 1, but not below 1
+    // Update the table's pageSize
+  };
+  const handlePreviousClick = () => {
+    handleDecreasePageSize(); // Decrease pageSize when going to the previous page
+    table.previousPage();
+  };
+
+  const handleNextClick = () => {
+    handleIncreasePageSize(); // Increase pageSize when going to the next page
+    table.nextPage();
+  };
   return (
     <div>
       <div className="flex items-center py-4">
@@ -97,8 +114,7 @@ export function DataTable<TData, TValue>({
                     checked={column.getIsVisible()}
                     onCheckedChange={(value) =>
                       column.toggleVisibility(!!value)
-                    }
-                  >
+                    }>
                     {column.id}
                   </DropdownMenuCheckboxItem>
                 );
@@ -131,8 +147,7 @@ export function DataTable<TData, TValue>({
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
+                  data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(
@@ -147,8 +162,7 @@ export function DataTable<TData, TValue>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                  className="h-24 text-center">
                   No results.
                 </TableCell>
               </TableRow>
@@ -160,17 +174,15 @@ export function DataTable<TData, TValue>({
         <Button
           variant="outline"
           size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
+          onClick={handlePreviousClick}
+          disabled={!table.getCanPreviousPage()}>
           Previous
         </Button>
         <Button
           variant="outline"
           size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
+          onClick={handleNextClick}
+          disabled={!table.getCanNextPage()}>
           Next
         </Button>
       </div>
