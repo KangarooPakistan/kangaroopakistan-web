@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
   page: {
     flexDirection: "column",
     backgroundColor: "#ffffff",
-    justifyContent: "space-between",
+    // justifyContent: "space-between",
     alignItems: "stretch",
     paddingTop: '115pt',
     paddingLeft: '43pt',
@@ -56,8 +56,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   logo: {
-    width: 150,
-    height: 170,
+    width: 175,
+    height: 200,
   },
   addressBlock: {
     marginBottom: 20,

@@ -10,6 +10,7 @@ import * as XLSX from "xlsx";
 import AllLabels, { SchoolDetails } from "./AllLabels";
 import { pdf } from "@react-pdf/renderer";
 import { saveAs } from "file-saver";
+import AllLabelsShort from "@/app/(routes)/admin/fetchallregistration/[id]/AllLabelsShort";
 
 
 export const dynamic = "force-dynamic"; // Ensures this page is always rendered server-side
@@ -218,6 +219,24 @@ const FetchAllRegistrations = () => {
 
   }
 
+  const handleDownloadAllLabelsShort = async () => {
+    console.log('kkr')
+    try {
+  
+      const blob = await pdf(
+        <AllLabelsShort
+        schoolDetails={labelsData}
+        />
+      ).toBlob();
+  
+      const pdfName = `ShortlabelsForAll.pdf`;
+      saveAs(blob, pdfName);
+    } catch (error) {
+      console.error("Error downloading the PDF:", error);
+    }  
+
+  }
+
   return (
     <div className="container mx-auto py-10">
       <h1 className="text-3xl text-center my-3 font-bold text-purple-600">
@@ -273,8 +292,11 @@ const FetchAllRegistrations = () => {
           <Button variant="default" className="mr-2" onClick={handleRegister}>
             Register a school
           </Button>
-          <Button variant="default" onClick={handleDownloadAllLabel}>
+          <Button variant="default" className="mr-2" onClick={handleDownloadAllLabel}>
             Download Labels
+          </Button>
+          <Button variant="default" onClick={handleDownloadAllLabelsShort}>
+            Download Short Labels
           </Button>
         </div>
       </div>

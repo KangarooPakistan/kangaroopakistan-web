@@ -18,7 +18,7 @@ interface AllLabelsProps {
 }
  
 
-const AllLabels: React.FC<AllLabelsProps> = ({ schoolDetails }) => {
+const AllLabelsShort: React.FC<AllLabelsProps> = ({ schoolDetails }) => {
   const [fontsLoaded, setFontsLoaded] = useState(false);
 
   useEffect(() => {
@@ -56,24 +56,24 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   logo: {
-    width: 175,
-    height: 200,
+    width: 150,
+    height: 170,
   },
   addressBlock: {
-    marginBottom: 20,
+    marginBottom: 10,
   },
   bold: {
     fontWeight: "bold",
   },
   textHeading: {
-    fontSize: 21,
+    fontSize: 11,
     fontFamily: "Roboto",
     textTransform: 'uppercase',
     fontWeight: 'bold',
 
   },
   text: {
-    fontSize: 22,
+    fontSize: 11,
     marginBottom: 5,
     textTransform: 'uppercase',
     fontFamily: "Roboto",
@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
   },
   subText: {
     textTransform: 'uppercase',
-    fontSize: 22,
+    fontSize: 11,
     marginBottom: 5,
     fontFamily: "Roboto",
   },
@@ -100,12 +100,12 @@ const styles = StyleSheet.create({
       <Page key={school.schoolId} size="A4" style={styles.page}>
         <View>
 
-        <View style={styles.header}>
+        {/* <View style={styles.header}>
           <Image
             style={styles.logo}
             src="/KSF_PAK.jpeg"
           />
-        </View>
+        </View> */}
 
         
         <View style={styles.addressBlock}>
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
         </View>
 
         <View style={styles.fromBlock}>
-          <Text style={styles.text}>From</Text>
+          <Text style={styles.text}>From:</Text>
           <Text style={[styles.text, styles.bold]}>Innovative Learning - KSF Pakistan</Text>
           <Text style={styles.subText}>2nd Floor, Plaza 114, Main Boulevard, Phase 6 DHA, Lahore</Text>
           <Text style={styles.subText}>Tel: 042-37180505/06</Text>
@@ -131,4 +131,4 @@ const styles = StyleSheet.create({
   </Document>)
 }
 
-export default AllLabels;
+export default AllLabelsShort;
