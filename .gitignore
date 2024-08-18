@@ -38,3 +38,4 @@ next-env.d.ts
 # Added email_counts.json
 
 email_counts.json
+/prisma/*.prisma
