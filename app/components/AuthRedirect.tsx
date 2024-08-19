@@ -23,6 +23,7 @@ const AuthRedirect = () => {
       router.replace("/"); // Redirect to login if not authenticated and not on login page
     }
   }, [status, router, pathname]);
+  // hello
 
   return null; // Render nothing
 };
