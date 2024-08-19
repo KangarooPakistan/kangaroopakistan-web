@@ -9,6 +9,7 @@ import "react-datepicker/dist/react-datepicker.css"; // Import styles
 import DatePicker from "react-datepicker"; // Import react-datepicker
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { getSession } from "next-auth/react";
 
 import {
   Form,
@@ -41,8 +42,18 @@ const formSchema = z.object({
 });
 const CreateContest = () => {
   const [data, setData] = useState();
+  const [currentUserEmail, setCurrentUserEmail] = useState<string | null>();
   const router = useRouter();
   const params = useParams();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const session = await getSession();
+
+      setCurrentUserEmail(session?.user?.email);
+    };
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const fetch = async () => {
@@ -51,8 +62,7 @@ const CreateContest = () => {
         .then((resp) => {
           setData(resp.data.contestCh);
         })
-        .catch((error) => {
-        });
+        .catch((error) => {});
     };
     fetch();
   }, [params.id]);
@@ -69,14 +79,13 @@ const CreateContest = () => {
 
   const isLoading = form.formState.isSubmitting;
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-
-
     const payload = {
       name: values.name, // Spread the form values
       startDate: values.startDate.toISOString(),
       endDate: values.endDate.toISOString(),
       contestTypeId: params.id,
       contestCh: data,
+      currentUserEmail: currentUserEmail,
     };
     try {
       await axios.post("/api/users/contests", payload);
@@ -91,8 +100,9 @@ const CreateContest = () => {
         progress: undefined,
         theme: "light",
       });
-    } catch (error) {
-      toast.error(" " + error, {
+    } catch (error: any) {
+      console.log(error.response.data.error);
+      toast.error(" " + error.response.data.error, {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -118,8 +128,6 @@ const CreateContest = () => {
     //   second: "numeric",
     //   timeZoneName: "short",
     // });
-
-   
   };
   return (
     <>
@@ -134,8 +142,7 @@ const CreateContest = () => {
               <Form {...form}>
                 <form
                   onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-4 md:space-y-6"
-                >
+                  className="space-y-4 md:space-y-6">
                   <FormField
                     control={form.control}
                     name="name"
@@ -245,8 +252,7 @@ const CreateContest = () => {
                     <Button
                       disabled={isLoading}
                       variant="default"
-                      className="px-10"
-                    >
+                      className="px-10">
                       Create
                     </Button>
                   </div>

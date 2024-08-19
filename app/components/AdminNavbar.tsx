@@ -159,6 +159,14 @@ const AdminNavbar = () => {
                 Dashboard
               </Link>
             </li>
+            <li>
+              <Link
+                href="/admin/logs"
+                className="block py-2 px-3 md:p-0 "
+                aria-current="page">
+                Logs
+              </Link>
+            </li>
             {/* <li>
               <Link
                 href="/admin/contesttypes"

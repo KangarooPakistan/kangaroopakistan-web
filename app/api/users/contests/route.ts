@@ -28,6 +28,7 @@ export async function POST(request: NextRequest) {
         contestDate,
         resultDate,
         contestCh,
+        currentUserEmail,
       } = reqBody;
 
       const contestData: ContestData = {
@@ -52,13 +53,51 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      const newContest = await db.contest.create({
-        data: contestData,
-      });
+      try {
+        // Attempt to create a new contest
+        const newContest = await db.contest.create({
+          data: contestData,
+        });
 
-      return NextResponse.json(newContest);
+        // If successful, create the updatesData object
+        const updatesData = {
+          email: currentUserEmail,
+          type: "Add",
+          contestName: name,
+          description: `A new contest, named ${name}, has been added by user ${currentUserEmail}.`,
+        };
+
+        try {
+          // Attempt to create a new update
+          const newUpdate = await db.updates.create({
+            data: updatesData,
+          });
+          console.log("Update created successfully:", newUpdate);
+        } catch (error) {
+          return NextResponse.json(
+            {
+              error:
+                "Contest was created successfully but could not create Log,. There was some error while creating log of this activity.",
+            },
+            { status: 500 }
+          );
+
+          console.error("Error creating update:", error);
+        }
+        return NextResponse.json(newContest);
+      } catch (error) {
+        return NextResponse.json("Error while creating Contest");
+        console.error("Error creating contest:", error);
+        // Handle the error according to your needs.
+      }
     } catch (error: any) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json(
+        {
+          error:
+            "Could not create contest. There was some error while creating contest",
+        },
+        { status: 500 }
+      );
     }
   } else {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

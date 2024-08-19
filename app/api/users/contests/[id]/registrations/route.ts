@@ -50,6 +50,7 @@ export async function POST(
       district,
       contestCh,
       schoolName,
+      currentUserEmail,
     } = reqBody;
     const contestId = params.id;
 
@@ -146,6 +147,9 @@ export async function POST(
 
       createdStudents.push(createdStudent);
     }
+    console.log("createdStudents");
+    console.log(createdStudents);
+    const studentIds = createdStudents.map((student) => student.id);
 
     const totalStudents = await db.student.findMany({
       where: { registrationId: regId },
@@ -154,7 +158,31 @@ export async function POST(
     const contestDate = await db.contest.findFirst({
       where: { id: contestId },
     });
-
+    console.log(contestDate);
+    const updatesData = {
+      email: currentUserEmail,
+      type: "Add",
+      contestName: contestDate?.name,
+      students: studentIds,
+      schoolId,
+      schoolName,
+      description: `New students have been added by user ${currentUserEmail} in ${contestDate?.name} contest.`,
+    };
+    try {
+      // Attempt to create a new update
+      const newUpdate = await db.updates.create({
+        data: updatesData,
+      });
+      console.log("Update created successfully:", newUpdate);
+    } catch (error) {
+      return NextResponse.json(
+        {
+          error:
+            "Students were registered successfully but could not create Log,. There was some error while creating log of this activity.",
+        },
+        { status: 500 }
+      );
+    }
     let contestName;
     switch (contestCh) {
       case "M":
