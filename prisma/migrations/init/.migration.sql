@@ -1,2 +1,0 @@
--- This is an empty migration that serves as a baseline
--- for an existing database
