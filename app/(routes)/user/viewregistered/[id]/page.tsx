@@ -36,9 +36,17 @@ const ViewRegistered = () => {
   const [junior, setJunior] = useState<number>(0);
   const [student, setStudent] = useState<number>(0);
   const [pdfUrl, setPdfUrl] = useState("");
-
+  const [currentUserEmail, setCurrentUserEmail] = useState<string | null>();
   const params = useParams();
   type LevelCounts = Record<string, number>;
+  useEffect(() => {
+    const fetchData = async () => {
+      const session = await getSession();
+
+      setCurrentUserEmail(session?.user?.email);
+    };
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const fetchUserData = async () => {

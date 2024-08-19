@@ -9,15 +9,17 @@ import {
 import { Button } from "@/components/ui/button";
 import { useModal } from "@/hooks/use-modal-store";
 import { useRouter } from "next/navigation"; // Use 'next/router' instead of 'next/navigation'
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
+import { getSession } from "next-auth/react";
 
 const DeleteStudent = () => {
   const { isOpen, onClose, type, data } = useModal();
   const router = useRouter();
+  const [currentUserEmail, setCurrentUserEmail] = useState<string | null>();
 
   //   useEffect(() => {
   //     if (isOpen && type === "deleteStudent") {
@@ -25,12 +27,27 @@ const DeleteStudent = () => {
   //     }
   //   }, [isOpen, type]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const session = await getSession();
+
+      setCurrentUserEmail(session?.user?.email);
+    };
+    fetchData();
+  }, []);
+
   const handleDelete = async () => {
-    
     try {
+      console.log(data?.currentUserEmail);
       const response = await axios.delete(
-        `/api/users/deletestudent/${data.id}`
-      ); // Replace ":id" with the actual ID of the student to be deleted
+        `/api/users/deletestudent/${data.id}`,
+        {
+          data: { email: data?.currentUserEmail },
+        }
+      );
+
+      console.log(response);
+      // Replace ":id" with the actual ID of the student to be deleted
       toast.success("Student successfully deleted", {
         position: "bottom-center",
         autoClose: 5000,

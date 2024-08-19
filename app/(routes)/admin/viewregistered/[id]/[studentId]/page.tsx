@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import "react-toastify/dist/ReactToastify.css";
 import { toast, ToastContainer } from "react-toastify";
-
+import { getSession } from "next-auth/react";
 import {
   Form,
   FormControl,
@@ -52,7 +52,7 @@ const initialData: Student = {
 const EditStudent = () => {
   const [data, setData] = useState<Student>(initialData);
   const [isAvailable, setIsAvailable] = useState<boolean>();
-
+  const [currentUserEmail, setCurrentUserEmail] = useState<string | null>();
   const [lastNumber, setLastNumber] = useState<string>();
 
   const params = useParams();
@@ -107,6 +107,15 @@ const EditStudent = () => {
     // Join the parts back together to form the new roll number
     return parts.join("-");
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const session = await getSession();
+
+      setCurrentUserEmail(session?.user?.email);
+    };
+    fetchData();
+  }, []);
   useEffect(() => {
     const fetchData = async () => {
       console.log(params.id);
@@ -143,6 +152,7 @@ const EditStudent = () => {
   const onSubmit = async (values: zod.infer<typeof formSchema>) => {
     const payload = {
       ...values,
+      currentUserEmail,
       rollNumber: data.rollNumber,
     };
     try {
@@ -243,8 +253,7 @@ const EditStudent = () => {
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-4 md:space-y-6"
-              >
+                className="space-y-4 md:space-y-6">
                 <FormField
                   control={form.control}
                   name="studentName"
@@ -293,8 +302,7 @@ const EditStudent = () => {
                         // Automatically set the level based on the class
                         handleClassChange(e.target.value);
                       }}
-                      className="w-full p-2 text-xs md:text-base rounded border border-gray-300 focus:outline-none focus:border-blue-500"
-                    >
+                      className="w-full p-2 text-xs md:text-base rounded border border-gray-300 focus:outline-none focus:border-blue-500">
                       <option value="">SELECT CLASS</option>
                       <option value="01">ONE</option>
                       <option value="02">TWO</option>
@@ -318,8 +326,7 @@ const EditStudent = () => {
                     <select
                       disabled
                       {...field}
-                      className="w-full p-2 text-xs md:text-base rounded border border-gray-300 focus:outline-none focus:border-blue-500"
-                    >
+                      className="w-full p-2 text-xs md:text-base rounded border border-gray-300 focus:outline-none focus:border-blue-500">
                       <option value="">SELECT LEVEL</option>
                       <option value="preecolier">PRE ECOLIER</option>
                       <option value="ecolier">ECOLIER</option>
@@ -335,8 +342,7 @@ const EditStudent = () => {
                   <Button
                     disabled={isLoading}
                     variant="default"
-                    className="px-10"
-                  >
+                    className="px-10">
                     Update Student Details
                   </Button>
                 </div>

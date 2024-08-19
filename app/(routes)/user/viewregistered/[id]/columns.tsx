@@ -1,6 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
+import { getSession } from "next-auth/react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,7 +14,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
 import { useModal } from "@/hooks/use-modal-store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type Student = {
@@ -31,6 +32,7 @@ type StudentActionsProps = {
 };
 const ContestActions: React.FC<StudentActionsProps> = ({ student }) => {
   const router = useRouter();
+  const [currentUserEmail, setCurrentUserEmail] = useState<string | null>();
   const { onOpen } = useModal();
 
   const handleEdit = () => {
@@ -38,6 +40,14 @@ const ContestActions: React.FC<StudentActionsProps> = ({ student }) => {
       `/user/viewregistered/${student.registrationId}/${student.id}}`
     );
   };
+  useEffect(() => {
+    const fetchData = async () => {
+      const session = await getSession();
+
+      setCurrentUserEmail(session?.user?.email);
+    };
+    fetchData();
+  }, []);
 
   return (
     <DropdownMenu>
@@ -51,8 +61,9 @@ const ContestActions: React.FC<StudentActionsProps> = ({ student }) => {
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <DropdownMenuItem onClick={handleEdit}>Edit Student</DropdownMenuItem>
         <DropdownMenuItem
-          onClick={() => onOpen("deleteStudent", { id: student.id })}
-        >
+          onClick={() =>
+            onOpen("deleteStudent", { id: student.id, currentUserEmail })
+          }>
           Delete Student
         </DropdownMenuItem>
       </DropdownMenuContent>

@@ -1,6 +1,8 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
+import { getSession } from "next-auth/react";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,6 +25,7 @@ import {
 } from "@react-pdf/renderer";
 import { saveAs } from "file-saver";
 import axios from "axios";
+import { useEffect, useState } from "react";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -42,6 +45,16 @@ type StudentActionsProps = {
 const ContestActions: React.FC<StudentActionsProps> = ({ student }) => {
   const router = useRouter();
   const { onOpen } = useModal();
+  const [currentUserEmail, setCurrentUserEmail] = useState<string | null>();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const session = await getSession();
+
+      setCurrentUserEmail(session?.user?.email);
+    };
+    fetchData();
+  }, []);
 
   const handleView = () => {
     router.push(`/admin/viewallrecipts/${student.registrationId}`);
@@ -117,7 +130,9 @@ const ContestActions: React.FC<StudentActionsProps> = ({ student }) => {
         </DropdownMenuItem>
         <DropdownMenuItem onClick={editStudent}>Edit Student </DropdownMenuItem>
         <DropdownMenuItem
-          onClick={() => onOpen("deleteStudent", { id: student.id })}>
+          onClick={() =>
+            onOpen("deleteStudent", { id: student.id, currentUserEmail })
+          }>
           Delete Student{" "}
         </DropdownMenuItem>
       </DropdownMenuContent>

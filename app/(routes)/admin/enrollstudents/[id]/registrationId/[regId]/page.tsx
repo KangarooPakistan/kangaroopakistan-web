@@ -50,7 +50,7 @@ const Register = () => {
 
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false); // State to track if the form is submitting
-
+  const [currentUserEmail, setCurrentUserEmail] = useState<string | null>();
   const [contestCh, setContestCh] = useState<string | null>();
   const [schoolId, setSchoolId] = useState<number | undefined>();
   const [schoolEmail, setSchoolEmail] = useState<number | undefined | null>();
@@ -62,6 +62,14 @@ const Register = () => {
   const [year, setYear] = useState<string | undefined>();
   const [schoolName, setSchoolName] = useState<string | undefined>();
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const session = await getSession();
+
+      setCurrentUserEmail(session?.user?.email);
+    };
+    fetchData();
+  }, []);
   useEffect(() => {
     const getYearInTwoDigits = (date: Date): string => {
       return new Intl.DateTimeFormat("en-US", {
@@ -149,6 +157,7 @@ const Register = () => {
         schoolName: schoolName,
         schoolId: schoolId,
         registeredBy: schoolEmail,
+        currentUserEmail,
       };
       try {
         const response = await axios.post(

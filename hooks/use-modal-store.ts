@@ -10,6 +10,7 @@ export type ModalType =
 interface ModalData {
   registrationId?: string;
   id?: number;
+  currentUserEmail?: string | null;
 }
 
 interface ModalStore {
