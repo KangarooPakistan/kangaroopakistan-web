@@ -112,6 +112,9 @@
   display: flex;
   align-items: center;
 }
+.timeline-column {
+  background-clip: padding-box;
+}
 
 .ticker-move {
   white-space: nowrap;

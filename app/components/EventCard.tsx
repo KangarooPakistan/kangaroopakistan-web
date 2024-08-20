@@ -51,7 +51,7 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
 
   return (
     <div className="mb-6 p-6 relative max-w-xl">
-      <div className="card bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-lg p-6 text-white overflow-hidden relative">
+      <div className="card bg-gradient-to-br from-gray-700 to-gray-900 rounded-xl shadow-lg p-6 text-white overflow-hidden relative">
         <div className="card-shine"></div>
         <div className="card-content relative z-10">
           <div className="absolute top-4 right-4 w-16 h-16 bg-white bg-opacity-20 rounded-full"></div>
@@ -85,20 +85,30 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
               <h3 className="font-semibold mb-2 xs:text-sm md:text-md xl:text-xl">
                 Added Students:
               </h3>
-              <ul className="list-disc pl-5 text-xs">
+              <ul className="list-disc pl-5 ">
                 {event.students.map((student) => (
                   <li
                     key={student.id}
-                    className="mb-1 xs:text-sm md:text-md xl:text-xl flex items-center">
-                    <p>
-                      <span className="mr-2">Name:</span>
-                      {student.studentName}{" "}
-                      <span className="mr-2">RollNumber:</span>
-                      {student.rollNumber}
-                      <span className="mr-2"> Class:</span>
-                      {student.class} <span className="mr-2"> Level: </span>
-                      {student.level}
-                    </p>
+                    className="mb-1 xs:text-sm md:text-md xl:text-xl ">
+                    <div className="flex flex-col flex-wrap">
+                      <p className="xs:text-sm md:text-md xl:text-xl">
+                        <span className="mr-2 ">Name:</span>
+                        {student.studentName}{" "}
+                      </p>
+                      <p className="xs:text-sm md:text-md xl:text-xl">
+                        <span className="mr-2">RollNumber:</span>
+                        {student.rollNumber}
+                      </p>
+                      <p className="xs:text-sm md:text-md xl:text-xl">
+                        <span className="mr-2"> Class:</span>
+                        {student.class}
+                      </p>{" "}
+                      <p className="xs:text-sm md:text-md xl:text-xl">
+                        {" "}
+                        <span className="mr-2"> Level: </span>
+                        {student.level}
+                      </p>
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -112,15 +122,25 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
               </h3>
               <ul className="list-disc pl-5 text-xs">
                 <li key={event.studentPrev} className="mb-1 ">
-                  <p className="xs:text-sm md:text-md xl:text-xl flex items-center">
-                    <span className="mr-2">Name:</span>
-                    {studentObject.studentName}
-                    <span className="mr-2"> RollNumber:</span>
-                    {studentObject.rollNumber}{" "}
-                    <span className="mr-2">Class:</span>
-                    {studentObject.class} <span className="mr-2">Level:</span>
-                    {studentObject.level}
-                  </p>
+                  <div className="flex flex-col">
+                    <p className="xs:text-sm md:text-md xl:text-xl">
+                      <span className="mr-2">Name:</span>
+                      {studentObject.studentName}
+                    </p>
+                    <p className="xs:text-sm md:text-md xl:text-xl">
+                      <span className="mr-2"> RollNumber:</span>
+                      {studentObject.rollNumber}{" "}
+                    </p>
+                    <p className="xs:text-sm md:text-md xl:text-xl">
+                      <span className="mr-2">Class:</span>
+                      {studentObject.class}
+                    </p>{" "}
+                    <p className="xs:text-sm  md:text-md xl:text-xl">
+                      {" "}
+                      <span className="mr-2">Level:</span>
+                      {studentObject.level}
+                    </p>
+                  </div>
                 </li>
               </ul>
             </div>
