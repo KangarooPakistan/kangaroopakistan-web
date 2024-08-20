@@ -3,7 +3,11 @@ import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   try {
-    const updatesLogs = await db.updates.findMany();
+    const updatesLogs = await db.updates.findMany({
+      orderBy: {
+        createdAt: "desc", // Order by roll number in descending order to get the last student
+      },
+    });
 
     const updatedUpdates = await db.$transaction(async (prisma) => {
       return Promise.all(
