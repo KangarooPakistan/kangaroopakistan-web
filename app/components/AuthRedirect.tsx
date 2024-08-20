@@ -18,7 +18,8 @@ const AuthRedirect = () => {
       status === "unauthenticated" &&
       pathname !== "/" &&
       pathname !== "/register" &&
-      pathname !== "/reset-password"
+      pathname !== "/reset-password" &&
+      !pathname.startsWith("/new-password/")
     ) {
       router.replace("/"); // Redirect to login if not authenticated and not on login page
     }
