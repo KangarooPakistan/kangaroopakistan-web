@@ -5,7 +5,28 @@ export async function GET(request: Request) {
   try {
     const updatesLogs = await db.updates.findMany();
 
-    return NextResponse.json(updatesLogs, { status: 200 });
+    const updatedUpdates = await db.$transaction(async (prisma) => {
+      return Promise.all(
+        updatesLogs.map(async (update) => {
+          if (update.students) {
+            const studentIds = update.students as number[];
+            const students = await prisma.student.findMany({
+              where: {
+                id: {
+                  in: studentIds,
+                },
+              },
+            });
+            return { ...update, students };
+          }
+          return update;
+        })
+      );
+    });
+
+    console.log(updatedUpdates);
+
+    return NextResponse.json(updatedUpdates, { status: 200 });
   } catch (error) {
     return NextResponse.json(
       "There was some error while fetching logs, Please try again later",
