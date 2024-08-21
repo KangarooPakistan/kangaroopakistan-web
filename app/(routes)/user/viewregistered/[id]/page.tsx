@@ -12,7 +12,27 @@ import { pdf } from "@react-pdf/renderer";
 import { saveAs } from "file-saver";
 import Link from "next/link";
 
-type ProfileData = {
+// type ProfileData = {
+//   p_fName: string;
+//   p_mName: string;
+//   p_lName: string;
+//   c_fName: string;
+//   c_mName: string;
+//   c_lName: string;
+//   email: string;
+//   contactNumber: string;
+// };
+interface Student {
+  rollNumber: string;
+  studentName: string;
+  fatherName: string;
+  studentClass: string; // Assuming 'class' is a string like '1A', '2B', etc.
+  studentLevel: string;
+  schoolId: number;
+  schoolName: string;
+  address: string; // Assuming 'class' is a string like '1A', '2B', etc.
+}
+interface profileData {
   p_fName: string;
   p_mName: string;
   p_lName: string;
@@ -21,7 +41,12 @@ type ProfileData = {
   c_lName: string;
   email: string;
   contactNumber: string;
-};
+}
+
+interface SchoolReportProps {
+  schoolData: Student[];
+  profileData: profileData | null | undefined;
+}
 
 const ViewRegistered = () => {
   const [students, setStudents] = useState<Student[]>([]);
@@ -130,7 +155,20 @@ const ViewRegistered = () => {
   const handleResults = () => {
     router.back();
   };
+  const generatePdfBlob = async (
+    schoolData: Student[],
+    profileData: profileData
+  ): Promise<Blob> => {
+    const doc = (
+      <SchoolReportDocument schoolData={schoolData} profileData={profileData} />
+    );
+
+    const asPdf = pdf(doc); // Create an empty PDF instance
+    const blob = await asPdf.toBlob();
+    return blob;
+  };
   const handleSheet = async () => {
+    console.log("kkr");
     try {
       const response = await axios.get(
         `/api/users/pdfdownload/${registrationId}`
@@ -141,7 +179,7 @@ const ViewRegistered = () => {
       );
       console.log("res");
       console.log(res.data.user.p_fName);
-      const profileData: ProfileData = {
+      const profileData: profileData = {
         p_fName: res.data.user.p_fName,
         p_mName: res.data.user.p_mName,
         p_lName: res.data.user.p_lName,
@@ -155,52 +193,84 @@ const ViewRegistered = () => {
       console.log(response.data);
       const schoolData = response.data;
       console.log("schoolData"); // This should be an array of ClassData
-      console.log(schoolData); // This should be an array of ClassData
-      const promise = pdf(
-        <SchoolReportDocument
-          schoolData={schoolData}
-          profileData={profileData}
-        />
-      ).toBlob();
-
-      const blob = await Promise.race([
-        promise,
-        new Promise((_, reject) =>
-          setTimeout(() => reject(new Error("Timeout")), 200000)
-        ), // Timeout after 10 seconds
-      ]);
-      // pdf(
-      //   <SchoolReportDocument
-      //     schoolData={schoolData}
-      //     profileData={profileData}
-      //   />
-      // )
-      //   .toBlob()
-      //   .then((blob) => {
-      //     console.log("PDF Blob created:", blob);
-
-      //     // Create URL from the Blob
-      //     const url = URL.createObjectURL(blob);
-      //     console.log("Generated PDF URL:", url);
-
-      //     // Trigger download
-      //     const link = document.createElement("a");
-      //     link.href = url;
-      //     link.setAttribute("download", "school-report.pdf");
-      //     document.body.appendChild(link);
-      //     link.click();
-      //     document.body.removeChild(link);
-
-      //     // Revoke the created URL to free up resources
-      //     URL.revokeObjectURL(url);
-      //   })
-      //   .catch((error) => {
-      //     console.error("Error generating the PDF:", error);
-      //   });
+      console.log(schoolData);
+      const blob = await generatePdfBlob(schoolData, profileData);
+      saveAs(blob, "students.pdf");
     } catch (error) {
-      console.error("Error generating the PDF:", error);
+      console.error("Error downloading the PDF:", error);
     }
   };
+  // const handleSheet = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       `/api/users/pdfdownload/${registrationId}`
+  //     );
+
+  //     const res = await axios.get(
+  //       `/api/users/allusers/getschoolbyregid/${registrationId}`
+  //     );
+  //     console.log("res");
+  //     console.log(res.data.user.p_fName);
+  //     const profileData: ProfileData = {
+  //       p_fName: res.data.user.p_fName,
+  //       p_mName: res.data.user.p_mName,
+  //       p_lName: res.data.user.p_lName,
+  //       c_fName: res.data.user.c_fName,
+  //       c_mName: res.data.user.c_mName,
+  //       c_lName: res.data.user.c_lName,
+  //       email: res.data.user.email,
+  //       contactNumber: res.data.user.contactNumber,
+  //     };
+
+  //     console.log(response.data);
+  //     const schoolData = response.data;
+  //     console.log("schoolData"); // This should be an array of ClassData
+  //     console.log(schoolData); // This should be an array of ClassData
+  //     const promise = pdf(
+  //       <SchoolReportDocument
+  //         schoolData={schoolData}
+  //         profileData={profileData}
+  //       />
+  //     ).toBlob();
+
+  //     const blob = await Promise.race([
+  //       promise,
+  //       new Promise((_, reject) =>
+  //         setTimeout(() => reject(new Error("Timeout")), 200000)
+  //       ), // Timeout after 10 seconds
+  //     ]);
+  //     // pdf(
+  //     //   <SchoolReportDocument
+  //     //     schoolData={schoolData}
+  //     //     profileData={profileData}
+  //     //   />
+  //     // )
+  //     //   .toBlob()
+  //     //   .then((blob) => {
+  //     //     console.log("PDF Blob created:", blob);
+
+  //     //     // Create URL from the Blob
+  //     //     const url = URL.createObjectURL(blob);
+  //     //     console.log("Generated PDF URL:", url);
+
+  //     //     // Trigger download
+  //     //     const link = document.createElement("a");
+  //     //     link.href = url;
+  //     //     link.setAttribute("download", "school-report.pdf");
+  //     //     document.body.appendChild(link);
+  //     //     link.click();
+  //     //     document.body.removeChild(link);
+
+  //     //     // Revoke the created URL to free up resources
+  //     //     URL.revokeObjectURL(url);
+  //     //   })
+  //     //   .catch((error) => {
+  //     //     console.error("Error generating the PDF:", error);
+  //     //   });
+  //   } catch (error) {
+  //     console.error("Error generating the PDF:", error);
+  //   }
+  // };
   return (
     <div className="container mx-auto py-4">
       <div className="py-4">
