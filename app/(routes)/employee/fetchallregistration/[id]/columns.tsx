@@ -302,6 +302,9 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
 
       console.log(response.data);
       const schoolData = response.data;
+      const schoolId = schoolData[0].schoolId;
+
+      // const schoolId = schoolData[0].schoolId;
       schoolData.sort((a: Student, b: Student) => {
         const extractNumeric = (rollNumber: string) => {
           const parts = rollNumber.split("-");
@@ -320,14 +323,10 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       console.log("Sorted schoolData by rollNumber:");
       console.log(schoolData);
 
-      console.log("schoolData"); // This should be an array of ClassData
-      console.log("schoolData"); // This should be an array of ClassData
       console.log(schoolData);
       // This should be an array of ClassData
       const blob = await generatePdfBlobForSE(schoolData, profileData);
-      saveAs(blob, "students.pdf");
-
-      console.log("link");
+      saveAs(blob, `students_data_${schoolId}.pdf`);
     } catch (error) {
       console.error("Error generating the PDF:", error);
     }

@@ -139,7 +139,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
     const blob = await asPdf.toBlob();
     return blob;
   }
-  
+
   const handleDownloadPdf = async () => {
     try {
       const response = await axios.get(
@@ -323,11 +323,13 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       console.log(schoolData);
 
       console.log("schoolData"); // This should be an array of ClassData
-      console.log("schoolData"); // This should be an array of ClassData
-      console.log(schoolData);
+
+      const schoolId = schoolData[0].schoolId;
+
+      console.log(schoolId);
       // This should be an array of ClassData
       const blob = await generatePdfBlobForSE(schoolData, profileData);
-      saveAs(blob, "students.pdf");
+      saveAs(blob, `students_data_${schoolId}.pdf`);
 
       console.log("link");
     } catch (error) {

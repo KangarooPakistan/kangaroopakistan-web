@@ -481,6 +481,32 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
           </View>
           <View></View>
         </View>
+        <View style={styles.newView}>
+          {/* <Text style={styles.totalStudentsText}>Total Students by Level</Text> */}
+          <Text style={styles.totalStudentsText}>
+            Total # Pre Ecolier: {preecolierCount}
+          </Text>
+          <Text style={styles.totalStudentsText}>
+            Total # Ecolier: {ecolierCount}
+          </Text>
+          <Text style={styles.totalStudentsText}>
+            Total # Benjamin: {benjaminCount}
+          </Text>
+          <Text style={styles.totalStudentsText}>
+            Total # Cadet: {cadetCount}
+          </Text>
+          <Text style={styles.totalStudentsText}>
+            Total # Junior: {juniorCount}
+          </Text>
+          <Text style={styles.totalStudentsText}>
+            Total # Student: {studentCount}
+          </Text>
+        </View>
+        <View>
+          <Text style={styles.totalStudentsText}>
+            Total Number of Students : {schoolData.length}
+          </Text>
+        </View>
         <Text
           style={{
             fontSize: "14px",
@@ -498,6 +524,9 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
             <Text style={styles.subHeader}>{getStudentLevel(level)} Level</Text>
             {Object.entries(classes).map(([cls, students]) => (
               <View key={cls} style={{ marginBottom: "0px" }}>
+                <Text style={styles.totalStudentsText}>
+                  Total Students of Class {cls}: {students.length}
+                </Text>
                 <View style={styles.studentTable}>
                   <View style={styles.tableRow}>
                     <View style={styles.tableColHeaderLeft}>
@@ -538,39 +567,10 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                     </View>
                   ))}
                 </View>
-                <Text style={styles.totalStudentsText}>
-                  Total Students of Class {cls}: {students.length}
-                </Text>
               </View>
             ))}
           </View>
         ))}
-        <View style={styles.newView}>
-          {/* <Text style={styles.totalStudentsText}>Total Students by Level</Text> */}
-          <Text style={styles.totalStudentsText}>
-            Total # Pre Ecolier: {preecolierCount}
-          </Text>
-          <Text style={styles.totalStudentsText}>
-            Total # Ecolier: {ecolierCount}
-          </Text>
-          <Text style={styles.totalStudentsText}>
-            Total # Benjamin: {benjaminCount}
-          </Text>
-          <Text style={styles.totalStudentsText}>
-            Total # Cadet: {cadetCount}
-          </Text>
-          <Text style={styles.totalStudentsText}>
-            Total # Junior: {juniorCount}
-          </Text>
-          <Text style={styles.totalStudentsText}>
-            Total # Student: {studentCount}
-          </Text>
-        </View>
-        <View>
-          <Text style={styles.totalStudentsText}>
-            Total Number of Students : {schoolData.length}
-          </Text>
-        </View>
       </Page>
     </Document>
   );
