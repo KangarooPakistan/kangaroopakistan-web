@@ -189,6 +189,9 @@ const UserRegister = () => {
       case "Chishtian":
         districtValue = "238";
         break;
+      case "Wah":
+        districtValue = "239";
+        break;
       case "D. I. Khan":
         districtValue = "108";
         break;
