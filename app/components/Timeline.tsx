@@ -11,7 +11,7 @@ const Timeline: React.FC<TimelineProps> = ({ events }) => {
   const breakpointColumnsObj = {
     default: 2, // Number of columns for default (large) screens
     1100: 2, // Number of columns for screen widths <= 1100px
-    700: 1, // Number of columns for screen widths <= 700px
+    600: 1, // Number of columns for screen widths <= 700px
   };
 
   return (

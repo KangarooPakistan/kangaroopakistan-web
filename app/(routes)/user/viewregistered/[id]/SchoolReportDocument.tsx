@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Page,
   Text,
@@ -37,18 +37,7 @@ interface SchoolReportProps {
   schoolData: Student[];
   profileData: profileData | null | undefined;
 }
-Font.register({
-  family: "Open Sans",
-  fonts: [
-    {
-      src: "https://cdn.jsdelivr.net/npm/open-sans-all@0.1.3/fonts/open-sans-regular.ttf",
-    },
-    {
-      src: "https://cdn.jsdelivr.net/npm/open-sans-all@0.1.3/fonts/open-sans-600.ttf",
-      fontWeight: 600,
-    },
-  ],
-});
+
 const styles = StyleSheet.create({
   image: {
     width: 70, // Set the width of your image
@@ -194,6 +183,23 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
   schoolData,
   profileData,
 }) => {
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+
+  useEffect(() => {
+    const loadFonts = async () => {
+      await Font.register({
+        family: "Roboto",
+        fonts: [
+          { src: "/fonts/Roboto-Regular.ttf" },
+          { src: "/fonts/Roboto-Bold.ttf", fontWeight: 700 },
+        ],
+      });
+
+      setFontsLoaded(true);
+    };
+
+    loadFonts();
+  }, []);
   console.log("----------------------------------------");
   const groupedStudents: Record<string, Record<string, Student[]>> = {};
 
