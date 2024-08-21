@@ -68,6 +68,7 @@ interface profileData {
   contactNumber: string;
   contestName: string;
   contestCh: string;
+  contestNo: string;
 }
 type RegistrationProps = {
   registration: Registration; // Use the Contest type here
@@ -298,6 +299,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         contactNumber: res.data.user.contactNumber,
         contestName: contestData.data.name,
         contestCh: contestData.data.contestCh,
+        contestNo: contestData.data.contestNo,
       };
 
       // console.log(response.data);

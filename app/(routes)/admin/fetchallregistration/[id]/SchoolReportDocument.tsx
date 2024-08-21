@@ -33,6 +33,7 @@ interface profileData {
   contactNumber: string;
   contestName: string;
   contestCh: string;
+  contestNo: string;
 }
 
 interface SchoolReportProps {
@@ -298,7 +299,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
               flexDirection: "column",
             }}>
             <Text style={styles.header}>
-              17
+              {profileData?.contestNo}
               <Text
                 style={{
                   verticalAlign: "super",

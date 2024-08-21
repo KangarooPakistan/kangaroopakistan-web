@@ -43,6 +43,7 @@ interface profileData {
   contactNumber: string;
   contestName: string;
   contestCh: string;
+  contestNo: string;
 }
 
 const ViewRegistered = () => {
@@ -193,6 +194,7 @@ const ViewRegistered = () => {
         contactNumber: res.data.user.contactNumber,
         contestName: contestData.data.name,
         contestCh: contestData.data.contestCh,
+        contestNo: contestData.data.contestNo,
       };
 
       console.log(response.data);
