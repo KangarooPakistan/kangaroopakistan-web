@@ -39,6 +39,7 @@ const formSchema = z.object({
     }),
   contestDate: z.string(),
   resultDate: z.string(),
+  contestNo: z.string(),
 });
 const CreateContest = () => {
   const [data, setData] = useState();
@@ -74,6 +75,7 @@ const CreateContest = () => {
       endDate: new Date(),
       contestDate: "",
       resultDate: "",
+      contestNo: "",
     },
   });
 
@@ -85,6 +87,7 @@ const CreateContest = () => {
       endDate: values.endDate.toISOString(),
       contestTypeId: params.id,
       contestCh: data,
+      contestNo: values.contestNo,
       currentUserEmail: currentUserEmail,
     };
     try {
@@ -154,6 +157,24 @@ const CreateContest = () => {
                             disabled={isLoading}
                             className="input"
                             placeholder="Enter Contest Name"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="contestNo"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="label">Contest No</FormLabel>
+                        <FormControl>
+                          <Input
+                            disabled={isLoading}
+                            className="input"
+                            placeholder="Enter Contest Number"
                             {...field}
                           />
                         </FormControl>

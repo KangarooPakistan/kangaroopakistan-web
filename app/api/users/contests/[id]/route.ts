@@ -23,7 +23,7 @@ export async function GET(
 export async function PUT(request: NextRequest) {
   try {
     // Extract the id and updated data from the request body
-    const { id, name, startDate, endDate, contestDate, resultDate } =
+    const { id, name, startDate, endDate, contestDate, resultDate, contestNo } =
       await request.json();
 
     // Check if the contest with the given id exists
@@ -51,6 +51,7 @@ export async function PUT(request: NextRequest) {
         startDate,
         endDate,
         contestDate,
+        contestNo,
         resultDate,
       },
     });

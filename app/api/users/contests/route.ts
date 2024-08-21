@@ -11,6 +11,7 @@ interface ContestData {
   resultDate: string | null;
   contestTypeId: string;
   contestCh: string | null;
+  contestNo: string | null;
 }
 
 export async function POST(request: NextRequest) {
@@ -28,6 +29,7 @@ export async function POST(request: NextRequest) {
         contestDate,
         resultDate,
         contestCh,
+        contestNo,
         currentUserEmail,
       } = reqBody;
 
@@ -38,6 +40,7 @@ export async function POST(request: NextRequest) {
         contestDate: contestDate || null,
         resultDate: resultDate || null,
         contestCh: contestCh || null,
+        contestNo: contestNo || null,
         contestTypeId,
       };
 

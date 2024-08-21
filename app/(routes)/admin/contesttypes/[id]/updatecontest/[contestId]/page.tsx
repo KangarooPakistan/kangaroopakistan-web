@@ -28,6 +28,7 @@ interface Contest {
   endDate: Date;
   contestDate: String;
   resultDate: String;
+  contestNo: String;
 }
 
 const formSchema = z.object({
@@ -46,6 +47,7 @@ const formSchema = z.object({
     }),
   contestDate: z.string(),
   resultDate: z.string(),
+  contestNo: z.string(),
 });
 
 const initialData: Contest = {
@@ -54,6 +56,7 @@ const initialData: Contest = {
   endDate: new Date(),
   contestDate: "",
   resultDate: "",
+  contestNo: "",
 };
 const UpdateContest = () => {
   const [data, setData] = useState<Contest>(initialData);
@@ -69,6 +72,7 @@ const UpdateContest = () => {
       startDate: new Date(), // Provide a valid initial date value
       endDate: new Date(),
       contestDate: "",
+      contestNo: "",
       resultDate: "",
     },
   });
@@ -103,6 +107,7 @@ const UpdateContest = () => {
           endDate: formattedEndDate ?? "",
           contestDate: response.data.contestDate ?? "",
           resultDate: response.data.resultDate ?? "",
+          contestNo: response.data.contestNo ?? "",
         });
       } catch (error) {}
     };
@@ -120,6 +125,8 @@ const UpdateContest = () => {
       startDate: values.startDate.toISOString(),
       endDate: values.endDate.toISOString(),
       contestDate: values.contestDate,
+      contestNo: values.contestNo,
+
       resultDate: values.resultDate,
     };
 
@@ -180,6 +187,24 @@ const UpdateContest = () => {
                             disabled={isLoading}
                             className="input"
                             placeholder="Enter Contest Name"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="contestNo"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="label">Contest Name</FormLabel>
+                        <FormControl>
+                          <Input
+                            disabled={isLoading}
+                            className="input"
+                            placeholder="Enter Contest No"
                             {...field}
                           />
                         </FormControl>
