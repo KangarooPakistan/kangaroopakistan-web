@@ -57,7 +57,26 @@ export type PaymentProof = {
   id: number;
   imageUrl: string;
 };
-
+interface Students {
+  rollNumber: string;
+  studentName: string;
+  fatherName: string;
+  studentClass: string; // Assuming 'class' is a string like '1A', '2B', etc.
+  studentLevel: string;
+  schoolId: number;
+  schoolName: string;
+  address: string; // Assuming 'class' is a string like '1A', '2B', etc.
+}
+interface profileData {
+  p_fName: string;
+  p_mName: string;
+  p_lName: string;
+  c_fName: string;
+  c_mName: string;
+  c_lName: string;
+  email: string;
+  contactNumber: string;
+}
 type RegistrationProps = {
   registration: Registration; // Use the Contest type here
 };
@@ -246,6 +265,18 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
     router.push(`/employee/userprofile/${data}`);
   };
 
+  const generatePdfBlobForSE = async (
+    schoolData: Students[],
+    profileData: profileData
+  ): Promise<Blob> => {
+    const doc = (
+      <SchoolReportDocument schoolData={schoolData} profileData={profileData} />
+    );
+
+    const asPdf = pdf(doc); // Create an empty PDF instance
+    const blob = await asPdf.toBlob();
+    return blob;
+  };
   const handleSheet = async () => {
     try {
       const response = await axios.get(
@@ -293,27 +324,10 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       console.log("schoolData"); // This should be an array of ClassData
       console.log(schoolData);
       // This should be an array of ClassData
-      const blob = await pdf(
-        <SchoolReportDocument
-          schoolData={schoolData}
-          profileData={profileData}
-        />
-      ).toBlob();
+      const blob = await generatePdfBlobForSE(schoolData, profileData);
+      saveAs(blob, "students.pdf");
+
       console.log("link");
-
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-
-      link.setAttribute("download", pdfName);
-      console.log("link");
-      console.log(link);
-      document.body.appendChild(link);
-      console.log(link);
-
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
     } catch (error) {
       console.error("Error generating the PDF:", error);
     }
@@ -441,7 +455,6 @@ const styles = StyleSheet.create({
     padding: 30,
   },
   header: {
-    
     fontSize: 14,
     marginBottom: 10,
     fontWeight: "bold",
@@ -452,7 +465,7 @@ const styles = StyleSheet.create({
   subHeaderBetween: {
     fontSize: 10,
     fontWeight: "bold",
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
     marginBottom: 10,
     textAlign: "center",
   },
@@ -473,13 +486,13 @@ const styles = StyleSheet.create({
   },
   studentInfoTitle: {
     fontSize: "14px",
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
     width: "250px",
     fontWeight: "heavy",
   },
   studentInfoContent: {
     fontSize: "14px",
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
     fontWeight: "bold",
     width: "700px", // Set maximum width to fit the container
     flexWrap: "wrap", // Allow text to wrap
@@ -513,11 +526,11 @@ const styles = StyleSheet.create({
   questionNumber: {},
   option: {
     fontSize: 13,
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
     fontWeight: "bold",
   },
   optionNumber: {
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
     fontSize: 15,
     marginTop: 2,
   },
@@ -570,7 +583,7 @@ const styles = StyleSheet.create({
   },
   optionText: {
     fontSize: 8,
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
     textAlign: "center",
   },
   correctFilling: {
@@ -639,7 +652,7 @@ const styles = StyleSheet.create({
   },
   optionTextWrong: {
     fontSize: "10px",
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
     position: "relative",
     zIndex: "1",
   },
