@@ -199,7 +199,7 @@ const UpdateContest = () => {
                     name="contestNo"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="label">Contest Name</FormLabel>
+                        <FormLabel className="label">Contest No</FormLabel>
                         <FormControl>
                           <Input
                             disabled={isLoading}
