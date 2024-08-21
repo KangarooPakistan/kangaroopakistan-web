@@ -44,16 +44,6 @@ export type Registration = {
   contestId: string;
 };
 
-type ProfileData = {
-  p_fName: string;
-  p_mName: string;
-  p_lName: string;
-  c_fName: string;
-  c_mName: string;
-  c_lName: string;
-  email: string;
-  contactNumber: string;
-};
 export type PaymentProof = {
   id: number;
   imageUrl: string;
@@ -78,6 +68,7 @@ interface profileData {
   email: string;
   contactNumber: string;
   contestName: string;
+  contestCh: string;
 }
 
 type RegistrationProps = {
@@ -308,6 +299,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         email: res.data.user.email,
         contactNumber: res.data.user.contactNumber,
         contestName: contestData.data.name,
+        contestCh: contestData.data.contestCh,
       };
 
       // console.log(response.data);

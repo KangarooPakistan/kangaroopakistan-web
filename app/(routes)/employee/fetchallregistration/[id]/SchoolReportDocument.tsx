@@ -32,6 +32,7 @@ interface profileData {
   email: string;
   contactNumber: string;
   contestName: string;
+  contestCh: string;
 }
 
 interface SchoolReportProps {
@@ -271,10 +272,22 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
             marginRight: "20px",
             flexDirection: "row",
           }}>
-          <Image
-            style={styles.image}
-            src="/innovative-learning.jpg" // Replace with your image path or URL
-          />
+          {profileData?.contestCh === "M" ? (
+            <Image
+              style={styles.image}
+              src="/innovative-learning.jpg" // Replace with your image path or URL
+            />
+          ) : profileData?.contestCh === "S" ? (
+            <Image
+              style={styles.image}
+              src="/innventive_learning.jpg" // Replace with your image path or URL
+            />
+          ) : (
+            <Image
+              style={styles.image}
+              src="/innovative-learning.jpg" // Replace with your image path or URL
+            />
+          )}
 
           <View
             style={{
@@ -285,7 +298,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
               flexDirection: "column",
             }}>
             <Text style={styles.header}>
-              34
+              17
               <Text
                 style={{
                   verticalAlign: "super",

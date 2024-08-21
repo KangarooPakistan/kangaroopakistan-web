@@ -42,6 +42,7 @@ interface profileData {
   email: string;
   contactNumber: string;
   contestName: string;
+  contestCh: string;
 }
 
 const ViewRegistered = () => {
@@ -191,6 +192,7 @@ const ViewRegistered = () => {
         email: res.data.user.email,
         contactNumber: res.data.user.contactNumber,
         contestName: contestData.data.name,
+        contestCh: contestData.data.contestCh,
       };
 
       console.log(response.data);
