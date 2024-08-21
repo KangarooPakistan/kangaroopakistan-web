@@ -272,6 +272,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
     const blob = await asPdf.toBlob();
     return blob;
   };
+
   const handleSheet = async () => {
     try {
       const response = await axios.get(
@@ -304,21 +305,30 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         contestNo: contestData.data.contestNo,
       };
 
-      // console.log(response.data);
-      const schoolData = response.data;
       schoolData.sort((a: Student, b: Student) => {
-        const extractNumeric = (rollNumber: string) => {
+        const extractClassAndSerial = (rollNumber: string) => {
           const parts = rollNumber.split("-");
-          const lastPart = parts[parts.length - 2];
-          // console.log(lastPart);
-          // console.log(parseInt(lastPart, 10));
-          return parseInt(lastPart, 10);
+          const classNumber = parseInt(parts[parts.length - 3], 10);
+          const serialNumber = parseInt(parts[parts.length - 2], 10);
+          return { class: classNumber, serial: serialNumber };
         };
 
-        const numericValueA = extractNumeric(a.rollNumber);
-        const numericValueB = extractNumeric(b.rollNumber);
+        const aClassAndSerial = extractClassAndSerial(a.rollNumber);
+        const bClassAndSerial = extractClassAndSerial(b.rollNumber);
 
-        return numericValueA - numericValueB;
+        if (aClassAndSerial.class < bClassAndSerial.class) {
+          return -1;
+        }
+        if (aClassAndSerial.class > bClassAndSerial.class) {
+          return 1;
+        }
+        if (aClassAndSerial.serial < bClassAndSerial.serial) {
+          return -1;
+        }
+        if (aClassAndSerial.serial > bClassAndSerial.serial) {
+          return 1;
+        }
+        return 0;
       });
 
       // console.log("Sorted schoolData by rollNumber:");
