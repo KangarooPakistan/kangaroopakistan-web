@@ -41,11 +41,7 @@ interface profileData {
   c_lName: string;
   email: string;
   contactNumber: string;
-}
-
-interface SchoolReportProps {
-  schoolData: Student[];
-  profileData: profileData | null | undefined;
+  contestName: string;
 }
 
 const ViewRegistered = () => {
@@ -177,6 +173,12 @@ const ViewRegistered = () => {
       const res = await axios.get(
         `/api/users/allusers/getschoolbyregid/${registrationId}`
       );
+      console.log(res.data.contestId);
+      const contestData = await axios.get(
+        `/api/users/contests/${res.data.contestId}`
+      );
+      console.log(contestData.data);
+      console.log(contestData.data.name);
       console.log("res");
       console.log(res.data.user.p_fName);
       const profileData: profileData = {
@@ -188,14 +190,15 @@ const ViewRegistered = () => {
         c_lName: res.data.user.c_lName,
         email: res.data.user.email,
         contactNumber: res.data.user.contactNumber,
+        contestName: contestData.data.name,
       };
 
       console.log(response.data);
       const schoolData = response.data;
       console.log("schoolData"); // This should be an array of ClassData
       console.log(schoolData);
-      const blob = await generatePdfBlob(schoolData, profileData);
-      saveAs(blob, "students.pdf");
+      // const blob = await generatePdfBlob(schoolData, profileData);
+      // saveAs(blob, "students.pdf");
     } catch (error) {
       console.error("Error downloading the PDF:", error);
     }

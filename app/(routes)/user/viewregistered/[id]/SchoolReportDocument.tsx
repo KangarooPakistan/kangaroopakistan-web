@@ -31,6 +31,7 @@ interface profileData {
   c_lName: string;
   email: string;
   contactNumber: string;
+  contestName: string;
 }
 
 interface SchoolReportProps {
@@ -287,8 +288,16 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
               flexDirection: "column",
             }}>
             <Text style={styles.header}>
-              34<Text style={{ verticalAlign: "super", fontSize: 10 }}>th</Text>{" "}
-              International Kangaroo Mathematics Contest 2024
+              34
+              <Text
+                style={{
+                  verticalAlign: "super",
+                  fontSize: 10,
+                  textTransform: "uppercase",
+                }}>
+                th
+              </Text>{" "}
+              {profileData?.contestName}
             </Text>
             <View style={{ display: "flex", justifyContent: "flex-start" }}>
               <Text

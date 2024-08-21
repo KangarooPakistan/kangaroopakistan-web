@@ -31,13 +31,13 @@ interface profileData {
   c_lName: string;
   email: string;
   contactNumber: string;
+  contestName: string;
 }
 
 interface SchoolReportProps {
   schoolData: Student[];
   profileData: profileData | null | undefined;
 }
-
 const styles = StyleSheet.create({
   image: {
     width: 70, // Set the width of your image
@@ -285,8 +285,16 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
               flexDirection: "column",
             }}>
             <Text style={styles.header}>
-              34<Text style={{ verticalAlign: "super", fontSize: 10 }}>th</Text>{" "}
-              International Kangaroo Mathematics Contest 2024
+              34
+              <Text
+                style={{
+                  verticalAlign: "super",
+                  fontSize: 10,
+                  textTransform: "uppercase",
+                }}>
+                th
+              </Text>{" "}
+              {profileData?.contestName}
             </Text>
             <View style={{ display: "flex", justifyContent: "flex-start" }}>
               <Text
@@ -481,6 +489,17 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
           </View>
           <View></View>
         </View>
+        <Text
+          style={{
+            fontSize: "14px",
+            textAlign: "center",
+            marginVertical: "8px",
+            fontFamily: "Roboto",
+            fontWeight: 600, // Keep the label text bold
+            display: "flex",
+          }}>
+          List of registered students
+        </Text>
         <View style={styles.newView}>
           {/* <Text style={styles.totalStudentsText}>Total Students by Level</Text> */}
           <Text style={styles.totalStudentsText}>
@@ -507,17 +526,6 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
             Total Number of Students : {schoolData.length}
           </Text>
         </View>
-        <Text
-          style={{
-            fontSize: "14px",
-            textAlign: "center",
-            marginVertical: "8px",
-            fontFamily: "Roboto",
-            fontWeight: 600, // Keep the label text bold
-            display: "flex",
-          }}>
-          List of registered students
-        </Text>
 
         {Object.entries(groupedStudents).map(([level, classes]) => (
           <View key={level} style={styles.section}>

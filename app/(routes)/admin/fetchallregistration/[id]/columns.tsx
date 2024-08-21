@@ -77,6 +77,7 @@ interface profileData {
   c_lName: string;
   email: string;
   contactNumber: string;
+  contestName: string;
 }
 
 type RegistrationProps = {
@@ -284,14 +285,20 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       const response = await axios.get(
         `/api/users/pdfdownload/${registration.id}`
       );
-
+      console.log("response");
+      console.log(response);
       const res = await axios.get(
         `/api/users/allusers/getschoolbyregid/${registration.id}`
       );
-      console.log("res");
-      const pdfName = `${res.data.user.schoolId}_Students Summary.pdf`;
-      console.log(res.data.user.p_fName);
-      const profileData: ProfileData = {
+      console.log(res.data.contestId);
+      const contestData = await axios.get(
+        `/api/users/contests/${res.data.contestId}`
+      );
+      console.log(contestData.data);
+      console.log(contestData.data.name);
+      // console.log("res");
+      // console.log(res.data.user.p_fName);
+      const profileData: profileData = {
         p_fName: res.data.user.p_fName,
         p_mName: res.data.user.p_mName,
         p_lName: res.data.user.p_lName,
@@ -300,16 +307,17 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         c_lName: res.data.user.c_lName,
         email: res.data.user.email,
         contactNumber: res.data.user.contactNumber,
+        contestName: contestData.data.name,
       };
 
-      console.log(response.data);
+      // console.log(response.data);
       const schoolData = response.data;
       schoolData.sort((a: Student, b: Student) => {
         const extractNumeric = (rollNumber: string) => {
           const parts = rollNumber.split("-");
           const lastPart = parts[parts.length - 2];
-          console.log(lastPart);
-          console.log(parseInt(lastPart, 10));
+          // console.log(lastPart);
+          // console.log(parseInt(lastPart, 10));
           return parseInt(lastPart, 10);
         };
 
@@ -319,19 +327,19 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         return numericValueA - numericValueB;
       });
 
-      console.log("Sorted schoolData by rollNumber:");
-      console.log(schoolData);
+      // console.log("Sorted schoolData by rollNumber:");
+      // console.log(schoolData);
 
-      console.log("schoolData"); // This should be an array of ClassData
+      // console.log("schoolData"); // This should be an array of ClassData
 
       const schoolId = schoolData[0].schoolId;
 
-      console.log(schoolId);
+      // console.log(schoolId);
       // This should be an array of ClassData
       const blob = await generatePdfBlobForSE(schoolData, profileData);
       saveAs(blob, `students_data_${schoolId}.pdf`);
 
-      console.log("link");
+      // console.log("link");
     } catch (error) {
       console.error("Error generating the PDF:", error);
     }

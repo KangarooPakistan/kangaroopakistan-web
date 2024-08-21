@@ -12,7 +12,7 @@ export async function GET(
     });
 
     if (!contest) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return NextResponse.json({ error: "Contest not found" }, { status: 404 });
     }
     return NextResponse.json(contest);
   } catch (error: any) {
