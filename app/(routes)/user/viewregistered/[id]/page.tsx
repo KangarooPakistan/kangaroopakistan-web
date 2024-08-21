@@ -4,7 +4,7 @@ import { getSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { DataTable } from "./data-table";
-import { columns } from "./columns";
+import { Student, columns } from "./columns";
 import { Button } from "@/components/ui/button";
 import { useModal } from "@/hooks/use-modal-store";
 import SchoolReportDocument from "./SchoolReportDocument";
@@ -22,7 +22,7 @@ import Link from "next/link";
 //   email: string;
 //   contactNumber: string;
 // };
-interface Student {
+interface Students {
   rollNumber: string;
   studentName: string;
   fatherName: string;
@@ -156,7 +156,7 @@ const ViewRegistered = () => {
     router.back();
   };
   const generatePdfBlob = async (
-    schoolData: Student[],
+    schoolData: Students[],
     profileData: profileData
   ): Promise<Blob> => {
     const doc = (
