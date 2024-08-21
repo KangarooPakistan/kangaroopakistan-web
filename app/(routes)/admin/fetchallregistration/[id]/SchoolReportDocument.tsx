@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Page,
   Text,
@@ -37,18 +37,6 @@ interface SchoolReportProps {
   schoolData: Student[];
   profileData: profileData | null | undefined;
 }
-Font.register({
-  family: "Open Sans",
-  fonts: [
-    {
-      src: "https://cdn.jsdelivr.net/npm/open-sans-all@0.1.3/fonts/open-sans-regular.ttf",
-    },
-    {
-      src: "https://cdn.jsdelivr.net/npm/open-sans-all@0.1.3/fonts/open-sans-600.ttf",
-      fontWeight: 600,
-    },
-  ],
-});
 const styles = StyleSheet.create({
   image: {
     width: 70, // Set the width of your image
@@ -64,7 +52,7 @@ const styles = StyleSheet.create({
     fontSize: "16px",
     textAlign: "center",
     marginVertical: "10px",
-    fontFamily: "Open Sans",
+    fontFamily: "Roboto",
     fontWeight: 600,
   },
   subHeader: {
@@ -195,6 +183,23 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
   profileData,
 }) => {
   const groupedStudents: Record<string, Record<string, Student[]>> = {};
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+
+  useEffect(() => {
+    const loadFonts = async () => {
+      await Font.register({
+        family: "Roboto",
+        fonts: [
+          { src: "/fonts/Roboto-Regular.ttf" },
+          { src: "/fonts/Roboto-Bold.ttf", fontWeight: 700 },
+        ],
+      });
+
+      setFontsLoaded(true);
+    };
+
+    loadFonts();
+  }, []);
 
   let preecolierCount = 0;
   let ecolierCount = 0;
@@ -288,7 +293,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                   fontSize: "10px",
                   textAlign: "left",
                   marginVertical: "1px",
-                  fontFamily: "Open Sans",
+                  fontFamily: "Roboto",
                   fontWeight: 900,
                 }}>
                 {schoolData[0].schoolName}
@@ -305,7 +310,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                   fontSize: "10px",
                   textAlign: "left",
                   marginVertical: "1px",
-                  fontFamily: "Open Sans",
+                  fontFamily: "Roboto",
                   fontWeight: 600, // Keep the label text bold
                   display: "flex",
                 }}>
@@ -316,7 +321,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                   fontSize: "10px",
                   textAlign: "left",
                   marginVertical: "1px",
-                  fontFamily: "Open Sans",
+                  fontFamily: "Roboto",
                   fontWeight: "normal", // Set fontWeight to normal for the school ID
                   display: "flex",
                 }}>
@@ -334,7 +339,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                   fontSize: "10px",
                   textAlign: "left",
                   marginVertical: "1px",
-                  fontFamily: "Open Sans",
+                  fontFamily: "Roboto",
                   fontWeight: 600, // Keep the label text bold
                   display: "flex",
                 }}>
@@ -345,7 +350,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                   fontSize: "10px",
                   textAlign: "left",
                   marginVertical: "1px",
-                  fontFamily: "Open Sans",
+                  fontFamily: "Roboto",
                   fontWeight: "normal", // Set fontWeight to normal for the school ID
                   display: "flex",
                 }}>
@@ -363,7 +368,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                   fontSize: "10px",
                   textAlign: "left",
                   marginVertical: "1px",
-                  fontFamily: "Open Sans",
+                  fontFamily: "Roboto",
                   fontWeight: 600, // Keep the label text bold
                   display: "flex",
                 }}>
@@ -374,7 +379,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                   fontSize: "10px",
                   textAlign: "left",
                   marginVertical: "1px",
-                  fontFamily: "Open Sans",
+                  fontFamily: "Roboto",
                   fontWeight: "normal", // Set fontWeight to normal for the school ID
                   display: "flex",
                 }}>
@@ -392,7 +397,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                   fontSize: "10px",
                   textAlign: "left",
                   marginVertical: "1px",
-                  fontFamily: "Open Sans",
+                  fontFamily: "Roboto",
                   fontWeight: 600, // Keep the label text bold
                   display: "flex",
                 }}>
@@ -403,7 +408,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                   fontSize: "10px",
                   textAlign: "left",
                   marginVertical: "1px",
-                  fontFamily: "Open Sans",
+                  fontFamily: "Roboto",
                   fontWeight: "normal", // Set fontWeight to normal for the school ID
                   display: "flex",
                 }}>
@@ -421,7 +426,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                   fontSize: "10px",
                   textAlign: "left",
                   marginVertical: "1px",
-                  fontFamily: "Open Sans",
+                  fontFamily: "Roboto",
                   fontWeight: 600, // Keep the label text bold
                   display: "flex",
                 }}>
@@ -432,7 +437,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                   fontSize: "10px",
                   textAlign: "left",
                   marginVertical: "1px",
-                  fontFamily: "Open Sans",
+                  fontFamily: "Roboto",
                   fontWeight: "normal", // Set fontWeight to normal for the school ID
                   display: "flex",
                 }}>
@@ -452,7 +457,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                   fontSize: "10px",
                   textAlign: "left",
                   marginVertical: "1px",
-                  fontFamily: "Open Sans",
+                  fontFamily: "Roboto",
                   fontWeight: 600, // Keep the label text bold
                   display: "flex",
                 }}>
@@ -463,7 +468,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                   fontSize: "10px",
                   textAlign: "left",
                   marginVertical: "1px",
-                  fontFamily: "Open Sans",
+                  fontFamily: "Roboto",
                   fontWeight: "normal", // Set fontWeight to normal for the school ID
                   display: "flex",
                 }}>
@@ -480,7 +485,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
             fontSize: "14px",
             textAlign: "center",
             marginVertical: "8px",
-            fontFamily: "Open Sans",
+            fontFamily: "Roboto",
             fontWeight: 600, // Keep the label text bold
             display: "flex",
           }}>
