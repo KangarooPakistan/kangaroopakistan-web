@@ -305,6 +305,9 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         contestNo: contestData.data.contestNo,
       };
 
+      // console.log(response.data);
+      const schoolData = response.data;
+
       schoolData.sort((a: Student, b: Student) => {
         const extractClassAndSerial = (rollNumber: string) => {
           const parts = rollNumber.split("-");
