@@ -33,12 +33,8 @@ interface Students {
   address: string; // Assuming 'class' is a string like '1A', '2B', etc.
 }
 interface profileData {
-  p_fName: string;
-  p_mName: string;
-  p_lName: string;
-  c_fName: string;
-  c_mName: string;
-  c_lName: string;
+  p_Name: string;
+  c_Name: string;
   email: string;
   contactNumber: string;
   contestName: string;
@@ -184,12 +180,8 @@ const ViewRegistered = () => {
       console.log("res");
       console.log(res.data.user.p_fName);
       const profileData: profileData = {
-        p_fName: res.data.user.p_fName,
-        p_mName: res.data.user.p_mName,
-        p_lName: res.data.user.p_lName,
-        c_fName: res.data.user.c_fName,
-        c_mName: res.data.user.c_mName,
-        c_lName: res.data.user.c_lName,
+        p_Name: res.data.user.p_Name,
+        c_Name: res.data.user.c_lName,
         email: res.data.user.email,
         contactNumber: res.data.user.contactNumber,
         contestName: contestData.data.name,

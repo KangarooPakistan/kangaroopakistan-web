@@ -249,6 +249,7 @@ const Register = () => {
 
   const populateFormFields = (data: StudentImport[]) => {
     console.log(data);
+
     const stds = data.map((item) => ({
       studentName: item.studentName || "",
       fatherName: item.fatherName || "",

@@ -23,12 +23,9 @@ interface Student {
   address: string; // Assuming 'class' is a string like '1A', '2B', etc.
 }
 interface profileData {
-  p_fName: string;
-  p_mName: string;
-  p_lName: string;
-  c_fName: string;
-  c_mName: string;
-  c_lName: string;
+  p_Name: string;
+
+  c_Name: string;
   email: string;
   contactNumber: string;
   contestName: string;
@@ -464,9 +461,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                   fontWeight: "normal", // Set fontWeight to normal for the school ID
                   display: "flex",
                 }}>
-                {profileData?.p_fName}{" "}
-                {profileData?.p_mName !== null && profileData?.p_mName + " "}
-                {profileData?.p_lName}{" "}
+                {profileData?.p_Name}
               </Text>
             </View>
             <View
@@ -495,9 +490,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                   fontWeight: "normal", // Set fontWeight to normal for the school ID
                   display: "flex",
                 }}>
-                {profileData?.c_fName}{" "}
-                {profileData?.c_mName !== null && profileData?.c_mName + " "}
-                {profileData?.c_lName}
+                {profileData?.c_Name}{" "}
               </Text>
             </View>
           </View>
