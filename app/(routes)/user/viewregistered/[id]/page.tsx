@@ -193,8 +193,8 @@ const ViewRegistered = () => {
       const schoolData = response.data;
       console.log("schoolData"); // This should be an array of ClassData
       console.log(schoolData);
-      // const blob = await generatePdfBlob(schoolData, profileData);
-      // saveAs(blob, "students.pdf");
+      const blob = await generatePdfBlob(schoolData, profileData);
+      saveAs(blob, "students_details.pdf");
     } catch (error) {
       console.error("Error downloading the PDF:", error);
     }
