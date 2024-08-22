@@ -126,6 +126,8 @@ const FetchAllRegistrations = () => {
       setCadet(levelCounts["cadet"] || 0);
       setJunior(levelCounts["junior"] || 0);
       setStudent(levelCounts["student"] || 0);
+      console.log("registrations");
+      console.log(registrations);
 
       const studentsForExcel = registrations.flatMap((reg: any) =>
         reg.students.map((student: StudentData) => ({
@@ -134,7 +136,7 @@ const FetchAllRegistrations = () => {
           "School BankTitle": reg.user?.bankTitle,
           "Contact Number": reg.user?.contactNumber,
           "School Address": reg.user?.schoolAddress,
-          District: reg.user?.district,
+          district: reg.user?.district,
           City: reg.user?.city,
           "Principal Name": reg.user?.p_Name,
           "Principal Cell #": reg.user?.p_contact,
