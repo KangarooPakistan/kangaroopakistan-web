@@ -129,29 +129,49 @@ const FetchAllRegistrations = () => {
       console.log("registrations");
       console.log(registrations);
 
-      const studentsForExcel = registrations.flatMap((reg: any) =>
-        reg.students.map((student: StudentData) => ({
-          "School id": reg.user?.schoolId,
-          "School Name": reg.user?.schoolName,
-          "School BankTitle": reg.user?.bankTitle,
-          "Contact Number": reg.user?.contactNumber,
-          "School Address": reg.user?.schoolAddress,
-          district: reg.user?.district,
-          City: reg.user?.city,
-          "Principal Name": reg.user?.p_Name,
-          "Principal Cell #": reg.user?.p_contact,
-          "Principal Phone #": reg.user?.p_phone,
-          "Principal Email": reg.user?.p_email,
-          "Coordinator Name": reg.user?.c_Name,
-          "Coordinator Cell #": reg.user?.c_contact,
-          "Coordinator Phone #": reg.user?.c_phone,
-          "Coordinator Email": reg.user?.c_email,
-          "Coordinator Account Details": reg.user?.c_accountDetails,
-          "School Email": reg.user?.email,
-          // ...student, // Spread student attributes
-        }))
-      );
-      setExcel(studentsForExcel);
+      const ExcelData = registrations.map((item: any) => ({
+        "School id": item.user?.schoolId,
+        "School Name": item.user?.schoolName,
+        "School BankTitle": item.user?.bankTitle,
+        "Contact Number": item.user?.contactNumber,
+        "School Address": item.user?.schoolAddress,
+        District: item.user?.district,
+        City: item.registrations?.city,
+        "Principal Name": item.user?.p_Name,
+        "Principal Cell #": item.user?.p_contact,
+        "Principal Phone #": item.user?.p_phone,
+        "Principal Email": item.user?.p_email,
+        "Coordinator Name": item.user?.c_Name,
+        "Coordinator Cell #": item.user?.c_contact,
+        "Coordinator Phone #": item.user?.c_phone,
+        "Coordinator Email": item.user?.c_email,
+        "Coordinator Account Details": item.user?.c_accountDetails,
+        "School Email": item.user?.email,
+        // ...student, // Spread student attributes
+      }));
+      // const studentsForExcel = registrations.flatMap((reg: any) =>
+      //   reg.students.map((student: StudentData) => ({
+      //     "School id": reg.user?.schoolId,
+      //     "School Name": reg.user?.schoolName,
+      //     "School BankTitle": reg.user?.bankTitle,
+      //     "Contact Number": reg.user?.contactNumber,
+      //     "School Address": reg.user?.schoolAddress,
+      //     district: reg.user?.district,
+      //     City: reg.user?.city,
+      //     "Principal Name": reg.user?.p_Name,
+      //     "Principal Cell #": reg.user?.p_contact,
+      //     "Principal Phone #": reg.user?.p_phone,
+      //     "Principal Email": reg.user?.p_email,
+      //     "Coordinator Name": reg.user?.c_Name,
+      //     "Coordinator Cell #": reg.user?.c_contact,
+      //     "Coordinator Phone #": reg.user?.c_phone,
+      //     "Coordinator Email": reg.user?.c_email,
+      //     "Coordinator Account Details": reg.user?.c_accountDetails,
+      //     "School Email": reg.user?.email,
+      //     // ...student, // Spread student attributes
+      //   }))
+      // );
+      setExcel(ExcelData);
 
       const extractedData = registrations.map((obj: any) => ({
         contestId: obj.contestId,
