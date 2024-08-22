@@ -49,12 +49,16 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: "16px",
+    textTransform: "uppercase",
+
     textAlign: "center",
     marginVertical: "10px",
     fontFamily: "Roboto",
     fontWeight: 600,
   },
   subHeader: {
+    textTransform: "uppercase",
+
     fontSize: "10px",
     fontWeight: "black",
     marginVertical: "1px",
@@ -63,6 +67,8 @@ const styles = StyleSheet.create({
   },
   subHeaderBelow: {
     marginVertical: "5px",
+    textTransform: "uppercase",
+
     fontSize: "13px",
     fontWeight: "heavy",
     textAlign: "center",
@@ -70,18 +76,24 @@ const styles = StyleSheet.create({
   subHeading: {
     marginVertical: "12px",
     fontSize: "12px",
+    textTransform: "uppercase",
+
     textAlign: "center",
     fontWeight: "black",
   },
 
   subHeadingTwo: {
     fontSize: "12px",
+    textTransform: "uppercase",
+
     textAlign: "center",
     fontWeight: "black",
     marginVertical: "0px",
   },
   subHeadingThree: {
     fontSize: "12px",
+    textTransform: "uppercase",
+
     textAlign: "center",
     fontWeight: "extrabold",
     marginVertical: "5px",
@@ -150,6 +162,8 @@ const styles = StyleSheet.create({
   },
   newViewText: {
     fontSize: "12px",
+    textTransform: "uppercase",
+
     marginVertical: "5px",
     textAlign: "left",
   },
@@ -160,11 +174,15 @@ const styles = StyleSheet.create({
   },
   tableCellHeader: {
     fontSize: 10,
+    textTransform: "uppercase",
+
     fontWeight: "bold",
     textAlign: "center", // Center align header text
   },
   tableCell: {
     fontSize: "9px",
+    textTransform: "uppercase",
+
     width: "100%",
     flexWrap: "wrap",
     fontWeight: "bold",
@@ -290,6 +308,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                 style={{
                   verticalAlign: "super",
                   fontSize: 10,
+
                   textTransform: "uppercase",
                 }}>
                 th
@@ -300,6 +319,8 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
               <Text
                 style={{
                   fontSize: "10px",
+                  textTransform: "uppercase",
+
                   textAlign: "left",
                   marginVertical: "1px",
                   fontFamily: "Roboto",
@@ -317,6 +338,8 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
               <Text
                 style={{
                   fontSize: "10px",
+                  textTransform: "uppercase",
+
                   textAlign: "left",
                   marginVertical: "1px",
                   fontFamily: "Roboto",
@@ -328,6 +351,8 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
               <Text
                 style={{
                   fontSize: "10px",
+                  textTransform: "uppercase",
+
                   textAlign: "left",
                   marginVertical: "1px",
                   fontFamily: "Roboto",
@@ -345,6 +370,8 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
               }}>
               <Text
                 style={{
+                  textTransform: "uppercase",
+
                   fontSize: "10px",
                   textAlign: "left",
                   marginVertical: "1px",
@@ -358,6 +385,8 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                 style={{
                   fontSize: "10px",
                   textAlign: "left",
+                  textTransform: "uppercase",
+
                   marginVertical: "1px",
                   fontFamily: "Roboto",
                   fontWeight: "normal", // Set fontWeight to normal for the school ID
@@ -375,6 +404,8 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
               <Text
                 style={{
                   fontSize: "10px",
+                  textTransform: "uppercase",
+
                   textAlign: "left",
                   marginVertical: "1px",
                   fontFamily: "Roboto",
@@ -386,6 +417,8 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
               <Text
                 style={{
                   fontSize: "10px",
+                  textTransform: "uppercase",
+
                   textAlign: "left",
                   marginVertical: "1px",
                   fontFamily: "Roboto",
@@ -404,6 +437,8 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
               <Text
                 style={{
                   fontSize: "10px",
+                  textTransform: "uppercase",
+
                   textAlign: "left",
                   marginVertical: "1px",
                   fontFamily: "Roboto",
@@ -416,6 +451,8 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                 style={{
                   fontSize: "10px",
                   textAlign: "left",
+                  textTransform: "uppercase",
+
                   marginVertical: "1px",
                   fontFamily: "Roboto",
                   fontWeight: "normal", // Set fontWeight to normal for the school ID
@@ -433,6 +470,8 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
               <Text
                 style={{
                   fontSize: "10px",
+                  textTransform: "uppercase",
+
                   textAlign: "left",
                   marginVertical: "1px",
                   fontFamily: "Roboto",
@@ -444,6 +483,8 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
               <Text
                 style={{
                   fontSize: "10px",
+                  textTransform: "uppercase",
+
                   textAlign: "left",
                   marginVertical: "1px",
                   fontFamily: "Roboto",
@@ -462,6 +503,8 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
               <Text
                 style={{
                   fontSize: "10px",
+                  textTransform: "uppercase",
+
                   textAlign: "left",
                   marginVertical: "1px",
                   fontFamily: "Roboto",
@@ -473,6 +516,8 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
               <Text
                 style={{
                   fontSize: "10px",
+                  textTransform: "uppercase",
+
                   textAlign: "left",
                   marginVertical: "1px",
                   fontFamily: "Roboto",
@@ -488,6 +533,8 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
         <Text
           style={{
             fontSize: "14px",
+            textTransform: "uppercase",
+
             textAlign: "center",
             marginVertical: "8px",
             fontFamily: "Roboto",
