@@ -33,7 +33,10 @@ export async function GET(request: Request) {
     return NextResponse.json(updatedUpdates, { status: 200 });
   } catch (error) {
     return NextResponse.json(
-      "There was some error while fetching logs, Please try again later",
+      {
+        message:
+          "There was some error while fetching logs, Please try again later",
+      },
       { status: 500 }
     );
   }

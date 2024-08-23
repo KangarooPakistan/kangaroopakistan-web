@@ -2,9 +2,8 @@ import { db } from "@/app/lib/prisma";
 import { NextResponse } from "next/server";
 import transporter from "@/app/lib/emailTransporter";
 import nodemailer from "nodemailer";
-import { SendMailOptions } from 'nodemailer';
+import { SendMailOptions } from "nodemailer";
 import emailManager from "@/app/lib/emailManager";
-
 
 export async function GET(
   request: Request,
@@ -13,7 +12,7 @@ export async function GET(
   try {
     if (!params.registrationId) {
       return NextResponse.json(
-        { error: "Missing registrationId in query parameters" },
+        { message: "Missing registrationId in query parameters" },
         { status: 400 }
       );
     }
@@ -55,7 +54,7 @@ export async function GET(
 
     if (!registrations) {
       return NextResponse.json(
-        { error: "No registrations found" },
+        { message: "No registrations found" },
         { status: 404 }
       );
     }
@@ -112,10 +111,6 @@ export async function GET(
     //   ${tableHtml}`,
     // };
 
-
-  
-  
-
     // const sendEmailWithRetry = async (
     //   mailOptions: nodemailer.SendMailOptions,
     //   retries = 1
@@ -132,7 +127,6 @@ export async function GET(
     //     }
     //   }
     // };
-    
 
     const mailOptions: SendMailOptions = {
       to: schoolDetails?.email,
@@ -158,17 +152,18 @@ export async function GET(
       ${tableHtml}`,
     };
 
-
     try {
       await emailManager.sendEmail(mailOptions);
       return NextResponse.json("Email sent Successfully", { status: 200 });
     } catch (error) {
       console.error("Failed to send email:", error);
-      return NextResponse.json({ error: "Failed to send email" }, { status: 500 });
+      return NextResponse.json(
+        { message: "Failed to send email" },
+        { status: 500 }
+      );
     }
-    
   } catch (error: any) {
     console.error("Error in GET function:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ message: error.message }, { status: 500 });
   }
 }

@@ -1,14 +1,17 @@
 import { NextResponse, NextRequest } from "next/server";
 import { db } from "@/app/lib/prisma";
 
-export async function GET(request: Request, {
-  params
-}: {
-  params: {
-    id: string;
-    schoolId: string;
-  };
-}) {
+export async function GET(
+  request: Request,
+  {
+    params,
+  }: {
+    params: {
+      id: string;
+      schoolId: string;
+    };
+  }
+) {
   try {
     const schoolIdInt = parseInt(params.schoolId, 10);
 
@@ -22,11 +25,14 @@ export async function GET(request: Request, {
     });
 
     if (!registration) {
-      return NextResponse.json({ error: "Contest not found" }, { status: 201 });
+      return NextResponse.json(
+        { message: "Contest not found" },
+        { status: 201 }
+      );
     }
 
     return NextResponse.json(registration);
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ message: error.message }, { status: 500 });
   }
 }

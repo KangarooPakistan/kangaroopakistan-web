@@ -80,9 +80,12 @@ export async function GET(
       },
     });
   } catch (error: any) {
-    return new Response(JSON.stringify({ message: error.message }), {
-      status: 400,
-    });
+    return new Response(
+      JSON.stringify({ message: "Error while fetching pdf data" }),
+      {
+        status: 400,
+      }
+    );
   }
 }
 

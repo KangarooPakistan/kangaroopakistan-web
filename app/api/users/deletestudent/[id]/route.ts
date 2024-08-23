@@ -72,7 +72,7 @@ export async function DELETE(
     } catch (error) {
       return NextResponse.json(
         {
-          error:
+          message:
             "Students were registered successfully but could not create Log,. There was some error while creating log of this activity.",
         },
         { status: 500 }
@@ -81,7 +81,7 @@ export async function DELETE(
 
     if (!student) {
       return NextResponse.json(
-        { error: "No students found for this registration" },
+        { message: "No students found for this registration" },
         { status: 404 }
       );
     }
@@ -94,7 +94,7 @@ export async function DELETE(
   } catch (error) {
     console.error("Request error", error);
     return NextResponse.json(
-      { error: "Error Deleting the student" },
+      { message: "Error Deleting the student" },
       { status: 500 }
     );
   }

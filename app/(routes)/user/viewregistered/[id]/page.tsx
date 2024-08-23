@@ -11,7 +11,6 @@ import SchoolReportDocument from "./SchoolReportDocument";
 import { pdf } from "@react-pdf/renderer";
 import { saveAs } from "file-saver";
 import Link from "next/link";
-
 // type ProfileData = {
 //   p_fName: string;
 //   p_mName: string;
@@ -56,6 +55,7 @@ const ViewRegistered = () => {
   const [student, setStudent] = useState<number>(0);
   const [pdfUrl, setPdfUrl] = useState("");
   const [currentUserEmail, setCurrentUserEmail] = useState<string | null>();
+
   const params = useParams();
   type LevelCounts = Record<string, number>;
   useEffect(() => {
@@ -161,6 +161,7 @@ const ViewRegistered = () => {
     const blob = await asPdf.toBlob();
     return blob;
   };
+
   const handleSheet = async () => {
     console.log("kkr");
     try {
@@ -343,7 +344,9 @@ const ViewRegistered = () => {
           <div className="w-full sm:w-1/2 md:w-1/4 p-1">
             <Button
               className="w-full"
-              onClick={() => onOpen("addImage", { registrationId })}>
+              onClick={() =>
+                onOpen("addImage", { registrationId, currentUserEmail })
+              }>
               Add Proof of Payment
             </Button>
           </div>

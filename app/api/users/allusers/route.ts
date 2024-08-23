@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
         return NextResponse.json(contestTypes);
       } catch (error: any) {
         // Handle errors and return an appropriate response
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return NextResponse.json({ message: error.message }, { status: 500 });
       }
     }
   }

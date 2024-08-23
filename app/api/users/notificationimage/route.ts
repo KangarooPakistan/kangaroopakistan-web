@@ -13,7 +13,7 @@ export async function POST(request: Request) {
     return NextResponse.json(notificationImage, { status: 200 });
   } catch (error: any) {
     // Handle errors and return an appropriate response
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ message: error.message }, { status: 500 });
   }
 }
 export async function GET(request: Request) {
@@ -27,7 +27,7 @@ export async function GET(request: Request) {
 
     if (!notification) {
       return NextResponse.json(
-        { error: "No Notifications found" },
+        { message: "No Notifications found" },
         { status: 404 }
       );
     }
@@ -35,7 +35,7 @@ export async function GET(request: Request) {
     return NextResponse.json(notification, { status: 200 });
   } catch (error) {
     return NextResponse.json(
-      { error: "No Notifications found" },
+      { message: "No Notifications found" },
       { status: 404 }
     );
   }

@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
 
       if (!existingContestType) {
         return NextResponse.json(
-          { error: "Contest Type not found" },
+          { message: "Contest Type not found" },
           { status: 404 }
         );
       }
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
         } catch (error) {
           return NextResponse.json(
             {
-              error:
+              message:
                 "Contest was created successfully but could not create Log,. There was some error while creating log of this activity.",
             },
             { status: 500 }
@@ -89,21 +89,27 @@ export async function POST(request: NextRequest) {
         }
         return NextResponse.json(newContest);
       } catch (error) {
-        return NextResponse.json("Error while creating Contest");
+        return NextResponse.json(
+          {
+            message: "Error while creating Contest.",
+          },
+          { status: 500 }
+        );
+        // return NextResponse.json("Error while creating Contest");
         console.error("Error creating contest:", error);
         // Handle the error according to your needs.
       }
     } catch (error: any) {
       return NextResponse.json(
         {
-          error:
+          message:
             "Could not create contest. There was some error while creating contest",
         },
         { status: 500 }
       );
     }
   } else {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 }
 
@@ -117,7 +123,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
     // Optionally, you can validate if contestTypeId is provided
     if (!contestTypeId) {
       return NextResponse.json(
-        { error: "Missing contestTypeId" },
+        { message: "Missing contestTypeId" },
         { status: 401 }
       );
     }
@@ -131,7 +137,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
   } catch (error) {
     console.error("Error:", error);
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { message: "Internal Server Error" },
       { status: 500 }
     );
   }
@@ -151,7 +157,7 @@ export async function PUT(request: NextRequest) {
 
     if (!existingContest) {
       return NextResponse.json(
-        { error: "Contest type not found" },
+        { message: "Contest type not found" },
         { status: 404 }
       );
     }
@@ -171,6 +177,6 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json(updatedContest);
   } catch (error: any) {
     // Handle errors and return an appropriate response
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ message: error.message }, { status: 500 });
   }
 }

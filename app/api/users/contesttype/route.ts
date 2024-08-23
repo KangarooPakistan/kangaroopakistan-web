@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
         });
         if (existingContest) {
           return NextResponse.json(
-            { error: "User Already Exists" },
+            { message: "User Already Exists" },
             { status: 400 }
           );
         }
@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
 
         return NextResponse.json(contestType);
       } catch (error: any) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return NextResponse.json({ message: error.message }, { status: 500 });
       }
     }
   }
@@ -66,7 +66,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(contestTypes);
   } catch (error: any) {
     // Handle errors and return an appropriate response
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ message: error.message }, { status: 500 });
   }
 }
 
@@ -104,6 +104,6 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json(updatedContest);
   } catch (error: any) {
     // Handle errors and return an appropriate response
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ message: error.message }, { status: 500 });
   }
 }

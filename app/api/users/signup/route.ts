@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
     });
     if (userExists) {
       return NextResponse.json(
-        { error: "User Already Exists" },
+        { message: "User Already Exists" },
         { status: 400 }
       );
     }
@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
       });
       if (idExists) {
         return NextResponse.json(
-          { error: "Id  Already Assigned to another school" },
+          { message: "Id  Already Assigned to another school" },
           { status: 400 }
         );
       }
@@ -125,7 +125,7 @@ export async function POST(request: NextRequest) {
     });
     return NextResponse.json(user);
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ message: error.message }, { status: 500 });
   }
 }
 
@@ -175,7 +175,7 @@ export async function PUT(
     });
 
     if (!existingUser) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
 
     // Update the user's data
@@ -217,6 +217,6 @@ export async function PUT(
 
     return NextResponse.json(updatedUser);
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ message: error.message }, { status: 500 });
   }
 }

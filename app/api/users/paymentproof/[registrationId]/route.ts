@@ -8,7 +8,7 @@ export async function GET(
   try {
     if (!params.registrationId) {
       return NextResponse.json(
-        { error: "Missing registrationId in query parameters" },
+        { message: "Missing registrationId in query parameters" },
         { status: 400 }
       );
     }
@@ -20,7 +20,7 @@ export async function GET(
 
     if (!paymentProof) {
       return NextResponse.json(
-        { error: "Payment proof not found" },
+        { message: "Payment proof not found" },
         { status: 404 }
       );
     }

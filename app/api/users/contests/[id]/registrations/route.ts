@@ -56,7 +56,7 @@ export async function POST(
 
     if (!registeredBy || !Array.isArray(students)) {
       return NextResponse.json(
-        { error: "Invalid registration data" },
+        { message: "Invalid registration data" },
         { status: 400 }
       );
     }
@@ -67,7 +67,7 @@ export async function POST(
     if (!regId) {
       if (!contestId) {
         return NextResponse.json(
-          { error: "Contest ID is required for new registration" },
+          { message: "Contest ID is required for new registration" },
           { status: 400 }
         );
       }
@@ -89,7 +89,7 @@ export async function POST(
 
     if (!schoolDetails) {
       return NextResponse.json(
-        { error: "School details not found" },
+        { message: "School details not found" },
         { status: 404 }
       );
     }
@@ -177,7 +177,7 @@ export async function POST(
     } catch (error) {
       return NextResponse.json(
         {
-          error:
+          message:
             "Students were registered successfully but could not create Log,. There was some error while creating log of this activity.",
         },
         { status: 500 }
@@ -263,7 +263,7 @@ export async function POST(
     } catch (error) {
       console.error("Failed to send email:", error);
       return NextResponse.json(
-        { error: "Failed to send email" },
+        { message: "Failed to send email" },
         { status: 500 }
       );
     }
@@ -272,7 +272,7 @@ export async function POST(
   } catch (error) {
     console.error("Request error", error);
     return NextResponse.json(
-      { error: "Error creating registration" },
+      { message: "Error creating registration" },
       { status: 500 }
     );
   }

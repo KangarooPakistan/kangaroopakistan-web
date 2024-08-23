@@ -131,6 +131,7 @@ const AddImageModal = () => {
         const payload = {
           imageUrl: awsUrl,
           registrationId: data.registrationId,
+          email: data?.currentUserEmail,
         };
 
         await axios.post("/api/users/paymentproof", payload);
