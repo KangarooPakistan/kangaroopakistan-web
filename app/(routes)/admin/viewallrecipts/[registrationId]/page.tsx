@@ -51,7 +51,7 @@ const ViewAllRecipts = () => {
           School Name: {schoolName}
         </h3>
         <h3 className="text-xl text-center my-3 font-bold text-purple-600">
-          School Name: {schoolId}
+          School Id: {schoolId}
         </h3>
         <div className="flex justify-center items-center">
           <div className="mx-auto	font-bold flex justify-center items-center p-3 bg-blue-500 w-[350px] text-white	text-2xl h-[100px] mb-10">
