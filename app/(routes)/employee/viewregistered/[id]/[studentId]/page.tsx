@@ -181,8 +181,8 @@ const EditStudent = () => {
         progress: undefined,
         theme: "light",
       });
-    } catch (error) {
-      toast.error("Error creating registration ", {
+    } catch (error: any) {
+      toast.error(" " + error.response.data.message, {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -243,8 +243,7 @@ const EditStudent = () => {
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-4 md:space-y-6"
-              >
+                className="space-y-4 md:space-y-6">
                 <FormField
                   control={form.control}
                   name="studentName"
@@ -293,8 +292,7 @@ const EditStudent = () => {
                         // Automatically set the level based on the class
                         handleClassChange(e.target.value);
                       }}
-                      className="w-full p-2 text-xs md:text-base rounded border border-gray-300 focus:outline-none focus:border-blue-500"
-                    >
+                      className="w-full p-2 text-xs md:text-base rounded border border-gray-300 focus:outline-none focus:border-blue-500">
                       <option value="">SELECT CLASS</option>
                       <option value="01">ONE</option>
                       <option value="02">TWO</option>
@@ -318,8 +316,7 @@ const EditStudent = () => {
                     <select
                       disabled
                       {...field}
-                      className="w-full p-2 text-xs md:text-base rounded border border-gray-300 focus:outline-none focus:border-blue-500"
-                    >
+                      className="w-full p-2 text-xs md:text-base rounded border border-gray-300 focus:outline-none focus:border-blue-500">
                       <option value="">SELECT LEVEL</option>
                       <option value="preecolier">PRE ECOLIER</option>
                       <option value="ecolier">ECOLIER</option>
@@ -335,8 +332,7 @@ const EditStudent = () => {
                   <Button
                     disabled={isLoading}
                     variant="default"
-                    className="px-10"
-                  >
+                    className="px-10">
                     Update Student Details
                   </Button>
                 </div>

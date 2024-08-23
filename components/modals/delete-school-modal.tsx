@@ -41,8 +41,8 @@ const DeleteSchool = () => {
       // Close the modal after deletion
       onClose();
       // You can also perform any additional actions after deletion here
-    } catch (error) {
-      toast.error("there was an error while deleting student", {
+    } catch (error: any) {
+      toast.error(" " + error.response.data.message, {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,

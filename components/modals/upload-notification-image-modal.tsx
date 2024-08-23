@@ -143,8 +143,8 @@ const UploadNotification = () => {
           theme: "light",
         });
       }
-    } catch (error) {
-      toast.error("Error uploading video", {
+    } catch (error: any) {
+      toast.error(" " + error.response.data.message, {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,

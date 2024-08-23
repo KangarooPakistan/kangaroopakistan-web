@@ -105,7 +105,7 @@ const CreateContest = () => {
       });
     } catch (error: any) {
       console.log(error.response.data.error);
-      toast.error(" " + error.response.data.error, {
+      toast.error(" " + error.response.data.message, {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,

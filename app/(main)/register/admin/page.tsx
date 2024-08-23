@@ -62,8 +62,8 @@ const Register = () => {
         progress: undefined,
         theme: "light",
       });
-    } catch (error) {
-      toast.error(" " + error, {
+    } catch (error: any) {
+      toast.error(" " + error.response.data.message, {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -88,8 +88,7 @@ const Register = () => {
               <Form {...form}>
                 <form
                   onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-4 md:space-y-6"
-                >
+                  className="space-y-4 md:space-y-6">
                   <FormField
                     control={form.control}
                     name="email"
@@ -147,8 +146,7 @@ const Register = () => {
                     <Button
                       disabled={isLoading}
                       variant="default"
-                      className="px-4"
-                    >
+                      className="px-4">
                       Create
                     </Button>
                   </div>
@@ -156,8 +154,7 @@ const Register = () => {
                     Already have an account?{" "}
                     <Link
                       className="font-medium text-blue-600 hover:underline"
-                      href="/login"
-                    >
+                      href="/login">
                       Sign in here
                     </Link>
                   </p>

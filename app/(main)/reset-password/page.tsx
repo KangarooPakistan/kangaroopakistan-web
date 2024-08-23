@@ -55,8 +55,8 @@ const ResetPassword = () => {
         progress: undefined,
         theme: "light",
       });
-    } catch (error) {
-      toast.error(" " + error, {
+    } catch (error: any) {
+      toast.error(" " + error.response.data.message, {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -85,8 +85,7 @@ const ResetPassword = () => {
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-4 md:space-y-6"
-              >
+                className="space-y-4 md:space-y-6">
                 <FormField
                   control={form.control}
                   name="email"
@@ -111,8 +110,7 @@ const ResetPassword = () => {
                     type="submit"
                     disabled={isLoading}
                     variant="default"
-                    className="px-4"
-                  >
+                    className="px-4">
                     Submit
                   </Button>
                 </div>
@@ -120,8 +118,7 @@ const ResetPassword = () => {
                   Need to sign in? &nbsp;
                   <Link
                     className="font-medium text-blue-600 hover:underline"
-                    href="/"
-                  >
+                    href="/">
                     Sign In
                   </Link>
                 </p>

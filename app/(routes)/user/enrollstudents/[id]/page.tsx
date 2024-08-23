@@ -192,8 +192,8 @@ const Register = () => {
         setIsSubmitting(false);
 
         // Handle successful registration creation
-      } catch (error) {
-        toast.error("Error creating registration ", {
+      } catch (error: any) {
+        toast.error(error.response.data.message, {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,

@@ -199,8 +199,8 @@ const EditStudent = () => {
         progress: undefined,
         theme: "light",
       });
-    } catch (error) {
-      toast.error("Error creating registration ", {
+    } catch (error: any) {
+      toast.error(" " + error.response.data.message, {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,

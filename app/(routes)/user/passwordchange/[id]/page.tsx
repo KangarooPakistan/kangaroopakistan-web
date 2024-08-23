@@ -51,7 +51,6 @@ const PasswordChange = () => {
 
   const isLoading = form.formState.isSubmitting;
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-
     try {
       const payload = {
         currentPassword: values.currentPassword,
@@ -70,8 +69,8 @@ const PasswordChange = () => {
         progress: undefined,
         theme: "light",
       });
-    } catch (error) {
-      toast.error(" Error occured while updating password", {
+    } catch (error: any) {
+      toast.error(" " + error.response.data.message, {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -111,8 +110,7 @@ const PasswordChange = () => {
               <Form {...form}>
                 <form
                   onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-4 md:space-y-6"
-                >
+                  className="space-y-4 md:space-y-6">
                   <FormField
                     control={form.control}
                     name="currentPassword"
@@ -184,8 +182,7 @@ const PasswordChange = () => {
                     <Button
                       disabled={isLoading}
                       variant="default"
-                      className="px-10"
-                    >
+                      className="px-10">
                       Update Account
                     </Button>
                   </div>

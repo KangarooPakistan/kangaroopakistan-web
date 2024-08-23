@@ -51,8 +51,8 @@ const ViewAllRecipts = () => {
         progress: undefined,
         theme: "light",
       });
-    } catch (error) {
-      toast.error("Error creating registration ", {
+    } catch (error: any) {
+      toast.error(" " + error.response.data.message, {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -113,8 +113,7 @@ const ViewAllRecipts = () => {
           {paymentProof.map((item, index) => (
             <div
               key={item.id}
-              className="relative rounded-lg overflow-hidden shadow-md"
-            >
+              className="relative rounded-lg overflow-hidden shadow-md">
               {/* Checkbox to select image */}
               <input
                 type="checkbox"

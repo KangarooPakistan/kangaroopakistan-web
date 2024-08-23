@@ -616,7 +616,7 @@ const UserRegister = () => {
         theme: "light",
       });
     } catch (error) {
-      toast.error("Error Updating Profile ", {
+      toast.error(" " + error.response.data.message, {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,

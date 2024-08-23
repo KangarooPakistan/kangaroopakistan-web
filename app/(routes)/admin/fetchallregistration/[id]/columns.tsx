@@ -344,8 +344,8 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
     }
   };
   const handleEmail = async () => {
-    const res = await axios.get(`/api/users/sendemail/${registration.id}`);
-    if (res.status == 200) {
+    try {
+      const res = await axios.get(`/api/users/sendemail/${registration.id}`);
       toast.success("🦄 Email Sent Successfully 😍", {
         position: "bottom-center",
         autoClose: 5000,
@@ -356,7 +356,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         progress: undefined,
         theme: "light",
       });
-    } else {
+    } catch (error: any) {
       toast.error(
         "Error sending email, Please try again later 😒 " +
           {
