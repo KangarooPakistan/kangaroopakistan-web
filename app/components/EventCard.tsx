@@ -79,6 +79,11 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
               School: {event.schoolName}
             </p>
           )}
+          {event.schoolId && (
+            <p className="mb-4 xs:text-sm md:text-md xl:text-xl">
+              School: {event.schoolId}
+            </p>
+          )}
 
           {event.students && event.students.length > 0 && (
             <div className="mt-4">
