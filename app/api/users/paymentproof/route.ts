@@ -41,7 +41,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           error:
-            "Contest was created successfully but could not create Log,. There was some error while creating log of this activity.",
+            "Image was added successfully but could not create Log,. There was some error while creating log of this activity.",
         },
         { status: 500 }
       );
