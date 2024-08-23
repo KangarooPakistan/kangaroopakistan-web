@@ -69,18 +69,18 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
             <span className="xs:text-sm md:text-md xl:text-xl">
               Date: {formatDate(event.createdAt)}
             </span>
-            <span className="xs:text-sm md:text-md xl:text-xl">
+            <span className="xs:text-sm md:text-md xl:text-xl break-words">
               User : {event.email}
             </span>
           </div>
 
           {event.schoolName && (
-            <p className="mb-4 xs:text-sm md:text-md xl:text-xl">
+            <p className="mb-4 xs:text-sm md:text-md xl:text-xl break-words">
               School: {event.schoolName}
             </p>
           )}
           {event.schoolId && (
-            <p className="mb-4 xs:text-sm md:text-md xl:text-xl">
+            <p className="mb-4 xs:text-sm md:text-md xl:text-xl break-words">
               School: {event.schoolId}
             </p>
           )}
@@ -94,10 +94,10 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
                 {event.students.map((student) => (
                   <li
                     key={student.id}
-                    className="mb-1 xs:text-sm md:text-md xl:text-xl ">
+                    className="mb-1 xs:text-sm md:text-md xl:text-xl break-words ">
                     <div className="flex flex-col flex-wrap">
                       <p className="xs:text-sm md:text-md xl:text-xl">
-                        <span className="mr-2 ">Name:</span>
+                        <span className="mr-2 break-words">Name:</span>
                         {student.studentName}{" "}
                       </p>
                       <p className="xs:text-sm md:text-md xl:text-xl">
@@ -122,14 +122,14 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
 
           {studentObject !== null && (
             <div className="mt-4">
-              <h3 className="font-semibold mb-2 xs:text-sm md:text-md xl:text-xl">
+              <h3 className="font-semibold mb-2 xs:text-sm md:text-md xl:text-xl break-words">
                 Previous Information of Student:
               </h3>
               <ul className="list-disc pl-5 text-xs">
                 <li key={event.studentPrev} className="mb-1 ">
                   <div className="flex flex-col">
-                    <p className="xs:text-sm md:text-md xl:text-xl">
-                      <span className="mr-2">Name:</span>
+                    <p className="xs:text-sm md:text-md xl:text-xl ">
+                      <span className="mr-2 break-words">Name:</span>
                       {studentObject.studentName}
                     </p>
                     <p className="xs:text-sm md:text-md xl:text-xl">
