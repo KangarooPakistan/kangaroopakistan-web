@@ -129,6 +129,7 @@ const FetchAllRegistrations = () => {
       setStudent(levelCounts["student"] || 0);
       console.log("registrations");
       console.log(registrations);
+
       const ExcelData = registrations.map((item: any) => ({
         "School id": item.user?.schoolId,
         "School Name": item.user?.schoolName,
@@ -147,6 +148,7 @@ const FetchAllRegistrations = () => {
         "Coordinator Email": item.user?.c_email,
         "Coordinator Account Details": item.user?.c_accountDetails,
         "School Email": item.user?.email,
+        "Total Students": item.students.length,
         // ...student, // Spread student attributes
       }));
 
