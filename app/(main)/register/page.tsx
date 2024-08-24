@@ -192,6 +192,9 @@ const UserRegister = () => {
       case "Wah":
         districtValue = "239";
         break;
+      case "Gojra":
+        districtValue = "240";
+        break;
       case "D. I. Khan":
         districtValue = "108";
         break;
@@ -752,6 +755,7 @@ const UserRegister = () => {
                           <option value="Faisalabad">Faisalabad</option>
                           <option value="Ghizer">Ghizer</option>
                           <option value="Ghotki">Ghotki</option>
+                          <option value="Gojra">Gojra</option>
                           <option value="Gujranwala">Gujranwala</option>
                           <option value="Gujrat">Gujrat</option>
                           <option value="Gwadar">Gwadar</option>
