@@ -136,7 +136,7 @@ const FetchAllRegistrations = () => {
         "Contact Number": item.user?.contactNumber,
         "School Address": item.user?.schoolAddress,
         District: item.user?.district,
-        City: item.registrations?.city,
+        DistrictName: item.registrations?.city,
         "Principal Name": item.user?.p_Name,
         "Principal Cell #": item.user?.p_contact,
         "Principal Phone #": item.user?.p_phone,
