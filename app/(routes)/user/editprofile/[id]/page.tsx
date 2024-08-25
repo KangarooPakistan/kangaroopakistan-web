@@ -206,13 +206,21 @@ const UserRegister = () => {
       case "Chishtian":
         districtValue = "238";
         break;
-        case "Wah":
-          districtValue = "239";
-          break;
-          
-        case "Gojra":
-          districtValue = "240";
-          break;
+      case "Wah":
+        districtValue = "239";
+        break;
+      case "Gojra":
+        districtValue = "240";
+        break;
+      case "Jhelum":
+        districtValue = "241";
+        break;
+      case "Khushab":
+        districtValue = "242";
+        break;
+      case "Taunsa":
+        districtValue = "243";
+        break;
       case "D. I. Khan":
         districtValue = "108";
         break;
@@ -287,6 +295,9 @@ const UserRegister = () => {
         break;
       case "Upper Dir":
         districtValue = "132";
+        break;
+      case "Muzaffarabad":
+        districtValue = "133";
         break;
       case "Attock":
         districtValue = "201";
@@ -487,6 +498,12 @@ const UserRegister = () => {
       case "Umer Kot":
         districtValue = "329";
         break;
+      case "Mirpur Khas":
+        districtValue = "330";
+        break;
+      case "Nawabshah":
+        districtValue = "331";
+        break;
       case "Awaran":
         districtValue = "401";
         break;
@@ -544,7 +561,7 @@ const UserRegister = () => {
       case "Musa Khel":
         districtValue = "419";
         break;
-      case "Nasirabad/ Tamboo":
+      case "Nasirabad/Tamboo":
         districtValue = "420";
         break;
       case "Nushki":
@@ -586,11 +603,17 @@ const UserRegister = () => {
       case "Ziarat":
         districtValue = "433";
         break;
+      case "Turbat":
+        districtValue = "434";
+        break;
       case "Mirpur":
         districtValue = "501";
         break;
       case "Skardu ":
         districtValue = "502";
+        break;
+      case "Rawalakot":
+        districtValue = "503";
         break;
       // Add more cases if needed
       default:
@@ -782,7 +805,6 @@ const UserRegister = () => {
                           <option value="Barkhan">Barkhan</option>
                           <option value="Batagram">Batagram</option>
                           <option value="Bhakhar">Bhakhar</option>
-                          <option value="Bhakkar">Bhakkar</option>
                           <option value="Bunair">Bunair</option>
                           <option value="Charsada">Charsada</option>
                           <option value="Chagai">Chagai</option>
@@ -794,10 +816,6 @@ const UserRegister = () => {
                           <option value="D. I. Khan">D. I. Khan</option>
                           <option value="Dadu">Dadu</option>
                           <option value="Dera Bugti">Dera Bugti</option>
-                          <option value="Dera Ismail Khan">
-                            Dera Ismail Khan
-                          </option>
-                          <option value="Diamer">Diamer</option>
                           <option value="Duki">Duki</option>
                           <option value="Faisalabad">Faisalabad</option>
                           <option value="Ghizer">Ghizer</option>
@@ -844,7 +862,7 @@ const UserRegister = () => {
                           <option value="Kohlu">Kohlu</option>
                           <option value="Korangi">Korangi</option>
                           <option value="Kurram">Kurram</option>
-                          <option value="Kushab">Kushab</option>
+                          <option value="Khushab">Khushab</option>
                           <option value="Lahore">Lahore</option>
                           <option value="Lakki Marwat">Lakki Marwat</option>
                           <option value="Larkana">Larkana</option>
@@ -872,12 +890,12 @@ const UserRegister = () => {
                           <option value="Muzaffar Garh">Muzaffar Garh</option>
                           <option value="Nankana Sahib">Nankana Sahib</option>
                           <option value="Narowal">Narowal</option>
-                          <option value="Nasirabad/Tamboo">
-                            Nasirabad/Tamboo
-                          </option>
                           <option value="Nawabshah">Nawabshah</option>
                           <option value="North Waziristan">
                             North Waziristan
+                          </option>
+                          <option value="Nasirabad/Tamboo">
+                            Nasirabad/Tamboo
                           </option>
                           <option value="Nowshera">Nowshera</option>
                           <option value="Nowshero Feroze">
@@ -890,9 +908,6 @@ const UserRegister = () => {
                           <option value="Panjgoor">Panjgoor</option>
                           <option value="Peshawar">Peshawar</option>
                           <option value="Pishin">Pishin</option>
-                          <option value="Poonch">Poonch</option>
-                          <option value="Poonch">Poonch</option>
-                          <option value="Poonch">Poonch</option>
                           <option value="Qilla Abdullah">Qilla Abdullah</option>
                           <option value="Qilla Saifullah">
                             Qilla Saifullah
@@ -903,7 +918,6 @@ const UserRegister = () => {
                           <option value="Rawalakot">Rawalakot</option>
                           <option value="Rawalpindi">Rawalpindi</option>
                           <option value="Sahiwal">Sahiwal</option>
-                          <option value="Sahiwal">Sahiwal</option>
                           <option value="Sanghar">Sanghar</option>
                           <option value="Sargodha">Sargodha</option>
                           <option value="Shahdadkot">Shahdadkot</option>
@@ -913,7 +927,6 @@ const UserRegister = () => {
                           <option value="Shaheed Sikandar Abad">
                             Shaheed Sikandar Abad
                           </option>
-                          <option value="Shahkot">Shahkot</option>
                           <option value="Shangla">Shangla</option>
                           <option value="Sherani">Sherani</option>
                           <option value="Sheikhupura">Sheikhupura</option>
@@ -926,7 +939,6 @@ const UserRegister = () => {
                           <option value="South Waziristan">
                             South Waziristan
                           </option>
-                          <option value="Sudhnuti">Sudhnuti</option>
                           <option value="Sukkur">Sukkur</option>
                           <option value="Swabi">Swabi</option>
                           <option value="Swat">Swat</option>
@@ -941,7 +953,6 @@ const UserRegister = () => {
                           <option value="Taunsa">Taunsa</option>
                           <option value="Tharparkar">Tharparkar</option>
                           <option value="Thatta">Thatta</option>
-                          <option value="Toba Tek Singh">Toba Tek Singh</option>
                           <option value="Tor Garh">Tor Garh</option>
                           <option value="Turbat">Turbat</option>
                           <option value="Umer Kot">Umer Kot</option>
