@@ -182,7 +182,7 @@ const ViewRegistered = () => {
       console.log(res.data.user.p_fName);
       const profileData: profileData = {
         p_Name: res.data.user.p_Name,
-        c_Name: res.data.user.c_lName,
+        c_Name: res.data.user.c_Name,
         email: res.data.user.email,
         contactNumber: res.data.user.contactNumber,
         contestName: contestData.data.name,
