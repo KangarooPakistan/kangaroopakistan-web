@@ -37,23 +37,48 @@ const RoleActions: React.FC<UserActionsProps> = ({ user }) => {
   };
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="h-8 w-8 p-0">
-          <span className="sr-only">Open menu</span>
-          <MoreHorizontal className="h-4 w-4" />
+    <>
+      <div className="hidden md:block">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuItem onClick={handleView}>
+              View School{" "}
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleEdit}>
+              Edit School{" "}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => onOpen("deleteSchool", { id: user.id })}>
+              Delete School
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+      <div className="md:hidden flex flex-wrap justify-between items-center gap-2">
+        <Button
+          className=" font-medium text-[11px]  tracking-wide"
+          onClick={handleView}>
+          View School{" "}
         </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <DropdownMenuItem onClick={handleView}>View School </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleEdit}>Edit School </DropdownMenuItem>
-        <DropdownMenuItem
+        <Button
+          className=" font-medium text-[11px]  tracking-wide"
+          onClick={handleEdit}>
+          Edit School{" "}
+        </Button>
+        <Button
+          className=" font-medium text-[11px]  tracking-wide"
           onClick={() => onOpen("deleteSchool", { id: user.id })}>
           Delete School
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+        </Button>
+      </div>
+    </>
   );
 };
 
@@ -98,6 +123,7 @@ export const columns: ColumnDef<User>[] = [
     header: "contactNumber",
   },
   {
+    accessorKey: "actions",
     id: "actions",
     cell: ({ row }) => <RoleActions user={row.original} />,
   },

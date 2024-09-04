@@ -125,11 +125,14 @@ const AdminNavbar = () => {
             data-collapse-toggle="navbar-user"
             type="button"
             onClick={toggleMobileMenu}
-            className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 }"
+            className={`inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-white rounded-lg md:hidden   focus:ring-2 ${
+              isMobileMenuOpen ? "focus:outline-double" : "focus:outline-none"
+            }  `}
             aria-controls="navbar-user"
             aria-expanded={isMobileMenuOpen}>
             <span className="sr-only">Open main menu</span>
             <svg
+              onClick={toggleMobileMenu}
               className="w-5 h-5"
               aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
@@ -146,7 +149,7 @@ const AdminNavbar = () => {
           </button>
         </div>
         <div
-          className={`items-center justify-between w-full md:flex md:w-auto md:order-1${
+          className={`items-center justify-between w-full md:flex md:w-auto md:order-1 ${
             isMobileMenuOpen ? "block" : "hidden"
           }`}
           id="navbar-user">

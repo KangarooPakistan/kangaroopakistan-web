@@ -3,6 +3,10 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
+import { IoCheckmarkDoneCircle } from "react-icons/io5";
+import { BiSolidXCircle } from "react-icons/bi";
+import { CgMoreO } from "react-icons/cg";
+
 import "react-toastify/dist/ReactToastify.css";
 
 import { Button } from "@/components/ui/button";
@@ -230,29 +234,6 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
     }
   };
 
-  // const handleDownloadPdfPuppeteer = async () => {
-  //   try {
-  //     setLoading(true);
-  //     const response = await axios.get(`/api/pdf-generate/${registration.id}`, {
-  //       responseType: "blob", // This tells Axios to expect a binary response
-  //     });
-  //     const file = new Blob([response.data], { type: "application/pdf" });
-  //     const fileURL = URL.createObjectURL(file);
-  //     const link = document.createElement("a");
-  //     link.href = fileURL;
-  //     link.setAttribute("download", "students.pdf"); // or any other name
-  //     document.body.appendChild(link);
-  //     link.click();
-
-  //     // Clean up and revoke the URL object
-  //     URL.revokeObjectURL(link.href);
-  //     document.body.removeChild(link);
-  //   } catch (error) {
-  //     console.error("Error downloading the PDF:", error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
   const handleSchoolDetails = () => {
     router.push(`/admin/userprofile/${data}`);
   };
@@ -326,19 +307,9 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         return 0;
       });
 
-      // console.log("Sorted schoolData by rollNumber:");
-      // console.log(schoolData);
-
-      // console.log("schoolData"); // This should be an array of ClassData
-
       const schoolId = schoolData[0].schoolId;
-
-      // console.log(schoolId);
-      // This should be an array of ClassData
       const blob = await generatePdfBlobForSE(schoolData, profileData);
       saveAs(blob, `students_data_${schoolId}.pdf`);
-
-      // console.log("link");
     } catch (error) {
       console.error("Error generating the PDF:", error);
     }
@@ -373,40 +344,97 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
     }
   };
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="h-8 w-8 p-0">
-          <span className="sr-only">Open menu</span>
-          <MoreHorizontal className="h-4 w-4" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <DropdownMenuItem onClick={handleView}>View</DropdownMenuItem>
-        <DropdownMenuItem onClick={handleRegister}>
-          Register Students
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleDownloadCheckList}>
-          Download CheckList
-        </DropdownMenuItem>
+    <>
+      <div className="hidden md:block">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <CgMoreO className="text-[30px]" />
 
-        <DropdownMenuItem onClick={handleEmail}>Send Email</DropdownMenuItem>
-        <DropdownMenuItem onClick={handleDownloadPdf}>
+              {/* <MoreHorizontal className="h-4 w-4" /> */}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel className="border-y-2 border-solid">
+              Actions
+            </DropdownMenuLabel>
+            <DropdownMenuItem
+              className="border-y-2 border-solid"
+              onClick={handleView}>
+              View
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="border-y-2 border-solid"
+              onClick={handleRegister}>
+              Register Students
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="border-y-2 border-solid"
+              onClick={handleDownloadCheckList}>
+              Download CheckList
+            </DropdownMenuItem>
+
+            <DropdownMenuItem
+              className="border-y-2 border-solid"
+              onClick={handleEmail}>
+              Send Email
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="border-y-2 border-solid"
+              onClick={handleDownloadPdf}>
+              Download Answer Sheet
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="border-y-2 border-solid"
+              onClick={handleDownloadAdditionalPdf}
+              disabled={active}>
+              Download Answer Sheet Part2
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="border-y-2 border-solid"
+              onClick={handleSheet}>
+              Download Student Details
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="border-y-2 border-solid"
+              onClick={handleSchoolDetails}>
+              View School Details
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+      <div className="md:hidden flex flex-wrap ">
+        <Button className="m-2" onClick={handleView}>
+          View
+        </Button>
+        <Button className="m-2" onClick={handleRegister}>
+          Register Students
+        </Button>
+        <Button className="m-2" onClick={handleDownloadCheckList}>
+          Download CheckList
+        </Button>
+
+        <Button className="m-2" onClick={handleEmail}>
+          Send Email
+        </Button>
+        <Button className="m-2" onClick={handleDownloadPdf}>
           Download Answer Sheet
-        </DropdownMenuItem>
-        <DropdownMenuItem
+        </Button>
+        <Button
+          className="m-2"
           onClick={handleDownloadAdditionalPdf}
           disabled={active}>
           Download Answer Sheet Part2
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleSheet}>
+        </Button>
+        <Button className="m-2" onClick={handleSheet}>
           Download Student Details
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleSchoolDetails}>
+        </Button>
+        <Button className="m-2" onClick={handleSchoolDetails}>
           View School Details
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+        </Button>
+      </div>
+    </>
   );
 };
 export const columns: ColumnDef<Registration>[] = [
@@ -448,11 +476,16 @@ export const columns: ColumnDef<Registration>[] = [
     cell: ({ row }) => {
       // Access the paymentProof property of the row data
       const paymentProofs = row.original.paymentProof || []; // Fallback to an empty array if undefined
-      return paymentProofs.length > 0 ? "P" : "NP";
+      return paymentProofs.length > 0 ? (
+        <IoCheckmarkDoneCircle className="text-[30px] mx-auto text-center" />
+      ) : (
+        <BiSolidXCircle className="text-[30px] mx-auto text-center" />
+      );
     },
   },
 
   {
+    accessorKey: "More Actions", // This should match the key from your data
     id: "actions",
     cell: ({ row }) => <RegistrationActions registration={row.original} />,
   },

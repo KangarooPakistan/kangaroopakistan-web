@@ -61,17 +61,35 @@ const ViewAllContests: React.FC = () => {
   const handleBack = () => {
     router.back();
   };
-  
+
   return (
-    <div className="container mx-auto py-10">
+    <div className="container  mx-auto py-10">
       <h1 className="text-3xl text-center my-3 font-bold text-purple-600">
         All Contests
       </h1>
-      <div className="flex justify-between">
-        <Button variant="default" onClick={handleBack}>
-          Back
-        </Button>
+      <div className="block md:hidden">
+        <div className="flex justify-between">
+          <Button
+            className=" font-medium text-[11px]  tracking-wide"
+            variant="default"
+            size="sm"
+            onClick={handleBack}>
+            Back
+          </Button>
+        </div>
       </div>
+      <div className="hidden md:block">
+        <div className="flex justify-between">
+          <Button
+            className=" font-medium text-[15px]  tracking-wide"
+            variant="default"
+            size="lg"
+            onClick={handleBack}>
+            Back
+          </Button>
+        </div>
+      </div>
+
       <DataTable columns={columns} data={contests} />
     </div>
   );

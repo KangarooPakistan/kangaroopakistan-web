@@ -62,9 +62,28 @@ const ViewAllRecipts = () => {
             Payment Proofs.
           </div>
         </div>
-        <Button variant="default" onClick={handleBack}>
-          Back
-        </Button>
+        <div className="hidden md:block">
+          <div className=" py-2 md:py-4 flex flex-wrap justify-between gap-2  items-center border-gray-300">
+            <Button
+              className=" font-semibold text-[15px]"
+              variant="default"
+              size="lg"
+              onClick={handleBack}>
+              Back
+            </Button>
+          </div>
+        </div>
+        <div className="block md:hidden">
+          <div className=" py-2 md:py-4 flex flex-wrap justify-between gap-2  items-center border-gray-300">
+            <Button
+              className=" font-semibold text-[15px]"
+              variant="default"
+              size="sm"
+              onClick={handleBack}>
+              Back
+            </Button>
+          </div>
+        </div>
         <div>
           {paymentProof.length > 0 &&
             paymentProof.map((item, index) => (

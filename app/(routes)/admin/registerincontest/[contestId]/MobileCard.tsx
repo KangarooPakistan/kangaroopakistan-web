@@ -43,10 +43,10 @@ export function MobileCard<T>({
         <div
           key={column.accessorKey}
           className="mb-2 flex items-start break-words">
-          <span className="font-bold text-[14px] mr-1 ">
+          <span className="font-bold text-[11px] mr-1 ">
             {column.accessorKey}:{" "}
           </span>
-          <span className="text-[14px]  uppercase text-balance ">
+          <span className="text-[11px]  uppercase text-balance break-words">
             {renderValue((data as any)[column.accessorKey])}
           </span>
         </div>
@@ -63,6 +63,7 @@ export function MobileCard<T>({
 
 function renderActionCell<T>(actionColumn: ColumnDef<T, any>, data: T) {
   if (typeof actionColumn.cell === "function") {
+    console.log(actionColumn.cell);
     console.log("harmeenmariam");
     return actionColumn.cell({ row: { original: data } } as CellContext<
       T,

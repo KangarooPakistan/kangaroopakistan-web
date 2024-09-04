@@ -166,19 +166,57 @@ const ViewAllBySchool = () => {
             </div>
           </div>
         </div>
-        <div className="p-4 flex justify-between border-gray-300">
-          <Button variant="default" onClick={handleBack}>
-            Back
-          </Button>
-          <Button
-            className="bg-transparent text-purple-600 text-xl disabled:bg-slate-100"
-            disabled={loading}
-            onClick={handleAddImage}>
-            Add Proof of Payment
-          </Button>
-          <Button className="" onClick={exportSheet}>
-            Export Data
-          </Button>
+        <div className="hidden md:block">
+          <div className=" py-2 md:py-4 flex flex-wrap justify-between gap-2  items-center border-gray-300">
+            <Button
+              className=" font-semibold text-[15px] tracking-wide "
+              variant="default"
+              size="lg"
+              onClick={handleBack}>
+              Back
+            </Button>
+            <Button
+              className="bg-transparent text-purple-600 font-semibold text-sm md:text-xl disabled:bg-slate-100"
+              disabled={loading}
+              variant="default"
+              size="lg"
+              onClick={handleAddImage}>
+              Add Proof of Payment
+            </Button>
+            <Button
+              className=" font-semibold text-[15px] tracking-wide "
+              variant="default"
+              size="lg"
+              onClick={exportSheet}>
+              Export Data
+            </Button>
+          </div>
+        </div>
+        <div className="block md:hidden">
+          <div className="md:hidden py-2 md:p-4 flex flex-wrap justify-between gap-2  items-center border-gray-300">
+            <Button
+              className=" font-medium text-[11px]  tracking-wide"
+              variant="default"
+              size="sm"
+              onClick={handleBack}>
+              Back
+            </Button>
+            <Button
+              className="bg-transparent tracking-wide text-purple-600 font-semibold text-sm md:text-xl disabled:bg-slate-100"
+              disabled={loading}
+              variant="default"
+              size="sm"
+              onClick={handleAddImage}>
+              Add Proof of Payment
+            </Button>
+            <Button
+              className=" font-medium text-[11px] tracking-wide"
+              variant="default"
+              size="sm"
+              onClick={exportSheet}>
+              Export Data
+            </Button>
+          </div>
         </div>
         <DataTable columns={columns} data={students} />
       </div>

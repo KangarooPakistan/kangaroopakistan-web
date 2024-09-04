@@ -69,7 +69,7 @@ const ContestTypesPage = () => {
               <img
                 src={contestType.imageUrl}
                 alt="contest image"
-                className="h-52 w-64 object-cover rounded-t-xl"
+                className="h-64 w-64 object-cover rounded-t-xl"
               />
               <div className="px-2 py-3 w-64">
                 <button className="bg-green-500 text-white rounded-xl text-smallest py-1 px-4 mb-2">

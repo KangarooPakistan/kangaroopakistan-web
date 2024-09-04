@@ -117,7 +117,7 @@ const UserNavbar = () => {
             data-collapse-toggle="navbar-user"
             type="button"
             onClick={toggleMobileMenu}
-            className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 "
+            className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-white rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 "
             aria-controls="navbar-user"
             aria-expanded={isMobileMenuOpen}>
             <span className="sr-only">Open main menu</span>

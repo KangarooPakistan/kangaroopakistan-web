@@ -26,6 +26,7 @@ import {
 import { saveAs } from "file-saver";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { CgMoreO } from "react-icons/cg";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -114,29 +115,66 @@ const ContestActions: React.FC<StudentActionsProps> = ({ student }) => {
     }
   };
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="h-8 w-8 p-0">
-          <span className="sr-only">Open menu</span>
-          <MoreHorizontal className="h-4 w-4" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+    <>
+      <div className="hidden md:block">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <CgMoreO className="text-[30px]" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel className="border-y-2 border-solid">
+              Actions
+            </DropdownMenuLabel>
 
-        <DropdownMenuItem onClick={handleView}>View Receipts </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleDownloadPdf}>
-          Download Answer Sheet
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={editStudent}>Edit Student </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() =>
-            onOpen("deleteStudent", { id: student.id, currentUserEmail })
-          }>
-          Delete Student{" "}
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+            <DropdownMenuItem
+              onClick={handleView}
+              className="border-y-2 border-solid">
+              View Receipts{" "}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={handleDownloadPdf}
+              className="border-y-2 border-solid">
+              Download Answer Sheet
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="border-y-2 border-solid"
+              onClick={editStudent}>
+              Edit Student{" "}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="border-y-2 border-solid"
+              onClick={() =>
+                onOpen("deleteStudent", { id: student.id, currentUserEmail })
+              }>
+              Delete Student{" "}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+      <div className="md:hidden">
+        <div className=" flex flex-wrap justify-between items-center gap-2">
+          <Button className="m-2" onClick={handleView}>
+            View Receipts{" "}
+          </Button>
+          <Button className="m-2" onClick={handleDownloadPdf}>
+            Download Answer Sheet
+          </Button>
+          <Button className="m-2" onClick={editStudent}>
+            Edit Student{" "}
+          </Button>
+          <Button
+            className="m-2"
+            onClick={() =>
+              onOpen("deleteStudent", { id: student.id, currentUserEmail })
+            }>
+            Delete Student
+          </Button>
+        </div>
+      </div>
+    </>
   );
 };
 
