@@ -94,7 +94,7 @@ export function DataTable<TData, TValue>({
   console.log(table.getState().pagination);
   return (
     <div>
-      <div className="flex items-center py-4">
+      <div className="flex flex-col md:flex-row justify-between items-center py-4">
         <Input
           placeholder="Filter SchoolId..."
           value={

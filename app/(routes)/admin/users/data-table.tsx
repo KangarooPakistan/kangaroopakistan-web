@@ -91,7 +91,6 @@ export function DataTable<TData, TValue>({
           onChange={(event) =>
             table.getColumn("schoolName")?.setFilterValue(event.target.value)
           }
-          className="max-w-sm "
         />
         <Input
           placeholder="Filter Contact Number..."
@@ -101,7 +100,6 @@ export function DataTable<TData, TValue>({
           onChange={(event) =>
             table.getColumn("contactNumber")?.setFilterValue(event.target.value)
           }
-          className="max-w-sm "
         />
       </div>
       <div className="hidden md:block">

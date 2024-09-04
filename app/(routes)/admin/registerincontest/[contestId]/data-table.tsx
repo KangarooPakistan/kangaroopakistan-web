@@ -69,7 +69,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="flex items-center py-4">
+      <div className="flex flex-col md:flex-row justify-between items-center py-4">
         <Input
           placeholder="Filter SchoolId..."
           value={
@@ -81,7 +81,6 @@ export function DataTable<TData, TValue>({
               .getColumn("schoolId")
               ?.setFilterValue(value !== "" ? Number(value) : undefined);
           }}
-          className="max-w-sm"
         />
         <Input
           placeholder="Filter SchoolName..."
@@ -91,7 +90,6 @@ export function DataTable<TData, TValue>({
           onChange={(event) =>
             table.getColumn("schoolName")?.setFilterValue(event.target.value)
           }
-          className="max-w-sm ml-4"
         />
       </div>
       <div className="hidden md:block">
