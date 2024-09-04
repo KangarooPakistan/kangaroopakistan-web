@@ -7,7 +7,6 @@ import { DataTable } from "./data-table";
 import { Student, columns } from "./columns";
 import { Button } from "@/components/ui/button";
 
-
 interface ItemType {
   students: Student[];
   schoolId: number;
@@ -47,7 +46,7 @@ const ViewRegistered = () => {
   };
   return (
     <>
-      <div className="container mx-auto py-10">
+      <div className=" mx-auto py-10">
         <DataTable columns={columns} data={students} />
       </div>
     </>
