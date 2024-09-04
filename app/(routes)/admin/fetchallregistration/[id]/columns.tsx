@@ -404,33 +404,33 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="md:hidden flex flex-wrap ">
-        <Button className="m-2" onClick={handleView}>
+      <div className="md:hidden flex flex-wrap gap-2 py-2 ">
+        <Button className=" text-[11px]" onClick={handleView}>
           View
         </Button>
-        <Button className="m-2" onClick={handleRegister}>
+        <Button className="text-[11px]" onClick={handleRegister}>
           Register Students
         </Button>
-        <Button className="m-2" onClick={handleDownloadCheckList}>
+        <Button className="text-[11px]" onClick={handleDownloadCheckList}>
           Download CheckList
         </Button>
 
-        <Button className="m-2" onClick={handleEmail}>
+        <Button className="text-[11px]" onClick={handleEmail}>
           Send Email
         </Button>
-        <Button className="m-2" onClick={handleDownloadPdf}>
+        <Button className="text-[11px]" onClick={handleDownloadPdf}>
           Download Answer Sheet
         </Button>
         <Button
-          className="m-2"
+          className="text-[11px]"
           onClick={handleDownloadAdditionalPdf}
           disabled={active}>
           Download Answer Sheet Part2
         </Button>
-        <Button className="m-2" onClick={handleSheet}>
+        <Button className="text-[11px]" onClick={handleSheet}>
           Download Student Details
         </Button>
-        <Button className="m-2" onClick={handleSchoolDetails}>
+        <Button className=" text-[11px]" onClick={handleSchoolDetails}>
           View School Details
         </Button>
       </div>
