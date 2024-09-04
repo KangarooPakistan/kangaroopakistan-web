@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
 import { useModal } from "@/hooks/use-modal-store";
 import { useEffect, useState } from "react";
+import { CgMoreO } from "react-icons/cg";
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type Student = {
@@ -50,24 +51,48 @@ const ContestActions: React.FC<StudentActionsProps> = ({ student }) => {
   }, []);
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="h-8 w-8 p-0">
-          <span className="sr-only">Open menu</span>
-          <MoreHorizontal className="h-4 w-4" />
+    <>
+      <div className="hidden md:block">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <CgMoreO className="text-[30px]" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel className="border-y-2 border-solid">
+              Actions
+            </DropdownMenuLabel>
+            <DropdownMenuItem
+              className="border-y-2 border-solid"
+              onClick={handleEdit}>
+              Edit Student
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="border-y-2 border-solid"
+              onClick={() =>
+                onOpen("deleteStudent", { id: student.id, currentUserEmail })
+              }>
+              Delete Student
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+      <div className="md:hidden flex flex-wrap gap-2 py-2 ">
+        <Button className=" text-[11px]" size="sm" onClick={handleEdit}>
+          Edit Student
         </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <DropdownMenuItem onClick={handleEdit}>Edit Student</DropdownMenuItem>
-        <DropdownMenuItem
+        <Button
+          className="text-[11px]"
+          size="sm"
           onClick={() =>
             onOpen("deleteStudent", { id: student.id, currentUserEmail })
           }>
           Delete Student
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+        </Button>
+      </div>
+    </>
   );
 };
 

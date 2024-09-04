@@ -63,9 +63,28 @@ const ViewAllContests: React.FC = () => {
   };
   return (
     <div className="container mx-auto py-10">
-      <Button variant="default" onClick={handleBack}>
-        Back
-      </Button>
+      <div className="hidden md:block">
+        <div className="py-2 md:py-4 flex flex-wrap justify-between gap-2  items-center border-gray-300">
+          <Button
+            className=" font-medium text-[15px]  tracking-wide"
+            variant="default"
+            size="lg"
+            onClick={handleBack}>
+            Back
+          </Button>
+        </div>
+      </div>
+      <div className="block md:hidden">
+        <div className="py-2 md:py-4 flex flex-wrap justify-between gap-2  items-center border-gray-300">
+          <Button
+            className=" font-medium text-[11px]  tracking-wide"
+            variant="default"
+            size="sm"
+            onClick={handleBack}>
+            Back
+          </Button>
+        </div>
+      </div>
       <DataTable columns={columns} data={contests} />
     </div>
   );

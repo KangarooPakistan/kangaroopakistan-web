@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useEffect, useState } from "react";
+import { CgMoreO } from "react-icons/cg";
 
 export type Contest = {
   id: string;
@@ -61,15 +62,23 @@ const ContestActions: React.FC<ContestActionsProps> = ({ contest }) => {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="h-8 w-8 p-0">
           <span className="sr-only">Open menu</span>
-          <MoreHorizontal className="h-4 w-4" />
+          <CgMoreO className="text-[30px]" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <DropdownMenuItem onClick={handleRegister}>
+        <DropdownMenuLabel className="border-y-2 border-solid">
+          Actions
+        </DropdownMenuLabel>
+        <DropdownMenuItem
+          className="border-y-2 border-solid"
+          onClick={handleRegister}>
           Register Students
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleView}>View</DropdownMenuItem>
+        <DropdownMenuItem
+          className="border-y-2 border-solid"
+          onClick={handleView}>
+          View
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
