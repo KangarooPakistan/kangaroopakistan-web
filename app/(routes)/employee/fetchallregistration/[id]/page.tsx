@@ -6,10 +6,11 @@ import React, { useEffect, useState } from "react";
 import { Registration, columns, PaymentProof } from "./columns";
 import { DataTable } from "./data-table";
 import { Button } from "@/components/ui/button";
-import * as XLSX from "xlsx";
-import AllLabels, { SchoolDetails } from "./AllLabels";
-import { pdf } from "@react-pdf/renderer";
 import { saveAs } from "file-saver";
+
+import AllLabels, { SchoolDetails } from "./AllLabels";
+import * as XLSX from "xlsx";
+import { pdf } from "@react-pdf/renderer";
 import AllLabelsShort from "@/app/(routes)/admin/fetchallregistration/[id]/AllLabelsShort";
 
 export const dynamic = "force-dynamic"; // Ensures this page is always rendered server-side
@@ -150,6 +151,7 @@ const FetchAllRegistrations = () => {
         "Total Students": item.students.length,
         // ...student, // Spread student attributes
       }));
+
       // const studentsForExcel = registrations.flatMap((reg: any) =>
       //   reg.students.map((student: StudentData) => ({
       //     "School id": reg.user?.schoolId,
@@ -157,7 +159,7 @@ const FetchAllRegistrations = () => {
       //     "School BankTitle": reg.user?.bankTitle,
       //     "Contact Number": reg.user?.contactNumber,
       //     "School Address": reg.user?.schoolAddress,
-      //     district: reg.user?.district,
+      //     District: reg.user?.district,
       //     City: reg.user?.city,
       //     "Principal Name": reg.user?.p_Name,
       //     "Principal Cell #": reg.user?.p_contact,
@@ -225,6 +227,7 @@ const FetchAllRegistrations = () => {
   const handleRegister = () => {
     router.push(`/employee/registerincontest/${params.id}`);
   };
+
   const handleDownloadAllLabel = async () => {
     console.log("kkr");
     try {
@@ -236,7 +239,6 @@ const FetchAllRegistrations = () => {
       console.error("Error downloading the PDF:", error);
     }
   };
-
   const handleDownloadAllLabelsShort = async () => {
     console.log("kkr");
     try {
@@ -295,24 +297,80 @@ const FetchAllRegistrations = () => {
           </div>
         </div>
       </div>
-      <div className="p-4 flex justify-between border-gray-300">
-        <Button variant="default" onClick={handleBack}>
-          Back
-        </Button>
-        <div>
-          <Button className="mr-2" onClick={handleClick}>
+      <div className="hidden md:block">
+        <div className="py-2 md:py-4 flex flex-wrap justify-between gap-2  items-center border-gray-300">
+          <Button
+            className=" font-medium text-[15px]  tracking-wide"
+            variant="default"
+            size="lg"
+            onClick={handleBack}>
+            Back
+          </Button>
+          <Button
+            className=" font-medium text-[15px]  tracking-wide"
+            variant="default"
+            size="lg"
+            onClick={handleClick}>
             Export Data
           </Button>
-          <Button variant="default" className="mr-2" onClick={handleRegister}>
+          <Button
+            className=" font-medium text-[15px]  tracking-wide"
+            variant="default"
+            size="lg"
+            onClick={handleRegister}>
             Register a school
           </Button>
           <Button
+            className=" font-medium text-[15px]  tracking-wide"
             variant="default"
-            className="mr-2"
+            size="lg"
             onClick={handleDownloadAllLabel}>
             Download Labels
           </Button>
-          <Button variant="default" onClick={handleDownloadAllLabelsShort}>
+          <Button
+            variant="default"
+            size="lg"
+            className=" font-medium text-[15px]  tracking-wide"
+            onClick={handleDownloadAllLabelsShort}>
+            Download Short Labels
+          </Button>
+        </div>
+      </div>
+      <div className="block md:hidden">
+        <div className="py-2 md:py-4 flex flex-wrap justify-between gap-2  items-center border-gray-300">
+          <Button
+            className=" font-medium text-[11px]  tracking-wide"
+            variant="default"
+            size="sm"
+            onClick={handleBack}>
+            Back
+          </Button>
+          <Button
+            className=" font-medium text-[11px]  tracking-wide"
+            variant="default"
+            size="sm"
+            onClick={handleClick}>
+            Export Data
+          </Button>
+          <Button
+            className=" font-medium text-[11px]  tracking-wide"
+            variant="default"
+            size="sm"
+            onClick={handleRegister}>
+            Register a school
+          </Button>
+          <Button
+            className=" font-medium text-[11px]  tracking-wide"
+            variant="default"
+            size="sm"
+            onClick={handleDownloadAllLabel}>
+            Download Labels
+          </Button>
+          <Button
+            className=" font-medium text-[11px]  tracking-wide"
+            variant="default"
+            size="sm"
+            onClick={handleDownloadAllLabelsShort}>
             Download Short Labels
           </Button>
         </div>

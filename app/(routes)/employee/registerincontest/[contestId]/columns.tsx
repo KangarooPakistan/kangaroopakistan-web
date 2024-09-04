@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useParams, useRouter } from "next/navigation";
 import { useModal } from "@/hooks/use-modal-store";
+import { CgMoreO } from "react-icons/cg";
 export type User = {
   id: number;
   email: string;
@@ -37,20 +38,35 @@ const RoleActions: React.FC<UserActionsProps> = ({ user }) => {
   };
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="h-8 w-8 p-0">
-          <span className="sr-only">Open menu</span>
-          <MoreHorizontal className="h-4 w-4" />
+    <>
+      <div className="hidden md:block">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <CgMoreO className="text-[30px]" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel className="border-y-2 border-solid">
+              Actions
+            </DropdownMenuLabel>
+            <DropdownMenuItem
+              onClick={handleRegister}
+              className="border-y-2 border-solid">
+              Register Students{" "}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+      <div className="md:hidden flex flex-wrap justify-between items-center gap-2 ">
+        <Button
+          className=" font-medium text-[11px]  tracking-wide"
+          onClick={handleRegister}>
+          Register Students
         </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <DropdownMenuItem onClick={handleRegister}>
-          Register Students{" "}
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+      </div>
+    </>
   );
 };
 
@@ -83,6 +99,7 @@ export const columns: ColumnDef<User>[] = [
     header: "contactNumber",
   },
   {
+    accessorKey: "actions",
     id: "actions",
     cell: ({ row }) => <RoleActions user={row.original} />,
   },

@@ -6,6 +6,7 @@ import { DataTable } from "./data-table";
 import * as XLSX from "xlsx";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { StringValidation } from "zod";
 
 type User = {
   email: string;
@@ -41,12 +42,12 @@ const Users = () => {
   useEffect(() => {
     async function fetchContestTypes() {
       try {
-        const response = await axios.get("/api/users/allusers");
-        console.log(response); // Replace with your actual API route URL
+        const response = await axios.get("/api/users/allusers"); // Replace with your actual API route URL
         setUsers(response.data);
         console.log(response.data);
         const usersForExcel = response.data.map((user: User) => ({
           email: user.email,
+
           role: user.role,
           schoolId: user.schoolId,
           schoolName: user.schoolName, // Optional: only for non-admin users
@@ -95,16 +96,43 @@ const Users = () => {
   };
   return (
     <div className="container mx-auto py-10">
-      <div className="p-4 flex justify-between border-gray-300">
-        <Button variant="default" onClick={handleBack}>
-          Back
-        </Button>
-        <div>
-          <Button className="mr-2" onClick={handleClick}>
+      <div className="hidden md:block">
+        <div className=" py-2 md:py-4 flex flex-wrap justify-between gap-2  items-center border-gray-300">
+          <Button
+            className=" font-semibold text-[15px] tracking-wide "
+            variant="default"
+            size="lg"
+            onClick={handleBack}>
+            Back
+          </Button>
+
+          <Button
+            className=" font-semibold text-[15px] tracking-wide "
+            size="lg"
+            onClick={handleClick}>
             Export Data
           </Button>
         </div>
       </div>
+      <div className=" md:hidden">
+        <div className=" py-2 md:py-4 flex flex-wrap justify-between gap-2  items-center border-gray-300">
+          <Button
+            className=" font-semibold text-[11px] tracking-wide "
+            variant="default"
+            size="sm"
+            onClick={handleBack}>
+            Back
+          </Button>
+
+          <Button
+            className=" font-semibold text-[11px] tracking-wide "
+            size="sm"
+            onClick={handleClick}>
+            Export Data
+          </Button>
+        </div>
+      </div>
+
       <DataTable columns={columns} data={users} />
     </div>
   );

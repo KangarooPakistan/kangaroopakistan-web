@@ -28,10 +28,27 @@ const RegisterInContest = () => {
       <h1 className="text-3xl text-center my-3 font-bold text-purple-600">
         Register Schools
       </h1>
-      <div className="flex justify-start w-full mt-4 mb-4">
-        <Button variant="default" onClick={handleBack}>
-          Back
-        </Button>
+      <div className="hidden md:block">
+        <div className="flex justify-start w-full mt-4 mb-4">
+          <Button
+            className=" font-medium text-[15px]  tracking-wide"
+            variant="default"
+            size="lg"
+            onClick={handleBack}>
+            Back
+          </Button>
+        </div>
+      </div>
+      <div className="block md:hidden">
+        <div className="flex justify-between flex-wrap w-full mt-4 mb-4">
+          <Button
+            className=" font-medium text-[11px]  tracking-wide"
+            variant="default"
+            size="sm"
+            onClick={handleBack}>
+            Back
+          </Button>
+        </div>
       </div>
       <DataTable columns={columns} data={users} />
     </div>

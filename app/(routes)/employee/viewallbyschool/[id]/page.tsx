@@ -22,9 +22,8 @@ type LevelCounts = Record<string, number>;
 
 const ViewAllBySchool = () => {
   const [students, setStudents] = useState<Student[]>([]);
-  const params = useParams();
   const { onOpen } = useModal();
-
+  const params = useParams();
   const router = useRouter();
   const [preEculier, setPreEculier] = useState<number>(0);
   const [totalPaymentDone, setTotalPaymentDone] = useState<number>(0);
@@ -36,8 +35,8 @@ const ViewAllBySchool = () => {
   const [totalSchools, setTotalSchools] = useState<number>(0);
   const [allStudents, setAllStudents] = useState<Student[]>([]);
   const [schoolName, setSchoolName] = useState();
-  const [loading, setLoading] = useState(false);
   const [registrationId, setRegistratonId] = useState<string>();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -54,14 +53,11 @@ const ViewAllBySchool = () => {
         const registeredStudents = await axios.get(
           `/api/users/registrations/${params.id}`
         );
-        console.log("-KKR-");
-        console.log("-KKR-");
         console.log(registeredStudents.data[0].id);
-        console.log("registeredStudents.data");
+
         console.log(registeredStudents.data);
         console.log(registeredStudents.data[0].schoolName);
         setSchoolName(registeredStudents.data[0].schoolName);
-        console.log("registeredStudents.data");
 
         const allStudents: Student[] = registeredStudents.data.flatMap(
           (reg: RegistrationEntry) => reg.students
@@ -116,6 +112,7 @@ const ViewAllBySchool = () => {
   const handleBack = () => {
     router.back();
   };
+
   const handleAddImage = () => {
     setLoading(true);
     onOpen("addImage", {
@@ -169,19 +166,57 @@ const ViewAllBySchool = () => {
             </div>
           </div>
         </div>
-        <div className="p-4 flex justify-between border-gray-300">
-          <Button variant="default" onClick={handleBack}>
-            Back
-          </Button>
-          <Button
-            className="bg-transparent text-purple-600 text-xl"
-            disabled={loading}
-            onClick={handleAddImage}>
-            Add Proof of Payment
-          </Button>
-          <Button className="" onClick={exportSheet}>
-            Export Data
-          </Button>
+        <div className="hidden md:block">
+          <div className=" py-2 md:py-4 flex flex-wrap justify-between gap-2  items-center border-gray-300">
+            <Button
+              className=" font-semibold text-[15px] tracking-wide "
+              variant="default"
+              size="lg"
+              onClick={handleBack}>
+              Back
+            </Button>
+            <Button
+              className="bg-transparent text-purple-600 font-semibold text-sm md:text-xl disabled:bg-slate-100"
+              disabled={loading}
+              variant="default"
+              size="lg"
+              onClick={handleAddImage}>
+              Add Proof of Payment
+            </Button>
+            <Button
+              className=" font-semibold text-[15px] tracking-wide "
+              variant="default"
+              size="lg"
+              onClick={exportSheet}>
+              Export Data
+            </Button>
+          </div>
+        </div>
+        <div className="block md:hidden">
+          <div className="md:hidden py-2 md:p-4 flex flex-wrap justify-between gap-2  items-center border-gray-300">
+            <Button
+              className=" font-medium text-[11px]  tracking-wide"
+              variant="default"
+              size="sm"
+              onClick={handleBack}>
+              Back
+            </Button>
+            <Button
+              className="bg-transparent tracking-wide text-purple-600 font-semibold text-sm md:text-xl disabled:bg-slate-100"
+              disabled={loading}
+              variant="default"
+              size="sm"
+              onClick={handleAddImage}>
+              Add Proof of Payment
+            </Button>
+            <Button
+              className=" font-medium text-[11px] tracking-wide"
+              variant="default"
+              size="sm"
+              onClick={exportSheet}>
+              Export Data
+            </Button>
+          </div>
         </div>
         <DataTable columns={columns} data={students} />
       </div>

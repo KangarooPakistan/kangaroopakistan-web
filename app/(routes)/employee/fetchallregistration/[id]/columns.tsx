@@ -30,6 +30,7 @@ import { useEffect, useState } from "react";
 import SchoolReportDocument from "./SchoolReportDocument";
 import { getSession } from "next-auth/react";
 import CheckList from "./CheckList";
+import { CgMoreO } from "react-icons/cg";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -358,39 +359,97 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
     }
   };
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="h-8 w-8 p-0">
-          <span className="sr-only">Open menu</span>
-          <MoreHorizontal className="h-4 w-4" />
+    <>
+      <div className="hidden md:block">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <CgMoreO className="text-[30px]" />
+
+              {/* <MoreHorizontal className="h-4 w-4" /> */}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel className="border-y-2 border-solid">
+              Actions
+            </DropdownMenuLabel>
+            <DropdownMenuItem
+              className="border-y-2 border-solid"
+              onClick={handleView}>
+              View
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="border-y-2 border-solid"
+              onClick={handleRegister}>
+              Register Students
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="border-y-2 border-solid"
+              onClick={handleDownloadCheckList}>
+              Download CheckList
+            </DropdownMenuItem>
+
+            <DropdownMenuItem
+              className="border-y-2 border-solid"
+              onClick={handleEmail}>
+              Send Email
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="border-y-2 border-solid"
+              onClick={handleDownloadPdf}>
+              Download Answer Sheet
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="border-y-2 border-solid"
+              onClick={handleDownloadAdditionalPdf}
+              disabled={active}>
+              Download Answer Sheet Part2
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="border-y-2 border-solid"
+              onClick={handleSheet}>
+              Download Student Details
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="border-y-2 border-solid"
+              onClick={handleSchoolDetails}>
+              View School Details
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+      <div className="md:hidden flex flex-wrap ">
+        <Button className="m-2" onClick={handleView}>
+          View
         </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <DropdownMenuItem onClick={handleView}>View</DropdownMenuItem>
-        <DropdownMenuItem onClick={handleRegister}>
+        <Button className="m-2" onClick={handleRegister}>
           Register Students
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleDownloadCheckList}>
+        </Button>
+        <Button className="m-2" onClick={handleDownloadCheckList}>
           Download CheckList
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleEmail}>Send Email</DropdownMenuItem>
-        <DropdownMenuItem onClick={handleDownloadPdf}>
+        </Button>
+
+        <Button className="m-2" onClick={handleEmail}>
+          Send Email
+        </Button>
+        <Button className="m-2" onClick={handleDownloadPdf}>
           Download Answer Sheet
-        </DropdownMenuItem>
-        <DropdownMenuItem
+        </Button>
+        <Button
+          className="m-2"
           onClick={handleDownloadAdditionalPdf}
           disabled={active}>
           Download Answer Sheet Part2
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleSheet}>
+        </Button>
+        <Button className="m-2" onClick={handleSheet}>
           Download Student Details
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleSchoolDetails}>
+        </Button>
+        <Button className="m-2" onClick={handleSchoolDetails}>
           View School Details
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+        </Button>
+      </div>
+    </>
   );
 };
 export const columns: ColumnDef<Registration>[] = [
@@ -438,6 +497,7 @@ export const columns: ColumnDef<Registration>[] = [
 
   {
     id: "actions",
+    accessorKey: "actions",
     cell: ({ row }) => <RegistrationActions registration={row.original} />,
   },
 ];
