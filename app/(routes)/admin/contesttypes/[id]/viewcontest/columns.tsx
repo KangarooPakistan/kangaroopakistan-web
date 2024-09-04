@@ -45,10 +45,11 @@ const ContestActions: React.FC<ContestActionsProps> = ({ contest }) => {
 
   return (
     <>
-      <div className="hidden md:block"></div>
-      <div className="flex justify-around ">
-        <Button onClick={handleEdit}>Edit</Button>
-        <Button onClick={handleAllRegistrationsView}>View</Button>
+      <div className="hidden md:block">
+        <div className="flex justify-around ">
+          <Button onClick={handleEdit}>Edit</Button>
+          <Button onClick={handleAllRegistrationsView}>View</Button>
+        </div>
       </div>
       <div className="md:hidden">
         <div className="flex flex-wrap gap-2 justify-around ">
