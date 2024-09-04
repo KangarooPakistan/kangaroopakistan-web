@@ -405,32 +405,39 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         </DropdownMenu>
       </div>
       <div className="md:hidden flex flex-wrap gap-2 py-2 ">
-        <Button className=" text-[11px]" onClick={handleView}>
+        <Button className=" text-[11px]" size="sm" onClick={handleView}>
           View
         </Button>
-        <Button className="text-[11px]" onClick={handleRegister}>
+        <Button className="text-[11px]" size="sm" onClick={handleRegister}>
           Register Students
         </Button>
-        <Button className="text-[11px]" onClick={handleDownloadCheckList}>
+        <Button
+          className="text-[11px]"
+          size="sm"
+          onClick={handleDownloadCheckList}>
           Download CheckList
         </Button>
 
-        <Button className="text-[11px]" onClick={handleEmail}>
+        <Button className="text-[11px]" size="sm" onClick={handleEmail}>
           Send Email
         </Button>
-        <Button className="text-[11px]" onClick={handleDownloadPdf}>
+        <Button className="text-[11px]" size="sm" onClick={handleDownloadPdf}>
           Download Answer Sheet
         </Button>
         <Button
+          size="sm"
           className="text-[11px]"
           onClick={handleDownloadAdditionalPdf}
           disabled={active}>
           Download Answer Sheet Part2
         </Button>
-        <Button className="text-[11px]" onClick={handleSheet}>
+        <Button size="sm" className="text-[11px]" onClick={handleSheet}>
           Download Student Details
         </Button>
-        <Button className=" text-[11px]" onClick={handleSchoolDetails}>
+        <Button
+          size="sm"
+          className=" text-[11px]"
+          onClick={handleSchoolDetails}>
           View School Details
         </Button>
       </div>
