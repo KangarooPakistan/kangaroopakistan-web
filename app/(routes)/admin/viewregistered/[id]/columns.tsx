@@ -77,6 +77,8 @@ export const columns: ColumnDef<Student>[] = [
     header: "Level",
   },
   {
+    accessorKey: "actions",
+
     id: "actions",
     cell: ({ row }) => <ContestActions student={row.original} />,
   },

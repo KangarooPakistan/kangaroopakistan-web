@@ -7,7 +7,6 @@ import { DataTable } from "./data-table";
 import { Student, columns } from "./columns";
 import { Button } from "@/components/ui/button";
 
-
 interface ItemType {
   students: Student[];
   schoolId: number;

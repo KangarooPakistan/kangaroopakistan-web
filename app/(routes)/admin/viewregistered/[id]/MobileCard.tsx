@@ -43,7 +43,7 @@ export function MobileCard<T>({
           key={column.accessorKey}
           className="mb-2 flex items-center break-words">
           <span className="font-bold text-[11px] ">{column.accessorKey}: </span>
-          <span className="text-[11px]  uppercase text-balance break-words ">
+          <span className="text-[11px]  uppercase text-balance break-words">
             {renderValue((data as any)[column.accessorKey])}
           </span>
         </div>
