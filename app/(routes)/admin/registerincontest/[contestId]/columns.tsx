@@ -61,6 +61,7 @@ const RoleActions: React.FC<UserActionsProps> = ({ user }) => {
       </div>
       <div className="md:hidden flex flex-wrap justify-between items-center gap-2 ">
         <Button
+          size="sm"
           className=" font-medium text-[11px]  tracking-wide"
           onClick={handleRegister}>
           Register Students

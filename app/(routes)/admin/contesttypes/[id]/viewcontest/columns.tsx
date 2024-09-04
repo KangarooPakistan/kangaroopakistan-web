@@ -44,10 +44,27 @@ const ContestActions: React.FC<ContestActionsProps> = ({ contest }) => {
   };
 
   return (
-    <div className="flex justify-around ">
-      <Button onClick={handleEdit}>Edit</Button>
-      <Button onClick={handleAllRegistrationsView}>View</Button>
-    </div>
+    <>
+      <div className="hidden md:block"></div>
+      <div className="flex justify-around ">
+        <Button onClick={handleEdit}>Edit</Button>
+        <Button onClick={handleAllRegistrationsView}>View</Button>
+      </div>
+      <div className="md:hidden">
+        <div className="flex flex-wrap gap-2 justify-around ">
+          <Button size="sm" className="text-[11px]" onClick={handleEdit}>
+            Edit
+          </Button>
+          <Button
+            size="sm"
+            className="text-[11px]"
+            onClick={handleAllRegistrationsView}>
+            View
+          </Button>
+        </div>
+      </div>
+    </>
+
     // <DropdownMenu>
     //   <DropdownMenuTrigger asChild>
     //     <Button variant="ghost" className="h-8 w-8 p-0">

@@ -155,18 +155,19 @@ const ContestActions: React.FC<StudentActionsProps> = ({ student }) => {
         </DropdownMenu>
       </div>
       <div className="md:hidden">
-        <div className=" flex flex-wrap justify-between items-center gap-2">
-          <Button className="m-2" onClick={handleView}>
+        <div className=" flex flex-wrap  justify-between items-center gap-2">
+          <Button size="sm" className="text-[11px]" onClick={handleView}>
             View Receipts{" "}
           </Button>
-          <Button className="m-2" onClick={handleDownloadPdf}>
+          <Button size="sm" className="text-[11px]" onClick={handleDownloadPdf}>
             Download Answer Sheet
           </Button>
-          <Button className="m-2" onClick={editStudent}>
+          <Button size="sm" className="text-[11px]" onClick={editStudent}>
             Edit Student{" "}
           </Button>
           <Button
-            className="m-2"
+            size="sm"
+            className="text-[11px]"
             onClick={() =>
               onOpen("deleteStudent", { id: student.id, currentUserEmail })
             }>
