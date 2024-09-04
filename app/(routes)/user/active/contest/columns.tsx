@@ -58,29 +58,43 @@ const ContestActions: React.FC<ContestActionsProps> = ({ contest }) => {
   };
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="h-8 w-8 p-0">
-          <span className="sr-only">Open menu</span>
-          <CgMoreO className="text-[30px]" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuLabel className="border-y-2 border-solid">
-          Actions
-        </DropdownMenuLabel>
-        <DropdownMenuItem
-          className="border-y-2 border-solid"
-          onClick={handleRegister}>
-          Register Students
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          className="border-y-2 border-solid"
-          onClick={handleView}>
-          View
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <>
+      <div className="hidden md:block">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <CgMoreO className="text-[30px]" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel className="border-y-2 border-solid">
+              Actions
+            </DropdownMenuLabel>
+            <DropdownMenuItem
+              className="border-y-2 border-solid"
+              onClick={handleRegister}>
+              Register Students
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="border-y-2 border-solid"
+              onClick={handleView}>
+              View
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+      <div className=" md:hidden">
+        <div className="flex flex-wrap justify-between items-center gap-2 py-2 ">
+          <Button className=" text-[11px]" size="sm" onClick={handleRegister}>
+            Register Students
+          </Button>
+          <Button className="text-[11px]" size="sm" onClick={handleView}>
+            View
+          </Button>
+        </div>
+      </div>
+    </>
   );
 };
 
