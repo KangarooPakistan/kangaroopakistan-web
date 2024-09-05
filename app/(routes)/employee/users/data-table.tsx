@@ -68,7 +68,7 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className="mx-5">
+    <div className="">
       <div className="flex flex-col md:flex-row justify-center items-center py-4 gap-4 ">
         <Input
           placeholder="Filter SchoolId..."
@@ -102,8 +102,8 @@ export function DataTable<TData, TValue>({
           }
         />
       </div>
-      <div className=" hidden md:block mx-10">
-        <div className="shadow-md sm:rounded-b-lg border">
+      <div className="hidden md:block">
+        <div className="shadow-md bg-slate-200 sm:rounded-b-lg border">
           <Table>
             <TableHeader className="table-header">
               {table.getHeaderGroups().map((headerGroup) => (
@@ -130,9 +130,13 @@ export function DataTable<TData, TValue>({
                 table.getRowModel().rows.map((row) => (
                   <TableRow
                     key={row.id}
-                    data-state={row.getIsSelected() && "selected"}>
+                    data-state={row.getIsSelected() && "selected"}
+                    className="even:text-purple-500 text-center  odd:text-slate-800" // Add this class
+                  >
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
+                      <TableCell
+                        key={cell.id}
+                        className=" font-semibold text-[15px] uppercase ">
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext()

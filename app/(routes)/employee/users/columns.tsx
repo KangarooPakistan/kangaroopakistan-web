@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useRouter } from "next/navigation";
 import { useModal } from "@/hooks/use-modal-store";
+import { CgMoreO } from "react-icons/cg";
 export type User = {
   id: number;
   email: string;
@@ -43,7 +44,7 @@ const RoleActions: React.FC<UserActionsProps> = ({ user }) => {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
               <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
+              <CgMoreO className="text-[30px]" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
