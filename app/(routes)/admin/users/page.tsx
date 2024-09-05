@@ -18,6 +18,8 @@ type User = {
   schoolAddress: string | null;
   district: string;
   tehsil: string;
+  createdAt: string;
+  updatedAt: string;
   fax: string;
   bankTitle: string | null;
   p_fName: string | null;
@@ -43,11 +45,13 @@ const Users = () => {
     async function fetchContestTypes() {
       try {
         const response = await axios.get("/api/users/allusers"); // Replace with your actual API route URL
+
         setUsers(response.data);
         console.log(response.data);
         const usersForExcel = response.data.map((user: User) => ({
           email: user.email,
-
+          createdAt: new Date(user.createdAt).toLocaleString(),
+          updatedAt: new Date(user.updatedAt).toLocaleString(),
           role: user.role,
           schoolId: user.schoolId,
           schoolName: user.schoolName, // Optional: only for non-admin users
