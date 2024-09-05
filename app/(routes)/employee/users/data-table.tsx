@@ -68,7 +68,7 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div>
+    <div className="mx-5">
       <div className="flex flex-col md:flex-row justify-center items-center py-4 gap-4 ">
         <Input
           placeholder="Filter SchoolId..."
@@ -102,7 +102,7 @@ export function DataTable<TData, TValue>({
           }
         />
       </div>
-      <div className="hidden md:block">
+      <div className=" hidden md:block mx-10">
         <div className="shadow-md sm:rounded-b-lg border">
           <Table>
             <TableHeader className="table-header">

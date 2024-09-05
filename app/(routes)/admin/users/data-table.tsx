@@ -68,7 +68,7 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div>
+    <div className="">
       <div className="flex flex-col md:flex-row justify-center items-center py-4 gap-4 ">
         <Input
           placeholder="Filter SchoolId..."

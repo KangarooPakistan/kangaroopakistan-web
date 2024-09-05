@@ -95,45 +95,47 @@ const Users = () => {
     router.back();
   };
   return (
-    <div className="container mx-auto py-10">
-      <div className="hidden md:block">
-        <div className=" py-2 md:py-4 flex flex-wrap justify-between gap-2  items-center border-gray-300">
-          <Button
-            className=" font-semibold text-[15px] tracking-wide "
-            variant="default"
-            size="lg"
-            onClick={handleBack}>
-            Back
-          </Button>
+    <div className=" ">
+      <div className="container mx-auto py-10">
+        <div className="hidden md:block">
+          <div className=" py-2 md:py-4 flex flex-wrap justify-between gap-2  items-center border-gray-300">
+            <Button
+              className=" font-semibold text-[15px] tracking-wide "
+              variant="default"
+              size="lg"
+              onClick={handleBack}>
+              Back
+            </Button>
 
-          <Button
-            className=" font-semibold text-[15px] tracking-wide "
-            size="lg"
-            onClick={handleClick}>
-            Export Data
-          </Button>
+            <Button
+              className=" font-semibold text-[15px] tracking-wide "
+              size="lg"
+              onClick={handleClick}>
+              Export Data
+            </Button>
+          </div>
         </div>
-      </div>
-      <div className=" md:hidden">
-        <div className=" py-2 md:py-4 flex flex-wrap justify-between gap-2  items-center border-gray-300">
-          <Button
-            className=" font-semibold text-[11px] tracking-wide "
-            variant="default"
-            size="sm"
-            onClick={handleBack}>
-            Back
-          </Button>
+        <div className=" md:hidden">
+          <div className=" py-2 md:py-4 flex flex-wrap justify-between gap-2  items-center border-gray-300">
+            <Button
+              className=" font-semibold text-[11px] tracking-wide "
+              variant="default"
+              size="sm"
+              onClick={handleBack}>
+              Back
+            </Button>
 
-          <Button
-            className=" font-semibold text-[11px] tracking-wide "
-            size="sm"
-            onClick={handleClick}>
-            Export Data
-          </Button>
+            <Button
+              className=" font-semibold text-[11px] tracking-wide "
+              size="sm"
+              onClick={handleClick}>
+              Export Data
+            </Button>
+          </div>
         </div>
-      </div>
 
-      <DataTable columns={columns} data={users} />
+        <DataTable columns={columns} data={users} />
+      </div>
     </div>
   );
 };
