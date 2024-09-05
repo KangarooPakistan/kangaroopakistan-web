@@ -75,7 +75,7 @@ function UserProfile({ params }: UserProfileProps) {
     { id: 3, label: "Coordinator " },
   ];
   const handleBack = () => {
-    router.push(`/employee/users`);
+    router.back();
   };
 
   return (
