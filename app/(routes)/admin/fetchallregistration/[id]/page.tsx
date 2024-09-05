@@ -149,7 +149,8 @@ const FetchAllRegistrations = () => {
         "Coordinator Account Details": item.user?.c_accountDetails,
         "School Email": item.user?.email,
         "Total Students": item.students.length,
-        time: new Date(item.updatedAt).toLocaleString(), // Convert to human-readable format
+        updatedTime: new Date(item.updatedAt).toLocaleString(), // Convert to human-readable format
+        createdAt: new Date(item.createdAt).toLocaleString(), // Convert to human-readable format
 
         // ...student, // Spread student attributes
       }));
