@@ -180,6 +180,26 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center", // Center align header text
   },
+  title: {
+    fontSize: 16,
+    fontFamily: "Roboto",
+    textAlign: "center",
+    marginBottom: 10,
+    fontWeight: "bold",
+  },
+  subtitle: {
+    fontSize: 14,
+    fontFamily: "Roboto",
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  signature: {
+    marginTop: 10,
+    fontFamily: "Roboto",
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+
   tableCell: {
     fontSize: "9px",
     textTransform: "uppercase",
@@ -189,6 +209,15 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center", // Center align cell text
   },
+  paragraph: {
+    fontSize: "12px",
+    marginBottom: 10,
+    fontFamily: "Roboto",
+  },
+  spacer: {
+    height: 20, // Adjust this value to increase or decrease space
+  },
+
   section: {
     display: "flex",
     flexDirection: "column",
@@ -212,6 +241,13 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
           { src: "/fonts/Roboto-Bold.ttf", fontWeight: 700 },
         ],
       });
+      // await Font.register({
+      //   family: "Calibri",
+      //   fonts: [
+      //     { src: "/fonts/calibri-regular.ttf" },
+      //     { src: "/fonts/calibri-bold.ttf", fontWeight: 700 },
+      //   ],
+      // });
 
       setFontsLoaded(true);
     };
@@ -280,6 +316,64 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
   return (
     <Document>
       <Page size="A4" style={styles.page}>
+        <Text style={styles.title}>ATTENDANCE SHEET</Text>
+        <Text style={styles.header}>{profileData?.contestName}</Text>
+
+        <Text style={styles.paragraph}>Dear Principal,</Text>
+        <Text style={styles.paragraph}>
+          We are pleased to inform you that your school is participating in the
+          International Kangaroo Science Contest (IKSC) 2024. Attached with this
+          letter are the contest question booklets and answer sheets for the
+          participating students.
+        </Text>
+        <Text style={styles.paragraph}>
+          Please find below the list of students from your school who have
+          registered for the International Kangaroo Science Contest (IKSC) 2024.
+          We kindly request that you or the assigned contest supervisor mark
+          each student&apos;s attendance by indicating &quot;Present&quot; or
+          &quot;Absent&quot; in the corresponding box next to their name. In
+          case you need to make any corrections to the student&apos;s name or
+          father&apos;s name, please make them here directly on this attendance
+          sheet.
+        </Text>
+
+        <Text style={styles.paragraph}>
+          Supervisor Name: _____________________
+        </Text>
+
+        <Text style={styles.paragraph}>Signature: ____________________</Text>
+
+        <Text style={styles.paragraph}>
+          We also request that you confirm the contest was conducted under your
+          supervision, ensuring complete transparency, by signing below and
+          stamping the document with your school&apos;s official stamp.
+        </Text>
+
+        <View style={styles.paragraph}>
+          <Text>Principal&apos;s Signature: ____________________</Text> <br />
+          <Text>Date: ____________________</Text>
+        </View>
+
+        <View style={styles.spacer} />
+        <View style={styles.spacer} />
+
+        <Text style={styles.paragraph}>
+          Your cooperation in ensuring the smooth conduct of the International
+          Kangaroo Science Contest (IKSC) 2024 is greatly appreciated. Please
+          return this document along with the completed answer sheets to our
+          representative.
+        </Text>
+
+        <Text style={styles.paragraph}>
+          Thank you for your continued support in promoting academic excellence.
+        </Text>
+
+        <Text style={styles.paragraph}>Best regards,</Text>
+        <Text style={styles.paragraph}>Khalid Rasul Awan</Text>
+        <Text break>
+          {/* This empty Text component with the break property forces a page break */}
+        </Text>
+
         <View
           style={{
             display: "flex",

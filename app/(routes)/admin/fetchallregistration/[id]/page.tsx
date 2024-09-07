@@ -21,10 +21,6 @@ async function fetchData(id: string, signal: AbortSignal) {
 
   return res.data;
 }
-async function fetchContestDetails(id: string, signal: AbortSignal) {
-  const res = await axios.get(`/api/users/contests/${id}`);
-  return res.data;
-}
 
 // Define a type for Registration, including the students array
 type Register = {
@@ -102,14 +98,6 @@ const FetchAllRegistrations = () => {
     const signal = controller.signal;
     const fetchAndSetData = async (id: string) => {
       const registrations = await fetchData(id, signal);
-      console.log("registeredBy registeredBy");
-      console.log(registrations[0].contestId);
-      const contestData = await fetchContestDetails(
-        registrations[0].contestId,
-        signal
-      );
-      console.log(contestData);
-      setContestCh(contestData.contestCh);
 
       setTotalSchools(registrations.length);
 
@@ -331,18 +319,6 @@ const FetchAllRegistrations = () => {
             onClick={handleClick}>
             Export Data
           </Button>
-          {contestCh == "S" && (
-            <Button
-              className=" font-medium text-[15px]  tracking-wide"
-              variant="default"
-              size="lg">
-              <a
-                href="https://docs.google.com/document/d/18m6ciOBjrL7xrCXJF59Cfiu3SHsNWb_3/edit?usp=sharing&ouid=100155003670788686545&rtpof=true&sd=true"
-                target="_new">
-                Download Answer Sheet
-              </a>
-            </Button>
-          )}
 
           <Button
             className=" font-medium text-[15px]  tracking-wide"
