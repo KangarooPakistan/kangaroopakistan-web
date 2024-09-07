@@ -177,7 +177,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       const blob = await generatePdfBlob(students, profileData);
       const pdfName = `answersheet_${response.data[0].schoolId}_part1.pdf`;
 
-      saveAs(blob, "students.pdf");
+      saveAs(blob, pdfName);
     } catch (error) {
       console.error("Error downloading the PDF:", error);
     } finally {
