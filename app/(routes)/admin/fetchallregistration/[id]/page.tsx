@@ -198,8 +198,8 @@ const FetchAllRegistrations = () => {
           schoolId: obj.user.schoolId,
           district: obj.user.city,
           schoolAddress: obj.user.schoolAddress,
-          schoolPrinPhone: obj.user.p_phone,
-          schoolCorPhone: obj.user.c_phone,
+          schoolPrinPhone: obj.user.p_contact,
+          schoolCorPhone: obj.user.c_contact,
           schoolMainPhone: obj.user.contactNumber,
         }))
         .sort((a: SchoolDetails, b: SchoolDetails) => a.schoolId - b.schoolId);

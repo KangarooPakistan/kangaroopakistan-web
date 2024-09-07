@@ -134,7 +134,7 @@ const AllLabels: React.FC<AllLabelsProps> = ({ schoolDetails }) => {
               Innovative Learning - KSF Pakistan
             </Text>
             <Text style={styles.subText}>
-              2nd Floor, Plaza 114, Main Boulevard, Phase 6 DHA, Lahore
+              1st FLOOR, PLAZA 114, MAIN BOULEVARD, PHASE 6 DHA, LAHORE{" "}
             </Text>
             <Text style={styles.subText}>Tel: 042-37180505/06</Text>
             <Text style={styles.subText}>
