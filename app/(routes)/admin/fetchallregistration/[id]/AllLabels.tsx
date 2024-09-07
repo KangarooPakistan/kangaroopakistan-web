@@ -138,7 +138,7 @@ const AllLabels: React.FC<AllLabelsProps> = ({ schoolDetails }) => {
             </Text>
             <Text style={styles.subText}>Tel: 042-37180505/06</Text>
             <Text style={styles.subText}>
-              Cell: 0321-8403033 / 0333-2111399
+              Cell: 0321-8403033 / 0333-2111399 / 0319-5080077
             </Text>
           </View>
           <View></View>
