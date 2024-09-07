@@ -85,10 +85,17 @@ const AllLabels: React.FC<AllLabelsProps> = ({ schoolDetails }) => {
       height: "60px",
     },
     subText: {
-      textTransform: "uppercase",
       fontSize: 16,
       marginBottom: 5,
+      textTransform: "uppercase",
       fontFamily: "Roboto",
+    },
+    subTextBold: {
+      fontSize: 16,
+      marginBottom: 5,
+      textTransform: "uppercase",
+      fontFamily: "Roboto",
+      fontWeight: "bold",
     },
     fromBlock: {
       marginTop: 20,
@@ -126,7 +133,9 @@ const AllLabels: React.FC<AllLabelsProps> = ({ schoolDetails }) => {
               <Text style={styles.subText}>
                 School Address: {school.schoolAddress}
               </Text>
-              <Text style={styles.subText}>District: {school.district}</Text>
+              <Text style={styles.subTextBold}>
+                District: {school.district}
+              </Text>
               <Text style={styles.subText}>
                 Tel:{school.schoolMainPhone} /{school.schoolPrinPhone} /{" "}
                 {school.schoolCorPhone}
