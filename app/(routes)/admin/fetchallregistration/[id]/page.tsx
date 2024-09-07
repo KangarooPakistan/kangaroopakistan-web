@@ -12,11 +12,17 @@ import AllLabels, { SchoolDetails } from "./AllLabels";
 import * as XLSX from "xlsx";
 import { pdf } from "@react-pdf/renderer";
 import AllLabelsShort from "./AllLabelsShort";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic"; // Ensures this page is always rendered server-side
 
 async function fetchData(id: string, signal: AbortSignal) {
   const res = await axios.get(`/api/users/fetchallregistrations/${id}`);
+
+  return res.data;
+}
+async function fetchContestDetails(id: string, signal: AbortSignal) {
+  const res = await axios.get(`/api/users/contests/${id}`);
   return res.data;
 }
 
@@ -89,12 +95,21 @@ const FetchAllRegistrations = () => {
   const [junior, setJunior] = useState<number>(0);
   const [student, setStudent] = useState<number>(0);
   const [labelsData, setLabelsData] = useState<SchoolDetails[]>([]);
+  const [contestCh, setContestCh] = useState("");
 
   useEffect(() => {
     const controller = new AbortController();
     const signal = controller.signal;
     const fetchAndSetData = async (id: string) => {
       const registrations = await fetchData(id, signal);
+      console.log("registeredBy registeredBy");
+      console.log(registrations[0].contestId);
+      const contestData = await fetchContestDetails(
+        registrations[0].contestId,
+        signal
+      );
+      console.log(contestData);
+      setContestCh(contestData.contestCh);
 
       setTotalSchools(registrations.length);
 
@@ -316,6 +331,19 @@ const FetchAllRegistrations = () => {
             onClick={handleClick}>
             Export Data
           </Button>
+          {contestCh == "S" && (
+            <Button
+              className=" font-medium text-[15px]  tracking-wide"
+              variant="default"
+              size="lg">
+              <a
+                href="https://docs.google.com/document/d/18m6ciOBjrL7xrCXJF59Cfiu3SHsNWb_3/edit?usp=sharing&ouid=100155003670788686545&rtpof=true&sd=true"
+                target="_new">
+                Download Answer Sheet
+              </a>
+            </Button>
+          )}
+
           <Button
             className=" font-medium text-[15px]  tracking-wide"
             variant="default"
@@ -355,6 +383,18 @@ const FetchAllRegistrations = () => {
             onClick={handleClick}>
             Export Data
           </Button>
+          {contestCh == "S" && (
+            <Button
+              className=" font-medium text-[11px]  tracking-wide"
+              variant="default"
+              size="sm">
+              <a
+                href="https://docs.google.com/document/d/18m6ciOBjrL7xrCXJF59Cfiu3SHsNWb_3/edit?usp=sharing&ouid=100155003670788686545&rtpof=true&sd=true"
+                target="_new">
+                Download Answer Sheet
+              </a>
+            </Button>
+          )}
           <Button
             className=" font-medium text-[11px]  tracking-wide"
             variant="default"
