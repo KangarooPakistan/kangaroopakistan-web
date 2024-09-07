@@ -66,7 +66,7 @@ const AllLabels: React.FC<AllLabelsProps> = ({ schoolDetails }) => {
       marginBottom: 20,
     },
     bold: {
-      fontWeight: "bold",
+      fontWeight: "extrabold",
     },
     textHeading: {
       fontSize: 16,
@@ -113,7 +113,11 @@ const AllLabels: React.FC<AllLabelsProps> = ({ schoolDetails }) => {
                 {school.schoolName}
               </Text>
               <Text style={styles.subText}>
-                SchoolId: <Text style={styles.bold}> {school.schoolId} </Text>
+                SchoolId:{" "}
+                <Text style={[styles.text, styles.bold]}>
+                  {" "}
+                  {school.schoolId}{" "}
+                </Text>
               </Text>
 
               <Text style={styles.spacer}></Text>
