@@ -125,8 +125,11 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       `/admin/enrollstudents/${registration.contestId}/registrationId/${registration.id}`
     );
   };
-  async function generatePdfBlob(students: Student[]) {
-    const doc = <MyDocument students={students} />;
+  async function generatePdfBlob(
+    students: Student[],
+    profileData: profileData
+  ) {
+    const doc = <MyDocument students={students} profileData={profileData} />;
 
     const asPdf = pdf(doc); // Create an empty PDF instance
     const blob = await asPdf.toBlob();
@@ -150,8 +153,28 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         // If no, or if the number is 200 or less, use the full array
         students = response.data;
       }
+      const res = await axios.get(
+        `/api/users/allusers/getschoolbyregid/${registration.id}`
+      );
+      console.log(res.data.contestId);
+      const contestData = await axios.get(
+        `/api/users/contests/${res.data.contestId}`
+      );
+      console.log(contestData.data);
+      console.log(contestData.data.name);
+      // console.log("res");
+      // console.log(res.data.user.p_fName);
+      const profileData: profileData = {
+        p_Name: res.data.user.p_Name,
+        c_Name: res.data.user.c_Name,
+        email: res.data.user.email,
+        contactNumber: res.data.user.contactNumber,
+        contestName: contestData.data.name,
+        contestCh: contestData.data.contestCh,
+        contestNo: contestData.data.contestNo,
+      };
 
-      const blob = await generatePdfBlob(students);
+      const blob = await generatePdfBlob(students, profileData);
       const pdfName = `answersheet_${response.data[0].schoolId}_part1.pdf`;
 
       saveAs(blob, "students.pdf");
@@ -224,7 +247,27 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         return; // Exit the function as there's nothing more to process
       }
 
-      const blob = await generatePdfBlob(additionalStudents);
+      const res = await axios.get(
+        `/api/users/allusers/getschoolbyregid/${registration.id}`
+      );
+      console.log(res.data.contestId);
+      const contestData = await axios.get(
+        `/api/users/contests/${res.data.contestId}`
+      );
+      console.log(contestData.data);
+      console.log(contestData.data.name);
+      // console.log("res");
+      // console.log(res.data.user.p_fName);
+      const profileData: profileData = {
+        p_Name: res.data.user.p_Name,
+        c_Name: res.data.user.c_Name,
+        email: res.data.user.email,
+        contactNumber: res.data.user.contactNumber,
+        contestName: contestData.data.name,
+        contestCh: contestData.data.contestCh,
+        contestNo: contestData.data.contestNo,
+      };
+      const blob = await generatePdfBlob(additionalStudents, profileData);
       const pdfName = `answersheet_${response.data[0].schoolId}_part2.pdf`;
       saveAs(blob, pdfName);
     } catch (error) {
@@ -772,15 +815,14 @@ interface Student {
 
 interface MyDocumentProps {
   students: Student[];
+  profileData: profileData;
 }
 
-const MyDocument: React.FC<MyDocumentProps> = ({ students }) => (
+const MyDocument: React.FC<MyDocumentProps> = ({ students, profileData }) => (
   <Document>
     {students.map((student, index) => (
       <Page size="A4" style={styles.page} key={index}>
-        <Text style={styles.header}>
-          International Kangaroo Mathematics Contest
-        </Text>
+        <Text style={styles.header}>{profileData?.contestName} </Text>
         <Text style={styles.subHeaderBetween}>Answer Sheet</Text>
 
         <Text style={styles.subHeader}>
