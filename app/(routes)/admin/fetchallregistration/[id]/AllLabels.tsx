@@ -112,7 +112,9 @@ const AllLabels: React.FC<AllLabelsProps> = ({ schoolDetails }) => {
               <Text style={[styles.text, styles.bold]}>
                 {school.schoolName}
               </Text>
-              <Text style={styles.subText}>SchoolId: {school.schoolId}</Text>
+              <Text style={styles.subText}>
+                SchoolId: <span style={styles.bold}> {school.schoolId} </span>
+              </Text>
 
               <Text style={styles.spacer}></Text>
               <Text style={styles.spacer}></Text>
