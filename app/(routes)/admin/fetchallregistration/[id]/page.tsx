@@ -196,9 +196,11 @@ const FetchAllRegistrations = () => {
         .map((obj: any) => ({
           schoolName: obj.user.schoolName,
           schoolId: obj.user.schoolId,
+          district: obj.user.city,
           schoolAddress: obj.user.schoolAddress,
           schoolPrinPhone: obj.user.p_phone,
           schoolCorPhone: obj.user.c_phone,
+          schoolMainPhone: obj.user.contactNumber,
         }))
         .sort((a: SchoolDetails, b: SchoolDetails) => a.schoolId - b.schoolId);
       setLabelsData(schoolsData);
