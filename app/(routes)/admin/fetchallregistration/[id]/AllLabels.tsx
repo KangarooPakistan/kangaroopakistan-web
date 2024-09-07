@@ -119,10 +119,12 @@ const AllLabels: React.FC<AllLabelsProps> = ({ schoolDetails }) => {
               <Text style={[styles.text, styles.bold]}>
                 {school.schoolName}
               </Text>
-              <Text>
+              <Text
+                style={{
+                  display: "flex",
+                }}>
                 <Text style={styles.subText}>SchoolId: </Text>
                 <Text style={[styles.subText, styles.bold]}>
-                  {" "}
                   {school.schoolId}{" "}
                 </Text>
               </Text>
