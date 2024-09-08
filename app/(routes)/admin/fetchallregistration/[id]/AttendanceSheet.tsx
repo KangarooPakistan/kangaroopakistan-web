@@ -686,9 +686,19 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
         <Text style={styles.paragraph}>
           Thank you for your continued support in promoting academic excellence.
         </Text>
+        <View style={styles.spacer} />
+
+        <Text style={styles.paragraph}>
+          We remind you that question booklets become property of the students,
+          therefore they should be given to the students.
+        </Text>
+        <View style={styles.spacer} />
 
         <Text style={styles.paragraph}>Best regards,</Text>
         <Text style={styles.paragraph}>Khalid Rasul Awan</Text>
+        <Text style={styles.paragraph}>
+          COO Inventive Learning - KSF Pakistan
+        </Text>
         <Text break></Text>
         <View style={styles.table}>
           <View style={styles.tableRow}>
