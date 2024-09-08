@@ -141,10 +141,8 @@ const AllLabels: React.FC<AllLabelsProps> = ({ schoolDetails }) => {
           </View>
 
           <View style={styles.fromBlock}>
-            <Text style={styles.text}>From</Text>
-            <Text style={[styles.text, styles.bold]}>
-              Innovative Learning - KSF Pakistan
-            </Text>
+            <Text style={[styles.text, styles.bold]}>From</Text>
+            <Text style={[styles.text, styles.bold]}>Inventive Learning </Text>
             <Text style={styles.subText}>
               1st FLOOR, PLAZA 114, MAIN BOULEVARD, PHASE 6 DHA, LAHORE{" "}
             </Text>

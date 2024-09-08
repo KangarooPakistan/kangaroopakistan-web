@@ -33,7 +33,7 @@ interface profileData {
   contestNo: string;
 }
 
-interface SchoolReportProps {
+interface AttendanceSheetProps {
   schoolData: Student[];
   profileData: profileData | null | undefined;
 }
@@ -113,15 +113,8 @@ const styles = StyleSheet.create({
     borderTop: 1,
     borderColor: "#000",
   },
-  tableRow: {
-    flexDirection: "row",
-    borderBottom: 1,
-    borderColor: "#000",
-    alignItems: "center",
-    height: 24, // Adjust the height as needed
-  },
   tableColHeaderMid: {
-    width: "25%",
+    width: "15%",
     borderRight: 1,
     borderColor: "#000",
     padding: 2,
@@ -133,11 +126,6 @@ const styles = StyleSheet.create({
     borderColor: "#000",
     padding: 2,
     backgroundColor: "#eee", // Optional for header background
-  },
-  tableColHeader: {
-    width: "15%",
-    padding: 2,
-    backgroundColor: "#eee",
   },
   tableColLeft: {
     width: "35%",
@@ -168,11 +156,6 @@ const styles = StyleSheet.create({
     marginVertical: "5px",
     textAlign: "left",
   },
-  tableCol: {
-    width: "15%",
-    padding: 2,
-    flexWrap: "wrap",
-  },
   tableCellHeader: {
     fontSize: 10,
     textTransform: "uppercase",
@@ -200,15 +183,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
 
-  tableCell: {
-    fontSize: "9px",
-    textTransform: "uppercase",
-
-    width: "100%",
-    flexWrap: "wrap",
-    fontWeight: "bold",
-    textAlign: "center", // Center align cell text
-  },
   paragraph: {
     fontSize: "12px",
     marginBottom: 10,
@@ -218,6 +192,49 @@ const styles = StyleSheet.create({
     height: 20, // Adjust this value to increase or decrease space
   },
 
+  table: {
+    display: "flex",
+    width: "100%",
+  },
+  tableRow: {
+    // margin: "auto",
+
+    flexDirection: "row",
+    borderBottomWidth: 1,
+    borderBottomColor: "#000",
+    borderBottomStyle: "solid",
+  },
+  tableColHeader: {
+    width: "11%",
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderLeftWidth: 0,
+    // borderTopWidth: 0,
+    backgroundColor: "#f0f0f0",
+  },
+  tableCol: {
+    width: "11%",
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderLeftWidth: 0,
+    borderTopWidth: 0,
+  },
+  tableColWide: {
+    width: "23%",
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderLeftWidth: 0,
+    borderTopWidth: 0,
+  },
+  tableCell: {
+    margin: "auto",
+    fontSize: 9,
+
+    textAlign: "left",
+    paddingTop: 3,
+    paddingBottom: 3,
+  },
+
   section: {
     display: "flex",
     flexDirection: "column",
@@ -225,7 +242,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const SchoolReportDocument: React.FC<SchoolReportProps> = ({
+const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
   schoolData,
   profileData,
 }) => {
@@ -576,6 +593,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
           </View>
           <View></View>
         </View>
+
         <Text
           style={{
             fontSize: "14px",
@@ -615,62 +633,110 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
             Total Number of Students : {schoolData.length}
           </Text>
         </View>
+        <Text break></Text>
 
-        {Object.entries(groupedStudents).map(([level, classes]) => (
-          <View key={level} style={styles.section}>
-            <Text style={styles.subHeader}>{getStudentLevel(level)} Level</Text>
-            {Object.entries(classes).map(([cls, students]) => (
-              <View key={cls} style={{ marginBottom: "0px" }}>
-                <Text style={styles.totalStudentsText}>
-                  Total Students of Class {cls}: {students.length}
-                </Text>
-                <View style={styles.studentTable}>
-                  <View style={styles.tableRow}>
-                    <View style={styles.tableColHeaderLeft}>
-                      <Text style={styles.tableCell}>Roll No</Text>
-                    </View>
-                    <View style={styles.tableColHeaderMid}>
-                      <Text style={styles.tableCell}>Student Name</Text>
-                    </View>
-                    <View style={styles.tableColHeaderMid}>
-                      <Text style={styles.tableCell}>Father Name</Text>
-                    </View>
-                    <View style={styles.tableColHeader}>
-                      <Text style={styles.tableCell}>Class</Text>
-                    </View>
-                  </View>
-                  {students.map((student, idx) => (
-                    <View key={idx} style={styles.tableRow}>
-                      <View style={styles.tableColLeft}>
-                        <Text style={styles.tableCell}>
-                          {student.rollNumber}
-                        </Text>
-                      </View>
-                      <View style={styles.tableColMid}>
-                        <Text style={styles.tableCell}>
-                          {student.studentName}
-                        </Text>
-                      </View>
-                      <View style={styles.tableColMid}>
-                        <Text style={styles.tableCell}>
-                          {student.fatherName}
-                        </Text>
-                      </View>
-                      <View style={styles.tableCol}>
-                        <Text style={styles.tableCell}>
-                          {student.studentClass}
-                        </Text>
-                      </View>
-                    </View>
-                  ))}
-                </View>
-              </View>
-            ))}
+        <Text style={styles.title}>ATTENDANCE SHEET</Text>
+        <Text style={styles.header}>{profileData?.contestName}</Text>
+
+        <Text style={styles.paragraph}>Dear Principal,</Text>
+        <Text style={styles.paragraph}>
+          We are pleased to inform you that your school is participating in the
+          International Kangaroo Science Contest (IKSC) 2024. Attached with this
+          letter are the contest question booklets and answer sheets for the
+          participating students.
+        </Text>
+        <Text style={styles.paragraph}>
+          Please find below the list of students from your school who have
+          registered for the International Kangaroo Science Contest (IKSC) 2024.
+          We kindly request that you or the assigned contest supervisor mark
+          each student&apos;s attendance by indicating &quot;Present&quot; or
+          &quot;Absent&quot; in the corresponding box next to their name. In
+          case you need to make any corrections to the student&apos;s name or
+          father&apos;s name, please make them here directly on this attendance
+          sheet.
+        </Text>
+
+        <Text style={styles.paragraph}>
+          Supervisor Name: _____________________
+        </Text>
+
+        <Text style={styles.paragraph}>Signature: ____________________</Text>
+
+        <Text style={styles.paragraph}>
+          We also request that you confirm the contest was conducted under your
+          supervision, ensuring complete transparency, by signing below and
+          stamping the document with your school&apos;s official stamp.
+        </Text>
+
+        <View style={styles.paragraph}>
+          <Text>Principal&apos;s Signature: ____________________</Text> <br />
+          <Text>Date: ____________________</Text>
+        </View>
+
+        <View style={styles.spacer} />
+        <View style={styles.spacer} />
+
+        <Text style={styles.paragraph}>
+          Your cooperation in ensuring the smooth conduct of the International
+          Kangaroo Science Contest (IKSC) 2024 is greatly appreciated. Please
+          return this document along with the completed answer sheets to our
+          representative.
+        </Text>
+
+        <Text style={styles.paragraph}>
+          Thank you for your continued support in promoting academic excellence.
+        </Text>
+
+        <Text style={styles.paragraph}>Best regards,</Text>
+        <Text style={styles.paragraph}>Khalid Rasul Awan</Text>
+        <Text break></Text>
+        <View style={styles.table}>
+          <View style={styles.tableRow}>
+            <View style={[styles.tableColHeader, { borderLeftWidth: 1 }]}>
+              <Text style={styles.tableCellHeader}>SR.NO</Text>
+            </View>
+            <View style={[styles.tableColHeader, { width: "23%" }]}>
+              <Text style={styles.tableCellHeader}>ROLL NUMBER</Text>
+            </View>
+            <View style={[styles.tableColHeader, { width: "23%" }]}>
+              <Text style={styles.tableCellHeader}>STUDENT NAME</Text>
+            </View>
+            <View style={[styles.tableColHeader, { width: "23%" }]}>
+              <Text style={styles.tableCellHeader}>FATHER NAME</Text>
+            </View>
+            <View style={styles.tableColHeader}>
+              <Text style={styles.tableCellHeader}>CLASS</Text>
+            </View>
+            <View style={styles.tableColHeader}>
+              <Text style={styles.tableCellHeader}>ATTENDANCE (P/A)</Text>
+            </View>
           </View>
-        ))}
+          {schoolData.map((student, index) => (
+            <View style={styles.tableRow} key={student.rollNumber}>
+              <View style={[styles.tableCol, { borderLeftWidth: "1%" }]}>
+                <Text style={styles.tableCell}>{index + 1}</Text>
+              </View>
+              <View style={styles.tableColWide}>
+                <Text style={styles.tableCell}>{student.rollNumber}</Text>
+              </View>
+              <View style={styles.tableColWide}>
+                <Text style={styles.tableCell}>{student.studentName}</Text>
+              </View>
+              <View style={styles.tableColWide}>
+                <Text style={styles.tableCell}>{student.fatherName}</Text>
+              </View>
+              <View style={styles.tableCol}>
+                <Text style={styles.tableCell}>{student.studentClass}</Text>
+              </View>
+              <View style={styles.tableCol}>
+                <Text style={styles.tableCell}></Text>
+              </View>
+            </View>
+          ))}
+        </View>
       </Page>
     </Document>
   );
 };
 
-export default SchoolReportDocument;
+export default AttendanceSheet;
