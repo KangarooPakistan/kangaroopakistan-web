@@ -713,7 +713,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
           </View>
           {schoolData.map((student, index) => (
             <View style={styles.tableRow} key={student.rollNumber}>
-              <View style={[styles.tableCol, { borderLeftWidth: "1%" }]}>
+              <View style={styles.tableCol}>
                 <Text style={styles.tableCell}>{index + 1}</Text>
               </View>
               <View style={styles.tableColWide}>
