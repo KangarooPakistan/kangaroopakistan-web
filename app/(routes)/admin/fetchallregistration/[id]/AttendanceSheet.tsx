@@ -647,13 +647,12 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
         </Text>
         <Text style={styles.paragraph}>
           Please find below the list of students from your school who have
-          registered for the International Kangaroo Science Contest (IKSC) 2024.
-          We kindly request that you or the assigned contest supervisor mark
-          each student&apos;s attendance by indicating &quot;Present&quot; or
-          &quot;Absent&quot; in the corresponding box next to their name. In
-          case you need to make any corrections to the student&apos;s name or
-          father&apos;s name, please make them here directly on this attendance
-          sheet.
+          registered for the {profileData?.contestName}. We kindly request that
+          you or the assigned contest supervisor mark each student&apos;s
+          attendance by indicating &quot;Present&quot; or &quot;Absent&quot; in
+          the corresponding box next to their name. In case you need to make any
+          corrections to the student&apos;s name or father&apos;s name, please
+          make them here directly on this attendance sheet.
         </Text>
 
         <Text style={styles.paragraph}>
@@ -677,10 +676,9 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
         <View style={styles.spacer} />
 
         <Text style={styles.paragraph}>
-          Your cooperation in ensuring the smooth conduct of the International
-          Kangaroo Science Contest (IKSC) 2024 is greatly appreciated. Please
-          return this document along with the completed answer sheets to our
-          representative.
+          Your cooperation in ensuring the smooth conduct of the{" "}
+          {profileData?.contestName} is greatly appreciated. Please return this
+          document along with the completed answer sheets to our representative.
         </Text>
 
         <Text style={styles.paragraph}>
