@@ -676,6 +676,12 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
         <View style={styles.spacer} />
 
         <Text style={styles.paragraph}>
+          We remind you that question booklets become property of the students,
+          therefore they should be given to the students.
+        </Text>
+        <View style={styles.spacer} />
+
+        <Text style={styles.paragraph}>
           Your cooperation in ensuring the smooth conduct of the{" "}
           {profileData?.contestName} is greatly appreciated. Please return this
           document along with the completed answer sheets to our representative.
@@ -686,10 +692,6 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
         </Text>
         <View style={styles.spacer} />
 
-        <Text style={styles.paragraph}>
-          We remind you that question booklets become property of the students,
-          therefore they should be given to the students.
-        </Text>
         <View style={styles.spacer} />
 
         <Text style={styles.paragraph}>Best regards,</Text>
