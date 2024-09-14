@@ -114,20 +114,22 @@ const Frontend = () => {
           </Button>
         </div>
       )}
-      <div className="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-4 mx-auto py-10">
-        <div className="bg-white  rounded-2xl shadow-gray-800 shadow-md w-1/2 m-2">
-          <p className="text-purple-600 text-justify p-4 font-bold text-md md:text-xl">
-            Participation fee can be paid through Bank Draft/Pay Order, drawn in
-            favor of INVENTIVE LEARNING. OR The fees can also be directly
-            transferred to our bank account: <br /> BANK NAME: MCB ISLAMIC BANK
-            LTD ACC.
-            <br /> TITLE: INVENTIVE LEARNING ACC. # 077 1004965640003 <br />{" "}
-            IBAN # PK52 MCIB 0771004965640003 <br /> BRANCH: BAHRIA TOWN
-            PHASE 4 RAWALPINDI
-          </p>
+      {mySession && role === "User" && (
+        <div className="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-4 mx-auto py-10">
+          <div className="bg-white  rounded-2xl shadow-gray-800 shadow-md w-1/2 m-2">
+            <p className="text-purple-600 text-justify p-4 font-bold text-md md:text-xl">
+              Participation fee can be paid through Bank Draft/Pay Order, drawn
+              in favor of INVENTIVE LEARNING. OR The fees can also be directly
+              transferred to our bank account: <br /> BANK NAME: MCB ISLAMIC
+              BANK LTD ACC.
+              <br /> TITLE: INVENTIVE LEARNING ACC. # 077 1004965640003 <br />{" "}
+              IBAN # PK52 MCIB 0771004965640003 <br /> BRANCH: BAHRIA TOWN
+              PHASE 4 RAWALPINDI
+            </p>
+          </div>
+          {/* <div></div> */}
         </div>
-        {/* <div></div> */}
-      </div>
+      )}
       <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 mx-auto py-10">
         <div className="flex-1 bg-white shadow-lg rounded-lg overflow-hidden">
           <div className="p-4">
