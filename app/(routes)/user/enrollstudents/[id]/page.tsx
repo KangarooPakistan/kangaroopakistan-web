@@ -176,19 +176,16 @@ const Register = () => {
         );
 
         router.push(`/user/viewregistered/${params.id}`);
-        toast.success(
-          "🦄 Student registered successfully, Please check your email",
-          {
-            position: "bottom-center",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-          }
-        );
+        toast.success("🦄 Student registered successfully.", {
+          position: "bottom-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
         setIsSubmitting(false);
 
         // Handle successful registration creation
