@@ -257,16 +257,16 @@ export async function POST(
       ${tableHtml}`,
     };
 
-    try {
-      await emailManager.sendEmail(mailOptions);
-      return NextResponse.json("Email sent Successfully", { status: 200 });
-    } catch (error) {
-      console.error("Failed to send email:", error);
-      return NextResponse.json(
-        { message: "Failed to send email" },
-        { status: 500 }
-      );
-    }
+    // try {
+    //   await emailManager.sendEmail(mailOptions);
+    //   return NextResponse.json("Email sent Successfully", { status: 200 });
+    // } catch (error) {
+    //   console.error("Failed to send email:", error);
+    //   return NextResponse.json(
+    //     { message: "Failed to send email" },
+    //     { status: 500 }
+    //   );
+    // }
 
     return NextResponse.json(createdStudents, { status: 201 });
   } catch (error) {
