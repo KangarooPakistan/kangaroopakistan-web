@@ -116,7 +116,7 @@ const Frontend = () => {
       )}
       {mySession && role === "User" && (
         <div className="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-4 mx-auto py-10">
-          <div className="bg-white  rounded-2xl shadow-gray-800 shadow-md w-1/2 m-2">
+          <div className="bg-white  rounded-2xl shadow-gray-800 shadow-md w-full m-2">
             <p className="text-purple-600 text-justify p-4 font-bold text-md md:text-xl">
               Participation fee can be paid through Bank Draft/Pay Order, drawn
               in favor of INVENTIVE LEARNING. OR The fees can also be directly
