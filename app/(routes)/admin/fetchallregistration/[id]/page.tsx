@@ -136,11 +136,12 @@ const FetchAllRegistrations = () => {
       const ExcelData = registrations.map((item: any) => ({
         "School id": item.user?.schoolId,
         "School Name": item.user?.schoolName,
-        "School BankTitle": item.user?.bankTitle,
-        "Contact Number": item.user?.contactNumber,
+        "Total Students": item.students.length,
         "School Address": item.user?.schoolAddress,
-        "District Id": item.user?.district,
         "District Name": item.user?.city,
+        "District Id": item.user?.district,
+        "School Email": item.user?.email,
+        "Contact Number": item.user?.contactNumber,
         "Principal Name": item.user?.p_Name,
         "Principal Cell #": item.user?.p_contact,
         "Principal Phone #": item.user?.p_phone,
@@ -149,9 +150,8 @@ const FetchAllRegistrations = () => {
         "Coordinator Cell #": item.user?.c_contact,
         "Coordinator Phone #": item.user?.c_phone,
         "Coordinator Email": item.user?.c_email,
+        "School BankTitle": item.user?.bankTitle,
         "Coordinator Account Details": item.user?.c_accountDetails,
-        "School Email": item.user?.email,
-        "Total Students": item.students.length,
         updatedTime: new Date(item.updatedAt).toLocaleString(), // Convert to human-readable format
         createdAt: new Date(item.createdAt).toLocaleString(), // Convert to human-readable format
 
