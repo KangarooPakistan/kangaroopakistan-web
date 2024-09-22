@@ -59,7 +59,7 @@ const initialData: Contest = {
   contestDate: "",
   resultDate: "",
   contestNo: "",
-  contestEnabled: true,
+  contestEnabled: null,
 };
 const UpdateContest = () => {
   const [data, setData] = useState<Contest>(initialData);
@@ -77,7 +77,7 @@ const UpdateContest = () => {
       contestDate: "",
       contestNo: "",
       resultDate: "",
-      contestEnabled: true,
+      contestEnabled: null,
     },
   });
 
@@ -112,6 +112,7 @@ const UpdateContest = () => {
           contestDate: response.data.contestDate ?? "",
           resultDate: response.data.resultDate ?? "",
           contestNo: response.data.contestNo ?? "",
+          contestEnabled: response.data.contestEnabled ?? null,
         });
       } catch (error) {}
     };
