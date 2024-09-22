@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import * as z from "zod";
 import axios from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { format } from "date-fns";
 import "react-datepicker/dist/react-datepicker.css"; // Import styles
 import DatePicker from "react-datepicker"; // Import react-datepicker
@@ -40,6 +40,7 @@ const formSchema = z.object({
   contestDate: z.string(),
   resultDate: z.string(),
   contestNo: z.string(),
+  contestEnabled: z.boolean(),
 });
 const CreateContest = () => {
   const [data, setData] = useState();
@@ -76,6 +77,7 @@ const CreateContest = () => {
       contestDate: "",
       resultDate: "",
       contestNo: "",
+      contestEnabled: true,
     },
   });
 
@@ -87,10 +89,13 @@ const CreateContest = () => {
       endDate: values.endDate.toISOString(),
       contestTypeId: params.id,
       contestCh: data,
+      contestEnabled: values.contestEnabled,
       contestNo: values.contestNo,
       currentUserEmail: currentUserEmail,
     };
+    console.log(payload);
     try {
+      // console.log(payload);
       await axios.post("/api/users/contests", payload);
       await router.push(`/admin/contesttypes/${params.id}/viewcontest`);
       toast.success("🦄 Contest successfully created", {
@@ -132,6 +137,7 @@ const CreateContest = () => {
     //   timeZoneName: "short",
     // });
   };
+
   return (
     <>
       <section className="bg-white mb-12">
@@ -266,6 +272,37 @@ const CreateContest = () => {
                         </FormControl>
                         <FormMessage />
                       </FormItem>
+                    )}
+                  />
+                  <Controller
+                    name="contestEnabled"
+                    control={form.control}
+                    render={({ field }) => (
+                      <select
+                        value={
+                          field.value === true
+                            ? "true"
+                            : field.value === false
+                            ? "false"
+                            : ""
+                        }
+                        onChange={(e) => {
+                          const selectedValue = e.target.value;
+                          let newValue;
+                          if (selectedValue === "") {
+                            newValue = null;
+                          } else {
+                            newValue = selectedValue === "true";
+                          }
+                          field.onChange(newValue);
+                        }}
+                        className="w-full p-2 text-xs md:text-base rounded border border-gray-300 focus:outline-none focus:border-blue-500">
+                        <option value="" disabled>
+                          Choose Contest Enabled
+                        </option>
+                        <option value="true">YES</option>
+                        <option value="false">NO</option>
+                      </select>
                     )}
                   />
 

@@ -5,6 +5,9 @@ export async function GET(req: NextRequest, res: NextResponse) {
   try {
     const today = new Date();
     const activeContests = await db.contest.findMany({
+      where: {
+        contestEnabled: true,
+      },
       include: {
         contestType: true, // assuming you want to include details from the ContestType model
       },

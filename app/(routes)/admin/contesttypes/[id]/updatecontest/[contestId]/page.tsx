@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import * as z from "zod";
 import axios from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { format } from "date-fns";
 import "react-datepicker/dist/react-datepicker.css"; // Import styles
 import DatePicker from "react-datepicker"; // Import react-datepicker
@@ -29,6 +29,7 @@ interface Contest {
   contestDate: String;
   resultDate: String;
   contestNo: String;
+  contestEnabled: Boolean;
 }
 
 const formSchema = z.object({
@@ -48,6 +49,7 @@ const formSchema = z.object({
   contestDate: z.string(),
   resultDate: z.string(),
   contestNo: z.string(),
+  contestEnabled: z.boolean(),
 });
 
 const initialData: Contest = {
@@ -57,6 +59,7 @@ const initialData: Contest = {
   contestDate: "",
   resultDate: "",
   contestNo: "",
+  contestEnabled: true,
 };
 const UpdateContest = () => {
   const [data, setData] = useState<Contest>(initialData);
@@ -74,6 +77,7 @@ const UpdateContest = () => {
       contestDate: "",
       contestNo: "",
       resultDate: "",
+      contestEnabled: true,
     },
   });
 
@@ -126,6 +130,7 @@ const UpdateContest = () => {
       endDate: values.endDate.toISOString(),
       contestDate: values.contestDate,
       contestNo: values.contestNo,
+      contestEnabled: values.contestEnabled,
 
       resultDate: values.resultDate,
     };
@@ -296,6 +301,37 @@ const UpdateContest = () => {
                         </FormControl>
                         <FormMessage />
                       </FormItem>
+                    )}
+                  />
+                  <Controller
+                    name="contestEnabled"
+                    control={form.control}
+                    render={({ field }) => (
+                      <select
+                        value={
+                          field.value === true
+                            ? "true"
+                            : field.value === false
+                            ? "false"
+                            : ""
+                        }
+                        onChange={(e) => {
+                          const selectedValue = e.target.value;
+                          let newValue;
+                          if (selectedValue === "") {
+                            newValue = null;
+                          } else {
+                            newValue = selectedValue === "true";
+                          }
+                          field.onChange(newValue);
+                        }}
+                        className="w-full p-2 text-xs md:text-base rounded border border-gray-300 focus:outline-none focus:border-blue-500">
+                        <option value="" disabled>
+                          Choose Contest Enabled
+                        </option>
+                        <option value="true">YES</option>
+                        <option value="false">NO</option>
+                      </select>
                     )}
                   />
 

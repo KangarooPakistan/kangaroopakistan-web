@@ -12,6 +12,7 @@ interface ContestData {
   contestTypeId: string;
   contestCh: string | null;
   contestNo: string | null;
+  contestEnabled: boolean;
 }
 
 export async function POST(request: NextRequest) {
@@ -30,6 +31,7 @@ export async function POST(request: NextRequest) {
         resultDate,
         contestCh,
         contestNo,
+        contestEnabled,
         currentUserEmail,
       } = reqBody;
 
@@ -42,6 +44,7 @@ export async function POST(request: NextRequest) {
         contestCh: contestCh || null,
         contestNo: contestNo || null,
         contestTypeId,
+        contestEnabled,
       };
 
       // Optionally, validate if the contestTypeId exists in ContestType
