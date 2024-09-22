@@ -163,14 +163,14 @@ const UpdateContest = () => {
     }
   };
   return (
-    <div className="container mx-auto py-4">
-      <div className="flex justify-center items-center">
+    <div className="container mx-auto py-4  ">
+      <div className=" mb-4">
         <Button variant="default" onClick={handleBack}>
           Back
         </Button>
       </div>
       <section className="bg-white mb-12">
-        <div className=" pt-10 h-screen grid grid-cols-1 md:grid-cols-2 gap-2 xl:gap-0">
+        <div className=" pt-10 py-10 grid grid-cols-1  gap-2 xl:gap-0">
           <div className="w-full rounded-lg shadow-2xl md:mt-0 sm:max-w-md xl:p-0 mx-auto">
             <div className="p-6 space-y-3 md:space-y-6 sm:p-8">
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl ">
@@ -303,49 +303,51 @@ const UpdateContest = () => {
                       </FormItem>
                     )}
                   />
-                  <FormField
-                    // control={form.control}
-                    name="contestEnabled"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="label">
-                          Show this Contest on School Dashboard?
-                        </FormLabel>
-                      </FormItem>
-                    )}
-                  />
+                  <>
+                    <FormField
+                      // control={form.control}
+                      name="contestEnabled"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="label">
+                            Show this Contest on School Dashboard?
+                          </FormLabel>
+                        </FormItem>
+                      )}
+                    />
 
-                  <Controller
-                    name="contestEnabled"
-                    control={form.control}
-                    render={({ field }) => (
-                      <select
-                        value={
-                          field.value === true
-                            ? "true"
-                            : field.value === false
-                            ? "false"
-                            : ""
-                        }
-                        onChange={(e) => {
-                          const selectedValue = e.target.value;
-                          let newValue;
-                          if (selectedValue === "") {
-                            newValue = null;
-                          } else {
-                            newValue = selectedValue === "true";
+                    <Controller
+                      name="contestEnabled"
+                      control={form.control}
+                      render={({ field }) => (
+                        <select
+                          value={
+                            field.value === true
+                              ? "true"
+                              : field.value === false
+                              ? "false"
+                              : ""
                           }
-                          field.onChange(newValue);
-                        }}
-                        className="w-full p-2 text-xs md:text-base rounded border border-gray-300 focus:outline-none focus:border-blue-500">
-                        <option value="" disabled>
-                          Choose Contest Enabled
-                        </option>
-                        <option value="true">YES</option>
-                        <option value="false">NO</option>
-                      </select>
-                    )}
-                  />
+                          onChange={(e) => {
+                            const selectedValue = e.target.value;
+                            let newValue;
+                            if (selectedValue === "") {
+                              newValue = null;
+                            } else {
+                              newValue = selectedValue === "true";
+                            }
+                            field.onChange(newValue);
+                          }}
+                          className="w-full p-2 text-xs md:text-base rounded border border-gray-300 focus:outline-none focus:border-blue-500">
+                          <option value="" disabled>
+                            Choose Contest Enabled
+                          </option>
+                          <option value="true">YES</option>
+                          <option value="false">NO</option>
+                        </select>
+                      )}
+                    />
+                  </>
 
                   <div className="flex items-center justify-center mt-16">
                     <Button
