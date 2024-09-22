@@ -274,6 +274,17 @@ const CreateContest = () => {
                       </FormItem>
                     )}
                   />
+                  <FormField
+                    // control={form.control}
+                    name="contestEnabled"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="label">
+                          Show this Contest on School Dashboard?
+                        </FormLabel>
+                      </FormItem>
+                    )}
+                  />
                   <Controller
                     name="contestEnabled"
                     control={form.control}
