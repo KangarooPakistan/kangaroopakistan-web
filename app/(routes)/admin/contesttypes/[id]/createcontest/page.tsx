@@ -308,7 +308,7 @@ const CreateContest = () => {
                             }
                             field.onChange(newValue);
                           }}
-                          className="w-full p-2 text-xs md:text-base rounded border border-gray-300 focus:outline-none focus:border-blue-500">
+                          className="w-full p-2 text-xs md:text-base rounded border border-gray-300 focus:outline-none focus:border-blue-500 mt-0">
                           <option value="" disabled>
                             Choose Contest Enabled
                           </option>
