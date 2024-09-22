@@ -23,8 +23,16 @@ export async function GET(
 export async function PUT(request: NextRequest) {
   try {
     // Extract the id and updated data from the request body
-    const { id, name, startDate, endDate, contestDate, resultDate, contestNo } =
-      await request.json();
+    const {
+      id,
+      name,
+      startDate,
+      endDate,
+      contestDate,
+      resultDate,
+      contestNo,
+      contestEnabled,
+    } = await request.json();
 
     // Check if the contest with the given id exists
     const existingContest = await db.contest.findUnique({
@@ -53,6 +61,7 @@ export async function PUT(request: NextRequest) {
         contestDate,
         contestNo,
         resultDate,
+        contestEnabled,
       },
     });
 
