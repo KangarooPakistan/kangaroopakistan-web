@@ -77,7 +77,7 @@ const UpdateContest = () => {
       contestDate: "",
       contestNo: "",
       resultDate: "",
-      contestEnabled: null,
+      contestEnabled: true,
     },
   });
 
