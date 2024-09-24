@@ -61,6 +61,7 @@ const initialData: Contest = {
   contestNo: "",
   contestEnabled: true,
 };
+// kainat
 const UpdateContest = () => {
   const [data, setData] = useState<Contest>(initialData);
   const [cid, setCid] = useState<number>();
