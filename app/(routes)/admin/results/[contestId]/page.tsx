@@ -58,6 +58,7 @@ const Results = () => {
         );
         const resp = await axios.get(`/api/results/getschoolsdata`);
         setSchoolData(resp.data);
+        console.log("resp");
         console.log(resp);
         console.log(data);
         toast.success("🦄 Table data fetched successfully", {
