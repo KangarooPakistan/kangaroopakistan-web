@@ -1,5 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import { db } from "@/app/lib/prisma";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export async function GET(req: NextRequest, res: NextResponse) {
   try {
@@ -13,7 +15,14 @@ export async function GET(req: NextRequest, res: NextResponse) {
       },
     });
 
-    return NextResponse.json(activeContests);
+    // return NextResponse.json(activeContests);
+
+    return NextResponse.json(activeContests, {
+      headers: {
+        "Cache-Control": "no-store, must-revalidate",
+        Pragma: "no-cache",
+      },
+    });
   } catch (error) {
     console.error("Error:", error);
     return NextResponse.json(

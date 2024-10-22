@@ -231,9 +231,19 @@ const FetchAllRegistrations = () => {
   const handleBack = () => {
     router.back();
   };
+  const handleGenerateResults = async () => {
+    const { data } = await axios.post("/api/results/generate", {
+      contestId: params.id,
+    });
+    console.log(data);
+    return data;
+  };
 
   const handleRegister = () => {
     router.push(`/admin/registerincontest/${params.id}`);
+  };
+  const handleAwardDefinition = () => {
+    router.push(`/admin/createawardcategories/${params.id}`);
   };
 
   const handleDownloadAllLabel = async () => {
@@ -259,6 +269,9 @@ const FetchAllRegistrations = () => {
     } catch (error) {
       console.error("Error downloading the PDF:", error);
     }
+  };
+  const handleViewResults = () => {
+    router.push(`/admin/results/${params.id}`);
   };
 
   return (
@@ -333,8 +346,29 @@ const FetchAllRegistrations = () => {
             className=" font-medium text-[15px]  tracking-wide"
             variant="default"
             size="lg"
+            onClick={handleAwardDefinition}>
+            Update Award Categories
+          </Button>
+          <Button
+            className=" font-medium text-[15px]  tracking-wide"
+            variant="default"
+            size="lg"
+            onClick={handleGenerateResults}>
+            Generate Results
+          </Button>
+          <Button
+            className=" font-medium text-[15px]  tracking-wide"
+            variant="default"
+            size="lg"
             onClick={handleDownloadAllLabel}>
             Download Labels
+          </Button>
+          <Button
+            className=" font-medium text-[15px]  tracking-wide"
+            variant="default"
+            size="lg"
+            onClick={handleViewResults}>
+            View Results
           </Button>
           <Button
             variant="default"
@@ -380,6 +414,28 @@ const FetchAllRegistrations = () => {
             onClick={handleRegister}>
             Register a school
           </Button>
+          <Button
+            className=" font-medium text-[11px]  tracking-wide"
+            variant="default"
+            size="sm"
+            onClick={handleAwardDefinition}>
+            Update Award Categories
+          </Button>
+          <Button
+            className=" font-medium text-[11px]  tracking-wide"
+            variant="default"
+            size="sm"
+            onClick={handleGenerateResults}>
+            Generate Results
+          </Button>
+          <Button
+            className=" font-medium text-[11px]  tracking-wide"
+            variant="default"
+            size="sm"
+            onClick={handleViewResults}>
+            View Results
+          </Button>
+
           <Button
             className=" font-medium text-[11px]  tracking-wide"
             variant="default"

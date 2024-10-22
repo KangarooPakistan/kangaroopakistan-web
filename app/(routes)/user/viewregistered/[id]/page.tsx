@@ -11,6 +11,7 @@ import SchoolReportDocument from "./SchoolReportDocument";
 import { pdf } from "@react-pdf/renderer";
 import { saveAs } from "file-saver";
 import Link from "next/link";
+import SchoolAwardsPdf from "@/app/(routes)/admin/results/[contestId]/SchoolAwardsPdf/SchoolAwardsPdf";
 // type ProfileData = {
 //   p_fName: string;
 //   p_mName: string;
@@ -41,10 +42,127 @@ interface profileData {
   contestNo: string;
 }
 
-const ViewRegistered = () => {
+export interface SchoolResultPdf {
+  AwardLevel: string;
+  class: string;
+  contactId: string;
+  district: string;
+  fatherName: string;
+  id: string;
+  percentage: string;
+  rollNumber: string;
+  score: {
+    score: string;
+    total: string;
+  };
+  studentName: string;
+}
+
+type AwardLevel =
+  | "GOLD"
+  | "SILVER"
+  | "BRONZE"
+  | "THREE_STAR"
+  | "TWO_STAR"
+  | "ONE_STAR"
+  | "PARTICIPATION";
+
+export interface AwardCounts {
+  GOLD: number;
+  SILVER: number;
+  BRONZE: number;
+  THREE_STAR: number;
+  TWO_STAR: number;
+  ONE_STAR: number;
+  PARTICIPATION: number;
+  total: number;
+}
+
+export interface SchoolResultsWithStats {
+  results: SchoolResultPdf[];
+  statistics: AwardCounts;
+}
+
+type Results = {
+  id: number;
+  schoolId: number;
+};
+
+type SchoolResultsProp = {
+  schoolResult: Results;
+};
+
+// Helper Functions
+function countStudentsByAward(students: SchoolResultPdf[]): AwardCounts {
+  // Return default counts if students array is undefined or empty
+  if (!students || students.length === 0) {
+    return {
+      GOLD: 0,
+      SILVER: 0,
+      BRONZE: 0,
+      THREE_STAR: 0,
+      TWO_STAR: 0,
+      ONE_STAR: 0,
+      PARTICIPATION: 0,
+      total: 0,
+    };
+  }
+
+  const initialCounts: AwardCounts = {
+    GOLD: 0,
+    SILVER: 0,
+    BRONZE: 0,
+    THREE_STAR: 0,
+    TWO_STAR: 0,
+    ONE_STAR: 0,
+    PARTICIPATION: 0,
+    total: 0,
+  };
+
+  return students.reduce((acc, student) => {
+    if (!student.AwardLevel) return acc;
+
+    // Convert award level to uppercase and remove spaces for consistency
+    const awardLevel = student.AwardLevel.toUpperCase().replace(
+      /\s+/g,
+      "_"
+    ) as AwardLevel;
+
+    // Increment the specific award count if it exists in our accumulator
+    if (awardLevel in acc) {
+      acc[awardLevel]++;
+    }
+
+    // Increment total count
+    acc.total++;
+
+    return acc;
+  }, initialCounts);
+}
+export function convertToBigIntOrNumber(value: string | null | undefined) {
+  if (!value) return 0;
+
+  try {
+    if (value.includes(".")) {
+      return parseFloat(value);
+    }
+
+    const bigIntValue = BigInt(value);
+    return bigIntValue <= Number.MAX_SAFE_INTEGER
+      ? Number(bigIntValue)
+      : bigIntValue;
+  } catch (error) {
+    console.error("Failed to convert value:", error);
+    return 0;
+  }
+}
+
+const ViewRegistered: React.FC<SchoolResultsProp> = ({ schoolResult }) => {
   const [students, setStudents] = useState<Student[]>([]);
   const { onOpen } = useModal();
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+
   const [registrationId, setRegistrationId] = useState<string>();
   const [preEculier, setPreEculier] = useState<number>(0);
   const [totalPaymentDone, setTotalPaymentDone] = useState<number>(0);
@@ -54,6 +172,7 @@ const ViewRegistered = () => {
   const [junior, setJunior] = useState<number>(0);
   const [student, setStudent] = useState<number>(0);
   const [pdfUrl, setPdfUrl] = useState("");
+  const [schoolId, setSchoolId] = useState(0);
   const [currentUserEmail, setCurrentUserEmail] = useState<string | null>();
 
   const params = useParams();
@@ -105,7 +224,7 @@ const ViewRegistered = () => {
         const regId = await axios.get(
           `/api/users/contests/${params.id}/${response.data.schoolId}`
         );
-
+        setSchoolId(response.data.schoolId);
         setRegistrationId(regId.data.id);
         const registeredStudents = await axios.get(
           `/api/users/contests/${params.id}/registrations/${regId.data.id}`
@@ -149,6 +268,61 @@ const ViewRegistered = () => {
   const handleResults = () => {
     router.back();
   };
+  async function generatePdfBlobForResults(data: SchoolResultsWithStats) {
+    try {
+      // Validate data before passing to PDF component
+      if (!data || (!data.results && !data.statistics)) {
+        throw new Error("Invalid data structure for PDF generation");
+      }
+
+      const doc = <SchoolAwardsPdf data={data} />;
+      const asPdf = pdf(doc);
+      return await asPdf.toBlob();
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      throw error;
+    }
+  }
+
+  const handleView = async () => {
+    // if (!schoolResult.schoolId) {
+    //   console.error("No school ID provided");
+    //   return;
+    // }
+
+    setIsLoading(true);
+    try {
+      const schoolResultResp = await axios.get(
+        `/api/results/getbyschools/${schoolId}/${params.id}`
+      );
+
+      if (!schoolResultResp.data) {
+        throw new Error("No data received from server");
+      }
+
+      const convertedData = schoolResultResp.data.map((item: any) => ({
+        ...item,
+        scoreId: convertToBigIntOrNumber(item.scoreId),
+        percentage: parseFloat(item.percentage || "0"),
+      }));
+
+      const statistics = countStudentsByAward(convertedData);
+      const dataWithStats = {
+        results: convertedData,
+        statistics: statistics,
+      };
+      console.log("schoolId");
+      console.log(schoolId);
+      const blob = await generatePdfBlobForResults(dataWithStats);
+      saveAs(blob, `School_${schoolId}_Results.pdf`);
+    } catch (error) {
+      console.error("Error processing school result:", error);
+      // Show error to user here
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const generatePdfBlob = async (
     schoolData: Students[],
     profileData: profileData
@@ -334,6 +508,11 @@ const ViewRegistered = () => {
           <div className="w-full sm:w-1/2 md:w-1/4 p-1">
             <Button className="w-full" onClick={handleClick}>
               View All Proof of Payments
+            </Button>
+          </div>
+          <div className="w-full sm:w-1/2 md:w-1/4 p-1">
+            <Button className="w-full" onClick={handleView}>
+              Download Results
             </Button>
           </div>
           <div className="w-full sm:w-1/2 md:w-1/4 p-1">
