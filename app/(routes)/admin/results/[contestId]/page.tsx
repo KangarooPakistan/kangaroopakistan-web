@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import AwardsPdf from "./AwardsPdf/AwardsPdf";
 import { pdf } from "@react-pdf/renderer";
 import { saveAs } from "file-saver";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export type Contest = {
   contestDate: string;
@@ -50,13 +52,36 @@ const Results = () => {
   const router = useRouter();
   useEffect(() => {
     const fetchData = async () => {
-      const data = await axios.get(
-        `/api/results/fetchresults/${params.contestId}`
-      );
-      const resp = await axios.get(`/api/results/getschoolsdata`);
-      setSchoolData(resp.data);
-      console.log(resp);
-      console.log(data);
+      try {
+        const data = await axios.get(
+          `/api/results/fetchresults/${params.contestId}`
+        );
+        const resp = await axios.get(`/api/results/getschoolsdata`);
+        setSchoolData(resp.data);
+        console.log(resp);
+        console.log(data);
+        toast.success("🦄 Table data fetched successfully", {
+          position: "bottom-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      } catch (error: any) {
+        toast.error(" " + error.response.data.message, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
     };
     fetchData();
   }, []);
