@@ -1,4 +1,5 @@
 "use client";
+
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,29 +21,7 @@ import { useParams } from "next/navigation";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const notify = (type: "success" | "error", message: string) => {
-  if (type === "success") {
-    toast.success(message, {
-      position: "top-right",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-    });
-  } else {
-    toast.error(message, {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-    });
-  }
-};
-
-// Schema and other type definitions remain the same...
+// Schema definitions and types remain the same
 const awardDefinitionSchema = z
   .object({
     goldPercent: z.number().min(0).max(100),
@@ -79,14 +58,6 @@ const awardDefinitionSchema = z
 
 type AwardDefinitionFormData = z.infer<typeof awardDefinitionSchema>;
 
-interface AwardDefinitionFormsProps {
-  contestId: string;
-  initialData?: {
-    junior?: AwardDefinitionFormData;
-    senior?: AwardDefinitionFormData;
-  };
-}
-
 const defaultValues = {
   goldPercent: 95,
   silverPercent: 90,
@@ -97,7 +68,7 @@ const defaultValues = {
   participationPercent: 0,
 };
 
-const AwardDefinitionForm = ({
+function AwardDefinitionForm({
   level,
   form,
   isSubmitting,
@@ -105,7 +76,7 @@ const AwardDefinitionForm = ({
   level: "JUNIOR" | "SENIOR";
   form: any;
   isSubmitting: boolean;
-}) => {
+}) {
   const percentageFields = [
     { name: "goldPercent", label: "Gold Medal Percentage" },
     { name: "silverPercent", label: "Silver Medal Percentage" },
@@ -149,14 +120,20 @@ const AwardDefinitionForm = ({
       ))}
     </div>
   );
-};
+}
 
-export function AwardDefinitionForms({
-  contestId,
-  initialData,
-}: AwardDefinitionFormsProps) {
-  const params = useParams();
+export default function Page({
+  params,
+  searchParams,
+}: {
+  params: { contestId: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [initialData, setInitialData] = React.useState<{
+    junior?: AwardDefinitionFormData;
+    senior?: AwardDefinitionFormData;
+  }>();
 
   const juniorForm = useForm<AwardDefinitionFormData>({
     resolver: zodResolver(awardDefinitionSchema),
@@ -196,8 +173,6 @@ export function AwardDefinitionForms({
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to update awards");
       }
-
-      notify("success", "Awards updated successfully!");
 
       toast.success("Awards updated successfully!", {
         position: "top-right",
