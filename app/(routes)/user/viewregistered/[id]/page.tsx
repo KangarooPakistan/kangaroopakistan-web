@@ -156,8 +156,12 @@ function convertToBigIntOrNumber(value: string | null | undefined) {
     return 0;
   }
 }
+interface PageProps {
+  params: { id: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+}
 
-const ViewRegistered: React.FC<SchoolResultsProp> = ({ schoolResult }) => {
+function ViewRegistered({ params, searchParams }: PageProps) {
   const [students, setStudents] = useState<Student[]>([]);
   const { onOpen } = useModal();
   const router = useRouter();
@@ -175,7 +179,7 @@ const ViewRegistered: React.FC<SchoolResultsProp> = ({ schoolResult }) => {
   const [schoolId, setSchoolId] = useState(0);
   const [currentUserEmail, setCurrentUserEmail] = useState<string | null>();
 
-  const params = useParams();
+  // const params = useParams();
   type LevelCounts = Record<string, number>;
   useEffect(() => {
     const fetchData = async () => {
@@ -546,6 +550,6 @@ const ViewRegistered: React.FC<SchoolResultsProp> = ({ schoolResult }) => {
       <DataTable columns={columns} data={students} />
     </div>
   );
-};
+}
 
 export default ViewRegistered;
