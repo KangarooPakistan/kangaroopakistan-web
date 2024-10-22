@@ -139,7 +139,7 @@ function countStudentsByAward(students: SchoolResultPdf[]): AwardCounts {
     return acc;
   }, initialCounts);
 }
-export function convertToBigIntOrNumber(value: string | null | undefined) {
+function convertToBigIntOrNumber(value: string | null | undefined) {
   if (!value) return 0;
 
   try {

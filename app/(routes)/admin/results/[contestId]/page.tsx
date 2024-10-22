@@ -3,7 +3,7 @@ import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { DataTable } from "./data-table";
-import { columns, convertToBigIntOrNumber } from "./columns";
+import { columns } from "./columns";
 import { Button } from "@/components/ui/button";
 import AwardsPdf from "./AwardsPdf/AwardsPdf";
 import { pdf } from "@react-pdf/renderer";
@@ -67,6 +67,23 @@ const Results = () => {
     const asPdf = pdf(doc); // Create an empty PDF instance
     const blob = await asPdf.toBlob();
     return blob;
+  }
+  function convertToBigIntOrNumber(value: string | null | undefined) {
+    if (!value) return 0;
+
+    try {
+      if (value.includes(".")) {
+        return parseFloat(value);
+      }
+
+      const bigIntValue = BigInt(value);
+      return bigIntValue <= Number.MAX_SAFE_INTEGER
+        ? Number(bigIntValue)
+        : bigIntValue;
+    } catch (error) {
+      console.error("Failed to convert value:", error);
+      return 0;
+    }
   }
 
   const handleGold = async () => {
