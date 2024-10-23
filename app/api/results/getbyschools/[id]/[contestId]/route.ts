@@ -22,6 +22,18 @@ export async function GET(
   try {
     const schoolIdInt = parseInt(params.id, 10);
 
+    // Fetch school details
+    const schoolDetails = await db.user.findFirst({
+      where: {
+        schoolId: schoolIdInt,
+      },
+      select: {
+        schoolName: true,
+        schoolAddress: true,
+        contactNumber: true,
+      },
+    });
+
     // First, get all students for faster lookup
     const students = await db.student.findMany({
       select: {
@@ -38,7 +50,7 @@ export async function GET(
     );
 
     // Fetch results for the school
-    const schoolWithDetails = await db.result.findMany({
+    const schoolResults = await db.result.findMany({
       where: {
         schoolId: schoolIdInt,
         contestId: params.contestId,
@@ -60,24 +72,29 @@ export async function GET(
       },
     });
 
-    // Combine results with student details
-    const resultsWithStudentDetails = schoolWithDetails.map((result) => {
+    // Combine results with student and school details
+    const resultsWithDetails = schoolResults.map((result) => {
       const studentInfo = studentMap.get(result.rollNumber || "");
 
       return {
         ...result,
         studentName: studentInfo?.studentName || null,
         fatherName: studentInfo?.fatherName || null,
-        class: studentInfo?.class || result.class.toString(), // Fallback to result class if student info not found
+        class: studentInfo?.class || result.class.toString(),
+        schoolDetails: {
+          schoolName: schoolDetails?.schoolName || null,
+          schoolAddress: schoolDetails?.schoolAddress || null,
+          contactNumber: schoolDetails?.contactNumber || null,
+        },
       };
     });
 
     // Use safeJsonStringify to handle BigInt values
-    return new NextResponse(safeJsonStringify(resultsWithStudentDetails), {
+    return new NextResponse(safeJsonStringify(resultsWithDetails), {
       status: 200,
     });
   } catch (error: any) {
-    console.error("Error fetching schools:", error);
+    console.error("Error fetching school results:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   } finally {
     await db.$disconnect();

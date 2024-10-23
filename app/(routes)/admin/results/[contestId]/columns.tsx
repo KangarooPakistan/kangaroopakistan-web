@@ -28,6 +28,11 @@ export interface SchoolResultPdf {
   id: string;
   percentage: string;
   rollNumber: string;
+  schoolDetails: {
+    schoolName: string | null;
+    schoolAddress: string | null;
+    contactNumber: string | null;
+  };
   score: {
     score: string;
     total: string;
@@ -176,7 +181,7 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
         throw new Error("No data received from server");
       }
 
-      const convertedData = schoolResultResp.data.map((item: any) => ({
+      const convertedData = schoolResultResp.data?.map((item: any) => ({
         ...item,
         scoreId: convertToBigIntOrNumber(item.scoreId),
         percentage: parseFloat(item.percentage || "0"),

@@ -16,11 +16,11 @@ const styles = StyleSheet.create({
   },
   title: {
     textTransform: "uppercase",
-    fontSize: 16,
+    fontSize: 14,
     fontFamily: "Roboto",
     fontWeight: "extrabold",
     textAlign: "center",
-    marginBottom: 10,
+    marginBottom: 5,
   },
   statsSection: {
     marginBottom: 20,
@@ -145,6 +145,11 @@ interface SchoolResultPdf {
   id: string;
   percentage: string;
   rollNumber: string;
+  schoolDetails: {
+    schoolName: string | null;
+    schoolAddress: string | null;
+    contactNumber: string | null;
+  };
   score: {
     score: string;
     total: string;
@@ -194,6 +199,7 @@ const SchoolAwardsPdf: React.FC<SchoolAwardsPdfProps> = ({ data }) => {
   // Safely access statistics with fallback to defaults
   const statistics = data?.statistics || defaultStats;
   const results = data?.results || [];
+  console.log(results);
 
   useEffect(() => {
     const loadFonts = async () => {
@@ -213,7 +219,16 @@ const SchoolAwardsPdf: React.FC<SchoolAwardsPdfProps> = ({ data }) => {
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        <Text style={styles.title}>School Awards Report</Text>
+        <Text style={styles.title}>{results[0].schoolDetails.schoolName}</Text>
+        <Text style={styles.title}>
+          {results[0].schoolDetails.schoolAddress}
+        </Text>
+        <Text style={styles.title}>
+          Contact Number:
+          {results[0].schoolDetails.contactNumber}
+        </Text>
+
+        {/* <Text style={styles.title}>School Awards Report</Text> */}
 
         <View style={styles.statsSection}>
           <Text style={styles.title}>Award Statistics</Text>

@@ -51,6 +51,11 @@ export interface SchoolResultPdf {
   id: string;
   percentage: string;
   rollNumber: string;
+  schoolDetails: {
+    schoolName: string | null;
+    schoolAddress: string | null;
+    contactNumber: string | null;
+  };
   score: {
     score: string;
     total: string;
