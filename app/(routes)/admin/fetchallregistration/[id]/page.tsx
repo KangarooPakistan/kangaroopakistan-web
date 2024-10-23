@@ -301,6 +301,7 @@ const FetchAllRegistrations = () => {
     }
   };
   const handleViewResults = () => {
+    setIsLoading(true);
     router.push(`/admin/results/${params.id}`);
   };
 
@@ -399,6 +400,7 @@ const FetchAllRegistrations = () => {
             className=" font-medium text-[15px]  tracking-wide"
             variant="default"
             size="lg"
+            disabled={isLoading}
             onClick={handleViewResults}>
             View Results
           </Button>
@@ -464,6 +466,7 @@ const FetchAllRegistrations = () => {
             className=" font-medium text-[11px]  tracking-wide"
             variant="default"
             size="sm"
+            disabled={isLoading}
             onClick={handleViewResults}>
             View Results
           </Button>
