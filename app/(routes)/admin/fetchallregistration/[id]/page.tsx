@@ -251,8 +251,8 @@ const FetchAllRegistrations = () => {
         progress: undefined,
         theme: "light",
       });
-      return data;
       setIsLoading(false);
+      return data;
     } catch (error: any) {
       toast.error(" " + error.response.data.message, {
         position: "top-right",
