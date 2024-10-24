@@ -8,6 +8,13 @@ const safeJsonStringify = (data: any) => {
   );
 };
 
+// Helper function to normalize class value for sorting
+const normalizeClass = (classValue: string | number): number => {
+  // Convert the class to a string and remove any non-numeric characters
+  const numericValue = String(classValue).replace(/\D/g, "");
+  return parseInt(numericValue, 10) || 0; // Return 0 if parsing fails
+};
+
 export async function GET(
   request: NextRequest,
   {
@@ -89,8 +96,15 @@ export async function GET(
       };
     });
 
+    // Sort results by class in ascending order
+    const sortedResults = resultsWithDetails.sort((a, b) => {
+      const classA = normalizeClass(a.class);
+      const classB = normalizeClass(b.class);
+      return classA - classB;
+    });
+
     // Use safeJsonStringify to handle BigInt values
-    return new NextResponse(safeJsonStringify(resultsWithDetails), {
+    return new NextResponse(safeJsonStringify(sortedResults), {
       status: 200,
     });
   } catch (error: any) {
