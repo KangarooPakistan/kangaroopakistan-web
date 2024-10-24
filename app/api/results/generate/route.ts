@@ -39,8 +39,6 @@ function calculateAward(percentage: Decimal, awardDefinition: any) {
     percentageNumber <= Number(awardDefinition.participationPercent)
   ) {
     return "PARTICIPATION";
-  } else {
-    return "NO AWARD";
   }
 }
 
