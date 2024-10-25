@@ -54,6 +54,42 @@ export async function GET(
       students.map((student) => [student.rollNumber, student])
     );
 
+    // Fetch schools data with schoolName and ensure non-null values
+    const schools = await db.user.findMany({
+      where: {
+        schoolName: {
+          not: null,
+        },
+      },
+      select: {
+        schoolId: true,
+        schoolName: true,
+        city: true,
+      },
+    });
+    // console.log(schools);
+    // schools.forEach((school) => {
+    //   console.log(`School ID: ${school.schoolId}`);
+    //   console.log(`School Name: ${school.schoolName}`);
+    //   console.log(`City: ${school.city}`);
+    //   console.log("------------------------");
+    // });
+
+    // Log schools with empty schoolName
+    // console.log("\nSchools with empty schoolName:");
+    // const emptySchoolNames = schools.filter((school) => !school.schoolName);
+    // console.log(emptySchoolNames);
+
+    // Create a map of schools by schoolId for faster lookup
+
+    console.log("Available School IDs in schools data:");
+    const availableSchoolIds = schools.map((school) => school.schoolId);
+    console.log(availableSchoolIds);
+
+    const schoolMap = new Map(
+      schools.map((school) => [school.schoolId, school])
+    );
+
     // Then fetch results with basic details
     const resultsWithDetails = await db.result.findMany({
       where: {
@@ -82,18 +118,15 @@ export async function GET(
         },
       },
     });
+    console.log("School IDs from results:");
+    const resultSchoolIds = resultsWithDetails.map((result) => result.schoolId);
+    console.log(resultSchoolIds);
 
-    const schools = await db.user.findMany({
-      select: {
-        schoolId: true,
-        city: true,
-      },
-      where: {
-        city: {
-          not: null,
-        },
-      },
-    });
+    const mismatchedSchoolIds = resultSchoolIds.filter(
+      (schoolId) => !availableSchoolIds.includes(schoolId)
+    );
+    console.log("School IDs in results but not in schools data:");
+    console.log(mismatchedSchoolIds);
 
     // Fetch distinct district-city mappings
     const districtData = await db.user.findMany({
@@ -120,13 +153,18 @@ export async function GET(
     // Combine and transform the data
     let combinedData = resultsWithDetails.map((result) => {
       const studentInfo = studentMap.get(result.rollNumber || "");
+      const schoolInfo = schoolMap.get(result.schoolId);
       const city = districtToCityMap.get(result.district?.toLowerCase());
       const classValue = studentInfo ? getClassValue(studentInfo.class) : 0;
+
+      // Ensure schoolName is included from the school info
+      const schoolName = schoolInfo?.schoolName || "Unknown School";
 
       return {
         ...result,
         classValue: classValue,
         numericPercentage: getNumericPercentage(result.percentage),
+        schoolName: schoolName, // This will now always have a value
         studentDetails: studentInfo
           ? {
               studentName: studentInfo.studentName,
@@ -134,8 +172,9 @@ export async function GET(
               class: studentInfo.class,
               level: studentInfo.level,
               schoolId: result.schoolId,
+              schoolName: schoolName, // Include schoolName in student details as well
               district: result.district,
-              city: city || null,
+              city: city,
             }
           : null,
       };

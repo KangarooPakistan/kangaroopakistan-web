@@ -29,6 +29,7 @@ export type StudentDetails = {
   fatherName: string;
   level: string;
   schoolId: number;
+  schoolName: string;
   studentName: string;
 };
 
@@ -41,6 +42,7 @@ export type Result = {
   percentage: number;
   rollNumber: string;
   schoolId: number;
+  schoolName: string;
   score: Score;
   scoreId?: string | undefined;
   studentDetails: StudentDetails;
@@ -119,6 +121,7 @@ const Results = () => {
       const schoolResultGoldResp = await axios.get(
         `/api/results/getschoolsdata/GOLD`
       );
+      console.log("schoolResultGoldResp");
       console.log(schoolResultGoldResp);
 
       // Map over the data to convert values accordingly

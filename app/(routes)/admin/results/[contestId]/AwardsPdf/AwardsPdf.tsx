@@ -205,7 +205,7 @@ const AwardsPdf: React.FC<Props> = ({ data, winnerType }) => {
                 <CellContent>{item.class}</CellContent>
               </View>
               <View style={styles.tableColLarge}>
-                <CellContent>{item.studentDetails.schoolId}</CellContent>
+                <CellContent>{item.schoolName}</CellContent>
               </View>
               <View style={styles.tableColLarge}>
                 <CellContent>{item.studentDetails.city}</CellContent>
