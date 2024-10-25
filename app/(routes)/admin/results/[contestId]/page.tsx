@@ -194,7 +194,7 @@ const Results = () => {
       setIsLoading(true);
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/THREE_STAR`
+        `/api/results/getschoolsdata/THREE STAR`
       );
       console.log(schoolResultGoldResp);
 
@@ -219,7 +219,7 @@ const Results = () => {
       setIsLoading(true);
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/TWO_STAR`
+        `/api/results/getschoolsdata/TWO STAR`
       );
       console.log(schoolResultGoldResp);
 
@@ -244,7 +244,7 @@ const Results = () => {
       setIsLoading(true);
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/ONE_STAR`
+        `/api/results/getschoolsdata/ONE STAR`
       );
       console.log(schoolResultGoldResp);
 
@@ -269,7 +269,7 @@ const Results = () => {
       setIsLoading(true);
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/ONE_STAR`
+        `/api/results/getschoolsdata/participation`
       );
       console.log(schoolResultGoldResp);
 

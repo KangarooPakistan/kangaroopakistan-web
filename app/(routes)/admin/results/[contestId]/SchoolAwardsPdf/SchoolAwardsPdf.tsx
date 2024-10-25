@@ -199,6 +199,7 @@ const SchoolAwardsPdf: React.FC<SchoolAwardsPdfProps> = ({ data }) => {
   // Safely access statistics with fallback to defaults
   const statistics = data?.statistics || defaultStats;
   const results = data?.results || [];
+  console.log(results);
   console.log("results");
   console.log(statistics);
   useEffect(() => {

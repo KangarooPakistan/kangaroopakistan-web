@@ -112,6 +112,8 @@ function countStudentsByAward(students: SchoolResultPdf[]): AwardCounts {
     ) as AwardLevel;
 
     // Increment the specific award count if it exists in our accumulator
+    console.log("awardLevel");
+    console.log(awardLevel);
     if (awardLevel in acc) {
       acc[awardLevel]++;
     }
@@ -196,6 +198,8 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
         results: convertedData,
         statistics: statistics,
       };
+
+      console.log(statistics);
       console.log(dataWithStats);
 
       const blob = await generatePdfBlob(dataWithStats);
