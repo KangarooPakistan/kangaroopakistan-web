@@ -34,13 +34,10 @@ function calculateAward(percentage: Decimal, awardDefinition: any) {
     percentageNumber < Number(awardDefinition.twoStarPercent)
   ) {
     return "ONE STAR";
-  } else if (
-    percentageNumber > 30 &&
-    percentageNumber <= Number(awardDefinition.participationPercent)
-  ) {
-    return "PARTICIPATION";
   } else {
-    return "NO AWARD";
+
+    return "PARTICIPATION ";
+  }
   }
 }
 

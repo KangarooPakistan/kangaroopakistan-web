@@ -121,7 +121,7 @@ export async function GET(
               level: studentInfo.level,
               schoolId: result.schoolId,
               district: result.district,
-              city: city || null, // Add city from school information
+              city: city, // Add city from school information
             }
           : null,
       };

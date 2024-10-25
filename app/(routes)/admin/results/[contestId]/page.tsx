@@ -49,6 +49,7 @@ export type Result = {
 const Results = () => {
   const [schoolData, setSchoolData] = useState([]);
   const params = useParams();
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   useEffect(() => {
     const fetchData = async () => {
@@ -114,6 +115,7 @@ const Results = () => {
 
   const handleGold = async () => {
     try {
+      setIsLoading(true);
       const schoolResultGoldResp = await axios.get(
         `/api/results/getschoolsdata/GOLD`
       );
@@ -129,12 +131,15 @@ const Results = () => {
       const pdfName = `GoldWinners.pdf`;
       saveAs(blob, pdfName);
       console.log(convertedData);
+      setIsLoading(false);
     } catch (error) {
       console.error("Error fetching school result:", error);
     }
   };
   const handleSilver = async () => {
     try {
+      setIsLoading(true);
+
       const schoolResultGoldResp = await axios.get(
         `/api/results/getschoolsdata/SILVER`
       );
@@ -151,12 +156,15 @@ const Results = () => {
       saveAs(blob, pdfName);
 
       console.log(convertedData);
+      setIsLoading(false);
     } catch (error) {
       console.error("Error fetching school result:", error);
     }
   };
   const handleBronze = async () => {
     try {
+      setIsLoading(true);
+
       const schoolResultGoldResp = await axios.get(
         `/api/results/getschoolsdata/BRONZE`
       );
@@ -173,12 +181,15 @@ const Results = () => {
       saveAs(blob, pdfName);
 
       console.log(convertedData);
+      setIsLoading(false);
     } catch (error) {
       console.error("Error fetching school result:", error);
     }
   };
   const handleThreeStar = async () => {
     try {
+      setIsLoading(true);
+
       const schoolResultGoldResp = await axios.get(
         `/api/results/getschoolsdata/THREE_STAR`
       );
@@ -195,12 +206,15 @@ const Results = () => {
       saveAs(blob, pdfName);
 
       console.log(convertedData);
+      setIsLoading(false);
     } catch (error) {
       console.error("Error fetching school result:", error);
     }
   };
   const handleTwoStar = async () => {
     try {
+      setIsLoading(true);
+
       const schoolResultGoldResp = await axios.get(
         `/api/results/getschoolsdata/TWO_STAR`
       );
@@ -217,12 +231,15 @@ const Results = () => {
       saveAs(blob, pdfName);
 
       console.log(convertedData);
+      setIsLoading(false);
     } catch (error) {
       console.error("Error fetching school result:", error);
     }
   };
   const handleOneStar = async () => {
     try {
+      setIsLoading(true);
+
       const schoolResultGoldResp = await axios.get(
         `/api/results/getschoolsdata/ONE_STAR`
       );
@@ -239,12 +256,15 @@ const Results = () => {
       saveAs(blob, pdfName);
 
       console.log(convertedData);
+      setIsLoading(false);
     } catch (error) {
       console.error("Error fetching school result:", error);
     }
   };
   const handleParticipation = async () => {
     try {
+      setIsLoading(true);
+
       const schoolResultGoldResp = await axios.get(
         `/api/results/getschoolsdata/ONE_STAR`
       );
@@ -261,6 +281,7 @@ const Results = () => {
       saveAs(blob, pdfName);
 
       console.log(convertedData);
+      setIsLoading(false);
     } catch (error) {
       console.error("Error fetching school result:", error);
     }
@@ -276,6 +297,7 @@ const Results = () => {
             className=" font-medium text-[15px]  tracking-wide"
             variant="default"
             size="lg"
+            disabled={isLoading}
             onClick={handleBack}>
             Back
           </Button>
@@ -283,6 +305,7 @@ const Results = () => {
             className=" font-medium text-[15px]  tracking-wide"
             variant="default"
             size="lg"
+            disabled={isLoading}
             onClick={handleGold}>
             Download Gold Winners
           </Button>
@@ -291,6 +314,7 @@ const Results = () => {
             className=" font-medium text-[15px]  tracking-wide"
             variant="default"
             size="lg"
+            disabled={isLoading}
             onClick={handleSilver}>
             Download Silver Winners
           </Button>
@@ -298,6 +322,7 @@ const Results = () => {
             className=" font-medium text-[15px]  tracking-wide"
             variant="default"
             size="lg"
+            disabled={isLoading}
             onClick={handleBronze}>
             Download Bronze Winners
           </Button>
@@ -305,6 +330,7 @@ const Results = () => {
             className=" font-medium text-[15px]  tracking-wide"
             variant="default"
             size="lg"
+            disabled={isLoading}
             onClick={handleThreeStar}>
             Download Three Star Winners
           </Button>
@@ -312,6 +338,7 @@ const Results = () => {
             className=" font-medium text-[15px]  tracking-wide"
             variant="default"
             size="lg"
+            disabled={isLoading}
             onClick={handleTwoStar}>
             Download Two Star Winners
           </Button>
@@ -319,6 +346,7 @@ const Results = () => {
             className=" font-medium text-[15px]  tracking-wide"
             variant="default"
             size="lg"
+            disabled={isLoading}
             onClick={handleOneStar}>
             Download One Star Winners
           </Button>
@@ -326,6 +354,7 @@ const Results = () => {
             className=" font-medium text-[15px]  tracking-wide"
             variant="default"
             size="lg"
+            disabled={isLoading}
             onClick={handleParticipation}>
             Download Participation
           </Button>
@@ -344,6 +373,7 @@ const Results = () => {
             className=" font-medium text-[11px]  tracking-wide"
             variant="default"
             size="sm"
+            disabled={isLoading}
             onClick={handleGold}>
             Download Gold Winner
           </Button>
@@ -351,6 +381,7 @@ const Results = () => {
             className=" font-medium text-[11px]  tracking-wide"
             variant="default"
             size="sm"
+            disabled={isLoading}
             onClick={handleSilver}>
             Download Silver Winner
           </Button>
@@ -358,6 +389,7 @@ const Results = () => {
             className=" font-medium text-[11px]  tracking-wide"
             variant="default"
             size="sm"
+            disabled={isLoading}
             onClick={handleBronze}>
             Download Bronze Winner
           </Button>
@@ -365,6 +397,7 @@ const Results = () => {
             className=" font-medium text-[11px]  tracking-wide"
             variant="default"
             size="sm"
+            disabled={isLoading}
             onClick={handleThreeStar}>
             Download Three Star Winner
           </Button>
@@ -372,6 +405,7 @@ const Results = () => {
             className=" font-medium text-[11px]  tracking-wide"
             variant="default"
             size="sm"
+            disabled={isLoading}
             onClick={handleTwoStar}>
             Download Two Star Winner
           </Button>
@@ -379,6 +413,7 @@ const Results = () => {
             className=" font-medium text-[11px]  tracking-wide"
             variant="default"
             size="sm"
+            disabled={isLoading}
             onClick={handleOneStar}>
             Download One Star Winner
           </Button>
@@ -386,6 +421,7 @@ const Results = () => {
             className=" font-medium text-[11px]  tracking-wide"
             variant="default"
             size="sm"
+            disabled={isLoading}
             onClick={handleParticipation}>
             Download Participation Winners
           </Button>
