@@ -102,6 +102,7 @@ function countStudentsByAward(students: SchoolResultPdf[]): AwardCounts {
   };
 
   return students.reduce((acc, student) => {
+    console.log(student);
     if (!student.AwardLevel) return acc;
 
     // Convert award level to uppercase and remove spaces for consistency
@@ -186,12 +187,16 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
         scoreId: convertToBigIntOrNumber(item.scoreId),
         percentage: parseFloat(item.percentage || "0"),
       }));
+      console.log(convertedData);
 
       const statistics = countStudentsByAward(convertedData);
+      console.log("statistics");
+      console.log(statistics);
       const dataWithStats = {
         results: convertedData,
         statistics: statistics,
       };
+      console.log(dataWithStats);
 
       const blob = await generatePdfBlob(dataWithStats);
       saveAs(blob, `School_${schoolResult.schoolId}_Results.pdf`);
