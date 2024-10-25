@@ -181,9 +181,9 @@ const AwardsPdf: React.FC<Props> = ({ data, winnerType }) => {
             <View style={styles.tableColHeaderLarge}>
               <Text style={styles.tableCellHeader}>INSTITUTION</Text>
             </View>
-            <View style={styles.tableColHeaderLarge}>
+            {/* <View style={styles.tableColHeaderLarge}>
               <Text style={styles.tableCellHeader}>DISTRICT</Text>
-            </View>
+            </View> */}
           </View>
 
           {/* Table Data */}
@@ -207,9 +207,9 @@ const AwardsPdf: React.FC<Props> = ({ data, winnerType }) => {
               <View style={styles.tableColLarge}>
                 <CellContent>{item.schoolName}</CellContent>
               </View>
-              <View style={styles.tableColLarge}>
+              {/* <View style={styles.tableColLarge}>
                 <CellContent>{item.studentDetails.city}</CellContent>
-              </View>
+              </View> */}
             </View>
           ))}
         </View>
