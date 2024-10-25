@@ -49,6 +49,24 @@ export async function GET(
       },
     });
 
+    // Track rollNumbers with missing student names
+    const missingStudentNames = students
+      .filter(
+        (student) => !student.studentName || student.studentName.trim() === ""
+      )
+      .map((student) => student.rollNumber);
+
+    // If there are missing student names, return an error
+    if (missingStudentNames.length > 0) {
+      return NextResponse.json(
+        {
+          error: "Missing student names detected",
+          rollNumbers: missingStudentNames,
+        },
+        { status: 400 }
+      );
+    }
+
     // Create a map of students by roll number for faster lookup
     const studentMap = new Map(
       students.map((student) => [student.rollNumber, student])
@@ -67,20 +85,6 @@ export async function GET(
         city: true,
       },
     });
-    // console.log(schools);
-    // schools.forEach((school) => {
-    //   console.log(`School ID: ${school.schoolId}`);
-    //   console.log(`School Name: ${school.schoolName}`);
-    //   console.log(`City: ${school.city}`);
-    //   console.log("------------------------");
-    // });
-
-    // Log schools with empty schoolName
-    // console.log("\nSchools with empty schoolName:");
-    // const emptySchoolNames = schools.filter((school) => !school.schoolName);
-    // console.log(emptySchoolNames);
-
-    // Create a map of schools by schoolId for faster lookup
 
     console.log("Available School IDs in schools data:");
     const availableSchoolIds = schools.map((school) => school.schoolId);
@@ -118,6 +122,22 @@ export async function GET(
         },
       },
     });
+
+    // Check for results with missing student information
+    const resultsWithMissingStudents = resultsWithDetails
+      .filter((result) => !studentMap.has(result.rollNumber || ""))
+      .map((result) => result.rollNumber);
+
+    if (resultsWithMissingStudents.length > 0) {
+      return NextResponse.json(
+        {
+          error: "Results found with missing student information",
+          rollNumbers: resultsWithMissingStudents,
+        },
+        { status: 400 }
+      );
+    }
+
     console.log("School IDs from results:");
     const resultSchoolIds = resultsWithDetails.map((result) => result.schoolId);
     console.log(resultSchoolIds);
@@ -156,15 +176,13 @@ export async function GET(
       const schoolInfo = schoolMap.get(result.schoolId);
       const city = districtToCityMap.get(result.district?.toLowerCase());
       const classValue = studentInfo ? getClassValue(studentInfo.class) : 0;
-
-      // Ensure schoolName is included from the school info
       const schoolName = schoolInfo?.schoolName || "Unknown School";
 
       return {
         ...result,
         classValue: classValue,
         numericPercentage: getNumericPercentage(result.percentage),
-        schoolName: schoolName, // This will now always have a value
+        schoolName: schoolName,
         studentDetails: studentInfo
           ? {
               studentName: studentInfo.studentName,
@@ -172,7 +190,7 @@ export async function GET(
               class: studentInfo.class,
               level: studentInfo.level,
               schoolId: result.schoolId,
-              schoolName: schoolName, // Include schoolName in student details as well
+              schoolName: schoolName,
               district: result.district,
               city: city,
             }
@@ -185,7 +203,6 @@ export async function GET(
       const classA = a.studentDetails?.class || "";
       const classB = b.studentDetails?.class || "";
 
-      // Handle numeric classes
       const numA = parseInt(classA);
       const numB = parseInt(classB);
 
@@ -193,11 +210,9 @@ export async function GET(
         return numA - numB;
       }
 
-      // Fall back to string comparison for non-numeric classes
       return classA.localeCompare(classB);
     });
 
-    // Return the sorted data
     return new NextResponse(safeJsonStringify(sortedData), {
       status: 200,
       headers: {
