@@ -8,6 +8,24 @@ const safeJsonStringify = (data: any) => {
   );
 };
 
+// Helper function to get numeric class value
+const getClassValue = (classStr: string | null): number => {
+  if (!classStr) return 0;
+  const numericValue = parseInt(classStr);
+  return isNaN(numericValue) ? 0 : numericValue;
+};
+
+// Helper function to safely convert percentage to number
+const getNumericPercentage = (percentage: any): number => {
+  if (typeof percentage === "string") {
+    return parseFloat(percentage);
+  }
+  if (typeof percentage === "number") {
+    return percentage;
+  }
+  return 0;
+};
+
 export async function GET(
   request: NextRequest,
   {
@@ -63,7 +81,6 @@ export async function GET(
           },
         },
       },
-      orderBy: [{ percentage: "desc" }, { createdAt: "asc" }],
     });
 
     const schools = await db.user.findMany({
@@ -78,7 +95,7 @@ export async function GET(
       },
     });
 
-    // Fetch distinct district-city mappings from User table
+    // Fetch distinct district-city mappings
     const districtData = await db.user.findMany({
       distinct: ["district"],
       select: {
@@ -95,18 +112,21 @@ export async function GET(
       },
     });
 
-    // Create a map of districts to their corresponding cities
+    // Create district to city mapping
     const districtToCityMap = new Map(
       districtData.map((data) => [data.district?.toLowerCase(), data.city])
     );
 
-    // Combine the data
-    const combinedData = resultsWithDetails.map((result) => {
+    // Combine and transform the data
+    let combinedData = resultsWithDetails.map((result) => {
       const studentInfo = studentMap.get(result.rollNumber || "");
       const city = districtToCityMap.get(result.district?.toLowerCase());
+      const classValue = studentInfo ? getClassValue(studentInfo.class) : 0;
 
       return {
         ...result,
+        classValue: classValue,
+        numericPercentage: getNumericPercentage(result.percentage),
         studentDetails: studentInfo
           ? {
               studentName: studentInfo.studentName,
