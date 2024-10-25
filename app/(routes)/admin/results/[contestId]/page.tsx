@@ -96,7 +96,9 @@ const Results = () => {
     console.log("--------------------------");
 
     const asPdf = pdf(doc); // Create an empty PDF instance
+    console.log("----------!!!!!!!!!");
     const blob = await asPdf.toBlob();
+    console.log("----------!!!!!!!!!");
     return blob;
   }
   function convertToBigIntOrNumber(value: string | null | undefined) {
