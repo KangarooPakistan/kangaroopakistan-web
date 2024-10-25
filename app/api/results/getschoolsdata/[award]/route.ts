@@ -47,10 +47,8 @@ export async function GET(
         percentage: true,
         rollNumber: true,
         class: true,
-
         district: true,
         schoolId: true,
-
         score: {
           select: {
             rollNo: true,
@@ -67,11 +65,7 @@ export async function GET(
       },
       orderBy: [{ percentage: "desc" }, { createdAt: "asc" }],
     });
-    const combinedData1 = resultsWithDetails.map((result) => {
-      const studentInfo = studentMap.get(result.rollNumber || "");
-      console.log(result.rollNumber);
-      console.log(studentInfo);
-    });
+
     const schools = await db.user.findMany({
       select: {
         schoolId: true,
@@ -121,15 +115,31 @@ export async function GET(
               level: studentInfo.level,
               schoolId: result.schoolId,
               district: result.district,
-              city: city || null, // Add city from school information
+              city: city || null,
             }
           : null,
       };
     });
 
-    console.log(combinedData);
-    // Return the combined data
-    return new NextResponse(safeJsonStringify(combinedData), {
+    // Sort the combined data by class in ascending order
+    const sortedData = combinedData.sort((a, b) => {
+      const classA = a.studentDetails?.class || "";
+      const classB = b.studentDetails?.class || "";
+
+      // Handle numeric classes
+      const numA = parseInt(classA);
+      const numB = parseInt(classB);
+
+      if (!isNaN(numA) && !isNaN(numB)) {
+        return numA - numB;
+      }
+
+      // Fall back to string comparison for non-numeric classes
+      return classA.localeCompare(classB);
+    });
+
+    // Return the sorted data
+    return new NextResponse(safeJsonStringify(sortedData), {
       status: 200,
       headers: {
         "Content-Type": "application/json",
