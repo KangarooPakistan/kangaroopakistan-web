@@ -91,6 +91,7 @@ const Results = () => {
   }, []);
 
   async function generatePdfBlob(data: Result[], winnerType: string) {
+    console.log(data);
     console.log("--------------------------");
     const doc = <AwardsPdf data={data} winnerType={winnerType} />;
     console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@");
