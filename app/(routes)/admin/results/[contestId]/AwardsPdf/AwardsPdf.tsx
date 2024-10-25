@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     padding: 4, // Increased padding
   },
   tableColHeaderLarge: {
-    width: "18%",
+    width: "22%",
     fontSize: 8,
     borderStyle: "solid",
     borderWidth: 1,
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     padding: 4, // Increased padding
   },
   tableColHeaderLargeR: {
-    width: "22%",
+    width: "25%",
     fontSize: 8,
     borderStyle: "solid",
     borderWidth: 1,
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     padding: 4, // Increased padding
   },
   tableColLarge: {
-    width: "18%",
+    width: "22%",
     borderStyle: "solid",
     borderWidth: 1,
     fontSize: 8,
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     padding: 4, // Increased padding
   },
   tableColLargeR: {
-    width: "22%",
+    width: "25%",
     borderStyle: "solid",
     borderWidth: 1,
     fontSize: 8,
