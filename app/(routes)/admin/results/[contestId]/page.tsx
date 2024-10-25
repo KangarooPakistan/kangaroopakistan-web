@@ -91,7 +91,9 @@ const Results = () => {
   }, []);
 
   async function generatePdfBlob(data: Result[], winnerType: string) {
+    console.log("--------------------------");
     const doc = <AwardsPdf data={data} winnerType={winnerType} />;
+    console.log("--------------------------");
 
     const asPdf = pdf(doc); // Create an empty PDF instance
     const blob = await asPdf.toBlob();
