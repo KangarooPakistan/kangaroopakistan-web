@@ -14,6 +14,15 @@ const normalizeClass = (classValue: string | number): number => {
   const numericValue = String(classValue).replace(/\D/g, "");
   return parseInt(numericValue, 10) || 0; // Return 0 if parsing fails
 };
+const normalizePercentage = (percentage: any): number => {
+  if (typeof percentage === "string") {
+    return parseFloat(percentage) || 0;
+  }
+  if (typeof percentage === "number") {
+    return percentage;
+  }
+  return 0;
+};
 
 export async function GET(
   request: NextRequest,
@@ -96,13 +105,26 @@ export async function GET(
       };
     });
 
-    // Sort results by class in ascending order
+    // Sort results by class and then by percentage in descending order
+    // Sort results by class and then by percentage in descending order
     const sortedResults = resultsWithDetails.sort((a, b) => {
       const classA = normalizeClass(a.class);
       const classB = normalizeClass(b.class);
-      return classA - classB;
-    });
 
+      // If classes are different, sort by class
+      if (classA !== classB) {
+        return classA - classB;
+      }
+
+      // Debug: Log raw percentage values
+      console.log("Raw percentage A:", a.percentage);
+
+      // Convert Decimal to number for comparison
+      const percentageA = a.percentage ? Number(a.percentage) : 0;
+      const percentageB = b.percentage ? Number(b.percentage) : 0;
+
+      return percentageB - percentageA;
+    });
     // Use safeJsonStringify to handle BigInt values
     return new NextResponse(safeJsonStringify(sortedResults), {
       status: 200,

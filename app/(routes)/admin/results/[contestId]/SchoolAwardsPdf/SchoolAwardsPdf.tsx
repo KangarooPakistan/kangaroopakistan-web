@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   tableColHeaderLargeR: {
-    width: "22%",
+    width: "24%",
     fontSize: 8,
     borderStyle: "solid",
     borderWidth: 1,
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   tableColLargeR: {
-    width: "22%",
+    width: "24%",
     borderStyle: "solid",
     borderWidth: 1,
     fontSize: 8,
@@ -234,27 +234,27 @@ const SchoolAwardsPdf: React.FC<SchoolAwardsPdfProps> = ({ data }) => {
         <View style={styles.statsSection}>
           <Text style={styles.title}>Award Statistics</Text>
           <View style={styles.statsRow}>
-            <Text style={styles.statsLabel}>Gold Awards:</Text>
+            <Text style={styles.statsLabel}>Gold Medals:</Text>
             <Text style={styles.statsValue}>{statistics.GOLD}</Text>
           </View>
           <View style={styles.statsRow}>
-            <Text style={styles.statsLabel}>Silver Awards:</Text>
+            <Text style={styles.statsLabel}>Silver Medals:</Text>
             <Text style={styles.statsValue}>{statistics.SILVER}</Text>
           </View>
           <View style={styles.statsRow}>
-            <Text style={styles.statsLabel}>Bronze Awards:</Text>
+            <Text style={styles.statsLabel}>Bronze Medals:</Text>
             <Text style={styles.statsValue}>{statistics.BRONZE}</Text>
           </View>
           <View style={styles.statsRow}>
-            <Text style={styles.statsLabel}>Three Star Awards:</Text>
+            <Text style={styles.statsLabel}>Three Star Badges:</Text>
             <Text style={styles.statsValue}>{statistics.THREE_STAR}</Text>
           </View>
           <View style={styles.statsRow}>
-            <Text style={styles.statsLabel}>Two Star Awards:</Text>
+            <Text style={styles.statsLabel}>Two Star Badges:</Text>
             <Text style={styles.statsValue}>{statistics.TWO_STAR}</Text>
           </View>
           <View style={styles.statsRow}>
-            <Text style={styles.statsLabel}>One Star Awards:</Text>
+            <Text style={styles.statsLabel}>One Star Badges:</Text>
             <Text style={styles.statsValue}>{statistics.ONE_STAR}</Text>
           </View>
           <View style={styles.statsRow}>
