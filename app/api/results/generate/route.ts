@@ -35,7 +35,7 @@ function calculateAward(percentage: Decimal, awardDefinition: any) {
   ) {
     return "ONE STAR";
   } else {
-    return "PARTICIPATION ";
+    return "PARTICIPATION";
   }
 }
 
