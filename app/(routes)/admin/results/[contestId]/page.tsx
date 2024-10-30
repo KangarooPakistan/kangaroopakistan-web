@@ -67,6 +67,7 @@ const Results = () => {
   const [schoolData, setSchoolData] = useState([]);
   const params = useParams();
   const [isLoading, setIsLoading] = useState(false);
+  const [loadData, setLoadData] = useState(true);
   const router = useRouter();
   const [result, setResult] = useState<Result[]>([]);
   useEffect(() => {
@@ -78,9 +79,11 @@ const Results = () => {
         const resp = await axios.get(`/api/results/getschoolsdata`);
         setSchoolData(resp.data);
         setResult(data.data);
+        setLoadData(false);
         console.log("resp");
         console.log(resp);
         console.log(data);
+
         toast.success("🦄 Table data fetched successfully", {
           position: "bottom-center",
           autoClose: 5000,
@@ -137,56 +140,59 @@ const Results = () => {
     }
   }
   function processDataForExcel(schoolData: SchoolData[], resultData: Result[]) {
-    // Create a map to store award counts for each school
-
-    const schoolAwardCounts = new Map<number, SchoolAwardCount>(); // Changed key type to number
-
-    // Get unique award levels using Array.from instead of spread operator
-
+    const schoolAwardCounts = new Map<number, SchoolAwardCount>();
     const uniqueAwards = Array.from(
       new Set(resultData.map((result) => result.AwardLevel))
     );
 
-    // Initialize counts for each school
+    // Initialize counts and create a map to track total students per school
+    const schoolTotalStudents = new Map<number, number>();
 
     schoolData.forEach((school) => {
       schoolAwardCounts.set(school.schoolId, {
-        schoolName: school.schoolName.toString(), // Convert to string since schoolName is String type
-
+        schoolName: school.schoolName.toString(),
         awards: uniqueAwards.reduce((acc, award) => {
           acc[award] = 0;
-
           return acc;
         }, {} as Record<string, number>),
       });
+      schoolTotalStudents.set(school.schoolId, 0);
     });
 
-    // Count awards for each school
-
+    // Count awards and total students for each school
     resultData.forEach((result) => {
       const schoolData = schoolAwardCounts.get(result.schoolId);
-
       if (schoolData) {
         schoolData.awards[result.AwardLevel]++;
+        // Increment total students count
+        schoolTotalStudents.set(
+          result.schoolId,
+          (schoolTotalStudents.get(result.schoolId) || 0) + 1
+        );
       }
     });
 
-    // Convert to array format for Excel
+    // Prepare headers and rows with total students
+    const headers = ["School Name", "Total Students", ...uniqueAwards];
 
-    const headers = ["School Name", ...uniqueAwards];
+    const rows = Array.from(schoolAwardCounts.values()).map((school) => {
+      const schoolId = Array.from(schoolAwardCounts.entries()).find(
+        ([_, value]) => value.schoolName === school.schoolName
+      )?.[0];
 
-    const rows = Array.from(schoolAwardCounts.values()).map((school) => [
-      school.schoolName,
-
-      ...uniqueAwards.map((award) => school.awards[award]),
-    ]);
+      return [
+        school.schoolName,
+        schoolTotalStudents.get(schoolId!) || 0,
+        ...uniqueAwards.map((award) => school.awards[award]),
+      ];
+    });
 
     return {
       headers,
-
       rows,
     };
   }
+
   function downloadExcel(schoolData: SchoolData[], resultData: Result[]) {
     // Process the data
     const { headers, rows } = processDataForExcel(schoolData, resultData);
@@ -470,7 +476,7 @@ const Results = () => {
             className=" font-medium text-[15px]  tracking-wide"
             variant="default"
             size="lg"
-            disabled={isLoading}
+            disabled={loadData}
             onClick={handleExcel}>
             Download Excel Sheet
           </Button>
@@ -545,7 +551,7 @@ const Results = () => {
             className=" font-medium text-[11px]  tracking-wide"
             variant="default"
             size="sm"
-            disabled={isLoading}
+            disabled={loadData}
             onClick={handleExcel}>
             Download Excel Sheet
           </Button>
