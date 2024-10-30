@@ -33,6 +33,11 @@ export type StudentDetails = {
   studentName: string;
 };
 
+interface SchoolAwardCount {
+  schoolName: string;
+  awards: Record<string, number>;
+}
+
 export type Result = {
   AwardLevel: string;
   class: number;
@@ -47,12 +52,23 @@ export type Result = {
   scoreId?: string | undefined;
   studentDetails: StudentDetails;
 };
+export type SchoolData = {
+  schoolId: number;
+  schoolName: String;
+  district: number;
+  city: string;
+  schoolAddress: string;
+  contactNumber: string;
+  email: string;
+  resultCount: number;
+};
 
 const Results = () => {
   const [schoolData, setSchoolData] = useState([]);
   const params = useParams();
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const [result, setResult] = useState<Result[]>([]);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -61,6 +77,7 @@ const Results = () => {
         );
         const resp = await axios.get(`/api/results/getschoolsdata`);
         setSchoolData(resp.data);
+        setResult(data.data);
         console.log("resp");
         console.log(resp);
         console.log(data);
@@ -119,6 +136,88 @@ const Results = () => {
       return 0;
     }
   }
+  function processDataForExcel(schoolData: SchoolData[], resultData: Result[]) {
+    // Create a map to store award counts for each school
+
+    const schoolAwardCounts = new Map<number, SchoolAwardCount>(); // Changed key type to number
+
+    // Get unique award levels using Array.from instead of spread operator
+
+    const uniqueAwards = Array.from(
+      new Set(resultData.map((result) => result.AwardLevel))
+    );
+
+    // Initialize counts for each school
+
+    schoolData.forEach((school) => {
+      schoolAwardCounts.set(school.schoolId, {
+        schoolName: school.schoolName.toString(), // Convert to string since schoolName is String type
+
+        awards: uniqueAwards.reduce((acc, award) => {
+          acc[award] = 0;
+
+          return acc;
+        }, {} as Record<string, number>),
+      });
+    });
+
+    // Count awards for each school
+
+    resultData.forEach((result) => {
+      const schoolData = schoolAwardCounts.get(result.schoolId);
+
+      if (schoolData) {
+        schoolData.awards[result.AwardLevel]++;
+      }
+    });
+
+    // Convert to array format for Excel
+
+    const headers = ["School Name", ...uniqueAwards];
+
+    const rows = Array.from(schoolAwardCounts.values()).map((school) => [
+      school.schoolName,
+
+      ...uniqueAwards.map((award) => school.awards[award]),
+    ]);
+
+    return {
+      headers,
+
+      rows,
+    };
+  }
+  function downloadExcel(schoolData: SchoolData[], resultData: Result[]) {
+    // Process the data
+    const { headers, rows } = processDataForExcel(schoolData, resultData);
+
+    // Create workbook and worksheet
+    const XLSX = require("xlsx");
+    const workbook = XLSX.utils.book_new();
+
+    // Convert to worksheet format
+    const worksheet = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+
+    // Set column widths
+    const colWidths = headers.map((header) => ({
+      wch: Math.max(header.length, 15), // minimum width of 15 characters
+    }));
+    worksheet["!cols"] = colWidths;
+
+    // Add worksheet to workbook
+    XLSX.utils.book_append_sheet(workbook, worksheet, "School Awards");
+
+    // Generate Excel file
+    XLSX.writeFile(workbook, "School_Awards_Report.xlsx");
+  }
+
+  const handleExcel = async () => {
+    try {
+      console.log(schoolData);
+      console.log(result);
+      downloadExcel(schoolData, result);
+    } catch (error) {}
+  };
 
   const handleGold = async () => {
     try {
@@ -144,6 +243,7 @@ const Results = () => {
       console.error("Error fetching school result:", error);
     }
   };
+
   const handleSilver = async () => {
     try {
       setIsLoading(true);
@@ -366,6 +466,14 @@ const Results = () => {
             onClick={handleParticipation}>
             Download Participation
           </Button>
+          <Button
+            className=" font-medium text-[15px]  tracking-wide"
+            variant="default"
+            size="lg"
+            disabled={isLoading}
+            onClick={handleExcel}>
+            Download Excel Sheet
+          </Button>
         </div>
       </div>
       <div className="block md:hidden">
@@ -432,6 +540,14 @@ const Results = () => {
             disabled={isLoading}
             onClick={handleParticipation}>
             Download Participation Winners
+          </Button>
+          <Button
+            className=" font-medium text-[11px]  tracking-wide"
+            variant="default"
+            size="sm"
+            disabled={isLoading}
+            onClick={handleExcel}>
+            Download Excel Sheet
           </Button>
         </div>
       </div>
