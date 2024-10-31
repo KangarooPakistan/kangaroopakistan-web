@@ -172,20 +172,24 @@ const Results = () => {
       }
     });
 
-    // Prepare headers and rows with total students
-    const headers = ["School Name", "Total Students", ...uniqueAwards];
+    // Prepare headers and rows with school ID and total students
+    const headers = [
+      "School ID",
+      "School Name",
+      "Total Students",
+      ...uniqueAwards,
+    ];
 
-    const rows = Array.from(schoolAwardCounts.values()).map((school) => {
-      const schoolId = Array.from(schoolAwardCounts.entries()).find(
-        ([_, value]) => value.schoolName === school.schoolName
-      )?.[0];
-
-      return [
-        school.schoolName,
-        schoolTotalStudents.get(schoolId!) || 0,
-        ...uniqueAwards.map((award) => school.awards[award]),
-      ];
-    });
+    const rows = Array.from(schoolAwardCounts.entries()).map(
+      ([schoolId, school]) => {
+        return [
+          schoolId,
+          school.schoolName,
+          schoolTotalStudents.get(schoolId) || 0,
+          ...uniqueAwards.map((award) => school.awards[award]),
+        ];
+      }
+    );
 
     return {
       headers,
