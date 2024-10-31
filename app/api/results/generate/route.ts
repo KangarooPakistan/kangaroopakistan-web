@@ -124,10 +124,20 @@ export async function POST(request: Request) {
       );
 
     // 5. Create all results in a single transaction
-    const createdResults = await db.result.createMany({
-      data: resultsData,
-      skipDuplicates: true,
-    });
+    let createdResults;
+    try {
+      createdResults = await db.result.createMany({
+        data: resultsData,
+        skipDuplicates: true,
+      });
+      console.log(createdResults);
+    } catch (createError) {
+      console.error("Error creating results:", createError);
+      return NextResponse.json(
+        { message: "Error creating results", error: createError },
+        { status: 500 }
+      );
+    }
 
     console.log("Results generated successfully");
 
