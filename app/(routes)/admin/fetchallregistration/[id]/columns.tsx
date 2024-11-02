@@ -665,7 +665,7 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
   },
   studentInfo: {
-    marginBottom: 2,
+    marginBottom: 4,
   },
   studentInfoRow: {
     flexDirection: "row",
@@ -673,13 +673,13 @@ const styles = StyleSheet.create({
     marginBottom: 1,
   },
   studentInfoTitle: {
-    fontSize: "12px",
+    fontSize: "14px",
     width: "250px",
     textTransform: "uppercase",
     fontWeight: "heavy",
   },
   studentInfoContent: {
-    fontSize: "12px",
+    fontSize: "14px",
     fontWeight: "bold",
     textTransform: "uppercase",
     width: "700px", // Set maximum width to fit the container
@@ -938,12 +938,12 @@ const MyDocument: React.FC<MyDocumentProps> = ({ students, profileData }) => (
             <Text style={styles.studentInfoContent}>{student.rollNumber}</Text>
           </View>
 
-          <View style={styles.studentInfoRow}>
+          {/* <View style={styles.studentInfoRow}>
             <Text style={styles.studentInfoTitle}>District</Text>
             <Text style={styles.studentInfoContent}>
               {student.districtCode}
             </Text>
-          </View>
+          </View> */}
           <View style={styles.studentInfoRow}>
             <Text style={styles.studentInfoTitle}>Student Name</Text>
             <Text style={styles.studentInfoContent}>{student.studentName}</Text>
