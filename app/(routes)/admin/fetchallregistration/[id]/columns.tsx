@@ -938,12 +938,12 @@ const MyDocument: React.FC<MyDocumentProps> = ({ students, profileData }) => (
             <Text style={styles.studentInfoContent}>{student.rollNumber}</Text>
           </View>
 
-          <View style={styles.studentInfoRow}>
+          {/* <View style={styles.studentInfoRow}>
             <Text style={styles.studentInfoTitle}>District</Text>
             <Text style={styles.studentInfoContent}>
               {student.districtCode}
             </Text>
-          </View>
+          </View> */}
           <View style={styles.studentInfoRow}>
             <Text style={styles.studentInfoTitle}>Student Name</Text>
             <Text style={styles.studentInfoContent}>{student.studentName}</Text>
