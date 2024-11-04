@@ -340,7 +340,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                 style={{
                   verticalAlign: "super",
                   fontSize: 10,
-                  textTransform: "uppercase",
+                  // textTransform: "uppercase",
                 }}>
                 {profileData?.contestNo
                   ? getOrdinalSuffix(profileData.contestNo)
