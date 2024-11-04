@@ -257,6 +257,27 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
         break;
     }
   });
+  const getOrdinalSuffix = (number: string) => {
+    const num = parseInt(number);
+    const lastDigit = num % 10;
+    const lastTwoDigits = num % 100;
+
+    // Special case for 11, 12, 13
+    if (lastTwoDigits >= 11 && lastTwoDigits <= 13) {
+      return "th";
+    }
+
+    switch (lastDigit) {
+      case 1:
+        return "st";
+      case 2:
+        return "nd";
+      case 3:
+        return "rd";
+      default:
+        return "th";
+    }
+  };
 
   function getStudentLevel(classStr: string) {
     switch (classStr) {
@@ -321,7 +342,9 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                   fontSize: 10,
                   textTransform: "uppercase",
                 }}>
-                th
+                {profileData?.contestNo
+                  ? getOrdinalSuffix(profileData.contestNo)
+                  : "th"}
               </Text>{" "}
               {profileData?.contestName}
             </Text>
