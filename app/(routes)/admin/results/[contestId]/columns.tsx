@@ -368,12 +368,12 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
               disabled={isLoading}>
               {isLoading ? "Downloading..." : "Download School Result"}
             </DropdownMenuItem>
-            {/* <DropdownMenuItem
+            <DropdownMenuItem
               className="border-y-2 border-solid"
               onClick={handleIndividualReport}
               disabled={isLoading}>
               {isLoading ? "Downloading..." : "Download Individual Report "}
-            </DropdownMenuItem> */}
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
@@ -385,13 +385,13 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
           disabled={isLoading}>
           {isLoading ? "Downloading..." : "Download School Result"}
         </Button>
-        {/* <Button
+        <Button
           className="text-[11px]"
-          size="sm"
+          // size="sm"
           onClick={handleIndividualReport}
           disabled={isLoading}>
           {isLoading ? "Downloading..." : "Download Individual Report "}
-        </Button> */}
+        </Button>
       </div>
     </>
   );

@@ -20,11 +20,16 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto",
   },
   image: {
-    width: 50, // Set the width of your image
-    height: 50, // Set the height of your image
+    width: 70, // Set the width of your image
+    height: 70, // Set the height of your image
     marginBottom: "20px", // Optional: add some margin if needed
   },
-
+  leftImage: {
+    marginRight: 30,
+  },
+  rightImage: {
+    marginLeft: 30,
+  },
   title: {
     fontSize: 18,
     fontWeight: "extrabold",
@@ -91,10 +96,10 @@ const styles = StyleSheet.create({
     marginRight: 150,
   },
   attemptedSection: {
-    marginBottom: 25,
+    marginBottom: 20,
   },
   table: {
-    marginBottom: 10,
+    marginBottom: 5,
     borderWidth: 1,
     borderColor: "#444",
     borderRadius: 4,
@@ -108,16 +113,16 @@ const styles = StyleSheet.create({
   },
   tableRow: {
     flexDirection: "row",
-    borderBottomWidth: 1,
-    borderBottomColor: "#e0e0e0",
-    minHeight: 30, // Add minimum height to rows
+    // borderBottomWidth: 1,
+    // borderBottomColor: "#e0e0e0",
+    minHeight: 20, // Add minimum height to rows
     backgroundColor: "#ffffff",
   },
   tableRowLast: {
     flexDirection: "row",
     // paddingVertical: 6,
     backgroundColor: "#ffffff",
-    minHeight: 30, // Add minimum height to last row
+    minHeight: 20, // Add minimum height to last row
   },
   tableCell: {
     flex: 1,
@@ -146,11 +151,11 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 8,
     color: "#333",
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: "bold",
   },
   scoreValue: {
-    fontSize: 11,
+    fontSize: 12,
     color: "#444",
   },
   totalRow: {
@@ -166,8 +171,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#f0f7ff",
   },
   creditScoreValue: {
-    color: "#2563eb",
-    fontWeight: "bold",
+    color: "#000",
+    // fontWeight: "bold",
   },
 
   rankings: {
@@ -182,11 +187,18 @@ const styles = StyleSheet.create({
     fontWeight: 900,
   },
   viewWidth: {
-    width: 320,
+    width: 310,
     display: "flex",
     flexDirection: "column",
     justifyContent: "flex-end",
     alignItems: "flex-end",
+  },
+  slip: {
+    marginTop: 25,
+    fontSize: 12,
+    fontStyle: "italic", // Added this line
+
+    // fontStyle: "italic",
   },
 });
 
@@ -250,24 +262,23 @@ const StudentReportPage: React.FC<{ student: StudentReport }> = ({
       <View
         style={{
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: "center",
           alignItems: "center",
-          // marginRight: "20px",
           flexDirection: "row",
         }}>
         {student.suffix === "M" ? (
           <Image
-            style={styles.image}
+            style={[styles.image, styles.leftImage]}
             src="/innovative-learning.jpg" // Replace with your image path or URL
           />
         ) : student.suffix === "S" ? (
           <Image
-            style={styles.image}
+            style={[styles.image, styles.leftImage]}
             src="/innventive_learning.jpg" // Replace with your image path or URL
           />
         ) : (
           <Image
-            style={styles.image}
+            style={[styles.image, styles.leftImage]}
             src="/innovative-learning.jpg" // Replace with your image path or URL
           />
         )}
@@ -278,11 +289,20 @@ const StudentReportPage: React.FC<{ student: StudentReport }> = ({
           </Text>
         </View>
         {student.suffix === "M" ? (
-          <Image style={styles.image} src="/ikmc_logo.png" />
+          <Image
+            style={[styles.image, styles.rightImage]}
+            src="/ikmc_logo.png"
+          />
         ) : student.suffix === "S" ? (
-          <Image style={styles.image} src="/innovative-learning.jpg" />
+          <Image
+            style={[styles.image, styles.rightImage]}
+            src="/iksc_logo.jpg"
+          />
         ) : (
-          <Image style={styles.image} src="/iklc_logo.webp" />
+          <Image
+            style={[styles.image, styles.rightImage]}
+            src="/iklc_logo.jpg"
+          />
         )}
         {/* <Text style={styles.regNo}>Registration No.: {student.rollNumber}</Text> */}
       </View>
@@ -467,6 +487,12 @@ const StudentReportPage: React.FC<{ student: StudentReport }> = ({
 
       {/* Rankings Section */}
       <RankingsTable student={student} />
+      <View style={styles.slip}>
+        <Text>
+          {" "}
+          This is system generated report and does not require a signature
+        </Text>
+      </View>
     </Page>
   );
 };
@@ -474,7 +500,7 @@ const StudentReportPage: React.FC<{ student: StudentReport }> = ({
 const RankingsTable: React.FC<{ student: StudentReport }> = ({ student }) => (
   <View
     style={{
-      marginTop: 10,
+      marginTop: 20,
       border: 1,
       borderColor: "#000000",
     }}>
@@ -521,7 +547,7 @@ const RankingsTable: React.FC<{ student: StudentReport }> = ({ student }) => (
             style={{
               textAlign: "center",
               fontWeight: "bold",
-              fontSize: 11,
+              fontSize: 12,
             }}>
             TOTAL NUMBER OF STUDENTS PARTICIPATING IN{"\n"}THE CONTEST AT YOUR
             GRADE
@@ -533,14 +559,15 @@ const RankingsTable: React.FC<{ student: StudentReport }> = ({ student }) => (
           style={{
             flexDirection: "row",
             borderBottom: 1,
-            height: 26,
+            height: 28,
             borderBottomColor: "#000000",
           }}>
           <View
             style={{
               flex: 3,
-              padding: 6,
-              fontSize: 11,
+              paddingHorizontal: 6,
+              paddingVertical: 4,
+              fontSize: 12,
               borderRight: 1,
 
               fontWeight: "bold",
@@ -551,11 +578,12 @@ const RankingsTable: React.FC<{ student: StudentReport }> = ({ student }) => (
           <View
             style={{
               flex: 1,
-              padding: 6,
+              paddingHorizontal: 6,
+              paddingVertical: 4,
               justifyContent: "center",
             }}>
             <Text
-              style={{ textAlign: "center", fontSize: 11, fontWeight: "bold" }}>
+              style={{ textAlign: "center", fontSize: 12, fontWeight: "bold" }}>
               {student.rankings.school.totalParticipants}
             </Text>
           </View>
@@ -566,16 +594,17 @@ const RankingsTable: React.FC<{ student: StudentReport }> = ({ student }) => (
           style={{
             flexDirection: "row",
             borderBottom: 1,
-            height: 26,
+            height: 28,
             borderBottomColor: "#000000",
           }}>
           <View
             style={{
               flex: 3,
-              padding: 6,
+              paddingHorizontal: 6,
+              paddingVertical: 4,
               borderRight: 1,
               borderRightColor: "#000000",
-              fontSize: 11,
+              fontSize: 12,
               fontWeight: "bold",
             }}>
             <Text>YOUR CITY/DISTRICT</Text>
@@ -583,11 +612,12 @@ const RankingsTable: React.FC<{ student: StudentReport }> = ({ student }) => (
           <View
             style={{
               flex: 1,
-              padding: 6,
+              paddingHorizontal: 6,
+              paddingVertical: 4,
               justifyContent: "center",
             }}>
             <Text
-              style={{ textAlign: "center", fontSize: 11, fontWeight: "bold" }}>
+              style={{ textAlign: "center", fontSize: 12, fontWeight: "bold" }}>
               {student.rankings.district.totalParticipants}
             </Text>
           </View>
@@ -597,15 +627,16 @@ const RankingsTable: React.FC<{ student: StudentReport }> = ({ student }) => (
         <View
           style={{
             flexDirection: "row",
-            height: 26,
+            height: 28,
           }}>
           <View
             style={{
               flex: 3,
-              padding: 6,
+              paddingHorizontal: 6,
+              paddingVertical: 4,
               borderRight: 1,
               borderRightColor: "#000000",
-              fontSize: 11,
+              fontSize: 12,
               fontWeight: "bold",
               height: "100%", // Added height 100%
               position: "relative", // Added position relative
@@ -625,11 +656,12 @@ const RankingsTable: React.FC<{ student: StudentReport }> = ({ student }) => (
           <View
             style={{
               flex: 1,
-              padding: 6,
+              paddingHorizontal: 6,
+              paddingVertical: 4,
               justifyContent: "center",
             }}>
             <Text
-              style={{ textAlign: "center", fontSize: 11, fontWeight: "bold" }}>
+              style={{ textAlign: "center", fontSize: 12, fontWeight: "bold" }}>
               {student.rankings.overall.totalParticipants}
             </Text>
           </View>
@@ -657,9 +689,10 @@ const RankingsTable: React.FC<{ student: StudentReport }> = ({ student }) => (
             style={{
               textAlign: "center",
               fontWeight: "bold",
-              fontSize: 11,
-              padding: 6,
-              height: 26,
+              fontSize: 12,
+              paddingHorizontal: 6,
+              paddingVertical: 10,
+              height: 36,
 
               borderRightColor: "#000000",
             }}>
@@ -672,14 +705,15 @@ const RankingsTable: React.FC<{ student: StudentReport }> = ({ student }) => (
           style={{
             borderBottom: 1,
             borderBottomColor: "#000000",
-            padding: 6,
-            height: 26,
-            fontSize: 11,
+            paddingHorizontal: 6,
+            paddingVertical: 4,
+            height: 28,
+            fontSize: 12,
 
             fontWeight: "bold",
           }}>
           <Text
-            style={{ textAlign: "center", fontSize: 11, fontWeight: "bold" }}>
+            style={{ textAlign: "center", fontSize: 12, fontWeight: "bold" }}>
             {student.rankings.school.rank}
           </Text>
         </View>
@@ -689,12 +723,13 @@ const RankingsTable: React.FC<{ student: StudentReport }> = ({ student }) => (
           style={{
             borderBottom: 1,
 
-            height: 26,
+            height: 28,
             borderBottomColor: "#000000",
-            padding: 6,
+            paddingHorizontal: 6,
+            paddingVertical: 4,
           }}>
           <Text
-            style={{ textAlign: "center", fontSize: 11, fontWeight: "bold" }}>
+            style={{ textAlign: "center", fontSize: 12, fontWeight: "bold" }}>
             {student.rankings.district.rank}
           </Text>
         </View>
@@ -702,12 +737,13 @@ const RankingsTable: React.FC<{ student: StudentReport }> = ({ student }) => (
         {/* Pakistan Rank */}
         <View
           style={{
-            padding: 6,
+            paddingHorizontal: 6,
+            paddingVertical: 4,
 
-            height: 26,
+            height: 28,
           }}>
           <Text
-            style={{ textAlign: "center", fontSize: 11, fontWeight: "bold" }}>
+            style={{ textAlign: "center", fontSize: 12, fontWeight: "bold" }}>
             {student.rankings.overall.rank}
           </Text>
         </View>
@@ -724,7 +760,8 @@ const IndividualReport: React.FC<IndividualReportProps> = ({ data }) => {
       await Font.register({
         family: "Roboto",
         fonts: [
-          { src: "/fonts/Roboto-Regular.ttf" },
+          { src: "/fonts/Roboto-Regular.ttf", fontWeight: 400 },
+          { src: "/fonts/Roboto-Italic.ttf", fontStyle: "italic" },
           { src: "/fonts/Roboto-Bold.ttf", fontWeight: 700 },
           { src: "/fonts/Roboto-Black.ttf", fontWeight: 900 },
         ],
