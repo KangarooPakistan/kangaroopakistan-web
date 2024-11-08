@@ -118,10 +118,7 @@ const styles = StyleSheet.create({
     minHeight: 20, // Add minimum height to rows
     backgroundColor: "#ffffff",
   },
-  tableRowColor: {
-    backgroundColor: "#ffffff",
 
-  }
   tableRowLast: {
     flexDirection: "row",
     // paddingVertical: 6,
@@ -166,9 +163,8 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: "#444",
     backgroundColor: "#ffffff",
-
   },
-  tableRowColor:{
+  tableRowColor: {
     backgroundColor: "#f3f3f3",
     borderTopWidth: 1,
     borderTopColor: "#444",
@@ -476,7 +472,7 @@ const StudentReportPage: React.FC<{ student: StudentReport }> = ({
           </View>
         </View>
 
-        <View style={[styles.tableRow, styles.totalRow, ]}>
+        <View style={[styles.tableRow, styles.totalRow]}>
           <View style={[styles.tableCell, styles.tableCellBorder]}>
             <Text style={styles.totalLabel}>Net Score Achieved</Text>
           </View>
