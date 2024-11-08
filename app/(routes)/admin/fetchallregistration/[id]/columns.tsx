@@ -370,6 +370,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       console.error("Error generating the PDF:", error);
     }
   };
+  
   const handleAttendanceSheet = async () => {
     try {
       const response = await axios.get(

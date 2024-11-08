@@ -31,6 +31,7 @@ import SchoolReportDocument from "./SchoolReportDocument";
 import { getSession } from "next-auth/react";
 import CheckList from "./CheckList";
 import { CgMoreO } from "react-icons/cg";
+import AttendanceSheet from "@/app/(routes)/admin/fetchallregistration/[id]/AttendanceSheet";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -358,6 +359,85 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       );
     }
   };
+  const generatePdfBlobForAttendanceSheet = async (
+    schoolData: Students[],
+    profileData: profileData
+  ): Promise<Blob> => {
+    const doc = (
+      <AttendanceSheet schoolData={schoolData} profileData={profileData} />
+    );
+
+    const asPdf = pdf(doc); // Create an empty PDF instance
+    const blob = await asPdf.toBlob();
+    return blob;
+  };
+  const handleAttendanceSheet = async () => {
+    try {
+      const response = await axios.get(
+        `/api/users/pdfdownload/${registration.id}`
+      );
+      console.log("response");
+      console.log(response);
+      const res = await axios.get(
+        `/api/users/allusers/getschoolbyregid/${registration.id}`
+      );
+      console.log(res.data.contestId);
+      const contestData = await axios.get(
+        `/api/users/contests/${res.data.contestId}`
+      );
+      console.log(contestData.data);
+      console.log(contestData.data.name);
+      // console.log("res");
+      // console.log(res.data.user.p_fName);
+      const profileData: profileData = {
+        p_Name: res.data.user.p_Name,
+        c_Name: res.data.user.c_Name,
+        email: res.data.user.email,
+        contactNumber: res.data.user.contactNumber,
+        contestName: contestData.data.name,
+        contestCh: contestData.data.contestCh,
+        contestNo: contestData.data.contestNo,
+      };
+
+      // console.log(response.data);
+      const schoolData = response.data;
+
+      schoolData.sort((a: Student, b: Student) => {
+        const extractClassAndSerial = (rollNumber: string) => {
+          const parts = rollNumber.split("-");
+          const classNumber = parseInt(parts[parts.length - 3], 10);
+          const serialNumber = parseInt(parts[parts.length - 2], 10);
+          return { class: classNumber, serial: serialNumber };
+        };
+
+        const aClassAndSerial = extractClassAndSerial(a.rollNumber);
+        const bClassAndSerial = extractClassAndSerial(b.rollNumber);
+
+        if (aClassAndSerial.class < bClassAndSerial.class) {
+          return -1;
+        }
+        if (aClassAndSerial.class > bClassAndSerial.class) {
+          return 1;
+        }
+        if (aClassAndSerial.serial < bClassAndSerial.serial) {
+          return -1;
+        }
+        if (aClassAndSerial.serial > bClassAndSerial.serial) {
+          return 1;
+        }
+        return 0;
+      });
+
+      const schoolId = schoolData[0].schoolId;
+      const blob = await generatePdfBlobForAttendanceSheet(
+        schoolData,
+        profileData
+      );
+      saveAs(blob, `attendance_sheet_${schoolId}.pdf`);
+    } catch (error) {
+      console.error("Error generating the PDF:", error);
+    }
+  };
   return (
     <>
       <div className="hidden md:block">
@@ -410,6 +490,11 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
               className="border-y-2 border-solid"
               onClick={handleSheet}>
               Download Student Details
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="border-y-2 border-solid"
+              onClick={handleAttendanceSheet}>
+              Download Attendance Sheet
             </DropdownMenuItem>
             <DropdownMenuItem
               className="border-y-2 border-solid"
