@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFF",
   },
   header: {
-    fontSize: "16px",
+    fontSize: "14px",
     textTransform: "uppercase",
     textAlign: "center",
     marginVertical: "10px",

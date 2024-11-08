@@ -17,6 +17,86 @@ import { useState } from "react";
 import { pdf } from "@react-pdf/renderer";
 import { saveAs } from "file-saver";
 import SchoolAwardsPdf from "./SchoolAwardsPdf/SchoolAwardsPdf";
+import IndividualReport from "./IndividualReport/IndividualReport";
+
+export interface StudentReport {
+  schoolName: string;
+  rollNumber: string;
+  city: string;
+  studentName: string;
+  fatherName: string;
+  level: string;
+  class: string;
+  schoolAddress: string;
+  totalMarks: number;
+  score: number;
+  creditScore: number;
+  cRow1: number;
+  cRow2: number;
+  cRow3: number;
+  wrong: number;
+  cTotal: number;
+  missing: number;
+  percentage: number;
+  constestNo: number;
+  year: number;
+  rankings: {
+    school: {
+      rank: number;
+      totalParticipants: number;
+    };
+    district: {
+      rank: number;
+      totalParticipants: number;
+    };
+    overall: {
+      rank: number;
+      totalParticipants: number;
+    };
+  };
+  contestName: string;
+  suffix: string;
+}
+
+interface ApiResponse {
+  scores: Array<{
+    rollNo: string;
+    totalMarks: number;
+    score: number;
+    creditScore: number;
+    cRow1: number;
+    cRow2: number;
+    cRow3: number;
+    wrong: number;
+    cTotal: number;
+    missing: number;
+    percentage: number;
+
+    rankings: {
+      school: { rank: number; totalParticipants: number };
+      district: { rank: number; totalParticipants: number };
+      overall: { rank: number; totalParticipants: number };
+    };
+    student: {
+      studentName: string;
+      fatherName: string;
+      class: string;
+      level: string;
+    };
+    contest: {
+      name: string;
+      contestNo: number;
+    };
+    parsedRollNumber: {
+      suffix: string;
+      year: number;
+    };
+  }>;
+  city: string;
+
+  schoolName: string;
+  schoolAddress: string;
+}
 
 // Types
 export interface SchoolResultPdf {
@@ -72,6 +152,34 @@ type Results = {
 
 type SchoolResultsProp = {
   schoolResult: Results;
+};
+
+const transformResponse = (response: ApiResponse): StudentReport[] => {
+  return response.scores.map((score) => ({
+    schoolName: response.schoolName,
+    city: response.city,
+    rollNumber: score.rollNo,
+    studentName: score.student.studentName,
+    fatherName: score.student.fatherName,
+    level: score.student.level,
+    class: score.student.class,
+    schoolAddress: response.schoolAddress,
+    totalMarks: score.totalMarks,
+    score: score.score,
+    creditScore: score.creditScore,
+    cRow1: score.cRow1,
+    cRow2: score.cRow2,
+    cRow3: score.cRow3,
+    wrong: score.wrong,
+    cTotal: score.cTotal,
+    missing: score.missing,
+    percentage: score.percentage,
+    rankings: score.rankings,
+    constestNo: score.contest.contestNo,
+    contestName: score.contest.name,
+    suffix: score.parsedRollNumber.suffix,
+    year: score.parsedRollNumber.year,
+  }));
 };
 
 // Helper Functions
@@ -166,6 +274,22 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
       throw error;
     }
   }
+  async function generatePdfBlobForIR(data: StudentReport[]) {
+    try {
+      // Validate data before passing to PDF component
+      // if (!data || (!data.results && !data.statistics)) {
+      //   throw new Error("Invalid data structure for PDF generation");
+      // }
+      console.log(data);
+
+      const doc = <IndividualReport data={data} />;
+      const asPdf = pdf(doc);
+      return await asPdf.toBlob();
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      throw error;
+    }
+  }
 
   // Usage in your component:
   const handleView = async () => {
@@ -211,6 +335,18 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
       setIsLoading(false);
     }
   };
+  const handleIndividualReport = async () => {
+    const response = await axios.get<ApiResponse>(
+      `/api/results/individualreports/${params.contestId}/${schoolResult.schoolId}`
+    );
+    console.log(response);
+
+    const studentResults: StudentReport[] = transformResponse(response.data);
+    const blob = await generatePdfBlobForIR(studentResults);
+    saveAs(blob, `School_${schoolResult.schoolId}_IndividualReport.pdf`);
+    // Now you can work with the transformed data
+    console.log(studentResults);
+  };
 
   return (
     <>
@@ -232,6 +368,12 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
               disabled={isLoading}>
               {isLoading ? "Downloading..." : "Download School Result"}
             </DropdownMenuItem>
+            {/* <DropdownMenuItem
+              className="border-y-2 border-solid"
+              onClick={handleIndividualReport}
+              disabled={isLoading}>
+              {isLoading ? "Downloading..." : "Download Individual Report "}
+            </DropdownMenuItem> */}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
@@ -243,6 +385,13 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
           disabled={isLoading}>
           {isLoading ? "Downloading..." : "Download School Result"}
         </Button>
+        {/* <Button
+          className="text-[11px]"
+          size="sm"
+          onClick={handleIndividualReport}
+          disabled={isLoading}>
+          {isLoading ? "Downloading..." : "Download Individual Report "}
+        </Button> */}
       </div>
     </>
   );
