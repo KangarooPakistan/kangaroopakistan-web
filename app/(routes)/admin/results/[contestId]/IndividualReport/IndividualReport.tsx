@@ -118,6 +118,10 @@ const styles = StyleSheet.create({
     minHeight: 20, // Add minimum height to rows
     backgroundColor: "#ffffff",
   },
+  tableRowColor: {
+    backgroundColor: "#ffffff",
+
+  }
   tableRowLast: {
     flexDirection: "row",
     // paddingVertical: 6,
@@ -150,7 +154,7 @@ const styles = StyleSheet.create({
   tableCellHeader: {
     flex: 1,
     paddingHorizontal: 8,
-    color: "#333",
+    color: "#f3f3f3",
     fontSize: 12,
     fontWeight: "bold",
   },
@@ -159,7 +163,13 @@ const styles = StyleSheet.create({
     color: "#444",
   },
   totalRow: {
-    backgroundColor: "#f8f8f8",
+    borderTopWidth: 1,
+    borderTopColor: "#444",
+    backgroundColor: "#ffffff",
+
+  },
+  tableRowColor:{
+    backgroundColor: "#f3f3f3",
     borderTopWidth: 1,
     borderTopColor: "#444",
   },
@@ -168,7 +178,7 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   creditScoreRow: {
-    backgroundColor: "#f0f7ff",
+    backgroundColor: "#d9e2f3",
   },
   creditScoreValue: {
     color: "#000",
@@ -455,7 +465,7 @@ const StudentReportPage: React.FC<{ student: StudentReport }> = ({
           </View>
         </View>
 
-        <View style={[styles.tableRow, styles.totalRow]}>
+        <View style={[styles.tableRow, styles.tableRowColor]}>
           <View style={[styles.tableCell, styles.tableCellBorder]}>
             <Text style={styles.totalLabel}>Negative Scores</Text>
           </View>
@@ -466,7 +476,7 @@ const StudentReportPage: React.FC<{ student: StudentReport }> = ({
           </View>
         </View>
 
-        <View style={[styles.tableRow, styles.totalRow]}>
+        <View style={[styles.tableRow, styles.totalRow, ]}>
           <View style={[styles.tableCell, styles.tableCellBorder]}>
             <Text style={styles.totalLabel}>Net Score Achieved</Text>
           </View>
@@ -539,6 +549,7 @@ const RankingsTable: React.FC<{ student: StudentReport }> = ({ student }) => (
         <View
           style={{
             borderBottom: 1,
+            backgroundColor: "#f2f2f2",
             borderBottomColor: "#000000",
             padding: 8,
             justifyContent: "center",
@@ -680,6 +691,7 @@ const RankingsTable: React.FC<{ student: StudentReport }> = ({ student }) => (
         <View
           style={{
             borderBottom: 1,
+            backgroundColor: "#f2f2f2",
             borderBottomColor: "#000000",
             // padding: 6,
             minHeight: 43,
