@@ -699,8 +699,8 @@ const RankingsTable: React.FC<{ student: StudentReport }> = ({ student }) => (
               fontWeight: "bold",
               fontSize: 12,
               paddingHorizontal: 6,
-              paddingVertical: 12,
-              height: 38,
+              paddingVertical: 8,
+              height: 42,
 
               borderRightColor: "#000000",
             }}>
