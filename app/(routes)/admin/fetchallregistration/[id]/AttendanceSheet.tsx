@@ -664,9 +664,8 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
         <Text style={styles.paragraph}>Dear Principal,</Text>
         <Text style={styles.paragraph}>
           We are pleased to inform you that your school is participating in the
-          International Kangaroo Science Contest (IKSC) 2024. Attached with this
-          letter are the contest question booklets and answer sheets for the
-          participating students.
+          {profileData?.contestName}. Attached with this letter are the contest
+          question booklets and answer sheets for the participating students.
         </Text>
         <Text style={styles.paragraph}>
           Please find below the list of students from your school who have
