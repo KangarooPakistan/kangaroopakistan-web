@@ -393,7 +393,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
                 style={{
                   verticalAlign: "super",
                   fontSize: 10,
-                  // textTransform: "uppercase",
+                  textTransform: "lowercase",
                 }}>
                 {profileData?.contestNo
                   ? getOrdinalSuffix(profileData.contestNo)
