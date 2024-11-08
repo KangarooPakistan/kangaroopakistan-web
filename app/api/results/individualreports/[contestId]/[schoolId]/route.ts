@@ -219,7 +219,9 @@ export async function GET(
 
     if (!schoolScores || schoolScores.length === 0) {
       return NextResponse.json(
-        { message: "No scores found for this school" },
+        {
+          message: `No scores found for this school ${paddedSchoolId} ,${allContestScores} `,
+        },
         { status: 404 }
       );
     }
