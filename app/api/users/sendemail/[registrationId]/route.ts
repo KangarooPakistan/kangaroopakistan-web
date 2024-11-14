@@ -129,7 +129,7 @@ export async function GET(
     // };
 
     const mailOptions: SendMailOptions = {
-      to: "kainatkiranrashid2@gmail.com",
+      to: schoolDetails?.email,
       subject: `Verification of Registration Details for ${contestNameShort} ${year}`,
       html: `<p><b>Dear Principal,</b></p>
       <p>Congratulations on registering for the ${contestName} ${year}</p>
