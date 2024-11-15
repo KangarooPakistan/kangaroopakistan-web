@@ -130,7 +130,12 @@ export async function GET(
 
     const mailOptions: SendMailOptions = {
       from: process.env.AWS_SMTP_EMAIL,
-      to: schoolDetails?.email,
+      to: [
+        schoolDetails?.email || "",
+        schoolDetails?.p_email || "",
+        schoolDetails?.c_email || "",
+      ],
+
       subject: `Verification of Registration Details for ${contestNameShort} ${year}`,
       html: `<p><b>Dear Principal,</b></p>
       <p>Congratulations on registering for the ${contestName} ${year}</p>
