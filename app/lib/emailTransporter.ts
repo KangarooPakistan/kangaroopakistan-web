@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer";
 console.log("process.env.NODEMAILER_EMAIL");
-console.log(process.env.AWS_SMTP_USER);
-console.log(process.env.AWS_SMTP_PASS);
+// console.log(process.env.AWS_SMTP_USER);
+// console.log(process.env.AWS_SMTP_PASS);
 
 const transporter = nodemailer.createTransport({
   // host: "smtpout.secureserver.net",
