@@ -129,6 +129,7 @@ export async function GET(
     // };
 
     const mailOptions: SendMailOptions = {
+      from: process.env.AWS_SMTP_EMAIL,
       to: schoolDetails?.email,
       subject: `Verification of Registration Details for ${contestNameShort} ${year}`,
       html: `<p><b>Dear Principal,</b></p>
@@ -153,7 +154,8 @@ export async function GET(
     };
 
     try {
-      await emailManager.sendEmail(mailOptions);
+      // await emailManager.sendEmail(mailOptions);
+      await transporter.sendMail(mailOptions);
       return NextResponse.json("Email sent Successfully", { status: 200 });
     } catch (error) {
       console.error("Failed to send email:", error);
