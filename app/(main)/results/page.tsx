@@ -54,6 +54,14 @@ interface StudentScore {
   }>;
 }
 
+interface ApiError {
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
+}
+
 const StudentResultsPage = () => {
   const [rollNumber, setRollNumber] = useState<string>("");
   const [studentData, setStudentData] = useState<StudentScore | null>(null);
@@ -81,7 +89,10 @@ const StudentResultsPage = () => {
       setStudentData(response.data);
     } catch (err) {
       console.log(err);
-      setError(err ? err.response.data.message : "An error occurred");
+      const apiError = err as ApiError;
+      setError(apiError.response?.data?.message || "An error occurred");
+
+      // setError(err ? err.response.data.message : "An error occurred");
     } finally {
       setLoading(false);
     }
