@@ -26,6 +26,24 @@ export async function GET(
     const schoolDetails = await db.user.findFirst({
       where: { schoolId: registrationData?.schoolId },
     });
+    const aminaEmail = await db.user.findFirst({
+      where: {
+        schoolId: 814,
+      },
+      select: {
+        email: true,
+      },
+    });
+    const ebdullahEmail = await db.user.findFirst({
+      where: {
+        schoolId: 292,
+      },
+      select: {
+        email: true,
+      },
+    });
+    console.log(aminaEmail?.email);
+    console.log(ebdullahEmail?.email);
     const totalStudents = await db.student.findMany({
       where: { registrationId: params.registrationId },
     });
@@ -134,13 +152,15 @@ export async function GET(
         schoolDetails?.email || "",
         schoolDetails?.p_email || "",
         schoolDetails?.c_email || "",
+        aminaEmail?.email || "",
+        ebdullahEmail?.email || "",
       ],
 
-      subject: `Verification of Registration Details for ${contestNameShort} ${year}`,
+      subject: ` ${contestNameShort} ${year} Registration Confirmation`,
       html: `<p><b>Dear Principal,</b></p>
       <p>Congratulations on registering for the ${contestName} ${year}</p>
       <p>The contest will be held on ${contestDate?.contestDate} in your institute under your supervision.</p>
-      <p>Below are the details of your institute. Please verify, as these details will be mentioned in all official documents:</p>
+      <p>Below are the details of your institute. Please verify, as these details will be mentioned in all the official documents:</p>
       <p> School ID: ${schoolDetails?.schoolId}</p>
       <p> School Name: ${schoolDetails?.schoolName}</p>
       <p> School Address: ${schoolDetails?.schoolAddress}</p>
