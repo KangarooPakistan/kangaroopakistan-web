@@ -81,9 +81,7 @@ const StudentResultsPage = () => {
       setStudentData(response.data);
     } catch (err) {
       console.log(err);
-      setError(
-        err instanceof Error ? err.response.data.message : "An error occurred"
-      );
+      setError(err ? err.response.data.message : "An error occurred");
     } finally {
       setLoading(false);
     }
