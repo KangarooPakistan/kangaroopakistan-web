@@ -173,6 +173,14 @@ const Login = () => {
                     Sign up here
                   </Link>
                 </p>
+                <p className="text-sm font-light text-gray-500 w-full text-center">
+                  {/* Dont have an account? &nbsp; */}
+                  <Link
+                    className="font-medium text-blue-600 hover:underline"
+                    href="/results">
+                    View Your Result
+                  </Link>
+                </p>
               </form>
             </Form>
           </div>

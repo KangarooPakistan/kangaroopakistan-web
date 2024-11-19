@@ -18,6 +18,7 @@ const AuthRedirect = () => {
       status === "unauthenticated" &&
       pathname !== "/" &&
       pathname !== "/register" &&
+      pathname !== "/results" &&
       pathname !== "/reset-password" &&
       !pathname.startsWith("/new-password/")
     ) {

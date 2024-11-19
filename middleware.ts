@@ -8,7 +8,7 @@ export async function middleware(request: NextRequest) {
     const token = await getToken({ req: request });
     const userRole = token?.role as string;
 
-    const publicRoutes = ["/login", "/register", "/reset-password"];
+    const publicRoutes = ["/login", "/register", "/reset-password", "/results"];
     const roleBasedRoutes = {
       Admin: ["/admin", "/dashboard"],
       User: ["/user", "/dashboard"],
@@ -46,6 +46,8 @@ export const config = {
     "/forgot-password",
     "/admin/:path*",
     "/user/:path*",
+
+    "/results",
     "/employee/:path*", // Added matcher for employee routes
     "/dashboard",
     "/user/dashboard",
