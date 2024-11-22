@@ -10,6 +10,7 @@ import { pdf } from "@react-pdf/renderer";
 import { saveAs } from "file-saver";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import * as XLSX from "xlsx";
 
 export type Contest = {
   contestDate: string;
@@ -70,6 +71,7 @@ const Results = () => {
   const [loadData, setLoadData] = useState(true);
   const router = useRouter();
   const [result, setResult] = useState<Result[]>([]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -253,6 +255,35 @@ const Results = () => {
       console.error("Error fetching school result:", error);
     }
   };
+  const handleGoldExcel = async () => {
+    try {
+      setIsLoading(true);
+      const schoolResultGoldResp = await axios.get(
+        `/api/results/getschoolsdata/GOLD`
+      );
+      console.log("schoolResultGoldResp");
+      console.log(schoolResultGoldResp);
+
+      const studentDetails = schoolResultGoldResp.data.map((item: any) => ({
+        schoolName: item.schoolName,
+        studentName: item.studentDetails.studentName,
+        fatherName: item.studentDetails.fatherName,
+        rollNumber: item.score.rollNo,
+        class: item.studentDetails.class,
+      }));
+      const downloadExcel = () => {
+        const workbook = XLSX.utils.book_new();
+        const worksheet = XLSX.utils.json_to_sheet(studentDetails);
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Student Details");
+        XLSX.writeFile(workbook, "student_details_gold_winners.xlsx");
+      };
+      downloadExcel();
+
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error fetching school result:", error);
+    }
+  };
 
   const handleSilver = async () => {
     try {
@@ -274,6 +305,34 @@ const Results = () => {
       saveAs(blob, pdfName);
 
       console.log(convertedData);
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error fetching school result:", error);
+    }
+  };
+  const handleSilverExcel = async () => {
+    try {
+      setIsLoading(true);
+
+      const schoolResultGoldResp = await axios.get(
+        `/api/results/getschoolsdata/SILVER`
+      );
+      console.log(schoolResultGoldResp);
+      const studentDetails = schoolResultGoldResp.data.map((item: any) => ({
+        schoolName: item.schoolName,
+        studentName: item.studentDetails.studentName,
+        fatherName: item.studentDetails.fatherName,
+        rollNumber: item.score.rollNo,
+        class: item.studentDetails.class,
+      }));
+      const downloadExcel = () => {
+        const workbook = XLSX.utils.book_new();
+        const worksheet = XLSX.utils.json_to_sheet(studentDetails);
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Student Details");
+        XLSX.writeFile(workbook, "student_details_silver_winners.xlsx");
+      };
+      downloadExcel();
+
       setIsLoading(false);
     } catch (error) {
       console.error("Error fetching school result:", error);
@@ -304,6 +363,35 @@ const Results = () => {
       console.error("Error fetching school result:", error);
     }
   };
+  const handleBronzeExcel = async () => {
+    try {
+      setIsLoading(true);
+
+      const schoolResultGoldResp = await axios.get(
+        `/api/results/getschoolsdata/BRONZE`
+      );
+      console.log(schoolResultGoldResp);
+
+      const studentDetails = schoolResultGoldResp.data.map((item: any) => ({
+        schoolName: item.schoolName,
+        studentName: item.studentDetails.studentName,
+        fatherName: item.studentDetails.fatherName,
+        rollNumber: item.score.rollNo,
+        class: item.studentDetails.class,
+      }));
+      const downloadExcel = () => {
+        const workbook = XLSX.utils.book_new();
+        const worksheet = XLSX.utils.json_to_sheet(studentDetails);
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Student Details");
+        XLSX.writeFile(workbook, "student_details_bronze_winners.xlsx");
+      };
+      downloadExcel();
+
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error fetching school result:", error);
+    }
+  };
   const handleThreeStar = async () => {
     try {
       setIsLoading(true);
@@ -324,6 +412,35 @@ const Results = () => {
       saveAs(blob, pdfName);
 
       console.log(convertedData);
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error fetching school result:", error);
+    }
+  };
+  const handleThreeStarExcel = async () => {
+    try {
+      setIsLoading(true);
+
+      const schoolResultGoldResp = await axios.get(
+        `/api/results/getschoolsdata/THREE STAR`
+      );
+      console.log(schoolResultGoldResp);
+
+      const studentDetails = schoolResultGoldResp.data.map((item: any) => ({
+        schoolName: item.schoolName,
+        studentName: item.studentDetails.studentName,
+        fatherName: item.studentDetails.fatherName,
+        rollNumber: item.score.rollNo,
+        class: item.studentDetails.class,
+      }));
+      const downloadExcel = () => {
+        const workbook = XLSX.utils.book_new();
+        const worksheet = XLSX.utils.json_to_sheet(studentDetails);
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Student Details");
+        XLSX.writeFile(workbook, "student_details_three_star_winners.xlsx");
+      };
+      downloadExcel();
+
       setIsLoading(false);
     } catch (error) {
       console.error("Error fetching school result:", error);
@@ -354,6 +471,34 @@ const Results = () => {
       console.error("Error fetching school result:", error);
     }
   };
+  const handleTwoStarExcel = async () => {
+    try {
+      setIsLoading(true);
+
+      const schoolResultGoldResp = await axios.get(
+        `/api/results/getschoolsdata/TWO STAR`
+      );
+      console.log(schoolResultGoldResp);
+      const studentDetails = schoolResultGoldResp.data.map((item: any) => ({
+        schoolName: item.schoolName,
+        studentName: item.studentDetails.studentName,
+        fatherName: item.studentDetails.fatherName,
+        rollNumber: item.score.rollNo,
+        class: item.studentDetails.class,
+      }));
+      const downloadExcel = () => {
+        const workbook = XLSX.utils.book_new();
+        const worksheet = XLSX.utils.json_to_sheet(studentDetails);
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Student Details");
+        XLSX.writeFile(workbook, "student_details_two_star_winners.xlsx");
+      };
+      downloadExcel();
+
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error fetching school result:", error);
+    }
+  };
   const handleOneStar = async () => {
     try {
       setIsLoading(true);
@@ -379,6 +524,35 @@ const Results = () => {
       console.error("Error fetching school result:", error);
     }
   };
+  const handleOneStarExcel = async () => {
+    try {
+      setIsLoading(true);
+
+      const schoolResultGoldResp = await axios.get(
+        `/api/results/getschoolsdata/ONE STAR`
+      );
+      console.log(schoolResultGoldResp);
+
+      const studentDetails = schoolResultGoldResp.data.map((item: any) => ({
+        schoolName: item.schoolName,
+        studentName: item.studentDetails.studentName,
+        fatherName: item.studentDetails.fatherName,
+        rollNumber: item.score.rollNo,
+        class: item.studentDetails.class,
+      }));
+      const downloadExcel = () => {
+        const workbook = XLSX.utils.book_new();
+        const worksheet = XLSX.utils.json_to_sheet(studentDetails);
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Student Details");
+        XLSX.writeFile(workbook, "student_details_one_star_winners.xlsx");
+      };
+      downloadExcel();
+
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error fetching school result:", error);
+    }
+  };
   const handleParticipation = async () => {
     try {
       setIsLoading(true);
@@ -399,6 +573,35 @@ const Results = () => {
       saveAs(blob, pdfName);
 
       console.log(convertedData);
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error fetching school result:", error);
+    }
+  };
+  const handleParticipationExcel = async () => {
+    try {
+      setIsLoading(true);
+
+      const schoolResultGoldResp = await axios.get(
+        `/api/results/getschoolsdata/participation`
+      );
+      console.log(schoolResultGoldResp);
+
+      const studentDetails = schoolResultGoldResp.data.map((item: any) => ({
+        schoolName: item.schoolName,
+        studentName: item.studentDetails.studentName,
+        fatherName: item.studentDetails.fatherName,
+        rollNumber: item.score.rollNo,
+        class: item.studentDetails.class,
+      }));
+      const downloadExcel = () => {
+        const workbook = XLSX.utils.book_new();
+        const worksheet = XLSX.utils.json_to_sheet(studentDetails);
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Student Details");
+        XLSX.writeFile(workbook, "student_details_participation_winners.xlsx");
+      };
+      downloadExcel();
+
       setIsLoading(false);
     } catch (error) {
       console.error("Error fetching school result:", error);
@@ -485,6 +688,65 @@ const Results = () => {
             Download Excel Sheet
           </Button>
         </div>
+        <div className="py-2 md:py-4 flex flex-wrap justify-between gap-2  items-center border-gray-300">
+          <Button
+            className=" font-medium text-[15px]  tracking-wide"
+            variant="default"
+            size="lg"
+            disabled={isLoading}
+            onClick={handleGoldExcel}>
+            Gold Winners Excel
+          </Button>
+
+          <Button
+            className=" font-medium text-[15px]  tracking-wide"
+            variant="default"
+            size="lg"
+            disabled={isLoading}
+            onClick={handleSilverExcel}>
+            Silver Winners Excel
+          </Button>
+          <Button
+            className=" font-medium text-[15px]  tracking-wide"
+            variant="default"
+            size="lg"
+            disabled={isLoading}
+            onClick={handleBronzeExcel}>
+            Bronze Winners Excel
+          </Button>
+          <Button
+            className=" font-medium text-[15px]  tracking-wide"
+            variant="default"
+            size="lg"
+            disabled={isLoading}
+            onClick={handleThreeStarExcel}>
+            Three Star Excel
+          </Button>
+          <Button
+            className=" font-medium text-[15px]  tracking-wide"
+            variant="default"
+            size="lg"
+            disabled={isLoading}
+            onClick={handleTwoStarExcel}>
+            Two Star Excel
+          </Button>
+          <Button
+            className=" font-medium text-[15px]  tracking-wide"
+            variant="default"
+            size="lg"
+            disabled={isLoading}
+            onClick={handleOneStarExcel}>
+            One Star Winners Excel
+          </Button>
+          <Button
+            className=" font-medium text-[15px]  tracking-wide"
+            variant="default"
+            size="lg"
+            disabled={isLoading}
+            onClick={handleParticipationExcel}>
+            Participation Excel
+          </Button>
+        </div>
       </div>
       <div className="block md:hidden">
         <div className="py-2 md:py-4 flex flex-wrap justify-between gap-2  items-center border-gray-300">
@@ -558,6 +820,64 @@ const Results = () => {
             disabled={loadData}
             onClick={handleExcel}>
             Download Excel Sheet
+          </Button>
+        </div>
+        <div className="py-2 md:py-4 flex flex-wrap justify-between gap-2  items-center border-gray-300">
+          <Button
+            className=" font-medium text-[11px]  tracking-wide"
+            variant="default"
+            size="sm"
+            disabled={isLoading}
+            onClick={handleGoldExcel}>
+            Gold Winners Excel
+          </Button>
+          <Button
+            className="font-medium text-[11px]  tracking-wide"
+            variant="default"
+            size="sm"
+            disabled={isLoading}
+            onClick={handleSilverExcel}>
+            Silver Winners Excel
+          </Button>
+          <Button
+            className=" font-medium text-[11px]  tracking-wide"
+            variant="default"
+            size="sm"
+            disabled={isLoading}
+            onClick={handleBronze}>
+            Bronze Winners Excel
+          </Button>
+          <Button
+            className=" font-medium text-[11px]  tracking-wide"
+            variant="default"
+            size="sm"
+            disabled={isLoading}
+            onClick={handleThreeStar}>
+            Three Star Winner Excel
+          </Button>
+          <Button
+            className=" font-medium text-[11px]  tracking-wide"
+            variant="default"
+            size="sm"
+            disabled={isLoading}
+            onClick={handleTwoStar}>
+            Two Star Winner Excel
+          </Button>
+          <Button
+            className=" font-medium text-[11px]  tracking-wide"
+            variant="default"
+            size="sm"
+            disabled={isLoading}
+            onClick={handleOneStar}>
+            One Star Winner Excel
+          </Button>
+          <Button
+            className=" font-medium text-[11px]  tracking-wide"
+            variant="default"
+            size="sm"
+            disabled={isLoading}
+            onClick={handleParticipation}>
+            Participation Winners Excel
           </Button>
         </div>
       </div>
