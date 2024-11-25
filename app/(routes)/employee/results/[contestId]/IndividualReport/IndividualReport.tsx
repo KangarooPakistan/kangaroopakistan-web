@@ -342,10 +342,10 @@ const StudentReportPage: React.FC<{ student: StudentReport }> = ({
           <Text style={styles.value}>{student.schoolName}</Text>
         </View>
 
-        {/* <View style={styles.infoRow2}>
+        <View style={styles.infoRow2}>
           <Text style={styles.label}>Address:</Text>
           <Text style={styles.value}>{student.schoolAddress}</Text>
-        </View> */}
+        </View>
       </View>
 
       {/* Contest Information */}
