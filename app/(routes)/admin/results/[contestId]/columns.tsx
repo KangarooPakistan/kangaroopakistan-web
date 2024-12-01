@@ -347,6 +347,9 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
     // Now you can work with the transformed data
     console.log(studentResults);
   };
+  const handleViewResults = async () => {
+    router.push(`/admin/results/${params.contestId}/${schoolResult.schoolId}`);
+  };
 
   return (
     <>
@@ -362,6 +365,12 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
             <DropdownMenuLabel className="border-y-2 border-solid">
               Actions
             </DropdownMenuLabel>
+            <DropdownMenuItem
+              className="border-y-2 border-solid"
+              onClick={handleViewResults}
+              disabled={isLoading}>
+              {isLoading ? "Loading..." : "View"}
+            </DropdownMenuItem>
             <DropdownMenuItem
               className="border-y-2 border-solid"
               onClick={handleView}
