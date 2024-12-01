@@ -22,13 +22,13 @@ type User = {
   updatedAt: string;
   fax: string;
   bankTitle: string | null;
-  p_fName: string | null;
+  p_Name: string | null;
   p_mName: string | null;
   p_lName: string | null;
   p_contact: string | null;
   p_phone: string | null;
   p_email: string | null;
-  c_fName: string | null;
+  c_Name: string | null;
   c_mName: string | null;
   c_lName: string | null;
   c_contact: string | null;
@@ -49,31 +49,31 @@ const Users = () => {
         setUsers(response.data);
         console.log(response.data);
         const usersForExcel = response.data.map((user: User) => ({
-          email: user.email,
+          "School id": user.schoolId,
+          "School Name": user.schoolName, // Optional: only for non-admin users
+          "School Address": user.schoolAddress,
+          "District Name": user.district,
+          "School Email": user.email,
+          "Contact Number": user.contactNumber,
+          "Principal Name": user.p_Name,
+          "Principal Cell #": user.p_contact,
+          "Principal Phone #": user.p_phone,
+          "Principal Email": user.p_email,
+          "Coordinator Name": user.c_Name,
+          "Coordinator Cell #": user.c_contact,
+          "Coordinator Phone #": user.c_phone,
+          "Coordinator Email #": user.c_email,
+          "Coordinator Account Details": user.c_accountDetails,
+          "School Bank Title": user.bankTitle,
           createdAt: new Date(user.createdAt).toLocaleString(),
           updatedAt: new Date(user.updatedAt).toLocaleString(),
           role: user.role,
-          schoolId: user.schoolId,
-          schoolName: user.schoolName, // Optional: only for non-admin users
-          contactNumber: user.contactNumber,
-          schoolAddress: user.schoolAddress,
-          district: user.district,
-          tehsil: user.tehsil,
+          // tehsil: user.tehsil,
           fax: user.fax,
-          bankTitle: user.bankTitle,
-          p_fName: user.p_fName,
-          p_mName: user.p_mName,
-          p_lName: user.p_lName,
-          p_contact: user.p_contact,
-          p_phone: user.p_phone,
-          p_email: user.p_email,
-          c_fName: user.c_fName,
-          c_mName: user.c_mName,
-          c_lName: user.c_lName,
-          c_contact: user.c_contact,
-          c_phone: user.c_phone,
-          c_email: user.c_email,
-          c_accountDetails: user.c_accountDetails,
+          // p_mName: user.p_mName,
+          // p_lName: user.p_lName,
+          // c_mName: user.c_mName,
+          // c_lName: user.c_lName,
         }));
         console.log(usersForExcel);
         setExcel(usersForExcel);
