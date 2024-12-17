@@ -374,9 +374,20 @@ const StudentReportPage: React.FC<{ student: StudentReport }> = ({
       <View style={styles.attemptedSection}>
         <View style={{ flexDirection: "row", marginBottom: 5 }}>
           <Text>You attempted </Text>
-          <Text style={{ fontWeight: "bold" }}>{student.cRow1} </Text>
+          <Text style={{ fontWeight: "bold" }}>
+            {parseInt(student.class) <= 4
+              ? 8 - student.missingQuestionsCount[0]
+              : 10 - student.missingQuestionsCount[0]}{" "}
+          </Text>
           <Text>out of </Text>
-          <Text style={{ fontWeight: "bold" }}>8 </Text>
+          <Text style={{ fontWeight: "bold" }}>
+            {parseInt(student.class) === 1 ||
+            parseInt(student.class) === 2 ||
+            parseInt(student.class) === 3 ||
+            parseInt(student.class) === 4
+              ? 8
+              : 10}{" "}
+          </Text>
           <Text>questions of </Text>
           <Text style={{ fontWeight: "bold" }}>3 </Text>
           <Text>marks each and your correct answers were </Text>
@@ -385,20 +396,37 @@ const StudentReportPage: React.FC<{ student: StudentReport }> = ({
         </View>
         <View style={{ flexDirection: "row", marginBottom: 5 }}>
           <Text>You attempted </Text>
-          <Text style={{ fontWeight: "bold" }}>{student.cRow2} </Text>
+          <Text style={{ fontWeight: "bold" }}>
+            {parseInt(student.class) <= 4
+              ? 8 - student.missingQuestionsCount[1]
+              : 10 - student.missingQuestionsCount[1]}{" "}
+          </Text>
           <Text>out of </Text>
-          <Text style={{ fontWeight: "bold" }}>8 </Text>
+          <Text style={{ fontWeight: "bold" }}>
+            {parseInt(student.class) === 1 ||
+            parseInt(student.class) === 2 ||
+            parseInt(student.class) === 3 ||
+            parseInt(student.class) === 4
+              ? 8
+              : 10}{" "}
+          </Text>
           <Text>questions of </Text>
           <Text style={{ fontWeight: "bold" }}>4 </Text>
           <Text>marks each and your correct answers were </Text>
-          <Text style={{ fontWeight: "bold" }}>{student.cRow2}</Text>
+          <Text style={{ fontWeight: "bold" }}>
+            {10 - student.missingQuestionsCount[2]}{" "}
+          </Text>
           <Text>.</Text>
         </View>
         <View style={{ flexDirection: "row", marginBottom: 5 }}>
           <Text>You attempted </Text>
           <Text style={{ fontWeight: "bold" }}>{student.cRow3} </Text>
           <Text>out of </Text>
-          <Text style={{ fontWeight: "bold" }}>8 </Text>
+          <Text style={{ fontWeight: "bold" }}>
+            {parseInt(student.class) <= 4
+              ? 8 - student.missingQuestionsCount[2]
+              : 10 - student.missingQuestionsCount[2]}{" "}
+          </Text>
           <Text>questions of </Text>
           <Text style={{ fontWeight: "bold" }}>5 </Text>
           <Text>marks each and your correct answers were </Text>

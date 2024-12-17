@@ -52,6 +52,49 @@ interface ProcessedScore
   };
 }
 
+function getMissingQuestions(
+  description: string | null,
+  studentClass: string | null
+): number[] {
+  if (!description || !studentClass) {
+    return [0, 0, 0];
+  }
+
+  const missingMatch = description.match(/Missing \{([^}]*)\}/);
+  const missingQuestions = missingMatch
+    ? missingMatch[1]
+        .trim()
+        .split(":")
+        .map((q) => q.trim())
+        .filter((q) => q.startsWith("Q") && q !== "")
+    : [];
+
+  const classNum = parseInt(studentClass, 10);
+
+  let questionRanges: [number, number][];
+  if (classNum >= 1 && classNum <= 4) {
+    questionRanges = [
+      [1, 8],
+      [9, 16],
+      [17, 24],
+    ];
+  } else {
+    questionRanges = [
+      [1, 10],
+      [11, 20],
+      [21, 30],
+    ];
+  }
+
+  return questionRanges.map(([start, end]) => {
+    const rangeCount = missingQuestions.filter((q) => {
+      const qNum = parseInt(q.replace("Q", ""), 10);
+      return qNum >= start && qNum <= end;
+    }).length;
+    return rangeCount;
+  });
+}
+
 // Helper function to convert BigInt and Decimal to Number
 const convertBigIntToNumber = (value: any): any => {
   if (value === null || value === undefined) {
@@ -120,6 +163,7 @@ const calculateClassBasedRankings = (
 // Helper function to process raw scores into ProcessedScore format
 const processRawScore = (rawScore: any): ProcessedScore => {
   // First convert all BigInts to numbers
+
   const convertedScore = convertBigIntToNumber(rawScore);
 
   return {
@@ -336,6 +380,27 @@ export async function GET(
 
     // Final conversion of any remaining BigInt values
     const finalProcessedScores = convertBigIntToNumber(processedScores);
+    const processedScoresNew = finalProcessedScores.map((score: any) => {
+      const missingQuestions = getMissingQuestions(
+        score.description,
+        score.student?.class ?? null
+      );
+
+      // Ensure missingQuestions is an array, even if it's a single number
+      const missingQuestionsArray = Array.isArray(missingQuestions)
+        ? missingQuestions
+        : [missingQuestions];
+
+      return {
+        ...score,
+        missingQuestionsCount: missingQuestionsArray,
+      };
+    });
+
+    console.log(processedScoresNew);
+
+    console.log("finalProcessedScores");
+    // console.log(finalProcessedScores);
 
     return NextResponse.json(
       {
@@ -344,7 +409,7 @@ export async function GET(
         city: schoolInfo?.city || null,
         schoolAddress: schoolInfo?.schoolAddress || null,
         totalScores: schoolScores.length,
-        scores: finalProcessedScores,
+        scores: processedScoresNew,
       },
       { status: 200 }
     );

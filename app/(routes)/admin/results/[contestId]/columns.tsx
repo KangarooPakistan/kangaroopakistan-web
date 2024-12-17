@@ -34,6 +34,8 @@ export interface StudentReport {
   cRow1: number;
   cRow2: number;
   cRow3: number;
+  missingQuestionsCount: number[];
+
   wrong: number;
   cTotal: number;
   missing: number;
@@ -67,6 +69,8 @@ interface ApiResponse {
     cRow1: number;
     cRow2: number;
     cRow3: number;
+    missingQuestionsCount: number[];
+
     wrong: number;
     cTotal: number;
     missing: number;
@@ -172,6 +176,7 @@ const transformResponse = (response: ApiResponse): StudentReport[] => {
     cRow3: score.cRow3,
     wrong: score.wrong,
     cTotal: score.cTotal,
+    missingQuestionsCount: score.missingQuestionsCount,
     missing: score.missing,
     percentage: score.percentage,
     rankings: score.rankings,
@@ -280,6 +285,7 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
       // if (!data || (!data.results && !data.statistics)) {
       //   throw new Error("Invalid data structure for PDF generation");
       // }
+      console.log("final data");
       console.log(data);
 
       const doc = <IndividualReport data={data} />;
