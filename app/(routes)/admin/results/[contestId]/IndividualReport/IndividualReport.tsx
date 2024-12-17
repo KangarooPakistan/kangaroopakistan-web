@@ -403,19 +403,12 @@ const StudentReportPage: React.FC<{ student: StudentReport }> = ({
           </Text>
           <Text>out of </Text>
           <Text style={{ fontWeight: "bold" }}>
-            {parseInt(student.class) === 1 ||
-            parseInt(student.class) === 2 ||
-            parseInt(student.class) === 3 ||
-            parseInt(student.class) === 4
-              ? 8
-              : 10}{" "}
+            {parseInt(student.class) <= 4 ? 8 : 10}{" "}
           </Text>
           <Text>questions of </Text>
           <Text style={{ fontWeight: "bold" }}>4 </Text>
           <Text>marks each and your correct answers were </Text>
-          <Text style={{ fontWeight: "bold" }}>
-            {10 - student.missingQuestionsCount[2]}{" "}
-          </Text>
+          <Text style={{ fontWeight: "bold" }}>{student.cRow2}</Text>
           <Text>.</Text>
         </View>
         <View style={{ flexDirection: "row", marginBottom: 5 }}>

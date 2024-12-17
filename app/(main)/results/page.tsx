@@ -27,6 +27,8 @@ interface StudentScore {
     };
     percentage: number | null;
     score: number;
+    missingQuestionsCount: number[];
+
     creditScore: number;
     cRow1: number;
     cRow2: number;
@@ -85,6 +87,7 @@ const StudentResultsPage = () => {
       const response = await axios.get(
         `/api/results/getbyrollnumber/${rollNumber}`
       );
+      console.log("response.data");
       console.log(response.data);
       setStudentData(response.data);
     } catch (err) {
@@ -123,6 +126,7 @@ const StudentResultsPage = () => {
         cTotal: score.cTotal, // Add if available
         missing: score.missing, // Add if available
         percentage: score.percentage || 0,
+        missingQuestionsCount: score.missingQuestionsCount,
         constestNo: score.contest.contestNo
           ? parseInt(score.contest.contestNo)
           : 0,
