@@ -97,13 +97,20 @@ const FetchAllRegistrations = () => {
   const [contestCh, setContestCh] = useState("");
   const [registerationsData, setRegistrationsData] = useState([]);
   const [studentForExcel, setStudentForExcel] = useState([]);
+  const [contestName, setContestName] = useState("");
 
   useEffect(() => {
     const controller = new AbortController();
     const signal = controller.signal;
     const fetchAndSetData = async (id: string) => {
       const registrations = await fetchData(id, signal);
-
+      const contestData = await axios.get(
+        `/api/users/contests/${registrations[0].contestId}`
+      );
+      console.log(contestData);
+      console.log("contestData");
+      console.log(contestData.data.name);
+      setContestName(contestData.data.name);
       setTotalSchools(registrations.length);
 
       const totalPayments = registrations.reduce(
@@ -387,6 +394,9 @@ const FetchAllRegistrations = () => {
     <div className="container mx-auto py-10">
       <h1 className="text-3xl text-center my-3 font-bold text-purple-600">
         Registered Schools
+      </h1>
+      <h1 className="text-3xl text-center my-3 font-bold text-purple-600">
+        {contestName}
       </h1>
       <div className="flex flex-wrap -mx-2">
         <div className="w-full md:w-1/2 px-2 mb-6 md:mb-0">
