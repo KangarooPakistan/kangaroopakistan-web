@@ -244,6 +244,8 @@ const Results = () => {
       downloadAwardCountsExcel(awardCounts);
       setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
+
       console.log(error);
       toast.error("Failed to download award counts");
     }
