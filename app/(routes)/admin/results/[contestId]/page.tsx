@@ -6,6 +6,8 @@ import { DataTable } from "./data-table";
 import { columns } from "./columns";
 import { Button } from "@/components/ui/button";
 import AwardsPdf from "./AwardsPdf/AwardsPdf";
+import { utils, writeFile } from "xlsx";
+
 import { pdf } from "@react-pdf/renderer";
 import { saveAs } from "file-saver";
 import { toast, ToastContainer } from "react-toastify";
@@ -231,11 +233,57 @@ const Results = () => {
     } catch (error) {}
   };
 
+  const handleCount = async () => {
+    try {
+      setIsLoading(true);
+      const countAwards = await axios.get(
+        `/api/results/fetchresults/${params.contestId}/count`
+      );
+      console.log(countAwards);
+      const { awardCounts } = countAwards.data;
+      downloadAwardCountsExcel(awardCounts);
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to download award counts");
+    }
+  };
+  const downloadAwardCountsExcel = (awardCounts: Record<string, number>) => {
+    // Prepare data for Excel
+    const excelData = Object.entries(awardCounts).map(([award, count]) => ({
+      "Award Level": award,
+      Count: count,
+    }));
+
+    // Add total row
+
+    // Create worksheet
+    const worksheet = utils.json_to_sheet(excelData);
+
+    // Set column widths
+    const colWidths = [
+      { wch: 15 }, // Award Level
+      { wch: 10 }, // Count
+      { wch: 12 }, // Percentage
+    ];
+    worksheet["!cols"] = colWidths;
+
+    // Create workbook
+    const workbook = {
+      Sheets: {
+        "Award Counts": worksheet,
+      },
+      SheetNames: ["Award Counts"],
+    };
+
+    // Write to file and download
+    writeFile(workbook, "award_counts.xlsx");
+  };
+
   const handleGold = async () => {
     try {
       setIsLoading(true);
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/GOLD`
+        `/api/results/getschoolsdata/${params.contestId}/GOLD`
       );
       console.log("schoolResultGoldResp");
       console.log(schoolResultGoldResp);
@@ -259,7 +307,7 @@ const Results = () => {
     try {
       setIsLoading(true);
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/GOLD`
+        `/api/results/${params.contestId}/getschoolsdata/GOLD`
       );
       console.log("schoolResultGoldResp");
       console.log(schoolResultGoldResp);
@@ -290,7 +338,7 @@ const Results = () => {
       setIsLoading(true);
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/SILVER`
+        `/api/results/getschoolsdata/${params.contestId}/SILVER`
       );
       console.log(schoolResultGoldResp);
 
@@ -315,7 +363,7 @@ const Results = () => {
       setIsLoading(true);
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/SILVER`
+        `/api/results/getschoolsdata/${params.contestId}/SILVER`
       );
       console.log(schoolResultGoldResp);
       const studentDetails = schoolResultGoldResp.data.map((item: any) => ({
@@ -343,7 +391,7 @@ const Results = () => {
       setIsLoading(true);
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/BRONZE`
+        `/api/results/getschoolsdata/${params.contestId}/BRONZE`
       );
       console.log(schoolResultGoldResp);
 
@@ -368,7 +416,7 @@ const Results = () => {
       setIsLoading(true);
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/BRONZE`
+        `/api/results/getschoolsdata/${params.contestId}/BRONZE`
       );
       console.log(schoolResultGoldResp);
 
@@ -392,12 +440,13 @@ const Results = () => {
       console.error("Error fetching school result:", error);
     }
   };
+
   const handleThreeStar = async () => {
     try {
       setIsLoading(true);
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/THREE STAR`
+        `/api/results/getschoolsdata/${params.contestId}/THREE STAR`
       );
       console.log(schoolResultGoldResp);
 
@@ -422,7 +471,7 @@ const Results = () => {
       setIsLoading(true);
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/THREE STAR`
+        `/api/results/getschoolsdata/${params.contestId}/THREE STAR`
       );
       console.log(schoolResultGoldResp);
 
@@ -451,7 +500,7 @@ const Results = () => {
       setIsLoading(true);
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/TWO STAR`
+        `/api/results/getschoolsdata/${params.contestId}/TWO STAR`
       );
       console.log(schoolResultGoldResp);
 
@@ -476,7 +525,7 @@ const Results = () => {
       setIsLoading(true);
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/TWO STAR`
+        `/api/results/getschoolsdata/${params.contestId}/TWO STAR`
       );
       console.log(schoolResultGoldResp);
       const studentDetails = schoolResultGoldResp.data.map((item: any) => ({
@@ -504,7 +553,7 @@ const Results = () => {
       setIsLoading(true);
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/ONE STAR`
+        `/api/results/getschoolsdata/${params.contestId}/ONE STAR`
       );
       console.log(schoolResultGoldResp);
 
@@ -529,7 +578,7 @@ const Results = () => {
       setIsLoading(true);
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/ONE STAR`
+        `/api/results/getschoolsdata/${params.contestId}/ONE STAR`
       );
       console.log(schoolResultGoldResp);
 
@@ -558,7 +607,7 @@ const Results = () => {
       setIsLoading(true);
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/participation`
+        `/api/results/getschoolsdata/${params.contestId}/participation`
       );
       console.log(schoolResultGoldResp);
 
@@ -583,7 +632,7 @@ const Results = () => {
       setIsLoading(true);
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/participation`
+        `/api/results/getschoolsdata/${params.contestId}/participation`
       );
       console.log(schoolResultGoldResp);
 
@@ -687,6 +736,14 @@ const Results = () => {
             onClick={handleExcel}>
             Download Excel Sheet
           </Button>
+          <Button
+            className=" font-medium text-[15px]  tracking-wide"
+            variant="default"
+            size="lg"
+            disabled={loadData}
+            onClick={handleCount}>
+            Download Total Count
+          </Button>
         </div>
         <div className="py-2 md:py-4 flex flex-wrap justify-between gap-2  items-center border-gray-300">
           <Button
@@ -756,6 +813,14 @@ const Results = () => {
             size="sm"
             onClick={handleBack}>
             Back
+          </Button>
+          <Button
+            className=" font-medium text-[11px]  tracking-wide"
+            variant="default"
+            size="sm"
+            disabled={loadData}
+            onClick={handleCount}>
+            Download Total Count
           </Button>
           <Button
             className=" font-medium text-[11px]  tracking-wide"
