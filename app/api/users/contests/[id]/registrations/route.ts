@@ -235,7 +235,7 @@ export async function POST(
 
     const mailOptions: SendMailOptions = {
       to: schoolDetails?.email,
-      subject: `Confirmation of Registration ${contestNameShort} ${year}`,
+      subject: `Confirmation of Registration ${contestName}  20${year}`,
       html: `<p><b>Dear Principal,</b></p>
       <p>Thank you for registering your school for the ${contestName} ${year}. We have successfully received your registration details. Currently, we are in the process of verifying your payment to complete the registration procedure. </p>
       <p>If there are any discrepancies or additional information required, our team will reach out to you promptly. In the meantime, if you have any questions or require assistance, please do not hesitate to contact us.</p>
