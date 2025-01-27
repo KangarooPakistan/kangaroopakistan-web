@@ -121,9 +121,9 @@ const Frontend = () => {
               Participation fee can be paid through Bank Draft/Pay Order, drawn
               in favor of INVENTIVE LEARNING. OR The fees can also be directly
               transferred to our bank account: <br /> BANK NAME: MCB ISLAMIC
-              BANK LTD ACC.
-              <br /> TITLE: INVENTIVE LEARNING ACC. # 077 1004965640003 <br />{" "}
-              IBAN # PK52 MCIB 0771004965640003 <br /> BRANCH: BAHRIA TOWN
+              BANK LTD
+              <br /> TITLE: INNOVATIVE LEARNING ACC. # 077 1005053360001 <br />{" "}
+              IBAN # PK85 MCIB 0771005053360001 <br /> BRANCH: BAHRIA TOWN
               PHASE 4 RAWALPINDI
             </p>
           </div>
