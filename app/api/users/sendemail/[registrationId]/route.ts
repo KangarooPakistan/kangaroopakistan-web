@@ -160,7 +160,7 @@ export async function GET(
       html: `<p><b>Dear Principal,</b></p>
       <p>Congratulations on registering for the ${contestName} ${year}</p>
       <p>The contest will be held on ${contestDate?.contestDate} in your institute under your supervision.</p>
-      <p>Below are the details of your institute. Please verify, as these details will be mentioned in all the official documents:</p>
+      <p>Below are the details of your institution. Please verify, as these details will be mentioned in all the official documents:</p>
       <p> School ID: ${schoolDetails?.schoolId}</p>
       <p> School Name: ${schoolDetails?.schoolName}</p>
       <p> School Address: ${schoolDetails?.schoolAddress}</p>

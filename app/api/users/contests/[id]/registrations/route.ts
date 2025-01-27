@@ -241,7 +241,7 @@ export async function POST(
       <p>If there are any discrepancies or additional information required, our team will reach out to you promptly. In the meantime, if you have any questions or require assistance, please do not hesitate to contact us.</p>
       <p>Please see attached list of students for any errors.</p>
       <p>Thank you for your continued support and enthusiasm. We look forward to working together to make this year's contests a remarkable success.</p>
-      <p>Below are the details of your institute. Please verify, as these details will be mentioned in all official documents:</p>
+      <p>Below are the details of your <b>institution</b>. Please verify, as these details will be mentioned in <b>all the official</b> documents:</p>
       <p> School ID: ${schoolDetails?.schoolId}</p>
       <p> School Name: ${schoolDetails?.schoolName}</p>
       <p> School Address: ${schoolDetails?.schoolAddress}</p>
