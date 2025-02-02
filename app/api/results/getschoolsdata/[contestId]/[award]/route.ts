@@ -33,6 +33,7 @@ export async function GET(
   }: {
     params: {
       id: string;
+      contestId: string;
       award: string;
     };
   }
