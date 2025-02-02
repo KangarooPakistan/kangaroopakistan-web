@@ -5,12 +5,15 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string; contestId: string } }
 ) {
   try {
     // Get schools with result count
     const schoolsWithResultCount = await db.result.groupBy({
       by: ["schoolId"],
+      where: {
+        contestId: params.contestId,
+      },
       _count: {
         _all: true,
       },

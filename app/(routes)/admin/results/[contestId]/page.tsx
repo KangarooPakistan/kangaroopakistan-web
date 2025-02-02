@@ -80,7 +80,9 @@ const Results = () => {
         const data = await axios.get(
           `/api/results/fetchresults/${params.contestId}`
         );
-        const resp = await axios.get(`/api/results/getschoolsdata`);
+        const resp = await axios.get(
+          `/api/results/getschoolsdata/${params.contestId}`
+        );
         setSchoolData(resp.data);
         setResult(data.data);
         setLoadData(false);
