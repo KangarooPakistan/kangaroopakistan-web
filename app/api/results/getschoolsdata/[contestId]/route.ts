@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string; contestId: string } }
+  { params }: { params: { contestId: string } }
 ) {
   try {
     // Get schools with result count
