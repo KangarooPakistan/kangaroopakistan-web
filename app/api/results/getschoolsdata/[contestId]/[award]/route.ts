@@ -99,6 +99,7 @@ export async function GET(
     const resultsWithDetails = await db.result.findMany({
       where: {
         AwardLevel: params.award,
+        contestId: params.contestId,
       },
       select: {
         id: true,

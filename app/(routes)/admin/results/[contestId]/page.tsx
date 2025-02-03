@@ -312,7 +312,7 @@ const Results = () => {
     try {
       setIsLoading(true);
       const schoolResultGoldResp = await axios.get(
-        `/api/results/${params.contestId}/getschoolsdata/GOLD`
+        `/api/results/getschoolsdata/${params.contestId}/GOLD`
       );
       console.log("schoolResultGoldResp");
       console.log(schoolResultGoldResp);
