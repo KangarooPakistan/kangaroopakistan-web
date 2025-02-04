@@ -237,7 +237,7 @@ export async function POST(
       to: schoolDetails?.email,
       subject: `Students Added on Kangaroo Contest Management Portal`,
       html: `<p><b>Dear Sir / Madam,</b></p>
-      <p>Please note, we have received the following entries of students for the ${contestName} ${year}. A total no. of ${totalStudents.length} students were added.  </p>
+      <p>Please note, we have received the following entries of students for the ${contestName} 20${year}. A total no. of ${totalStudents.length} students were added.  </p>
       <p><b>Next Steps: </b></p>
       <p>1.<b>Check: </b> Please take a look at this list and confirm if all the data is accurate (student name, guardian name, class and school details).</p>
       <p>2.<b>Pay fee: </b> Please make payment as per payment details provided for ${totalStudents.length} students.</p>
@@ -245,7 +245,7 @@ export async function POST(
       <p>4.<b>Submit: </b> After attaching proof of payment please click “submit” button.</p>
       <p>5.<b>Wait for Final Registration Confirmation Email:: </b> Your registration upon completing the above steps will be complete. You will receive a “Registration confirmation” by February 25, 2025 on your registered email.</p>
       <p>Please see attached list of students for any errors. If you have any questions or require assistance, please feel free to reach us out.</p>
-      
+
       <p>Below are the details of your <b>institution</b>. Please verify, as these details will be mentioned in <b>all the official</b> documents:</p>
       <p> School ID: ${schoolDetails?.schoolId}</p>
       <p> School Name: ${schoolDetails?.schoolName}</p>
