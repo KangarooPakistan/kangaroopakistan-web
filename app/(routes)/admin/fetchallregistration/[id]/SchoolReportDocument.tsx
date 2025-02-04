@@ -41,10 +41,6 @@ const styles = StyleSheet.create({
     height: 70, // Set the height of your image
     marginTop: "20px", // Optional: add some margin if needed
   },
-  arabicText: {
-    fontFamily: "NotoSansArabic",
-  },
-
   page: {
     padding: "20px",
     flexDirection: "column",
@@ -243,19 +239,6 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
           { src: "/fonts/Roboto-Bold.ttf", fontWeight: 700 },
         ],
       });
-      await Font.register({
-        family: "NotoSansArabic",
-        fonts: [
-          { src: "/fonts/NotoSansArabic-Thin.ttf", fontWeight: 100 },
-          { src: "/fonts/NotoSansArabic-Light.ttf", fontWeight: 300 },
-          { src: "/fonts/NotoSansArabic-Regular.ttf", fontWeight: 400 },
-          { src: "/fonts/NotoSansArabic-Medium.ttf", fontWeight: 500 },
-          { src: "/fonts/NotoSansArabic-SemiBold.ttf", fontWeight: 600 },
-          { src: "/fonts/NotoSansArabic-Bold.ttf", fontWeight: 700 },
-          { src: "/fonts/NotoSansArabic-ExtraBold.ttf", fontWeight: 800 },
-          { src: "/fonts/NotoSansArabic-Black.ttf", fontWeight: 900 },
-        ],
-      });
       // await Font.register({
       //   family: "Calibri",
       //   fonts: [
@@ -269,10 +252,6 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
 
     loadFonts();
   }, []);
-
-  const isArabic = (text: string) => {
-    return /[\u0600-\u06FF]/.test(text);
-  };
 
   let preecolierCount = 0;
   let ecolierCount = 0;
@@ -404,16 +383,18 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
               {profileData?.contestName}
             </Text>
             <View style={{ display: "flex", justifyContent: "flex-start" }}>
-              <SmartText
-                text={schoolData[0].schoolName}
+              <Text
                 style={{
                   fontSize: "10px",
                   textTransform: "uppercase",
+
                   textAlign: "left",
                   marginVertical: "1px",
+                  fontFamily: "Roboto",
                   fontWeight: 900,
-                }}
-              />{" "}
+                }}>
+                {schoolData[0].schoolName}
+              </Text>
             </View>
             <View
               style={{
@@ -714,20 +695,3 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
 };
 
 export default SchoolReportDocument;
-
-const SmartText: React.FC<{ text: string; style?: any }> = ({
-  text,
-  style,
-}) => {
-  const isArabicText = /[\u0600-\u06FF]/.test(text);
-
-  return (
-    <Text
-      style={[
-        style,
-        { fontFamily: isArabicText ? "NotoSansArabic" : "Roboto" },
-      ]}>
-      {text}
-    </Text>
-  );
-};
