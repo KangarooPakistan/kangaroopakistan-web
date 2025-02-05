@@ -129,7 +129,7 @@ export async function GET(
         ebdullahEmail?.email || "",
       ],
 
-      subject: `<b>Registration Received - ${contestNameShort} ${year}</b>`,
+      subject: `Registration Received - ${contestNameShort} ${year}`,
       html: `<p><b>Dear Sir / Madam,</b></p>
       <p>Thank you for registering your school for the ${contestName} 20${year}. We have successfully received your registration details and are currently in the process of verifying your payment to complete the registration procedure. </p>
       <p>If there are any discrepancies or additional information required, our team will reach out to you promptly. In the meantime, if you have any questions or require assistance, please feel free to contact us. </p>
