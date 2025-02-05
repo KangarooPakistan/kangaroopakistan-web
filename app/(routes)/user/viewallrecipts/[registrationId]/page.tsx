@@ -116,9 +116,6 @@ const ViewAllRecipts = () => {
 
         <div className="grid grid-cols-3 gap-4 mt-4">
           {paymentProof.map((item, index) => (
-            <div key={index}>Kainat</div>
-          ))}
-          {paymentProof.map((item, index) => (
             <div
               key={item.id}
               className="relative rounded-lg overflow-hidden shadow-md">
