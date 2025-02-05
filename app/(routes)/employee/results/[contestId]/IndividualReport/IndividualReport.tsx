@@ -374,7 +374,10 @@ const StudentReportPage: React.FC<{ student: StudentReport }> = ({
       <View style={styles.attemptedSection}>
         <View style={{ flexDirection: "row", marginBottom: 5 }}>
           <Text>You attempted </Text>
-          <Text style={{ fontWeight: "bold" }}>{student.cRow1} </Text>
+          <Text style={{ fontWeight: "bold" }}>
+            {" "}
+            {parseInt(student.class) <= 4 ? 8 : 10}{" "}
+          </Text>
           <Text>out of </Text>
           <Text style={{ fontWeight: "bold" }}>8 </Text>
           <Text>questions of </Text>
@@ -385,7 +388,10 @@ const StudentReportPage: React.FC<{ student: StudentReport }> = ({
         </View>
         <View style={{ flexDirection: "row", marginBottom: 5 }}>
           <Text>You attempted </Text>
-          <Text style={{ fontWeight: "bold" }}>{student.cRow2} </Text>
+          <Text style={{ fontWeight: "bold" }}>
+            {" "}
+            {parseInt(student.class) <= 4 ? 8 : 10}{" "}
+          </Text>
           <Text>out of </Text>
           <Text style={{ fontWeight: "bold" }}>8 </Text>
           <Text>questions of </Text>
@@ -396,7 +402,10 @@ const StudentReportPage: React.FC<{ student: StudentReport }> = ({
         </View>
         <View style={{ flexDirection: "row", marginBottom: 5 }}>
           <Text>You attempted </Text>
-          <Text style={{ fontWeight: "bold" }}>{student.cRow3} </Text>
+          <Text style={{ fontWeight: "bold" }}>
+            {" "}
+            {parseInt(student.class) <= 4 ? 8 : 10}{" "}
+          </Text>
           <Text>out of </Text>
           <Text style={{ fontWeight: "bold" }}>8 </Text>
           <Text>questions of </Text>
