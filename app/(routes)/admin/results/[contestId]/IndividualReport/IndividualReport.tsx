@@ -413,7 +413,10 @@ const StudentReportPage: React.FC<{ student: StudentReport }> = ({
         </View>
         <View style={{ flexDirection: "row", marginBottom: 5 }}>
           <Text>You attempted </Text>
-          <Text style={{ fontWeight: "bold" }}>{student.cRow3} </Text>
+          <Text style={{ fontWeight: "bold" }}>
+            {" "}
+            {parseInt(student.class) <= 4 ? 8 : 10}{" "}
+          </Text>
           <Text>out of </Text>
           <Text style={{ fontWeight: "bold" }}>
             {parseInt(student.class) <= 4
