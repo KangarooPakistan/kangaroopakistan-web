@@ -182,6 +182,9 @@ function ViewRegistered({ params, searchParams }: PageProps) {
   const [student, setStudent] = useState<number>(0);
   const [pdfUrl, setPdfUrl] = useState("");
   const [schoolId, setSchoolId] = useState(0);
+  const [showPaymentReminder, setShowPaymentReminder] = useState(false);
+  const [isPaymentDataLoaded, setIsPaymentDataLoaded] = useState(false);
+
   const [currentUserEmail, setCurrentUserEmail] = useState<string | null>();
 
   // const params = useParams();
@@ -261,6 +264,8 @@ function ViewRegistered({ params, searchParams }: PageProps) {
         );
         setTotalPaymentDone(paymentProof.data.length);
         console.log("paymentProof");
+        setIsPaymentDataLoaded(true); // Add this line
+
         console.log(paymentProof);
       } catch (error) {
         console.error("Error:", error);
@@ -344,14 +349,13 @@ function ViewRegistered({ params, searchParams }: PageProps) {
     const blob = await asPdf.toBlob();
     return blob;
   };
-  const [showPaymentReminder, setShowPaymentReminder] = useState(false);
 
   // Add this useEffect to handle the modal display
   useEffect(() => {
-    if (totalPaymentDone === 0) {
+    if (isPaymentDataLoaded && totalPaymentDone === 0) {
       setShowPaymentReminder(true);
     }
-  }, [totalPaymentDone]);
+  }, [isPaymentDataLoaded, totalPaymentDone]);
 
   // Add close handler for the modal
   const handleClosePaymentReminder = () => {
