@@ -79,7 +79,12 @@ const ViewAllRecipts = () => {
         setTotalStudents(registeredStudents.data[0].students.length);
 
         const response = await axios.get(`/api/users/paymentproof/${id}`);
-        setPaymentProof(response.data);
+        console.log(response.data);
+        const paymentProofData = Array.isArray(response.data)
+          ? response.data
+          : [];
+
+        setPaymentProof(paymentProofData);
       }
     };
     fetchData();
@@ -110,6 +115,9 @@ const ViewAllRecipts = () => {
         </div>
 
         <div className="grid grid-cols-3 gap-4 mt-4">
+          {paymentProof.map((item, index) => (
+            <div key={index}>Kainat</div>
+          ))}
           {paymentProof.map((item, index) => (
             <div
               key={item.id}
