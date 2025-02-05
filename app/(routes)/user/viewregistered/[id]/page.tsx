@@ -344,6 +344,19 @@ function ViewRegistered({ params, searchParams }: PageProps) {
     const blob = await asPdf.toBlob();
     return blob;
   };
+  const [showPaymentReminder, setShowPaymentReminder] = useState(false);
+
+  // Add this useEffect to handle the modal display
+  useEffect(() => {
+    if (totalPaymentDone === 0) {
+      setShowPaymentReminder(true);
+    }
+  }, [totalPaymentDone]);
+
+  // Add close handler for the modal
+  const handleClosePaymentReminder = () => {
+    setShowPaymentReminder(false);
+  };
 
   const handleSheet = async () => {
     console.log("kkr");
@@ -456,6 +469,11 @@ function ViewRegistered({ params, searchParams }: PageProps) {
   // };
   return (
     <div className="container mx-auto py-4">
+      <PaymentReminderModal
+        isOpen={showPaymentReminder}
+        onClose={handleClosePaymentReminder}
+      />
+
       <div className="py-4">
         <div className="flex flex-wrap -mx-2">
           <div className="w-full md:w-1/2 px-2 mb-6 md:mb-0">
@@ -558,3 +576,31 @@ function ViewRegistered({ params, searchParams }: PageProps) {
 }
 
 export default ViewRegistered;
+
+interface PaymentReminderModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+// Use React.FC (Functional Component) type or define the component with explicit typing
+const PaymentReminderModal: React.FC<PaymentReminderModalProps> = ({
+  isOpen,
+  onClose,
+}) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+      <div className="bg-white rounded-lg p-8 max-w-md w-full m-4">
+        <h1 className="text-2xl font-bold text-center text-red-600 mb-4">
+          Reminder: Attach proof of payment to complete the registration
+        </h1>
+        <div className="flex justify-center mt-6">
+          <Button onClick={onClose} className="bg-purple-600 text-white">
+            Close
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
