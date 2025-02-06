@@ -370,7 +370,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       console.error("Error generating the PDF:", error);
     }
   };
-  
+
   const handleAttendanceSheet = async () => {
     try {
       const response = await axios.get(
@@ -438,6 +438,11 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       console.error("Error generating the PDF:", error);
     }
   };
+  const handleReceiptView = () => {
+    router.push(`/admin/viewallrecipts/${registration.id}`);
+
+    // router.push(`/admin/viewregistered/${student.registrationId}`);
+  };
   const handleEmail = async () => {
     try {
       const res = await axios.get(`/api/users/sendemail/${registration.id}`);
@@ -497,6 +502,11 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
               className="border-y-2 border-solid"
               onClick={handleDownloadCheckList}>
               Download CheckList
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={handleReceiptView}
+              className="border-y-2 border-solid">
+              View Receipts{" "}
             </DropdownMenuItem>
 
             <DropdownMenuItem

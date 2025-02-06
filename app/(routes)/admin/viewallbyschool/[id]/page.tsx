@@ -29,6 +29,7 @@ const ViewAllBySchool = () => {
   const [totalPaymentDone, setTotalPaymentDone] = useState<number>(0);
   const [eculier, setEculier] = useState<number>(0);
   const [benjamin, setBenjamin] = useState<number>(0);
+  const [contestId, setContestId] = useState("");
   const [cadet, setCadet] = useState<number>(0);
   const [junior, setJunior] = useState<number>(0);
   const [student, setStudent] = useState<number>(0);
@@ -53,6 +54,9 @@ const ViewAllBySchool = () => {
         const registeredStudents = await axios.get(
           `/api/users/registrations/${params.id}`
         );
+        const regData = await axios.get(`/api/registration/${params.id}`);
+        setContestId(regData.data.contestId);
+
         console.log(registeredStudents.data[0].id);
 
         console.log(registeredStudents.data);
@@ -102,6 +106,11 @@ const ViewAllBySchool = () => {
 
     fetch();
   }, [params.id]);
+  const handleRegister = () => {
+    router.push(
+      `/admin/enrollstudents/${contestId}/registrationId/${params.id}`
+    );
+  };
 
   const exportSheet = () => {
     const ws = XLSX.utils.json_to_sheet(students);
@@ -190,6 +199,13 @@ const ViewAllBySchool = () => {
               onClick={exportSheet}>
               Export Data
             </Button>
+            <Button
+              className=" font-semibold text-[15px] tracking-wide "
+              variant="default"
+              size="lg"
+              onClick={handleRegister}>
+              Register Students
+            </Button>
           </div>
         </div>
         <div className="block md:hidden">
@@ -213,8 +229,15 @@ const ViewAllBySchool = () => {
               className=" font-medium text-[11px] tracking-wide"
               variant="default"
               size="sm"
-              onClick={exportSheet}>
+              onClick={handleRegister}>
               Export Data
+            </Button>
+            <Button
+              className=" font-medium text-[11px] tracking-wide"
+              variant="default"
+              size="sm"
+              onClick={exportSheet}>
+              Register Students
             </Button>
           </div>
         </div>
