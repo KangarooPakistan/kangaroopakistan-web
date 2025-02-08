@@ -275,7 +275,7 @@ const StudentReportPage: React.FC<{ student: StudentReport }> = ({
         {student.suffix === "M" ? (
           <Image
             style={[styles.image, styles.leftImage]}
-            src="/innovative-learning.jpg" // Replace with your image path or URL
+            src="/innventive_learning.jpg" // Replace with your image path or URL
           />
         ) : student.suffix === "S" ? (
           <Image
