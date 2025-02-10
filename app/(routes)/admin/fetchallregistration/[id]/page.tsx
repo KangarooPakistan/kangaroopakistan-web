@@ -2,7 +2,7 @@
 
 import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Registration, columns, PaymentProof } from "./columns";
 import { DataTable } from "./data-table";
 import { Button } from "@/components/ui/button";
@@ -19,7 +19,9 @@ import Link from "next/link";
 export const dynamic = "force-dynamic"; // Ensures this page is always rendered server-side
 
 async function fetchData(id: string, signal: AbortSignal) {
-  const res = await axios.get(`/api/users/fetchallregistrations/${id}`);
+  const res = await axios.get(`/api/users/fetchallregistrations/${id}`, {
+    signal,
+  });
 
   return res.data;
 }
@@ -98,128 +100,152 @@ const FetchAllRegistrations = () => {
   const [registerationsData, setRegistrationsData] = useState([]);
   const [studentForExcel, setStudentForExcel] = useState([]);
   const [contestName, setContestName] = useState("");
+  const activeRequestController = useRef<AbortController | null>(null);
+
+  const abortActiveRequest = () => {
+    if (activeRequestController.current) {
+      activeRequestController.current.abort();
+      activeRequestController.current = null;
+    }
+  };
 
   useEffect(() => {
     const controller = new AbortController();
     const signal = controller.signal;
     const fetchAndSetData = async (id: string) => {
-      const registrations = await fetchData(id, signal);
-      const contestData = await axios.get(
-        `/api/users/contests/${registrations[0].contestId}`
-      );
-      console.log(contestData);
-      console.log("contestData");
-      console.log(contestData.data.name);
-      setContestName(contestData.data.name);
-      setTotalSchools(registrations.length);
+      try {
+        const registrations = await fetchData(id, signal);
+        const contestData = await axios.get(
+          `/api/users/contests/${registrations[0].contestId}`,
+          { signal } // Add signal to this request too
+        );
 
-      const totalPayments = registrations.reduce(
-        (acc: number, curr: Registration) => {
-          return (
-            acc + (curr.paymentProof && curr.paymentProof.length > 0 ? 1 : 0)
+        // Only proceed with state updates if the request hasn't been cancelled
+        if (!signal.aborted) {
+          setContestName(contestData.data.name);
+          setTotalSchools(registrations.length);
+
+          const totalPayments = registrations.reduce(
+            (acc: number, curr: Registration) => {
+              return (
+                acc +
+                (curr.paymentProof && curr.paymentProof.length > 0 ? 1 : 0)
+              );
+            },
+            0
           );
-        },
-        0
-      );
-      setTotalPaymentDone(totalPayments);
+          setTotalPaymentDone(totalPayments);
 
-      const studentsArrays = registrations.map((reg: Register) => reg.students);
-      const flattenedStudents = studentsArrays.flat();
-      setAllStudents(flattenedStudents);
+          const studentsArrays = registrations.map(
+            (reg: Register) => reg.students
+          );
+          const flattenedStudents = studentsArrays.flat();
+          setAllStudents(flattenedStudents);
 
-      const levelCounts = flattenedStudents.reduce(
-        (acc: LevelCounts, student: Student) => {
-          const { level } = student;
-          acc[level] = (acc[level] || 0) + 1;
-          return acc;
-        },
-        {}
-      );
+          const levelCounts = flattenedStudents.reduce(
+            (acc: LevelCounts, student: Student) => {
+              const { level } = student;
+              acc[level] = (acc[level] || 0) + 1;
+              return acc;
+            },
+            {}
+          );
 
-      setPreEculier(levelCounts["preecolier"] || 0);
-      setEculier(levelCounts["ecolier"] || 0);
-      setBenjamin(levelCounts["benjamin"] || 0);
-      setCadet(levelCounts["cadet"] || 0);
-      setJunior(levelCounts["junior"] || 0);
-      setStudent(levelCounts["student"] || 0);
-      console.log("registrations");
-      console.log(registrations);
-      setRegistrationsData(registrations);
-      const ExcelData = registrations.map((item: any) => ({
-        "School id": item.user?.schoolId,
-        "School Name": item.user?.schoolName,
-        "Total Students": item.students.length,
-        "School Address": item.user?.schoolAddress,
-        "District Name": item.user?.city,
-        "District Id": item.user?.district,
-        "School Email": item.user?.email,
-        "Contact Number": item.user?.contactNumber,
-        "Principal Name": item.user?.p_Name,
-        "Principal Cell #": item.user?.p_contact,
-        "Principal Phone #": item.user?.p_phone,
-        "Principal Email": item.user?.p_email,
-        "Coordinator Name": item.user?.c_Name,
-        "Coordinator Cell #": item.user?.c_contact,
-        "Coordinator Phone #": item.user?.c_phone,
-        "Coordinator Email": item.user?.c_email,
-        "School BankTitle": item.user?.bankTitle,
-        "Coordinator Account Details": item.user?.c_accountDetails,
-        updatedTime: new Date(item.updatedAt).toLocaleString(), // Convert to human-readable format
-        createdAt: new Date(item.createdAt).toLocaleString(), // Convert to human-readable format
+          setPreEculier(levelCounts["preecolier"] || 0);
+          setEculier(levelCounts["ecolier"] || 0);
+          setBenjamin(levelCounts["benjamin"] || 0);
+          setCadet(levelCounts["cadet"] || 0);
+          setJunior(levelCounts["junior"] || 0);
+          setStudent(levelCounts["student"] || 0);
+          console.log("registrations");
+          console.log(registrations);
+          setRegistrationsData(registrations);
+          const ExcelData = registrations.map((item: any) => ({
+            "School id": item.user?.schoolId,
+            "School Name": item.user?.schoolName,
+            "Total Students": item.students.length,
+            "School Address": item.user?.schoolAddress,
+            "District Name": item.user?.city,
+            "District Id": item.user?.district,
+            "School Email": item.user?.email,
+            "Contact Number": item.user?.contactNumber,
+            "Principal Name": item.user?.p_Name,
+            "Principal Cell #": item.user?.p_contact,
+            "Principal Phone #": item.user?.p_phone,
+            "Principal Email": item.user?.p_email,
+            "Coordinator Name": item.user?.c_Name,
+            "Coordinator Cell #": item.user?.c_contact,
+            "Coordinator Phone #": item.user?.c_phone,
+            "Coordinator Email": item.user?.c_email,
+            "School BankTitle": item.user?.bankTitle,
+            "Coordinator Account Details": item.user?.c_accountDetails,
+            updatedTime: new Date(item.updatedAt).toLocaleString(), // Convert to human-readable format
+            createdAt: new Date(item.createdAt).toLocaleString(), // Convert to human-readable format
 
-        // ...student, // Spread student attributes
-      }));
+            // ...student, // Spread student attributes
+          }));
 
-      const studentsForExcel = registrations.flatMap((reg: any) =>
-        reg.students.map((student: StudentData) => ({
-          "School id": reg.user?.schoolId,
-          "School Name": reg.user?.schoolName,
-          "Total Students": reg.students.length,
-          "School Address": reg.user?.schoolAddress,
-          "District Name": reg.user?.city,
-          "District Id": reg.user?.district,
-          "School Email": reg.user?.email,
-          "Contact Number": reg.user?.contactNumber,
-          "Principal Name": reg.user?.p_Name,
-          "Principal Cell #": reg.user?.p_contact,
-          "Principal Phone #": reg.user?.p_phone,
-          "Principal Email": reg.user?.p_email,
-          "Coordinator Name": reg.user?.c_Name,
-          "Coordinator Cell #": reg.user?.c_contact,
-          "Coordinator Phone #": reg.user?.c_phone,
-          "Coordinator Email": reg.user?.c_email,
-          "School BankTitle": reg.user?.bankTitle,
-          "Coordinator Account Details": reg.user?.c_accountDetails,
-          ...student, // Spread student attributes
-        }))
-      );
-      setStudentForExcel(studentsForExcel);
-      setExcel(ExcelData);
+          const studentsForExcel = registrations.flatMap((reg: any) =>
+            reg.students.map((student: StudentData) => ({
+              "School id": reg.user?.schoolId,
+              "School Name": reg.user?.schoolName,
+              "Total Students": reg.students.length,
+              "School Address": reg.user?.schoolAddress,
+              "District Name": reg.user?.city,
+              "District Id": reg.user?.district,
+              "School Email": reg.user?.email,
+              "Contact Number": reg.user?.contactNumber,
+              "Principal Name": reg.user?.p_Name,
+              "Principal Cell #": reg.user?.p_contact,
+              "Principal Phone #": reg.user?.p_phone,
+              "Principal Email": reg.user?.p_email,
+              "Coordinator Name": reg.user?.c_Name,
+              "Coordinator Cell #": reg.user?.c_contact,
+              "Coordinator Phone #": reg.user?.c_phone,
+              "Coordinator Email": reg.user?.c_email,
+              "School BankTitle": reg.user?.bankTitle,
+              "Coordinator Account Details": reg.user?.c_accountDetails,
+              ...student, // Spread student attributes
+            }))
+          );
+          setStudentForExcel(studentsForExcel);
+          setExcel(ExcelData);
 
-      const extractedData = registrations.map((obj: any) => ({
-        contestId: obj.contestId,
-        schoolName: obj.user.schoolName,
-        schoolId: obj.schoolId,
-        id: obj.id,
-        registeredBy: obj.registeredBy,
-        studentsLength: obj.students.length,
-        email: obj.user.email,
-        paymentProof: obj.paymentProof, // This assumes paymentProof is within the user object
-      }));
-      const schoolsData = registrations
-        .map((obj: any) => ({
-          schoolName: obj.user.schoolName,
-          schoolId: obj.user.schoolId,
-          district: obj.user.city,
-          schoolAddress: obj.user.schoolAddress,
-          schoolPrinPhone: obj.user.p_contact,
-          schoolCorPhone: obj.user.c_contact,
-          schoolMainPhone: obj.user.contactNumber,
-        }))
-        .sort((a: SchoolDetails, b: SchoolDetails) => a.schoolId - b.schoolId);
-      setLabelsData(schoolsData);
+          const extractedData = registrations.map((obj: any) => ({
+            contestId: obj.contestId,
+            schoolName: obj.user.schoolName,
+            schoolId: obj.schoolId,
+            id: obj.id,
+            registeredBy: obj.registeredBy,
+            studentsLength: obj.students.length,
+            email: obj.user.email,
+            paymentProof: obj.paymentProof, // This assumes paymentProof is within the user object
+          }));
+          const schoolsData = registrations
+            .map((obj: any) => ({
+              schoolName: obj.user.schoolName,
+              schoolId: obj.user.schoolId,
+              district: obj.user.city,
+              schoolAddress: obj.user.schoolAddress,
+              schoolPrinPhone: obj.user.p_contact,
+              schoolCorPhone: obj.user.c_contact,
+              schoolMainPhone: obj.user.contactNumber,
+            }))
+            .sort(
+              (a: SchoolDetails, b: SchoolDetails) => a.schoolId - b.schoolId
+            );
+          setLabelsData(schoolsData);
 
-      setRegData(extractedData);
+          setRegData(extractedData);
+        }
+      } catch (error) {
+        // Check if the error is a cancellation error
+        if (axios.isCancel(error)) {
+          console.log("Request canceled");
+        } else {
+          console.error("Error fetching data:", error);
+        }
+      }
     };
 
     if (typeof params.id === "string") {
@@ -357,6 +383,7 @@ const FetchAllRegistrations = () => {
     router.push(`/admin/registerincontest/${params.id}`);
   };
   const handleAwardDefinition = () => {
+    abortActiveRequest();
     setIsLoading(true);
     router.push(`/admin/createawardcategories/${params.id}`);
   };
@@ -386,7 +413,10 @@ const FetchAllRegistrations = () => {
     }
   };
   const handleViewResults = () => {
+    abortActiveRequest(); // Abort any existing request
+    activeRequestController.current = new AbortController();
     setIsLoading(true);
+
     router.push(`/admin/results/${params.id}`);
   };
 
