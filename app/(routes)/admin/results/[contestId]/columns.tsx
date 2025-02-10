@@ -353,6 +353,7 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
             theme: "light",
           });
         } catch (error) {
+          console.log(error);
           toast.error(" Error while sending email. Please contact developer", {
             position: "top-right",
             autoClose: 5000,

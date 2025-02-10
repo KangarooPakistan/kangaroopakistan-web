@@ -9,6 +9,7 @@ const ses = new SESClient({
     secretAccessKey: process.env.AWS_SECRET_KEYID!,
   },
 });
+
 function validateAwsCredentials() {
   if (!process.env.AWS_BUCKET_REGION) {
     throw new Error("AWS_REGION is not configured");
@@ -22,22 +23,35 @@ function validateAwsCredentials() {
 }
 
 export async function POST(request: Request) {
+  let schoolDetails: any = null;
+  let aminaEmail: any = null;
+
   try {
     const { pdfData, schoolId, contestId } = await request.json();
-    console.log;
     validateAwsCredentials();
 
-    const schoolDetails = await db.user.findFirst({
+    schoolDetails = await db.user.findFirst({
       where: { schoolId: parseInt(schoolId) },
+      select: {
+        email: true,
+        p_email: true,
+        c_email: true,
+      },
     });
 
     if (!schoolDetails) {
       return NextResponse.json(
-        { error: "School details not found" },
+        {
+          error: "School details not found",
+          failedEmails: {
+            school: "School details not found in database",
+          },
+        },
         { status: 404 }
       );
     }
-    const aminaEmail = await db.user.findFirst({
+
+    aminaEmail = await db.user.findFirst({
       where: {
         schoolId: 814,
       },
@@ -46,23 +60,25 @@ export async function POST(request: Request) {
       },
     });
 
-    if (!schoolDetails.email) {
-      return NextResponse.json(
-        { error: "No email address found for school" },
-        { status: 400 }
-      );
-    }
-
     const contestData = await db.contest.findUnique({
       where: { id: contestId },
     });
 
     if (!contestData) {
       return NextResponse.json(
-        { error: "Contest data not found" },
+        {
+          error: "Contest data not found",
+          failedEmails: {
+            [schoolDetails.email || "primary"]: "Contest data not found",
+            [schoolDetails.p_email || "p_email"]: "Contest data not found",
+            [schoolDetails.c_email || "c_email"]: "Contest data not found",
+            [aminaEmail?.email || "amina_email"]: "Contest data not found",
+          },
+        },
         { status: 404 }
       );
     }
+
     let contestName, contestNameShort;
     switch (contestData?.contestCh) {
       case "M":
@@ -85,17 +101,27 @@ export async function POST(request: Request) {
     const fromEmail = process.env.AWS_SMTP_EMAIL;
     if (!fromEmail) {
       return NextResponse.json(
-        { error: "Sender email not configured" },
+        {
+          error: "Sender email not configured",
+          failedEmails: {
+            [schoolDetails.email || "primary"]:
+              "Sender email configuration missing",
+            [schoolDetails.p_email || "p_email"]:
+              "Sender email configuration missing",
+            [schoolDetails.c_email || "c_email"]:
+              "Sender email configuration missing",
+            [aminaEmail?.email || "amina_email"]:
+              "Sender email configuration missing",
+          },
+        },
         { status: 500 }
       );
     }
 
-    // Generate a boundary string for multipart message
     const boundary = "NextPart_" + Date.now().toString(16);
     const startDateString = contestData?.endDate;
     let year = startDateString ? new Date(startDateString).getFullYear() : 0;
 
-    console.log(schoolDetails.email);
     const emailBody = `Dear Principal,<br/><br/>
 
 We are delighted to announce the results of the ${contestName} ${year} and extend our heartfelt congratulations to all participating schools and students for their dedication and outstanding performance. Attached, you will find the official results for your review.<br/><br/>
@@ -112,23 +138,30 @@ Innovative Learning | Inventive Learning - KSF Pakistan<br/><br/>
 www.kangaroopakistan.org`;
 
     const emailAddresses = [
-      schoolDetails?.email,
-      schoolDetails?.p_email,
-      schoolDetails?.c_email,
+      schoolDetails.email,
+      schoolDetails.p_email,
+      schoolDetails.c_email,
       aminaEmail?.email,
-    ].filter((email) => email); // This removes null/undefined values
+    ].filter((email) => email);
 
     if (emailAddresses.length === 0) {
       return NextResponse.json(
-        { error: "No valid email addresses found" },
+        {
+          error: "No valid email addresses found",
+          failedEmails: {
+            [schoolDetails.email || "primary"]: "Email not provided",
+            [schoolDetails.p_email || "p_email"]: "Email not provided",
+            [schoolDetails.c_email || "c_email"]: "Email not provided",
+            [aminaEmail?.email || "amina_email"]: "Email not provided",
+          },
+        },
         { status: 400 }
       );
     }
 
-    // Construct email headers
     const headers = [
       `From: Kangaroo Pakistan <${fromEmail}>`,
-      `To: ${emailAddresses.join(", ")}`, // Join all email addresses with comma
+      `To: ${emailAddresses.join(", ")}`,
       `Subject: ${contestNameShort} ${year} Results announced `,
       "MIME-Version: 1.0",
       `Content-Type: multipart/mixed; boundary="${boundary}"`,
@@ -148,19 +181,47 @@ www.kangaroopakistan.org`;
       `--${boundary}--`,
     ].join("\r\n");
 
-    const command = new SendRawEmailCommand({
-      RawMessage: {
-        Data: new Uint8Array(Buffer.from(headers, "utf-8")),
-      },
-    });
+    try {
+      const command = new SendRawEmailCommand({
+        RawMessage: {
+          Data: new Uint8Array(Buffer.from(headers, "utf-8")),
+        },
+      });
 
-    await ses.send(command);
+      await ses.send(command);
 
-    return NextResponse.json({ message: "Email sent successfully" });
-  } catch (error) {
+      return NextResponse.json({
+        message: "Email sent successfully",
+        sentTo: emailAddresses,
+      });
+    } catch (sesError: any) {
+      const failedEmails: Record<string, string> = {};
+      emailAddresses.forEach((email) => {
+        failedEmails[email] = sesError.message || "SES sending failed";
+      });
+
+      return NextResponse.json(
+        {
+          error: "Failed to send email",
+          failedEmails,
+          technicalError: sesError.message,
+        },
+        { status: 500 }
+      );
+    }
+  } catch (error: any) {
     console.error("Error sending email:", error);
     return NextResponse.json(
-      { error: "Failed to send email" },
+      {
+        error: "Failed to send email",
+        technicalError: error.message,
+        failedEmails: {
+          [schoolDetails?.email || "primary"]: error.message,
+          [schoolDetails?.p_email || "p_email"]: error.message,
+          [schoolDetails?.c_email || "c_email"]: error.message,
+          [aminaEmail?.email || "amina_email"]: error.message,
+        },
+      },
       { status: 500 }
     );
   }
