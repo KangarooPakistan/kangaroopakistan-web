@@ -114,7 +114,7 @@ www.kangaroopakistan.org`;
     // Construct email headers
     const headers = [
       `From: Kangaroo Pakistan <${fromEmail}>`,
-      `To: wajiha.farhat@gmail.com`,
+      `To: ${schoolDetails.email} ${schoolDetails.p_email} ${schoolDetails.c_email} ${aminaEmail}`,
       `Subject: ${contestNameShort} ${year} Results announced `,
       "MIME-Version: 1.0",
       `Content-Type: multipart/mixed; boundary="${boundary}"`,
