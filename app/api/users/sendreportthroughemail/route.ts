@@ -111,10 +111,24 @@ Innovative Learning | Inventive Learning - KSF Pakistan<br/><br/>
 <b>Address</b>: 1st Floor, Plaza 114, Main Boulevard, Phase 6, D.H.A Lahore <br/>
 www.kangaroopakistan.org`;
 
+    const emailAddresses = [
+      schoolDetails?.email,
+      schoolDetails?.p_email,
+      schoolDetails?.c_email,
+      aminaEmail?.email,
+    ].filter((email) => email); // This removes null/undefined values
+
+    if (emailAddresses.length === 0) {
+      return NextResponse.json(
+        { error: "No valid email addresses found" },
+        { status: 400 }
+      );
+    }
+
     // Construct email headers
     const headers = [
       `From: Kangaroo Pakistan <${fromEmail}>`,
-      `To: ${schoolDetails.email}`,
+      `To: ${emailAddresses.join(", ")}`, // Join all email addresses with comma
       `Subject: ${contestNameShort} ${year} Results announced `,
       "MIME-Version: 1.0",
       `Content-Type: multipart/mixed; boundary="${boundary}"`,
