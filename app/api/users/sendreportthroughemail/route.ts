@@ -37,6 +37,14 @@ export async function POST(request: Request) {
         { status: 404 }
       );
     }
+    const aminaEmail = await db.user.findFirst({
+      where: {
+        schoolId: 814,
+      },
+      select: {
+        email: true,
+      },
+    });
 
     if (!schoolDetails.email) {
       return NextResponse.json(
@@ -106,7 +114,7 @@ www.kangaroopakistan.org`;
     // Construct email headers
     const headers = [
       `From: Kangaroo Pakistan <${fromEmail}>`,
-      `To: ${schoolDetails.email} ${schoolDetails.p_email} ${schoolDetails.c_email}`,
+      `To: ${schoolDetails.email} ${schoolDetails.p_email} ${schoolDetails.c_email} ${aminaEmail}`,
       `Subject: ${contestNameShort} ${year} Results announced `,
       "MIME-Version: 1.0",
       `Content-Type: multipart/mixed; boundary="${boundary}"`,
