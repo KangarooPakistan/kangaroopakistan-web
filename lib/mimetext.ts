@@ -10,7 +10,3 @@ interface MimeMessage {
   }): void;
   asRaw(): string;
 }
-
-// Re-export the actual mimetext module with our types
-import { createMimeMessage as originalCreateMimeMessage } from "mimetext";
-export const createMimeMessage = originalCreateMimeMessage as () => MimeMessage;
