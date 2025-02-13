@@ -119,7 +119,7 @@ const Frontend = () => {
           <div className="bg-white  rounded-2xl shadow-gray-800 shadow-md w-full m-2">
             <p className="text-purple-600 text-justify p-4 font-bold text-md md:text-xl">
               Participation fee can be paid through Bank Draft/Pay Order, drawn
-              in favor of INVENTIVE LEARNING. OR The fees can also be directly
+              in favor of INNOVATIVE LEARNING. OR The fees can also be directly
               transferred to our bank account: <br /> BANK NAME: MCB ISLAMIC
               BANK LTD
               <br /> TITLE: INNOVATIVE LEARNING ACC. # 077 1005053360001 <br />{" "}

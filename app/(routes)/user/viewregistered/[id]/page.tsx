@@ -400,6 +400,10 @@ function ViewRegistered({ params, searchParams }: PageProps) {
       console.error("Error downloading the PDF:", error);
     }
   };
+
+  const handleRegister = () => {
+    router.push(`/user/enrollstudents/${params.id}`);
+  };
   // const handleSheet = async () => {
   //   try {
   //     const response = await axios.get(
@@ -523,19 +527,11 @@ function ViewRegistered({ params, searchParams }: PageProps) {
           </div>
         </div>
         <div className="flex flex-wrap justify-end mt-4">
-          {pdfUrl ? (
-            <div className="w-full sm:w-1/2 md:w-1/4  p-1">
-              <Button className="w-full">
-                <Link href={pdfUrl} target="_blank" rel="noopener noreferrer">
-                  View Results
-                </Link>
-              </Button>
-            </div>
-          ) : (
-            <div className="w-full sm:w-1/2 md:w-1/4 p-1">
-              <Button className="w-full">No results found</Button>
-            </div>
-          )}
+          <div className="w-full sm:w-1/2 md:w-1/4 p-1">
+            <Button className="w-full" onClick={handleRegister}>
+              Register Students
+            </Button>
+          </div>
           <div className="w-full sm:w-1/2 md:w-1/4 p-1">
             <Button className="w-full" onClick={handleClick}>
               View All Proof of Payments

@@ -60,7 +60,11 @@ const ContestActions: React.FC<ContestActionsProps> = ({ contest }) => {
   return (
     <>
       <div className="hidden md:block">
-        <DropdownMenu>
+        <div className="flex gap-2 ">
+          <Button onClick={handleRegister}>Register Students</Button>
+          <Button onClick={handleView}>View</Button>
+        </div>
+        {/* <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
               <span className="sr-only">Open menu</span>
@@ -82,7 +86,7 @@ const ContestActions: React.FC<ContestActionsProps> = ({ contest }) => {
               View
             </DropdownMenuItem>
           </DropdownMenuContent>
-        </DropdownMenu>
+        </DropdownMenu> */}
       </div>
       <div className=" md:hidden">
         <div className="flex flex-wrap justify-between items-center gap-2 py-2 ">
