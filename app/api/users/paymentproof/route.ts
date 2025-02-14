@@ -42,7 +42,7 @@ export async function POST(request: Request) {
       },
     });
     console.log(aminaEmail?.email);
-    console.log(ebdullahEmail?.email);
+    // console.log(ebdullahEmail?.email);
     const totalStudents = await db.student.findMany({
       where: { registrationId: registrationId },
     });
@@ -109,7 +109,7 @@ export async function POST(request: Request) {
         schoolDetails?.p_email || "",
         schoolDetails?.c_email || "",
         aminaEmail?.email || "",
-        ebdullahEmail?.email || "",
+        // ebdullahEmail?.email || "",
       ],
 
       subject: `Registration Received - ${contestNameShort} ${year}`,
