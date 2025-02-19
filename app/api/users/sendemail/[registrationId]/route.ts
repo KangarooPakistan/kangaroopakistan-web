@@ -156,11 +156,13 @@ export async function GET(
         // ebdullahEmail?.email || "",
       ],
 
-      subject: ` ${contestNameShort} ${year} Registration Confirmation`,
-      html: `<p><b>Dear Principal,</b></p>
-      <p>Congratulations on registering for the ${contestName} ${year}</p>
-      <p>The contest will be held on ${contestDate?.contestDate} in your institute under your supervision.</p>
-      <p>Below are the details of your institution. Please verify, as these details will be mentioned in all the official documents:</p>
+      subject: `Registration Received - ${contestNameShort} ${year}`,
+      html: `<p><b>Dear Sir / Madam,</b></p>
+      <p>Thank you for registering your school for the ${contestName} ${year}. We have successfully received your registration details and are currently in the process of verifying your payment to complete the registration procedure. </p>
+      <p>If there are any discrepancies or additional information required, our team will reach out to you promptly. In the meantime, if you have any questions or require assistance, please feel free to contact us. </p>
+      <p>We appreciate your continued support and enthusiasm. We look forward to working together to make this year's contest a remarkable success.</p>
+      <p>Below are the details of your institution. Kindly verify, as these details will be used in all official documents: </p>
+      <br/>
       <p> School ID: ${schoolDetails?.schoolId}</p>
       <p> School Name: ${schoolDetails?.schoolName}</p>
       <p> School Address: ${schoolDetails?.schoolAddress}</p>
@@ -175,7 +177,17 @@ export async function GET(
       <p> Coordinator Cell: ${schoolDetails?.c_contact}</p>
       <p> Coordinator Account Details: ${schoolDetails?.c_accountDetails}</p>
       <p> Total Number of students Registered: ${totalStudents.length}</p>
-      ${tableHtml}`,
+      ${tableHtml}
+
+       <p>Best Regards</p>
+      
+      <p><b>Team ${contestNameShort}</b></p>
+      <p>Innovative Learning - KSF Pakistan</p>
+      <p><b>Office: </b> 042-37180505 | 042-37180506</p>
+      <p><b>Whatsapp: </b>0333-2111399 | 0321-8403033 | 0319-5080077</p>
+      <p><b>Address: </b>1st Floor, Plaza 114, Main Boulevard, Phase 6, D.H.A Lahore</p>
+      <a href="www.kangaroopakistan.org" target="#">www.kangaroopakistan.org</a>
+`,
     };
 
     try {
