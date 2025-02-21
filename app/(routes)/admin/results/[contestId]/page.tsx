@@ -661,6 +661,34 @@ const Results = () => {
       console.error("Error fetching school result:", error);
     }
   };
+  const handleExcelForKainat = async () => {
+    try {
+      setIsLoading(true);
+      const schoolResultGoldResp = await axios.get(
+        `/api/results/allresults/${params.contestId}`
+      );
+      console.log(schoolResultGoldResp);
+
+      const studentDetails = schoolResultGoldResp.data.map((item: any) => ({
+        schoolName: item.schoolName,
+        studentName: item.studentDetails.studentName,
+        fatherName: item.studentDetails.fatherName,
+        rollNumber: item.score.rollNo,
+        class: item.studentDetails.class,
+      }));
+      const downloadExcel = () => {
+        const workbook = XLSX.utils.book_new();
+        const worksheet = XLSX.utils.json_to_sheet(studentDetails);
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Student Details");
+        XLSX.writeFile(workbook, "student_details_for_kainats_use.xlsx");
+      };
+      downloadExcel();
+
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error fetching school result:", error);
+    }
+  };
   const handleBack = () => {
     router.back();
   };
@@ -807,6 +835,14 @@ const Results = () => {
             disabled={isLoading}
             onClick={handleParticipationExcel}>
             Participation Excel
+          </Button>
+          <Button
+            className=" font-medium text-[15px]  tracking-wide"
+            variant="default"
+            size="lg"
+            disabled={isLoading}
+            onClick={handleExcelForKainat}>
+            Only For Kainat&apos; Use
           </Button>
         </div>
       </div>
