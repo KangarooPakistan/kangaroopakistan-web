@@ -668,12 +668,14 @@ const Results = () => {
         `/api/results/allresults/${params.contestId}`
       );
       console.log(schoolResultGoldResp);
+      console.log("schoolResultGoldResp");
 
       const studentDetails = schoolResultGoldResp.data.map((item: any) => ({
         schoolName: item.schoolName,
         studentName: item.studentDetails.studentName,
         fatherName: item.studentDetails.fatherName,
         rollNumber: item.score.rollNo,
+        awardLevel: item.awardLevel,
         class: item.studentDetails.class,
       }));
       const downloadExcel = () => {
