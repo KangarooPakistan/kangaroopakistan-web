@@ -675,7 +675,7 @@ const Results = () => {
         studentName: item.studentDetails.studentName,
         fatherName: item.studentDetails.fatherName,
         rollNumber: item.score.rollNo,
-        awardLevel: item.awardLevel,
+        awardLevel: item.AwardLevel,
         class: item.studentDetails.class,
       }));
       const downloadExcel = () => {
