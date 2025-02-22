@@ -99,6 +99,7 @@ const FetchAllRegistrations = () => {
   const [contestCh, setContestCh] = useState("");
   const [registerationsData, setRegistrationsData] = useState([]);
   const [studentForExcel, setStudentForExcel] = useState([]);
+  const [studentsForUtility, setStudentForUtility] = useState([]);
   const [contestName, setContestName] = useState("");
   const activeRequestController = useRef<AbortController | null>(null);
 
@@ -208,6 +209,17 @@ const FetchAllRegistrations = () => {
               ...student, // Spread student attributes
             }))
           );
+          const studentsForUtility = registrations.flatMap((reg: any) =>
+            reg.students.map((student: StudentData) => ({
+              rollNumber: student.rollNumber,
+              studentName: student.studentName,
+              fatherName: student.fatherName,
+              class: student.class,
+              level: student.level,
+              // ...student, // Spread student attributes
+            }))
+          );
+          setStudentForUtility(studentsForUtility);
           setStudentForExcel(studentsForExcel);
           setExcel(ExcelData);
 
@@ -323,6 +335,55 @@ const FetchAllRegistrations = () => {
 
       // Add Student Data sheet
       const studentWs = XLSX.utils.json_to_sheet(studentForExcel);
+      XLSX.utils.book_append_sheet(wb, studentWs, "Student Data");
+
+      // Write and save the file
+      XLSX.writeFile(wb, `contest_data.xlsx`);
+    } else {
+      console.log("No data available to export");
+      toast.error("No data available to export", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  };
+  const handleExcelForUtility = () => {
+    if (regData.length > 0) {
+      // Prepare Student Data (new logic)
+      const studentData: any[] = [];
+      console.log(regData);
+      // Iterate through registrations to extract student details
+      regData.forEach((registration: any) => {
+        // Find the corresponding school data
+
+        // If the registration has students, add each student to the studentData
+        if (registration.students && registration.students.length > 0) {
+          registration.students.forEach((student: any) => {
+            studentData.push({
+              // Student Information
+              "Roll Number": student.rollNumber,
+              "Student Name": student.studentName,
+              "Father Name": student.fatherName,
+              Class: student.class,
+              Level: student.level,
+            });
+          });
+        }
+      });
+
+      // Create workbook and add sheets
+      const wb = XLSX.utils.book_new();
+
+      // Add School Data sheet
+
+      // Add Student Data sheet
+      const studentWs = XLSX.utils.json_to_sheet(studentsForUtility);
       XLSX.utils.book_append_sheet(wb, studentWs, "Student Data");
 
       // Write and save the file
@@ -482,6 +543,13 @@ const FetchAllRegistrations = () => {
             size="lg"
             onClick={handleClick}>
             Export Data
+          </Button>
+          <Button
+            className=" font-medium text-[15px]  tracking-wide"
+            variant="default"
+            size="lg"
+            onClick={handleExcelForUtility}>
+            Export Data For Uitlity
           </Button>
 
           <Button
