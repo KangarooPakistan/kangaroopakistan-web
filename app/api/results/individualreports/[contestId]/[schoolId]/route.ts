@@ -401,6 +401,28 @@ export async function GET(
 
     console.log("finalProcessedScores");
     // console.log(finalProcessedScores);
+    processedScoresNew.sort(
+      (
+        a: ProcessedScore & { missingQuestionsCount: number[] },
+        b: ProcessedScore & { missingQuestionsCount: number[] }
+      ) => {
+        const classA = parseInt(a.student?.class || "0", 10);
+        const classB = parseInt(b.student?.class || "0", 10);
+        return classA - classB;
+      }
+    );
+
+    return NextResponse.json(
+      {
+        schoolId: schoolIntId,
+        schoolName: schoolInfo?.schoolName || null,
+        city: schoolInfo?.city || null,
+        schoolAddress: schoolInfo?.schoolAddress || null,
+        totalScores: schoolScores.length,
+        scores: processedScoresNew,
+      },
+      { status: 200 }
+    );
 
     return NextResponse.json(
       {
