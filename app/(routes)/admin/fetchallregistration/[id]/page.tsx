@@ -211,12 +211,7 @@ const FetchAllRegistrations = () => {
           );
           const studentsForUtility = registrations.flatMap((reg: any) =>
             reg.students.map((student: StudentData) => ({
-              rollNumber: student.rollNumber,
-              studentName: student.studentName,
-              fatherName: student.fatherName,
-              class: student.class,
-              level: student.level,
-              // ...student, // Spread student attributes
+              ...student, // Spread student attributes
             }))
           );
           setStudentForUtility(studentsForUtility);
