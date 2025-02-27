@@ -101,7 +101,7 @@ export async function GET(
 
     tableHtml += `</tbody></table>`;
 
-    const startDateString = contestDate?.startDate;
+    const startDateString = contestDate?.endDate;
     let year = startDateString ? new Date(startDateString).getFullYear() : 0;
 
     // const mailOptions: nodemailer.SendMailOptions = {
@@ -158,9 +158,8 @@ export async function GET(
 
       subject: `Registration Received - ${contestNameShort} ${year}`,
       html: `<p><b>Dear Sir / Madam,</b></p>
-      <p>Thank you for registering your school for the ${contestName} ${year}. We have successfully received your registration details and are currently in the process of verifying your payment to complete the registration procedure. </p>
-      <p>If there are any discrepancies or additional information required, our team will reach out to you promptly. In the meantime, if you have any questions or require assistance, please feel free to contact us. </p>
-      <p>We appreciate your continued support and enthusiasm. We look forward to working together to make this year's contest a remarkable success.</p>
+      <p>We are pleased to confirm that your registration for the ${contestName} ${year} is complete, and your payment has been successfully verified. Thank you for your participation! </p>
+      
       <p>Below are the details of your institution. Kindly verify, as these details will be used in all official documents: </p>
       <br/>
       <p> School ID: ${schoolDetails?.schoolId}</p>
