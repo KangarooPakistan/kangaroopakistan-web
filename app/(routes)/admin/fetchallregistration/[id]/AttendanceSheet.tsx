@@ -1016,7 +1016,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
         <Text style={styles.paragraph}>
           COO Inventive Learning - KSF Pakistan
         </Text>
-        <Text break></Text>
+        {/* <Text break></Text> */}
         <View style={styles.table}>
           <View style={styles.tableRow}>
             <View style={[styles.tableColHeader, { borderLeftWidth: 1 }]}>
