@@ -781,7 +781,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
               <Text style={styles.tableCell}></Text>
             </View>
           </View>
-          <View style={{ marginTop: 10, marginBottom: 40 }}>
+          <View style={{ marginTop: 10, marginBottom: 20 }}>
             <Text
               style={[styles.paragraph, { fontSize: 9, fontWeight: "bold" }]}>
               It is hereby certified that the level-wise figures provided above
