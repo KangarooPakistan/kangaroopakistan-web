@@ -650,11 +650,27 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             Total # Student: {studentCount}
           </Text>
         </View>
-        <View>
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+          }}>
           <Text style={styles.totalStudentsText}>
             Total Number of Students : {schoolData.length}
           </Text>
+          <View style={{ marginTop: 370 }}>
+            <Text style={styles.totalStudentsText}>
+              Please return this attendance sheet and answer sheets to the
+              following address: Innovative Learning Plaza 114, Main Boulevard,
+              Block J, DHA Phase 6 Lahore
+            </Text>
+            <Text style={styles.totalStudentsText}>
+              Tel. 0333-2111399, 0321-8403033
+            </Text>
+          </View>
         </View>
+
         <Text break></Text>
         <Text style={styles.title}>ATTENDANCE SHEET</Text>
         <Text style={styles.header}>{profileData?.contestName}</Text>
