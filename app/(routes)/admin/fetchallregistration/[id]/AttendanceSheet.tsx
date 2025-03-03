@@ -184,12 +184,12 @@ const styles = StyleSheet.create({
   },
 
   paragraph: {
-    fontSize: "12px",
-    marginBottom: 10,
+    fontSize: "10px",
+    marginBottom: 8,
     fontFamily: "Roboto",
   },
   spacer: {
-    height: 20, // Adjust this value to increase or decrease space
+    height: 14, // Adjust this value to increase or decrease space
   },
 
   table: {
@@ -673,7 +673,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
           corrections to the student&apos;s name or father&apos;s name, please
           make them here directly on this attendance sheet.
         </Text>
-        <Text style={[styles.title, { marginTop: 15 }]}>
+        <Text style={[styles.title, { marginTop: 10 }]}>
           SUMMARY OF PAPERS RECEIVED
         </Text>
         <View style={styles.table}>
@@ -781,7 +781,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
               <Text style={styles.tableCell}></Text>
             </View>
           </View>
-          <View style={{ marginTop: 10, marginBottom: 20 }}>
+          <View style={{ marginTop: 10, marginBottom: 10 }}>
             <Text
               style={[styles.paragraph, { fontSize: 9, fontWeight: "bold" }]}>
               It is hereby certified that the level-wise figures provided above
@@ -791,7 +791,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
 
           <View
             style={{
-              marginTop: 20,
+              marginTop: 10,
               textAlign: "right",
               alignItems: "flex-end",
             }}>
@@ -802,7 +802,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             </Text>
           </View>
 
-          <Text style={[styles.title, { marginTop: 20 }]}>
+          <Text style={[styles.title, { marginTop: 15 }]}>
             SUMMARY OF PAPERS RETURNED
           </Text>
           <View style={styles.table}>
@@ -969,7 +969,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
           </View>
           <View
             style={{
-              marginTop: 20,
+              marginTop: 25,
               textAlign: "right",
               alignItems: "flex-end",
             }}>
@@ -985,7 +985,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
           Supervisor Name: _____________________
         </Text>
         <Text style={styles.paragraph}>Signature: ____________________</Text> */}
-        <Text style={styles.paragraph}>
+        {/* <Text style={styles.paragraph}>
           We also request that you confirm the contest was conducted under your
           supervision, ensuring complete transparency, by signing below and
           stamping the document with your school&apos;s official stamp.
@@ -1010,13 +1010,13 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
           Thank you for your continued support in promoting academic excellence.
         </Text>
         <View style={styles.spacer} />
-        <View style={styles.spacer} />
+        <View style={styles.spacer} /> */}
         <Text style={styles.paragraph}>Best regards,</Text>
         <Text style={styles.paragraph}>Khalid Rasul Awan</Text>
         <Text style={styles.paragraph}>
-          COO Inventive Learning - KSF Pakistan
+          COO Innovative Learning - KSF Pakistan
         </Text>
-        {/* <Text break></Text> */}
+        <Text break></Text>
         <View style={styles.table}>
           <View style={styles.tableRow}>
             <View style={[styles.tableColHeader, { borderLeftWidth: 1 }]}>
