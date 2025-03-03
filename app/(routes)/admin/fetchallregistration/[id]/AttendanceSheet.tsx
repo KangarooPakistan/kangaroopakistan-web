@@ -662,7 +662,10 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
           <View style={{ marginTop: 370 }}>
             <Text style={styles.totalStudentsText}>
               Please return this attendance sheet and answer sheets to the
-              following address: Innovative Learning
+              following
+            </Text>
+            <Text style={styles.totalStudentsText}>
+              address: Innovative Learning
             </Text>
             <Text style={styles.totalStudentsText}>
               First floor, Plaza 114, Main Boulevard, Block J, DHA Phase 6
