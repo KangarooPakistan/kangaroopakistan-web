@@ -669,10 +669,10 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             </Text>
             <Text style={styles.totalStudentsText}>
               First floor, Plaza 114, Main Boulevard, Block J, DHA Phase 6
-              Lahore Tel. 0333-2111399, 0321-8403033
+              Lahore
             </Text>
             <Text style={styles.totalStudentsText}>
-              Tel. 0333-2111399, 0321-8403033
+              Tel. 0333-2111399, 0321-8403033
             </Text>
           </View>
         </View>
