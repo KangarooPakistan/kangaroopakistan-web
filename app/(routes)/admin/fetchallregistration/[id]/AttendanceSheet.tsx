@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
     textAlign: "left",
   },
   tableCellHeader: {
-    fontSize: 10,
+    fontSize: 9,
     textTransform: "uppercase",
 
     fontWeight: "bold",
@@ -616,7 +616,6 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
           </View>
           <View></View>
         </View>
-
         <Text
           style={{
             fontSize: "14px",
@@ -657,10 +656,8 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
           </Text>
         </View>
         <Text break></Text>
-
         <Text style={styles.title}>ATTENDANCE SHEET</Text>
         <Text style={styles.header}>{profileData?.contestName}</Text>
-
         <Text style={styles.paragraph}>Dear Principal,</Text>
         <Text style={styles.paragraph}>
           We are pleased to inform you that your school is participating in the
@@ -676,46 +673,344 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
           corrections to the student&apos;s name or father&apos;s name, please
           make them here directly on this attendance sheet.
         </Text>
+        <Text style={[styles.title, { marginTop: 15 }]}>
+          SUMMARY OF PAPERS RECEIVED
+        </Text>
+        <View style={styles.table}>
+          <View style={styles.tableRow}>
+            <View
+              style={[
+                styles.tableColHeader,
+                { borderLeftWidth: 1, width: "10%" },
+              ]}>
+              <Text style={styles.tableCellHeader}>S. No</Text>
+            </View>
+            <View style={[styles.tableColHeader, { width: "35%" }]}>
+              <Text style={styles.tableCellHeader}>Level</Text>
+            </View>
+            <View style={[styles.tableColHeader, { width: "35%" }]}>
+              <Text style={styles.tableCellHeader}>
+                No. of Answer Sheets & Booklets Sent
+              </Text>
+            </View>
+            <View style={[styles.tableColHeader, { width: "20%" }]}>
+              <Text style={styles.tableCellHeader}>Remarks</Text>
+            </View>
+          </View>
+          <View style={styles.tableRow}>
+            <View style={[styles.tableCol, { width: "10%" }]}>
+              <Text style={styles.tableCell}>1.</Text>
+            </View>
+            <View style={[styles.tableCol, { width: "35%" }]}>
+              <Text style={styles.tableCell}>PreEcolier (Class 1 & 2)</Text>
+            </View>
+            <View style={[styles.tableCol, { width: "35%" }]}>
+              <Text style={styles.tableCell}></Text>
+            </View>
+            <View style={[styles.tableCol, { width: "20%" }]}>
+              <Text style={styles.tableCell}></Text>
+            </View>
+          </View>
+          <View style={styles.tableRow}>
+            <View style={[styles.tableCol, { width: "10%" }]}>
+              <Text style={styles.tableCell}>2.</Text>
+            </View>
+            <View style={[styles.tableCol, { width: "35%" }]}>
+              <Text style={styles.tableCell}>Ecolier (Class 3 & 4)</Text>
+            </View>
+            <View style={[styles.tableCol, { width: "35%" }]}>
+              <Text style={styles.tableCell}></Text>
+            </View>
+            <View style={[styles.tableCol, { width: "20%" }]}>
+              <Text style={styles.tableCell}></Text>
+            </View>
+          </View>
+          <View style={styles.tableRow}>
+            <View style={[styles.tableCol, { width: "10%" }]}>
+              <Text style={styles.tableCell}>3.</Text>
+            </View>
+            <View style={[styles.tableCol, { width: "35%" }]}>
+              <Text style={styles.tableCell}>Benjamin (Class 5 & 6)</Text>
+            </View>
+            <View style={[styles.tableCol, { width: "35%" }]}>
+              <Text style={styles.tableCell}></Text>
+            </View>
+            <View style={[styles.tableCol, { width: "20%" }]}>
+              <Text style={styles.tableCell}></Text>
+            </View>
+          </View>
+          <View style={styles.tableRow}>
+            <View style={[styles.tableCol, { width: "10%" }]}>
+              <Text style={styles.tableCell}>4.</Text>
+            </View>
+            <View style={[styles.tableCol, { width: "35%" }]}>
+              <Text style={styles.tableCell}>Cadet (Class 7 & 8)</Text>
+            </View>
+            <View style={[styles.tableCol, { width: "35%" }]}>
+              <Text style={styles.tableCell}></Text>
+            </View>
+            <View style={[styles.tableCol, { width: "20%" }]}>
+              <Text style={styles.tableCell}></Text>
+            </View>
+          </View>
+          <View style={styles.tableRow}>
+            <View style={[styles.tableCol, { width: "10%" }]}>
+              <Text style={styles.tableCell}>5.</Text>
+            </View>
+            <View style={[styles.tableCol, { width: "35%" }]}>
+              <Text style={styles.tableCell}>Junior (Class 9 & 10)</Text>
+            </View>
+            <View style={[styles.tableCol, { width: "35%" }]}>
+              <Text style={styles.tableCell}></Text>
+            </View>
+            <View style={[styles.tableCol, { width: "20%" }]}>
+              <Text style={styles.tableCell}></Text>
+            </View>
+          </View>
+          <View style={styles.tableRow}>
+            <View style={[styles.tableCol, { width: "10%" }]}>
+              <Text style={styles.tableCell}>6.</Text>
+            </View>
+            <View style={[styles.tableCol, { width: "35%" }]}>
+              <Text style={styles.tableCell}>Student (Class 11 & 12)</Text>
+            </View>
+            <View style={[styles.tableCol, { width: "35%" }]}>
+              <Text style={styles.tableCell}></Text>
+            </View>
+            <View style={[styles.tableCol, { width: "20%" }]}>
+              <Text style={styles.tableCell}></Text>
+            </View>
+          </View>
+          <View style={{ marginTop: 10, marginBottom: 40 }}>
+            <Text
+              style={[styles.paragraph, { fontSize: 9, fontWeight: "bold" }]}>
+              It is hereby certified that the level-wise figures provided above
+              are accurate.
+            </Text>
+          </View>
 
-        <Text style={styles.paragraph}>
+          <View
+            style={{
+              marginTop: 20,
+              textAlign: "right",
+              alignItems: "flex-end",
+            }}>
+            <View
+              style={{ width: 200, borderTopWidth: 1, marginTop: 10 }}></View>
+            <Text style={[styles.paragraph, { fontSize: 10 }]}>
+              Signature & Stamp of the Principal
+            </Text>
+          </View>
+
+          <Text style={[styles.title, { marginTop: 20 }]}>
+            SUMMARY OF PAPERS RETURNED
+          </Text>
+          <View style={styles.table}>
+            <View style={styles.tableRow}>
+              <View
+                style={[
+                  styles.tableColHeader,
+                  { borderLeftWidth: 1, width: "10%" },
+                ]}>
+                <Text style={styles.tableCellHeader}>S. No</Text>
+              </View>
+              <View style={[styles.tableColHeader, { width: "25%" }]}>
+                <Text style={styles.tableCellHeader}>Level</Text>
+              </View>
+              <View style={[styles.tableColHeader, { width: "25%" }]}>
+                <Text style={styles.tableCellHeader}>
+                  No. of Answer Sheets of Students Present
+                </Text>
+              </View>
+              <View style={[styles.tableColHeader, { width: "25%" }]}>
+                <Text style={styles.tableCellHeader}>
+                  No. of Answer Sheets of Students Absent
+                </Text>
+              </View>
+              <View style={[styles.tableColHeader, { width: "15%" }]}>
+                <Text style={styles.tableCellHeader}>Total</Text>
+              </View>
+            </View>
+
+            <View style={styles.tableRow}>
+              <View style={[styles.tableCol, { width: "10%" }]}>
+                <Text style={styles.tableCell}>1.</Text>
+              </View>
+              <View style={[styles.tableCol, { width: "25%" }]}>
+                <Text style={styles.tableCell}>PreEcolier (Class 1 & 2)</Text>
+              </View>
+              <View style={[styles.tableCol, { width: "25%" }]}>
+                <Text style={styles.tableCell}></Text>
+              </View>
+              <View style={[styles.tableCol, { width: "25%" }]}>
+                <Text style={styles.tableCell}></Text>
+              </View>
+              <View style={[styles.tableCol, { width: "15%" }]}>
+                <Text style={styles.tableCell}></Text>
+              </View>
+            </View>
+
+            <View style={styles.tableRow}>
+              <View style={[styles.tableCol, { width: "10%" }]}>
+                <Text style={styles.tableCell}>2.</Text>
+              </View>
+              <View style={[styles.tableCol, { width: "25%" }]}>
+                <Text style={styles.tableCell}>Ecolier (Class 3 & 4)</Text>
+              </View>
+              <View style={[styles.tableCol, { width: "25%" }]}>
+                <Text style={styles.tableCell}></Text>
+              </View>
+              <View style={[styles.tableCol, { width: "25%" }]}>
+                <Text style={styles.tableCell}></Text>
+              </View>
+              <View style={[styles.tableCol, { width: "15%" }]}>
+                <Text style={styles.tableCell}></Text>
+              </View>
+            </View>
+
+            <View style={styles.tableRow}>
+              <View style={[styles.tableCol, { width: "10%" }]}>
+                <Text style={styles.tableCell}>3.</Text>
+              </View>
+              <View style={[styles.tableCol, { width: "25%" }]}>
+                <Text style={styles.tableCell}>Benjamin (Class 5 & 6)</Text>
+              </View>
+              <View style={[styles.tableCol, { width: "25%" }]}>
+                <Text style={styles.tableCell}></Text>
+              </View>
+              <View style={[styles.tableCol, { width: "25%" }]}>
+                <Text style={styles.tableCell}></Text>
+              </View>
+              <View style={[styles.tableCol, { width: "15%" }]}>
+                <Text style={styles.tableCell}></Text>
+              </View>
+            </View>
+
+            <View style={styles.tableRow}>
+              <View style={[styles.tableCol, { width: "10%" }]}>
+                <Text style={styles.tableCell}>4.</Text>
+              </View>
+              <View style={[styles.tableCol, { width: "25%" }]}>
+                <Text style={styles.tableCell}>Cadet (Class 7 & 8)</Text>
+              </View>
+              <View style={[styles.tableCol, { width: "25%" }]}>
+                <Text style={styles.tableCell}></Text>
+              </View>
+              <View style={[styles.tableCol, { width: "25%" }]}>
+                <Text style={styles.tableCell}></Text>
+              </View>
+              <View style={[styles.tableCol, { width: "15%" }]}>
+                <Text style={styles.tableCell}></Text>
+              </View>
+            </View>
+
+            <View style={styles.tableRow}>
+              <View style={[styles.tableCol, { width: "10%" }]}>
+                <Text style={styles.tableCell}>5.</Text>
+              </View>
+              <View style={[styles.tableCol, { width: "25%" }]}>
+                <Text style={styles.tableCell}>Junior (Class 9 & 10)</Text>
+              </View>
+              <View style={[styles.tableCol, { width: "25%" }]}>
+                <Text style={styles.tableCell}></Text>
+              </View>
+              <View style={[styles.tableCol, { width: "25%" }]}>
+                <Text style={styles.tableCell}></Text>
+              </View>
+              <View style={[styles.tableCol, { width: "15%" }]}>
+                <Text style={styles.tableCell}></Text>
+              </View>
+            </View>
+
+            <View style={styles.tableRow}>
+              <View style={[styles.tableCol, { width: "10%" }]}>
+                <Text style={styles.tableCell}>6.</Text>
+              </View>
+              <View style={[styles.tableCol, { width: "25%" }]}>
+                <Text style={styles.tableCell}>Student (Class 11 & 12)</Text>
+              </View>
+              <View style={[styles.tableCol, { width: "25%" }]}>
+                <Text style={styles.tableCell}></Text>
+              </View>
+              <View style={[styles.tableCol, { width: "25%" }]}>
+                <Text style={styles.tableCell}></Text>
+              </View>
+              <View style={[styles.tableCol, { width: "15%" }]}>
+                <Text style={styles.tableCell}></Text>
+              </View>
+            </View>
+
+            <View style={styles.tableRow}>
+              <View style={[styles.tableCol, { width: "10%" }]}>
+                <Text style={styles.tableCell}></Text>
+              </View>
+              <View style={[styles.tableCol, { width: "25%" }]}>
+                <Text style={[styles.tableCell, { fontWeight: "bold" }]}>
+                  Total
+                </Text>
+              </View>
+              <View style={[styles.tableCol, { width: "25%" }]}>
+                <Text style={styles.tableCell}></Text>
+              </View>
+              <View style={[styles.tableCol, { width: "25%" }]}>
+                <Text style={styles.tableCell}></Text>
+              </View>
+              <View style={[styles.tableCol, { width: "15%" }]}>
+                <Text style={styles.tableCell}></Text>
+              </View>
+            </View>
+          </View>
+          <View style={{ marginTop: 10 }}>
+            <Text
+              style={[styles.paragraph, { fontSize: 9, fontWeight: "bold" }]}>
+              I hereby acknowledge the receipt of the detailed papers mentioned
+              above and certify that the number of papers received is accurate.
+            </Text>
+          </View>
+          <View
+            style={{
+              marginTop: 20,
+              textAlign: "right",
+              alignItems: "flex-end",
+            }}>
+            <View
+              style={{ width: 200, borderTopWidth: 1, marginTop: 10 }}></View>
+            <Text style={[styles.paragraph, { fontSize: 10 }]}>
+              Signature & Stamp of the Principal
+            </Text>
+          </View>
+        </View>
+
+        {/* <Text style={styles.paragraph}>
           Supervisor Name: _____________________
         </Text>
-
         <Text style={styles.paragraph}>Signature: ____________________</Text>
-
         <Text style={styles.paragraph}>
           We also request that you confirm the contest was conducted under your
           supervision, ensuring complete transparency, by signing below and
           stamping the document with your school&apos;s official stamp.
         </Text>
-
         <View style={styles.paragraph}>
           <Text>Principal&apos;s Signature: ____________________</Text> <br />
           <Text>Date: ____________________</Text>
         </View>
-
         <View style={styles.spacer} />
         <View style={styles.spacer} />
-
         <Text style={styles.paragraph}>
           We remind you that question booklets become property of the students,
           therefore they should be given to the students.
         </Text>
         <View style={styles.spacer} />
-
         <Text style={styles.paragraph}>
           Your cooperation in ensuring the smooth conduct of the{" "}
           {profileData?.contestName} is greatly appreciated. Please return this
           document along with the completed answer sheets to our representative.
         </Text>
-
         <Text style={styles.paragraph}>
           Thank you for your continued support in promoting academic excellence.
-        </Text>
+        </Text> */}
         <View style={styles.spacer} />
-
         <View style={styles.spacer} />
-
         <Text style={styles.paragraph}>Best regards,</Text>
         <Text style={styles.paragraph}>Khalid Rasul Awan</Text>
         <Text style={styles.paragraph}>
