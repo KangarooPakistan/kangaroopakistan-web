@@ -984,7 +984,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
         {/* <Text style={styles.paragraph}>
           Supervisor Name: _____________________
         </Text>
-        <Text style={styles.paragraph}>Signature: ____________________</Text>
+        <Text style={styles.paragraph}>Signature: ____________________</Text> */}
         <Text style={styles.paragraph}>
           We also request that you confirm the contest was conducted under your
           supervision, ensuring complete transparency, by signing below and
@@ -1008,7 +1008,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
         </Text>
         <Text style={styles.paragraph}>
           Thank you for your continued support in promoting academic excellence.
-        </Text> */}
+        </Text>
         <View style={styles.spacer} />
         <View style={styles.spacer} />
         <Text style={styles.paragraph}>Best regards,</Text>
