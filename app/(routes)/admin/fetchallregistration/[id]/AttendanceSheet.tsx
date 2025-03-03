@@ -659,7 +659,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
           <Text style={styles.totalStudentsText}>
             Total Number of Students : {schoolData.length}
           </Text>
-          <View style={{ marginTop: 370 }}>
+          <View style={{ marginTop: 340 }}>
             <Text style={styles.totalStudentsText}>
               Please return this attendance sheet and answer sheets to the
               following
