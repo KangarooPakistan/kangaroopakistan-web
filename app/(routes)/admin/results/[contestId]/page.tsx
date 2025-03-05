@@ -703,6 +703,7 @@ const Results = () => {
       const allStudents = Object.values(studentsByClass).flat();
 
       const studentDetails = allStudents.map((item: any) => ({
+        id: item.id,
         rollNumber: item.rollNo,
         cRow1: item.cRow1,
         cRow2: item.cRow2,
