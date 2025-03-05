@@ -691,6 +691,46 @@ const Results = () => {
       console.error("Error fetching school result:", error);
     }
   };
+  const handleExcelForKainatPart2 = async () => {
+    try {
+      setIsLoading(true);
+      const schoolResultGoldResp = await axios.get(
+        `/api/results/getallscores/${params.contestId}`
+      );
+      console.log(schoolResultGoldResp);
+      console.log("schoolResultGoldResp");
+      const studentsByClass = JSON.parse(schoolResultGoldResp.data);
+      const allStudents = Object.values(studentsByClass).flat();
+
+      const studentDetails = allStudents.map((item: any) => ({
+        rollNumber: item.rollNo,
+        cRow1: item.cRow1,
+        cRow2: item.cRow2,
+        cRow3: item.cRow3,
+        cTotal: item.cTotal,
+        creditScore: item.creditScore,
+        description: item.description,
+        missing: item.missing,
+        percentage: item.percentage,
+        score: item.score ? Number(item.score) : null,
+        totalMarks: item.totalMarks ? Number(item.totalMarks) : null,
+        wrong: item.wrong,
+        class: item.rollNo?.split("-")[2] || "Unknown",
+      }));
+
+      const downloadExcel = () => {
+        const workbook = XLSX.utils.book_new();
+        const worksheet = XLSX.utils.json_to_sheet(studentDetails);
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Student Details");
+        XLSX.writeFile(workbook, "student_details_for_kainats_use.xlsx");
+      };
+      downloadExcel();
+
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error fetching school result:", error);
+    }
+  };
   const handleBack = () => {
     router.back();
   };
@@ -845,6 +885,14 @@ const Results = () => {
             disabled={isLoading}
             onClick={handleExcelForKainat}>
             Only For Kainat&apos; Use
+          </Button>
+          <Button
+            className=" font-medium text-[15px]  tracking-wide"
+            variant="default"
+            size="lg"
+            disabled={isLoading}
+            onClick={handleExcelForKainatPart2}>
+            Only For Kainat&apos; Use part 2
           </Button>
         </div>
       </div>
