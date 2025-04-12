@@ -14,6 +14,9 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import * as XLSX from "xlsx";
 
+import { ca } from "date-fns/locale";
+import QuestionStatsPdf from "../QuestionStats/QuestionStats";
+
 export type Contest = {
   contestDate: string;
   name: string;
@@ -73,6 +76,7 @@ const Results = () => {
   const [loadData, setLoadData] = useState(true);
   const router = useRouter();
   const [result, setResult] = useState<Result[]>([]);
+  const [questionStats, setQuestionStats] = useState<any>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -732,6 +736,48 @@ const Results = () => {
       console.error("Error fetching school result:", error);
     }
   };
+  const downloadQuestionStats = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.get(
+        `/api/question-stats/${params.contestId}`
+      );
+      console.log(response.data);
+      setQuestionStats(response.data); // Save the data to state
+      setIsLoading(false);
+      const blob = await pdf(
+        <QuestionStatsPdf data={response.data} />
+      ).toBlob();
+
+      // Download PDF
+      saveAs(blob, `${response.data.contestName}_Question_Stats.pdf`);
+
+      toast.success("Question stats fetched successfully", {
+        position: "bottom-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    } catch (e) {
+      console.log(e);
+      setIsLoading(false);
+      toast.error("Failed to fetch question stats", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  };
+
   const handleBack = () => {
     router.back();
   };
@@ -746,6 +792,14 @@ const Results = () => {
             disabled={isLoading}
             onClick={handleBack}>
             Back
+          </Button>
+          <Button
+            className=" font-medium text-[15px]  tracking-wide"
+            variant="default"
+            size="lg"
+            disabled={isLoading}
+            onClick={downloadQuestionStats}>
+            Download Question Stats
           </Button>
           <Button
             className=" font-medium text-[15px]  tracking-wide"
