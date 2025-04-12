@@ -552,10 +552,6 @@ const MyDocument: React.FC<MyDocumentProps> = ({ student }) => (
         </View>
 
         <View style={styles.studentInfoRow}>
-          <Text style={styles.studentInfoTitle}>District</Text>
-          <Text style={styles.studentInfoContent}>{student.districtCode}</Text>
-        </View>
-        <View style={styles.studentInfoRow}>
           <Text style={styles.studentInfoTitle}>Student Name</Text>
           <Text style={styles.studentInfoContent}>{student.studentName}</Text>
         </View>
