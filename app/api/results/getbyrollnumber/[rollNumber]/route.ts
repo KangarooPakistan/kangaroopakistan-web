@@ -214,6 +214,25 @@ export async function GET(
     const schoolIntId = parseInt(schoolId, 10);
     const paddedSchoolId = schoolIntId.toString().padStart(5, "0");
 
+    const registrationIdStudent = await db.student.findFirst({
+      where: { rollNumber },
+      select: {
+        registrationId: true,
+      },
+    });
+    const contestIdForRP = await db.registration.findFirst({
+      where: { id: registrationIdStudent?.registrationId },
+    });
+    const resultsProof = await db.resultProof.findFirst({
+      where: {
+        contestId: contestIdForRP?.contestId,
+      },
+    });
+
+    if (!resultsProof) {
+      return NextResponse.json({ error: "No results found!" }, { status: 404 });
+    }
+
     // Get student information
     const studentInfo = await db.student.findFirst({
       where: { rollNumber },
