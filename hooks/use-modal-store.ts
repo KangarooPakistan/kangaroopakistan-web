@@ -4,11 +4,13 @@ import { create } from "zustand";
 export type ModalType =
   | "createContest"
   | "addImage"
+  | "addResult"
   | "deleteStudent"
   | "deleteSchool"
   | "upload-notification";
 interface ModalData {
   registrationId?: string;
+  contestId?: string;
   id?: number;
   currentUserEmail?: string | null;
 }

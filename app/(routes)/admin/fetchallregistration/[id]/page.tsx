@@ -15,6 +15,7 @@ import * as XLSX from "xlsx";
 import { pdf } from "@react-pdf/renderer";
 import AllLabelsShort from "./AllLabelsShort";
 import Link from "next/link";
+import { useModal } from "@/hooks/use-modal-store";
 
 export const dynamic = "force-dynamic"; // Ensures this page is always rendered server-side
 
@@ -82,8 +83,10 @@ interface RegistrationWithPaymentProof extends Registration {
 
 const FetchAllRegistrations = () => {
   const params = useParams();
+  const { onOpen } = useModal();
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const [contestId, setContestId] = useState("");
   const [regData, setRegData] = useState<Registration[]>([]);
   const [excel, setExcel] = useState([]); // This makes sure `excel` is an array
   const [totalSchools, setTotalSchools] = useState<number>(0);
@@ -120,7 +123,7 @@ const FetchAllRegistrations = () => {
           `/api/users/contests/${registrations[0].contestId}`,
           { signal } // Add signal to this request too
         );
-
+        setContestId(registrations[0].contestId);
         // Only proceed with state updates if the request hasn't been cancelled
         if (!signal.aborted) {
           setContestName(contestData.data.name);
@@ -475,6 +478,13 @@ const FetchAllRegistrations = () => {
 
     router.push(`/admin/results/${params.id}`);
   };
+  const handleAddResult = () => {
+    setIsLoading(true);
+    onOpen("addResult", {
+      contestId,
+    });
+    setIsLoading(false);
+  };
 
   return (
     <div className="container mx-auto py-10">
@@ -546,7 +556,6 @@ const FetchAllRegistrations = () => {
             onClick={handleExcelForUtility}>
             Export Data For Uitlity
           </Button>
-
           <Button
             className=" font-medium text-[15px]  tracking-wide"
             variant="default"
@@ -585,6 +594,15 @@ const FetchAllRegistrations = () => {
             onClick={handleViewResults}>
             View Results
           </Button>
+          <Button
+            className=" font-medium text-[15px]  tracking-wide"
+            variant="default"
+            size="lg"
+            disabled={isLoading}
+            onClick={handleAddResult}>
+            Upload Permission For Publishing Result
+          </Button>
+
           <Button
             variant="default"
             size="lg"
