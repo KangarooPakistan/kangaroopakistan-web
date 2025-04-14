@@ -230,7 +230,10 @@ export async function GET(
     });
 
     if (!resultsProof) {
-      return NextResponse.json({ error: "No results found!" }, { status: 404 });
+      return NextResponse.json(
+        { message: "Result not found for this rollNumber" },
+        { status: 404 }
+      );
     }
 
     // Get student information
