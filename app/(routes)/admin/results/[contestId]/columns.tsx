@@ -383,7 +383,7 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
     setIsLoading(true);
     try {
       const schoolResultResp = await axios.get(
-        `/api/results/getbyschools/${schoolResult.schoolId}/${params.contestId}`
+        `/api/results/getbyschools/${schoolResult.schoolId}/${params.contestId}/admin`
       );
 
       if (!schoolResultResp.data) {
