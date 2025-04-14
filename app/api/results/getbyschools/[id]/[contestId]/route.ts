@@ -37,6 +37,18 @@ export async function GET(
 ) {
   try {
     const schoolIdInt = parseInt(params.id, 10);
+    const resultsProof = await db.resultProof.findFirst({
+      where: {
+        contestId: params.contestId,
+      },
+    });
+
+    if (!resultsProof) {
+      return NextResponse.json(
+        { error: "No results found for this contest" },
+        { status: 404 }
+      );
+    }
 
     // Fetch school details
     const schoolDetails = await db.user.findFirst({
