@@ -472,6 +472,37 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       );
     }
   };
+  const sendCorrectionEmail = async () => {
+    try {
+      const res = await axios.get(
+        `/api/users/correctionemail/${registration.id}`
+      );
+      toast.success("🦄 Email Sent Successfully 😍", {
+        position: "bottom-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    } catch (error: any) {
+      toast.error(
+        "Error sending email, Please try again later 😒 " +
+          {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          }
+      );
+    }
+  };
   return (
     <>
       <div className="hidden md:block">
@@ -512,6 +543,11 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
             <DropdownMenuItem
               className="border-y-2 border-solid"
               onClick={handleEmail}>
+              Send Email
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="border-y-2 border-solid"
+              onClick={sendCorrectionEmail}>
               Send Email
             </DropdownMenuItem>
             <DropdownMenuItem
