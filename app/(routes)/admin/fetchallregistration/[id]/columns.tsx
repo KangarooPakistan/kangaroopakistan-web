@@ -548,7 +548,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
             <DropdownMenuItem
               className="border-y-2 border-solid"
               onClick={sendCorrectionEmail}>
-              Send Email
+              Send Correction Email
             </DropdownMenuItem>
             <DropdownMenuItem
               className="border-y-2 border-solid"
