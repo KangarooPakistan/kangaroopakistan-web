@@ -351,6 +351,64 @@ const FetchAllRegistrations = () => {
       });
     }
   };
+  const handleStudentCountByLevels = async () => {
+    try {
+      // Show loading toast
+      toast.info("Generating report, please wait...", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+
+      const response = await axios.get(
+        `/api/users/contests/${params.id}/getlevelsbyschoolId`
+      );
+
+      const { schools } = response.data;
+      if (!schools || schools.length === 0) {
+        toast.error("No data available to export", {
+          position: "top-right",
+          autoClose: 5000,
+        });
+        return;
+      }
+      const excelData = schools.map((school: any) => ({
+        "School ID": school.schoolId,
+        "School Name": school.schoolName,
+        "Total Students": school.totalStudents,
+        "PRE-ECOLIER (Class 1-2)": school.categories.PRE_ECOLIER,
+        "ECOLIER (Class 3-4)": school.categories.ECOLIER,
+        "BENJAMIN (Class 5-6)": school.categories.BENJAMIN,
+        "CADET (Class 7-8)": school.categories.CADET,
+        "JUNIOR (Class 9-10)": school.categories.JUNIOR,
+        "STUDENT (Class 11-12)": school.categories.STUDENT,
+      }));
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.json_to_sheet(excelData);
+
+      // Add worksheet to workbook
+      XLSX.utils.book_append_sheet(wb, ws, "Student Counts by Level");
+
+      // Generate a suitable filename
+      const fileName = `${
+        contestName || "Contest"
+      }_Student_Counts_By_Level.xlsx`;
+
+      // Write and download the file
+      XLSX.writeFile(wb, fileName);
+
+      // Show success toast
+      toast.success("Report downloaded successfully!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    } catch (error) {
+      console.error("Error generating report:", error);
+      toast.error("Failed to generate report. Please try again.", {
+        position: "top-right",
+        autoClose: 5000,
+      });
+    }
+  };
   const handleExcelForUtility = () => {
     if (regData.length > 0) {
       // Prepare Student Data (new logic)
@@ -548,6 +606,13 @@ const FetchAllRegistrations = () => {
             size="lg"
             onClick={handleClick}>
             Export Data
+          </Button>
+          <Button
+            className=" font-medium text-[15px]  tracking-wide"
+            variant="default"
+            size="lg"
+            onClick={handleStudentCountByLevels}>
+            Download Student Count By Levels
           </Button>
           <Button
             className=" font-medium text-[15px]  tracking-wide"
