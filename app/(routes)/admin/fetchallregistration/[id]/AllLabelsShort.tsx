@@ -63,7 +63,7 @@ const AllLabelsShort: React.FC<AllLabelsProps> = ({ schoolDetails }) => {
     addressBlock: {
       marginBottom: 10,
       marginTop: 10,
-      width: "200px",
+      width: "250px",
       maxWidth: "220px",
     },
     bold: {
