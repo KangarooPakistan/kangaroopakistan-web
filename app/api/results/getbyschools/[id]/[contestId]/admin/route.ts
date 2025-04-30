@@ -188,13 +188,20 @@ export async function GET(
         return classA - classB;
       }
 
-      // Within the same class, sort by percentage in descending order
-      const percentageA = normalizePercentage(a.percentage);
-      const percentageB = normalizePercentage(b.percentage);
-      return percentageB - percentageA;
+      // Make sure percentages are converted to numbers for comparison
+      // This ensures proper numerical sorting rather than string comparison
+      const percentageA = Number(a.percentage);
+      const percentageB = Number(b.percentage);
+
+      // Handle NaN values (default to 0 if conversion fails)
+      const numA = isNaN(percentageA) ? 0 : percentageA;
+      const numB = isNaN(percentageB) ? 0 : percentageB;
+
+      // Sort by percentage in descending order
+      return numB - numA;
     });
 
-    // Sort the absent students just by class if needed
+    // Sort the absent students just by class
     const sortedAbsentStudents = absentStudents.sort((a, b) => {
       const classA = normalizeClass(a.class);
       const classB = normalizeClass(b.class);
