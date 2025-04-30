@@ -43,13 +43,6 @@ export async function GET(
       },
     });
 
-    if (!resultsProof) {
-      return NextResponse.json(
-        { error: "No results found for this contest" },
-        { status: 404 }
-      );
-    }
-
     // Fetch school details
     const schoolDetails = await db.user.findFirst({
       where: {
