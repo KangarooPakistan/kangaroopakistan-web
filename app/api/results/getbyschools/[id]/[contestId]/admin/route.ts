@@ -178,12 +178,8 @@ export async function GET(
 
     console.log(`Found ${absentStudents.length} absent students`);
 
-    // Combine regular results with absent students
-    const allResults = [...resultsWithDetails, ...absentStudents];
-    console.log(`Total results (present + absent): ${allResults.length}`);
-
-    // Sort results by class and then by percentage in descending order
-    const sortedResults = allResults.sort((a, b) => {
+    // First, sort just the resultsWithDetails
+    const sortedPresentResults = resultsWithDetails.sort((a, b) => {
       const classA = normalizeClass(a.class);
       const classB = normalizeClass(b.class);
 
@@ -192,24 +188,21 @@ export async function GET(
         return classA - classB;
       }
 
-      // Absent students should appear after students with results in the same class
-      if (a.AwardLevel === "Absent" && b.AwardLevel !== "Absent") {
-        return 1;
-      }
-      if (a.AwardLevel !== "Absent" && b.AwardLevel === "Absent") {
-        return -1;
-      }
-
-      // Convert Decimal to number for comparison
+      // Within the same class, sort by percentage in descending order
       const percentageA = normalizePercentage(a.percentage);
       const percentageB = normalizePercentage(b.percentage);
-
       return percentageB - percentageA;
     });
 
-    // Double check the final count
-    console.log(`Final sorted results count: ${sortedResults.length}`);
+    // Sort the absent students just by class if needed
+    const sortedAbsentStudents = absentStudents.sort((a, b) => {
+      const classA = normalizeClass(a.class);
+      const classB = normalizeClass(b.class);
+      return classA - classB;
+    });
 
+    // Combine sorted present results with sorted absent students
+    const sortedResults = [...sortedPresentResults, ...sortedAbsentStudents];
     // Use safeJsonStringify to handle BigInt values
     return new NextResponse(safeJsonStringify(sortedResults), {
       status: 200,
