@@ -77,10 +77,16 @@ const Results = () => {
   const router = useRouter();
   const [result, setResult] = useState<Result[]>([]);
   const [questionStats, setQuestionStats] = useState<any>(null);
+  const [contestName, setContestName] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const contestData = await axios.get(
+          `/api/users/contests/${params.contestId}`
+        );
+        console.log(contestData);
+        setContestName(contestData.data.name);
         const data = await axios.get(
           `/api/results/fetchresults/${params.contestId}`
         );
@@ -783,6 +789,12 @@ const Results = () => {
   };
   return (
     <div className="container mx-auto py-10">
+      <h1 className="text-3xl text-center my-3 font-bold text-purple-600">
+        Schools Results
+      </h1>
+      <h1 className="text-3xl text-center my-3 font-bold text-purple-600">
+        {contestName}
+      </h1>
       <div className="hidden md:block">
         <div className="py-2 md:py-4 flex flex-wrap justify-between gap-2  items-center border-gray-300">
           <Button

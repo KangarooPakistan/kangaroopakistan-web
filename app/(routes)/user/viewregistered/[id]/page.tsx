@@ -309,6 +309,8 @@ function ViewRegistered({ params, searchParams }: PageProps) {
       const schoolResultResp = await axios.get(
         `/api/results/getbyschools/${schoolId}/${params.id}`
       );
+      console.log("kangaroopakistan");
+      console.log(schoolResultResp);
 
       if (!schoolResultResp.data) {
         throw new Error("No data received from server");

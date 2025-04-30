@@ -59,22 +59,42 @@ export async function GET(
         schoolName: true,
         schoolAddress: true,
         contactNumber: true,
+        district: true,
       },
     });
 
-    // First, get all students for faster lookup
-    const students = await db.student.findMany({
-      select: {
-        rollNumber: true,
-        studentName: true,
-        fatherName: true,
-        class: true,
+    // First, get all students registered for this school and contest
+    const registration = await db.registration.findFirst({
+      where: {
+        schoolId: schoolIdInt,
+        contestId: params.contestId,
+      },
+      include: {
+        students: {
+          select: {
+            rollNumber: true,
+            studentName: true,
+            fatherName: true,
+            class: true,
+          },
+        },
       },
     });
 
-    // Create a map for quick student lookups
+    if (!registration) {
+      return NextResponse.json(
+        { error: "No registration found for this school and contest" },
+        { status: 404 }
+      );
+    }
+
+    // Log the count of registered students for debugging
+    console.log(`Total registered students: ${registration.students.length}`);
+
+    // Create a map for registered students
+    const registeredStudents = registration.students;
     const studentMap = new Map(
-      students.map((student) => [student.rollNumber, student])
+      registeredStudents.map((student) => [student.rollNumber, student])
     );
 
     // Fetch results for the school
@@ -100,6 +120,21 @@ export async function GET(
       },
     });
 
+    // Log the count of results for debugging
+    console.log(`Students with results: ${schoolResults.length}`);
+
+    // Create a set of roll numbers that have results for easier lookup
+    const studentsWithResults = new Set();
+    schoolResults.forEach((result) => {
+      if (result.rollNumber) {
+        studentsWithResults.add(result.rollNumber);
+      }
+    });
+
+    console.log(
+      `Unique roll numbers with results: ${studentsWithResults.size}`
+    );
+
     // Combine results with student and school details
     const resultsWithDetails = schoolResults.map((result) => {
       const studentInfo = studentMap.get(result.rollNumber || "");
@@ -117,9 +152,45 @@ export async function GET(
       };
     });
 
+    // Find absent students - those who are registered but don't have results
+    const absentStudents = [];
+
+    for (const student of registeredStudents) {
+      if (!studentsWithResults.has(student.rollNumber)) {
+        console.log(
+          `Found absent student: ${student.rollNumber} - ${student.studentName}`
+        );
+        absentStudents.push({
+          id: null,
+          rollNumber: student.rollNumber,
+          AwardLevel: "Absent",
+          percentage: 0,
+          district: schoolDetails?.district || null,
+          class: student.class,
+          contestId: params.contestId,
+          score: {
+            score: 0,
+            totalMarks: 0,
+          },
+          studentName: student.studentName,
+          fatherName: student.fatherName,
+          schoolDetails: {
+            schoolName: schoolDetails?.schoolName || null,
+            schoolAddress: schoolDetails?.schoolAddress || null,
+            contactNumber: schoolDetails?.contactNumber || null,
+          },
+        });
+      }
+    }
+
+    console.log(`Found ${absentStudents.length} absent students`);
+
+    // Combine regular results with absent students
+    const allResults = [...resultsWithDetails, ...absentStudents];
+    console.log(`Total results (present + absent): ${allResults.length}`);
+
     // Sort results by class and then by percentage in descending order
-    // Sort results by class and then by percentage in descending order
-    const sortedResults = resultsWithDetails.sort((a, b) => {
+    const sortedResults = allResults.sort((a, b) => {
       const classA = normalizeClass(a.class);
       const classB = normalizeClass(b.class);
 
@@ -128,15 +199,24 @@ export async function GET(
         return classA - classB;
       }
 
-      // Debug: Log raw percentage values
-      console.log("Raw percentage A:", a.percentage);
+      // Absent students should appear after students with results in the same class
+      if (a.AwardLevel === "Absent" && b.AwardLevel !== "Absent") {
+        return 1;
+      }
+      if (a.AwardLevel !== "Absent" && b.AwardLevel === "Absent") {
+        return -1;
+      }
 
       // Convert Decimal to number for comparison
-      const percentageA = a.percentage ? Number(a.percentage) : 0;
-      const percentageB = b.percentage ? Number(b.percentage) : 0;
+      const percentageA = normalizePercentage(a.percentage);
+      const percentageB = normalizePercentage(b.percentage);
 
       return percentageB - percentageA;
     });
+
+    // Double check the final count
+    console.log(`Final sorted results count: ${sortedResults.length}`);
+
     // Use safeJsonStringify to handle BigInt values
     return new NextResponse(safeJsonStringify(sortedResults), {
       status: 200,
