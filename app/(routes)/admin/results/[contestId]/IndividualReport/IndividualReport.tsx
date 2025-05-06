@@ -348,7 +348,9 @@ const StudentReportPage: React.FC<{ student: StudentReport }> = ({
       {/* Contest Information */}
       <View style={styles.contestInfo}>
         <Text>
-          Inventive Learning KSF - Pakistan congratulates you on your
+          {student.suffix === "M"
+            ? "Innovative Learning KSF - Pakistan congratulates you on your"
+            : "Inventive Learning KSF - Pakistan congratulates you on your"}{" "}
           participation in the {student.constestNo}th {student.contestName}. You
           participated at
           {getLevelWithClass(student.level)} and your results are as follows:
