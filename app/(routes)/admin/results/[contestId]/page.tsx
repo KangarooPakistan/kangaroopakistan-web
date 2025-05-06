@@ -161,7 +161,7 @@ const Results = () => {
     const schoolAwardCounts = new Map<number, SchoolAwardCount>();
     const uniqueAwards = Array.from(
       new Set(resultData.map((result) => result.AwardLevel))
-    );
+    ).filter((award) => !!award); // Remove nulls
 
     // Initialize counts and create a map to track total students per school
     const schoolTotalStudents = new Map<number, number>();
@@ -180,7 +180,7 @@ const Results = () => {
     // Count awards and total students for each school
     resultData.forEach((result) => {
       const schoolData = schoolAwardCounts.get(result.schoolId);
-      if (schoolData) {
+      if (schoolData && result.AwardLevel) {
         schoolData.awards[result.AwardLevel]++;
         // Increment total students count
         schoolTotalStudents.set(
@@ -190,12 +190,34 @@ const Results = () => {
       }
     });
 
+    // Calculate junior and senior bronze counts
+    const juniorBronzeCounts = new Map<number, number>();
+    const seniorBronzeCounts = new Map<number, number>();
+
+    resultData.forEach((result: any) => {
+      if (result.AwardLevel === "BRONZE") {
+        if (result.level === "JUNIOR") {
+          juniorBronzeCounts.set(
+            result.schoolId,
+            (juniorBronzeCounts.get(result.schoolId) || 0) + 1
+          );
+        } else if (result.level === "SENIOR") {
+          seniorBronzeCounts.set(
+            result.schoolId,
+            (seniorBronzeCounts.get(result.schoolId) || 0) + 1
+          );
+        }
+      }
+    });
+
     // Prepare headers and rows with school ID and total students
     const headers = [
       "School ID",
       "School Name",
       "Total Students",
       ...uniqueAwards,
+      "Junior Bronze Count", // Added column
+      "Senior Bronze Count", // Added column
     ];
 
     const rows = Array.from(schoolAwardCounts.entries()).map(
@@ -205,6 +227,8 @@ const Results = () => {
           school.schoolName,
           schoolTotalStudents.get(schoolId) || 0,
           ...uniqueAwards.map((award) => school.awards[award]),
+          juniorBronzeCounts.get(schoolId) || 0, // Add junior bronze count
+          seniorBronzeCounts.get(schoolId) || 0, // Add senior bronze count
         ];
       }
     );

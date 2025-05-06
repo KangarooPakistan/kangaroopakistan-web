@@ -6,8 +6,8 @@ export async function GET(
   { params }: { params: { contestId: string } }
 ) {
   try {
-    // First, get all schools that have results for this contest
-    const schoolsWithResults = await db.result.groupBy({
+    // Get schools with result count
+    const schoolsWithResultCount = await db.result.groupBy({
       by: ["schoolId"],
       where: {
         contestId: params.contestId,
@@ -17,23 +17,37 @@ export async function GET(
       },
     });
 
-    // Get all the bronze medal counts in a single query
-    const bronzeCounts = await db.result.groupBy({
-      by: ["schoolId", "class"],
+    // Get junior bronze counts (using the level enum)
+    const juniorBronzeCounts = await db.result.groupBy({
+      by: ["schoolId"],
       where: {
         contestId: params.contestId,
         AwardLevel: "BRONZE",
+        level: "JUNIOR",
       },
       _count: {
         _all: true,
       },
     });
 
-    // Get school details
+    // Get senior bronze counts (using the level enum)
+    const seniorBronzeCounts = await db.result.groupBy({
+      by: ["schoolId"],
+      where: {
+        contestId: params.contestId,
+        AwardLevel: "BRONZE",
+        level: "SENIOR",
+      },
+      _count: {
+        _all: true,
+      },
+    });
+
+    // Get school details for these schoolIds
     const schoolDetails = await db.user.findMany({
       where: {
         schoolId: {
-          in: schoolsWithResults.map((s) => s.schoolId),
+          in: schoolsWithResultCount.map((school) => school.schoolId),
         },
       },
       select: {
@@ -47,26 +61,19 @@ export async function GET(
       },
     });
 
-    // Process the data to calculate junior and senior bronze counts
+    // Combine school details with result count and bronze counts
     const schoolsWithDetails = schoolDetails.map((school) => {
       const resultCount =
-        schoolsWithResults.find((s) => s.schoolId === school.schoolId)?._count
+        schoolsWithResultCount.find((s) => s.schoolId === school.schoolId)
+          ?._count._all ?? 0;
+
+      const juniorBronzeCount =
+        juniorBronzeCounts.find((s) => s.schoolId === school.schoolId)?._count
           ._all ?? 0;
 
-      // Filter bronze counts for this school
-      const schoolBronzeCounts = bronzeCounts.filter(
-        (count) => count.schoolId === school.schoolId
-      );
-
-      // Calculate junior bronze count (class 1-4)
-      const juniorBronzeCount = schoolBronzeCounts
-        .filter((count) => count.class >= 1 && count.class <= 4)
-        .reduce((total, current) => total + current._count._all, 0);
-
-      // Calculate senior bronze count (class 5-12)
-      const seniorBronzeCount = schoolBronzeCounts
-        .filter((count) => count.class >= 5 && count.class <= 12)
-        .reduce((total, current) => total + current._count._all, 0);
+      const seniorBronzeCount =
+        seniorBronzeCounts.find((s) => s.schoolId === school.schoolId)?._count
+          ._all ?? 0;
 
       return {
         ...school,
