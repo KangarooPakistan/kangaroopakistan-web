@@ -67,6 +67,8 @@ export type SchoolData = {
   contactNumber: string;
   email: string;
   resultCount: number;
+  juniorBronzeCount: number; // Added for junior bronze count
+  seniorBronzeCount: number; // Added for senior bronze count
 };
 
 const Results = () => {
