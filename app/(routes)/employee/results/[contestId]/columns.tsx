@@ -19,8 +19,8 @@ import axios from "axios";
 import { useState } from "react";
 import { pdf } from "@react-pdf/renderer";
 import { saveAs } from "file-saver";
-import SchoolAwardsPdf from "./SchoolAwardsPdf/SchoolAwardsPdf";
-import IndividualReport from "./IndividualReport/IndividualReport";
+import SchoolAwardsPdf from "../../../admin/results/[contestId]/SchoolAwardsPdf/SchoolAwardsPdf";
+import IndividualReport from "../../../admin/results/[contestId]/IndividualReport/IndividualReport";
 
 export interface StudentReport {
   schoolName: string;
@@ -430,7 +430,9 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
     console.log(studentResults);
   };
   const handleViewResults = async () => {
-    router.push(`/employee/results/${params.contestId}/${schoolResult.schoolId}`);
+    router.push(
+      `/employee/results/${params.contestId}/${schoolResult.schoolId}`
+    );
   };
 
   return (

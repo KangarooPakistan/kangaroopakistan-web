@@ -27,7 +27,6 @@ interface UserData {
   schoolName: string;
   contactNumber: string;
   district: string;
-
   bankTitle: string;
   p_Name: string;
   p_contact: string;

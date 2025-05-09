@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
 import { Button } from "@/components/ui/button";
-import AwardsPdf from "./AwardsPdf/AwardsPdf";
+import AwardsPdf from "../../../admin/results/[contestId]//AwardsPdf/AwardsPdf";
 import { utils, writeFile } from "xlsx";
 
 import { pdf } from "@react-pdf/renderer";
