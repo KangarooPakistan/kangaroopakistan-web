@@ -16,11 +16,11 @@ const StudentResults = () => {
         const data = await axios.get(
           `/api/results/fetchresults/${params.contestId}/${params.schoolId}`
         );
-        const resp = await axios.get(`/api/results/getschoolsdata`);
+        // const resp = await axios.get(`/api/results/getschoolsdata`);
 
         console.log("resp");
         setSchoolData(data.data);
-        console.log(resp);
+
         console.log(data);
 
         toast.success("🦄 Table data fetched successfully", {

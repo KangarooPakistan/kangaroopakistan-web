@@ -595,14 +595,7 @@ const FetchAllRegistrations = () => {
             onClick={handleRegister}>
             Register a school
           </Button>
-          <Button
-            className=" font-medium text-[15px]  tracking-wide"
-            variant="default"
-            disabled={isLoading}
-            size="lg"
-            onClick={handleAwardDefinition}>
-            Update Award Categories
-          </Button>
+
           <Button
             className=" font-medium text-[15px]  tracking-wide"
             variant="default"
@@ -662,13 +655,7 @@ const FetchAllRegistrations = () => {
             onClick={handleRegister}>
             Register a school
           </Button>
-          <Button
-            className=" font-medium text-[11px]  tracking-wide"
-            variant="default"
-            size="sm"
-            onClick={handleAwardDefinition}>
-            Update Award Categories
-          </Button>
+
           <Button
             className=" font-medium text-[11px]  tracking-wide"
             variant="default"
