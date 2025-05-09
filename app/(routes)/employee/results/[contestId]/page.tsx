@@ -6,11 +6,16 @@ import { DataTable } from "./data-table";
 import { columns } from "./columns";
 import { Button } from "@/components/ui/button";
 import AwardsPdf from "./AwardsPdf/AwardsPdf";
+import { utils, writeFile } from "xlsx";
+
 import { pdf } from "@react-pdf/renderer";
 import { saveAs } from "file-saver";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import * as XLSX from "xlsx";
+
+import { ca } from "date-fns/locale";
+import QuestionStatsPdf from "../QuestionStats/QuestionStats";
 
 export type Contest = {
   contestDate: string;
@@ -62,6 +67,8 @@ export type SchoolData = {
   contactNumber: string;
   email: string;
   resultCount: number;
+  juniorBronzeCount: number; // Added for junior bronze count
+  seniorBronzeCount: number; // Added for senior bronze count
 };
 
 const Results = () => {
@@ -71,14 +78,23 @@ const Results = () => {
   const [loadData, setLoadData] = useState(true);
   const router = useRouter();
   const [result, setResult] = useState<Result[]>([]);
+  const [questionStats, setQuestionStats] = useState<any>(null);
+  const [contestName, setContestName] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const contestData = await axios.get(
+          `/api/users/contests/${params.contestId}`
+        );
+        console.log(contestData);
+        setContestName(contestData.data.name);
         const data = await axios.get(
           `/api/results/fetchresults/${params.contestId}`
         );
-        const resp = await axios.get(`/api/results/getschoolsdata`);
+        const resp = await axios.get(
+          `/api/results/getschoolsdata/${params.contestId}`
+        );
         setSchoolData(resp.data);
         setResult(data.data);
         setLoadData(false);
@@ -145,7 +161,7 @@ const Results = () => {
     const schoolAwardCounts = new Map<number, SchoolAwardCount>();
     const uniqueAwards = Array.from(
       new Set(resultData.map((result) => result.AwardLevel))
-    );
+    ).filter((award) => !!award); // Remove nulls
 
     // Initialize counts and create a map to track total students per school
     const schoolTotalStudents = new Map<number, number>();
@@ -164,7 +180,7 @@ const Results = () => {
     // Count awards and total students for each school
     resultData.forEach((result) => {
       const schoolData = schoolAwardCounts.get(result.schoolId);
-      if (schoolData) {
+      if (schoolData && result.AwardLevel) {
         schoolData.awards[result.AwardLevel]++;
         // Increment total students count
         schoolTotalStudents.set(
@@ -174,12 +190,34 @@ const Results = () => {
       }
     });
 
+    // Calculate junior and senior bronze counts
+    const juniorBronzeCounts = new Map<number, number>();
+    const seniorBronzeCounts = new Map<number, number>();
+
+    resultData.forEach((result: any) => {
+      if (result.AwardLevel === "BRONZE") {
+        if (result.level === "JUNIOR") {
+          juniorBronzeCounts.set(
+            result.schoolId,
+            (juniorBronzeCounts.get(result.schoolId) || 0) + 1
+          );
+        } else if (result.level === "SENIOR") {
+          seniorBronzeCounts.set(
+            result.schoolId,
+            (seniorBronzeCounts.get(result.schoolId) || 0) + 1
+          );
+        }
+      }
+    });
+
     // Prepare headers and rows with school ID and total students
     const headers = [
       "School ID",
       "School Name",
       "Total Students",
       ...uniqueAwards,
+      "Junior Bronze Count", // Added column
+      "Senior Bronze Count", // Added column
     ];
 
     const rows = Array.from(schoolAwardCounts.entries()).map(
@@ -189,6 +227,8 @@ const Results = () => {
           school.schoolName,
           schoolTotalStudents.get(schoolId) || 0,
           ...uniqueAwards.map((award) => school.awards[award]),
+          juniorBronzeCounts.get(schoolId) || 0, // Add junior bronze count
+          seniorBronzeCounts.get(schoolId) || 0, // Add senior bronze count
         ];
       }
     );
@@ -231,11 +271,60 @@ const Results = () => {
     } catch (error) {}
   };
 
+  const handleCount = async () => {
+    try {
+      setIsLoading(true);
+      const countAwards = await axios.get(
+        `/api/results/fetchresults/${params.contestId}/count`
+      );
+      console.log(countAwards);
+      const { awardCounts } = countAwards.data;
+      downloadAwardCountsExcel(awardCounts);
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+
+      console.log(error);
+      toast.error("Failed to download award counts");
+    }
+  };
+  const downloadAwardCountsExcel = (awardCounts: Record<string, number>) => {
+    // Prepare data for Excel
+    const excelData = Object.entries(awardCounts).map(([award, count]) => ({
+      "Award Level": award,
+      Count: count,
+    }));
+
+    // Add total row
+
+    // Create worksheet
+    const worksheet = utils.json_to_sheet(excelData);
+
+    // Set column widths
+    const colWidths = [
+      { wch: 15 }, // Award Level
+      { wch: 10 }, // Count
+      { wch: 12 }, // Percentage
+    ];
+    worksheet["!cols"] = colWidths;
+
+    // Create workbook
+    const workbook = {
+      Sheets: {
+        "Award Counts": worksheet,
+      },
+      SheetNames: ["Award Counts"],
+    };
+
+    // Write to file and download
+    writeFile(workbook, "award_counts.xlsx");
+  };
+
   const handleGold = async () => {
     try {
       setIsLoading(true);
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/GOLD`
+        `/api/results/getschoolsdata/${params.contestId}/GOLD`
       );
       console.log("schoolResultGoldResp");
       console.log(schoolResultGoldResp);
@@ -259,7 +348,7 @@ const Results = () => {
     try {
       setIsLoading(true);
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/GOLD`
+        `/api/results/getschoolsdata/${params.contestId}/GOLD`
       );
       console.log("schoolResultGoldResp");
       console.log(schoolResultGoldResp);
@@ -290,7 +379,7 @@ const Results = () => {
       setIsLoading(true);
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/SILVER`
+        `/api/results/getschoolsdata/${params.contestId}/SILVER`
       );
       console.log(schoolResultGoldResp);
 
@@ -315,7 +404,7 @@ const Results = () => {
       setIsLoading(true);
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/SILVER`
+        `/api/results/getschoolsdata/${params.contestId}/SILVER`
       );
       console.log(schoolResultGoldResp);
       const studentDetails = schoolResultGoldResp.data.map((item: any) => ({
@@ -343,7 +432,7 @@ const Results = () => {
       setIsLoading(true);
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/BRONZE`
+        `/api/results/getschoolsdata/${params.contestId}/BRONZE`
       );
       console.log(schoolResultGoldResp);
 
@@ -368,7 +457,7 @@ const Results = () => {
       setIsLoading(true);
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/BRONZE`
+        `/api/results/getschoolsdata/${params.contestId}/BRONZE`
       );
       console.log(schoolResultGoldResp);
 
@@ -392,12 +481,13 @@ const Results = () => {
       console.error("Error fetching school result:", error);
     }
   };
+
   const handleThreeStar = async () => {
     try {
       setIsLoading(true);
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/THREE STAR`
+        `/api/results/getschoolsdata/${params.contestId}/THREE STAR`
       );
       console.log(schoolResultGoldResp);
 
@@ -422,7 +512,7 @@ const Results = () => {
       setIsLoading(true);
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/THREE STAR`
+        `/api/results/getschoolsdata/${params.contestId}/THREE STAR`
       );
       console.log(schoolResultGoldResp);
 
@@ -451,7 +541,7 @@ const Results = () => {
       setIsLoading(true);
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/TWO STAR`
+        `/api/results/getschoolsdata/${params.contestId}/TWO STAR`
       );
       console.log(schoolResultGoldResp);
 
@@ -476,7 +566,7 @@ const Results = () => {
       setIsLoading(true);
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/TWO STAR`
+        `/api/results/getschoolsdata/${params.contestId}/TWO STAR`
       );
       console.log(schoolResultGoldResp);
       const studentDetails = schoolResultGoldResp.data.map((item: any) => ({
@@ -504,7 +594,7 @@ const Results = () => {
       setIsLoading(true);
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/ONE STAR`
+        `/api/results/getschoolsdata/${params.contestId}/ONE STAR`
       );
       console.log(schoolResultGoldResp);
 
@@ -529,7 +619,7 @@ const Results = () => {
       setIsLoading(true);
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/ONE STAR`
+        `/api/results/getschoolsdata/${params.contestId}/ONE STAR`
       );
       console.log(schoolResultGoldResp);
 
@@ -558,7 +648,7 @@ const Results = () => {
       setIsLoading(true);
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/participation`
+        `/api/results/getschoolsdata/${params.contestId}/participation`
       );
       console.log(schoolResultGoldResp);
 
@@ -583,7 +673,7 @@ const Results = () => {
       setIsLoading(true);
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/participation`
+        `/api/results/getschoolsdata/${params.contestId}/participation`
       );
       console.log(schoolResultGoldResp);
 
@@ -607,11 +697,130 @@ const Results = () => {
       console.error("Error fetching school result:", error);
     }
   };
+  const handleExcelForKainat = async () => {
+    try {
+      setIsLoading(true);
+      const schoolResultGoldResp = await axios.get(
+        `/api/results/allresults/${params.contestId}`
+      );
+      console.log(schoolResultGoldResp);
+      console.log("schoolResultGoldResp");
+
+      const studentDetails = schoolResultGoldResp.data.map((item: any) => ({
+        schoolName: item.schoolName,
+        studentName: item.studentDetails.studentName,
+        fatherName: item.studentDetails.fatherName,
+        rollNumber: item.score.rollNo,
+        awardLevel: item.AwardLevel,
+        class: item.studentDetails.class,
+      }));
+      const downloadExcel = () => {
+        const workbook = XLSX.utils.book_new();
+        const worksheet = XLSX.utils.json_to_sheet(studentDetails);
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Student Details");
+        XLSX.writeFile(workbook, "student_details_for_kainats_use.xlsx");
+      };
+      downloadExcel();
+
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error fetching school result:", error);
+    }
+  };
+  const handleExcelForKainatPart2 = async () => {
+    try {
+      setIsLoading(true);
+      const schoolResultGoldResp = await axios.get(
+        `/api/results/getallscores/${params.contestId}`
+      );
+      console.log(schoolResultGoldResp);
+      console.log("schoolResultGoldResp");
+      const studentsByClass = JSON.parse(schoolResultGoldResp.data);
+      const allStudents = Object.values(studentsByClass).flat();
+
+      const studentDetails = allStudents.map((item: any) => ({
+        id: item.id,
+        rollNumber: item.rollNo,
+        cRow1: item.cRow1,
+        cRow2: item.cRow2,
+        cRow3: item.cRow3,
+        cTotal: item.cTotal,
+        creditScore: item.creditScore,
+        description: item.description,
+        missing: item.missing,
+        percentage: item.percentage,
+        score: item.score ? Number(item.score) : null,
+        totalMarks: item.totalMarks ? Number(item.totalMarks) : null,
+        wrong: item.wrong,
+        class: item.rollNo?.split("-")[2] || "Unknown",
+      }));
+
+      const downloadExcel = () => {
+        const workbook = XLSX.utils.book_new();
+        const worksheet = XLSX.utils.json_to_sheet(studentDetails);
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Student Details");
+        XLSX.writeFile(workbook, "student_details_for_kainats_use.xlsx");
+      };
+      downloadExcel();
+
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error fetching school result:", error);
+    }
+  };
+  const downloadQuestionStats = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.get(
+        `/api/question-stats/${params.contestId}`
+      );
+      console.log(response.data);
+      setQuestionStats(response.data); // Save the data to state
+      setIsLoading(false);
+      const blob = await pdf(
+        <QuestionStatsPdf data={response.data} />
+      ).toBlob();
+
+      // Download PDF
+      saveAs(blob, `${response.data.contestName}_Question_Stats.pdf`);
+
+      toast.success("Question stats fetched successfully", {
+        position: "bottom-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    } catch (e) {
+      console.log(e);
+      setIsLoading(false);
+      toast.error("Failed to fetch question stats", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  };
+
   const handleBack = () => {
     router.back();
   };
   return (
     <div className="container mx-auto py-10">
+      <h1 className="text-3xl text-center my-3 font-bold text-purple-600">
+        Schools Results
+      </h1>
+      <h1 className="text-3xl text-center my-3 font-bold text-purple-600">
+        {contestName}
+      </h1>
       <div className="hidden md:block">
         <div className="py-2 md:py-4 flex flex-wrap justify-between gap-2  items-center border-gray-300">
           <Button
@@ -621,6 +830,14 @@ const Results = () => {
             disabled={isLoading}
             onClick={handleBack}>
             Back
+          </Button>
+          <Button
+            className=" font-medium text-[15px]  tracking-wide"
+            variant="default"
+            size="lg"
+            disabled={isLoading}
+            onClick={downloadQuestionStats}>
+            Download Question Stats
           </Button>
           <Button
             className=" font-medium text-[15px]  tracking-wide"
@@ -687,6 +904,14 @@ const Results = () => {
             onClick={handleExcel}>
             Download Excel Sheet
           </Button>
+          <Button
+            className=" font-medium text-[15px]  tracking-wide"
+            variant="default"
+            size="lg"
+            disabled={loadData}
+            onClick={handleCount}>
+            Download Total Count
+          </Button>
         </div>
         <div className="py-2 md:py-4 flex flex-wrap justify-between gap-2  items-center border-gray-300">
           <Button
@@ -746,6 +971,22 @@ const Results = () => {
             onClick={handleParticipationExcel}>
             Participation Excel
           </Button>
+          <Button
+            className=" font-medium text-[15px]  tracking-wide"
+            variant="default"
+            size="lg"
+            disabled={isLoading}
+            onClick={handleExcelForKainat}>
+            Only For Kainat&apos; Use
+          </Button>
+          <Button
+            className=" font-medium text-[15px]  tracking-wide"
+            variant="default"
+            size="lg"
+            disabled={isLoading}
+            onClick={handleExcelForKainatPart2}>
+            Only For Kainat&apos; Use part 2
+          </Button>
         </div>
       </div>
       <div className="block md:hidden">
@@ -756,6 +997,14 @@ const Results = () => {
             size="sm"
             onClick={handleBack}>
             Back
+          </Button>
+          <Button
+            className=" font-medium text-[11px]  tracking-wide"
+            variant="default"
+            size="sm"
+            disabled={loadData}
+            onClick={handleCount}>
+            Download Total Count
           </Button>
           <Button
             className=" font-medium text-[11px]  tracking-wide"

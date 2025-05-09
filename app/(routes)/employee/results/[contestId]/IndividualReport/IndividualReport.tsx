@@ -339,10 +339,10 @@ const StudentReportPage: React.FC<{ student: StudentReport }> = ({
           <Text style={styles.value}>{student.schoolName}</Text>
         </View>
 
-        <View style={styles.infoRow2}>
+        {/* <View style={styles.infoRow2}>
           <Text style={styles.label}>Address:</Text>
           <Text style={styles.value}>{student.schoolAddress}</Text>
-        </View>
+        </View> */}
       </View>
 
       {/* Contest Information */}
@@ -374,11 +374,14 @@ const StudentReportPage: React.FC<{ student: StudentReport }> = ({
         <View style={{ flexDirection: "row", marginBottom: 5 }}>
           <Text>You attempted </Text>
           <Text style={{ fontWeight: "bold" }}>
-            {" "}
-            {parseInt(student.class) <= 4 ? 8 : 10}{" "}
+            {parseInt(student.class) <= 4
+              ? 8 - student.missingQuestionsCount[0]
+              : 10 - student.missingQuestionsCount[0]}{" "}
           </Text>
           <Text>out of </Text>
-          <Text style={{ fontWeight: "bold" }}>8 </Text>
+          <Text style={{ fontWeight: "bold" }}>
+            {parseInt(student.class) <= 4 ? 8 : 10}{" "}
+          </Text>
           <Text>questions of </Text>
           <Text style={{ fontWeight: "bold" }}>3 </Text>
           <Text>marks each and your correct answers were </Text>
@@ -388,11 +391,14 @@ const StudentReportPage: React.FC<{ student: StudentReport }> = ({
         <View style={{ flexDirection: "row", marginBottom: 5 }}>
           <Text>You attempted </Text>
           <Text style={{ fontWeight: "bold" }}>
-            {" "}
-            {parseInt(student.class) <= 4 ? 8 : 10}{" "}
+            {parseInt(student.class) <= 4
+              ? 8 - student.missingQuestionsCount[1]
+              : 10 - student.missingQuestionsCount[1]}{" "}
           </Text>
           <Text>out of </Text>
-          <Text style={{ fontWeight: "bold" }}>8 </Text>
+          <Text style={{ fontWeight: "bold" }}>
+            {parseInt(student.class) <= 4 ? 8 : 10}{" "}
+          </Text>
           <Text>questions of </Text>
           <Text style={{ fontWeight: "bold" }}>4 </Text>
           <Text>marks each and your correct answers were </Text>
@@ -402,11 +408,12 @@ const StudentReportPage: React.FC<{ student: StudentReport }> = ({
         <View style={{ flexDirection: "row", marginBottom: 5 }}>
           <Text>You attempted </Text>
           <Text style={{ fontWeight: "bold" }}>
-            {" "}
             {parseInt(student.class) <= 4 ? 8 : 10}{" "}
           </Text>
           <Text>out of </Text>
-          <Text style={{ fontWeight: "bold" }}>8 </Text>
+          <Text style={{ fontWeight: "bold" }}>
+            {parseInt(student.class) <= 4 ? 8 : 10}{" "}
+          </Text>
           <Text>questions of </Text>
           <Text style={{ fontWeight: "bold" }}>5 </Text>
           <Text>marks each and your correct answers were </Text>

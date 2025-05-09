@@ -3,12 +3,13 @@ import React, { useEffect, useState } from "react";
 import * as z from "zod";
 import axios from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { format } from "date-fns";
 import "react-datepicker/dist/react-datepicker.css"; // Import styles
 import DatePicker from "react-datepicker"; // Import react-datepicker
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { getSession } from "next-auth/react";
 
 import {
   Form,
@@ -39,11 +40,22 @@ const formSchema = z.object({
   contestDate: z.string(),
   resultDate: z.string(),
   contestNo: z.string(),
+  contestEnabled: z.boolean(),
 });
 const CreateContest = () => {
   const [data, setData] = useState();
+  const [currentUserEmail, setCurrentUserEmail] = useState<string | null>();
   const router = useRouter();
   const params = useParams();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const session = await getSession();
+
+      setCurrentUserEmail(session?.user?.email);
+    };
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const fetch = async () => {
@@ -63,8 +75,9 @@ const CreateContest = () => {
       startDate: new Date(), // Provide a valid initial date value
       endDate: new Date(),
       contestDate: "",
-      contestNo: "",
       resultDate: "",
+      contestNo: "",
+      contestEnabled: true,
     },
   });
 
@@ -72,13 +85,17 @@ const CreateContest = () => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const payload = {
       name: values.name, // Spread the form values
-      contestNo: values.contestNo, // Spread the form values
       startDate: values.startDate.toISOString(),
       endDate: values.endDate.toISOString(),
       contestTypeId: params.id,
       contestCh: data,
+      contestEnabled: values.contestEnabled,
+      contestNo: values.contestNo,
+      currentUserEmail: currentUserEmail,
     };
+    console.log(payload);
     try {
+      // console.log(payload);
       await axios.post("/api/users/contests", payload);
       await router.push(`/employee/contesttypes/${params.id}/viewcontest`);
       toast.success("🦄 Contest successfully created", {
@@ -92,6 +109,7 @@ const CreateContest = () => {
         theme: "light",
       });
     } catch (error: any) {
+      console.log(error.response.data.error);
       toast.error(" " + error.response.data.message, {
         position: "top-right",
         autoClose: 5000,
@@ -119,10 +137,11 @@ const CreateContest = () => {
     //   timeZoneName: "short",
     // });
   };
+
   return (
     <>
-      <section className="bg-white mb-12">
-        <div className=" pt-10 h-screen grid grid-cols-1 md:grid-cols-2 gap-2 xl:gap-0">
+      <section className="bg-white">
+        <div className=" p-10  grid grid-cols-1 gap-2 xl:gap-0">
           <div className="w-full rounded-lg shadow-2xl md:mt-0 sm:max-w-md xl:p-0 mx-auto">
             <div className="p-6 space-y-3 md:space-y-6 sm:p-8">
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl ">
@@ -161,7 +180,7 @@ const CreateContest = () => {
                           <Input
                             disabled={isLoading}
                             className="input"
-                            placeholder="Enter Contest No"
+                            placeholder="Enter Contest Number"
                             {...field}
                           />
                         </FormControl>
@@ -255,7 +274,50 @@ const CreateContest = () => {
                       </FormItem>
                     )}
                   />
-
+                  <>
+                    <FormField
+                      // control={form.control}
+                      name="contestEnabled"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="label">
+                            Show this Contest on School Dashboard?
+                          </FormLabel>
+                        </FormItem>
+                      )}
+                    />
+                    <Controller
+                      name="contestEnabled"
+                      control={form.control}
+                      render={({ field }) => (
+                        <select
+                          value={
+                            field.value === true
+                              ? "true"
+                              : field.value === false
+                              ? "false"
+                              : ""
+                          }
+                          onChange={(e) => {
+                            const selectedValue = e.target.value;
+                            let newValue;
+                            if (selectedValue === "") {
+                              newValue = null;
+                            } else {
+                              newValue = selectedValue === "true";
+                            }
+                            field.onChange(newValue);
+                          }}
+                          className="w-full p-2 text-xs md:text-base rounded border border-gray-300 focus:outline-none focus:border-blue-500 !mt-0">
+                          <option value="" disabled>
+                            Choose Contest Enabled
+                          </option>
+                          <option value="true">YES</option>
+                          <option value="false">NO</option>
+                        </select>
+                      )}
+                    />
+                  </>
                   <div className="flex items-center justify-center mt-16">
                     <Button
                       disabled={isLoading}

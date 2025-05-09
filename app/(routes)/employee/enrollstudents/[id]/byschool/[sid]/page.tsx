@@ -47,6 +47,7 @@ const schema = zod.object({
 const Register = () => {
   const [duplicateError, setDuplicateError] = useState<string | null>(null);
   const { id, sid } = useParams<{ id: string; sid: string }>();
+  const [currentUserEmail, setCurrentUserEmail] = useState<string | null>();
 
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false); // State to track if the form is submitting
@@ -61,6 +62,14 @@ const Register = () => {
 
   const [year, setYear] = useState<string | undefined>();
   const [schoolName, setSchoolName] = useState<string | undefined>();
+  useEffect(() => {
+    const fetchData = async () => {
+      const session = await getSession();
+
+      setCurrentUserEmail(session?.user?.email);
+    };
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const getYearInTwoDigits = (date: Date): string => {
@@ -149,6 +158,7 @@ const Register = () => {
         contestCh: contestCh,
         schoolName: schoolName,
         schoolId: schoolId,
+        currentUserEmail: currentUserEmail,
         registeredBy: schoolEmail,
       };
       try {
@@ -158,24 +168,21 @@ const Register = () => {
         );
 
         router.back();
-        toast.success(
-          "🦄 Student registered successfully, Email has also been sent at the school's registered email",
-          {
-            position: "bottom-center",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-          }
-        );
+        toast.success("🦄 Student registered successfully. ", {
+          position: "bottom-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
         setIsSubmitting(false);
 
         // Handle successful registration creation
-      } catch (error) {
-        toast.error("Error creating registration ", {
+      } catch (error: any) {
+        toast.error(" " + error.response.data.message, {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,

@@ -2,21 +2,28 @@
 
 import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Registration, columns, PaymentProof } from "./columns";
 import { DataTable } from "./data-table";
 import { Button } from "@/components/ui/button";
 import { saveAs } from "file-saver";
-
-import AllLabels, { SchoolDetails } from "./AllLabels";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import AllLabels, {
+  SchoolDetails,
+} from "@/app/(routes)/admin/fetchallregistration/[id]/AllLabels";
 import * as XLSX from "xlsx";
 import { pdf } from "@react-pdf/renderer";
 import AllLabelsShort from "@/app/(routes)/admin/fetchallregistration/[id]/AllLabelsShort";
+import { useModal } from "@/hooks/use-modal-store";
 
 export const dynamic = "force-dynamic"; // Ensures this page is always rendered server-side
 
 async function fetchData(id: string, signal: AbortSignal) {
-  const res = await axios.get(`/api/users/fetchallregistrations/${id}`);
+  const res = await axios.get(`/api/users/fetchallregistrations/${id}`, {
+    signal,
+  });
+
   return res.data;
 }
 
@@ -76,7 +83,10 @@ interface RegistrationWithPaymentProof extends Registration {
 
 const FetchAllRegistrations = () => {
   const params = useParams();
+  const { onOpen } = useModal();
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const [contestId, setContestId] = useState("");
   const [regData, setRegData] = useState<Registration[]>([]);
   const [excel, setExcel] = useState([]); // This makes sure `excel` is an array
   const [totalSchools, setTotalSchools] = useState<number>(0);
@@ -89,115 +99,163 @@ const FetchAllRegistrations = () => {
   const [junior, setJunior] = useState<number>(0);
   const [student, setStudent] = useState<number>(0);
   const [labelsData, setLabelsData] = useState<SchoolDetails[]>([]);
+  const [contestCh, setContestCh] = useState("");
+  const [registerationsData, setRegistrationsData] = useState([]);
+  const [studentForExcel, setStudentForExcel] = useState([]);
+  const [studentsForUtility, setStudentForUtility] = useState([]);
+  const [contestName, setContestName] = useState("");
+  const activeRequestController = useRef<AbortController | null>(null);
+
+  const abortActiveRequest = () => {
+    if (activeRequestController.current) {
+      activeRequestController.current.abort();
+      activeRequestController.current = null;
+    }
+  };
 
   useEffect(() => {
     const controller = new AbortController();
     const signal = controller.signal;
     const fetchAndSetData = async (id: string) => {
-      const registrations = await fetchData(id, signal);
+      try {
+        const registrations = await fetchData(id, signal);
+        const contestData = await axios.get(
+          `/api/users/contests/${registrations[0].contestId}`,
+          { signal } // Add signal to this request too
+        );
+        setContestId(registrations[0].contestId);
+        // Only proceed with state updates if the request hasn't been cancelled
+        if (!signal.aborted) {
+          setContestName(contestData.data.name);
+          setTotalSchools(registrations.length);
 
-      setTotalSchools(registrations.length);
-
-      const totalPayments = registrations.reduce(
-        (acc: number, curr: Registration) => {
-          return (
-            acc + (curr.paymentProof && curr.paymentProof.length > 0 ? 1 : 0)
+          const totalPayments = registrations.reduce(
+            (acc: number, curr: Registration) => {
+              return (
+                acc +
+                (curr.paymentProof && curr.paymentProof.length > 0 ? 1 : 0)
+              );
+            },
+            0
           );
-        },
-        0
-      );
-      setTotalPaymentDone(totalPayments);
+          setTotalPaymentDone(totalPayments);
 
-      const studentsArrays = registrations.map((reg: Register) => reg.students);
-      const flattenedStudents = studentsArrays.flat();
-      setAllStudents(flattenedStudents);
+          const studentsArrays = registrations.map(
+            (reg: Register) => reg.students
+          );
+          const flattenedStudents = studentsArrays.flat();
+          setAllStudents(flattenedStudents);
 
-      const levelCounts = flattenedStudents.reduce(
-        (acc: LevelCounts, student: Student) => {
-          const { level } = student;
-          acc[level] = (acc[level] || 0) + 1;
-          return acc;
-        },
-        {}
-      );
+          const levelCounts = flattenedStudents.reduce(
+            (acc: LevelCounts, student: Student) => {
+              const { level } = student;
+              acc[level] = (acc[level] || 0) + 1;
+              return acc;
+            },
+            {}
+          );
 
-      setPreEculier(levelCounts["preecolier"] || 0);
-      setEculier(levelCounts["ecolier"] || 0);
-      setBenjamin(levelCounts["benjamin"] || 0);
-      setCadet(levelCounts["cadet"] || 0);
-      setJunior(levelCounts["junior"] || 0);
-      setStudent(levelCounts["student"] || 0);
-      console.log("registrations");
-      console.log(registrations);
+          setPreEculier(levelCounts["preecolier"] || 0);
+          setEculier(levelCounts["ecolier"] || 0);
+          setBenjamin(levelCounts["benjamin"] || 0);
+          setCadet(levelCounts["cadet"] || 0);
+          setJunior(levelCounts["junior"] || 0);
+          setStudent(levelCounts["student"] || 0);
+          console.log("registrations");
+          console.log(registrations);
+          setRegistrationsData(registrations);
+          const ExcelData = registrations.map((item: any) => ({
+            "School id": item.user?.schoolId,
+            "School Name": item.user?.schoolName,
+            "Total Students": item.students.length,
+            "School Address": item.user?.schoolAddress,
+            "District Name": item.user?.city,
+            "District Id": item.user?.district,
+            "School Email": item.user?.email,
+            "Contact Number": item.user?.contactNumber,
+            "Principal Name": item.user?.p_Name,
+            "Principal Cell #": item.user?.p_contact,
+            "Principal Phone #": item.user?.p_phone,
+            "Principal Email": item.user?.p_email,
+            "Coordinator Name": item.user?.c_Name,
+            "Coordinator Cell #": item.user?.c_contact,
+            "Coordinator Phone #": item.user?.c_phone,
+            "Coordinator Email": item.user?.c_email,
+            "School BankTitle": item.user?.bankTitle,
+            "Coordinator Account Details": item.user?.c_accountDetails,
+            updatedTime: new Date(item.updatedAt).toLocaleString(), // Convert to human-readable format
+            createdAt: new Date(item.createdAt).toLocaleString(), // Convert to human-readable format
 
-      const ExcelData = registrations.map((item: any) => ({
-        "School id": item.user?.schoolId,
-        "School Name": item.user?.schoolName,
-        "School BankTitle": item.user?.bankTitle,
-        "Contact Number": item.user?.contactNumber,
-        "School Address": item.user?.schoolAddress,
-        "District Id": item.user?.district,
-        "District Name": item.user?.city,
-        "Principal Name": item.user?.p_Name,
-        "Principal Cell #": item.user?.p_contact,
-        "Principal Phone #": item.user?.p_phone,
-        "Principal Email": item.user?.p_email,
-        "Coordinator Name": item.user?.c_Name,
-        "Coordinator Cell #": item.user?.c_contact,
-        "Coordinator Phone #": item.user?.c_phone,
-        "Coordinator Email": item.user?.c_email,
-        "Coordinator Account Details": item.user?.c_accountDetails,
-        "School Email": item.user?.email,
-        "Total Students": item.students.length,
-        // ...student, // Spread student attributes
-      }));
+            // ...student, // Spread student attributes
+          }));
 
-      // const studentsForExcel = registrations.flatMap((reg: any) =>
-      //   reg.students.map((student: StudentData) => ({
-      //     "School id": reg.user?.schoolId,
-      //     "School Name": reg.user?.schoolName,
-      //     "School BankTitle": reg.user?.bankTitle,
-      //     "Contact Number": reg.user?.contactNumber,
-      //     "School Address": reg.user?.schoolAddress,
-      //     District: reg.user?.district,
-      //     City: reg.user?.city,
-      //     "Principal Name": reg.user?.p_Name,
-      //     "Principal Cell #": reg.user?.p_contact,
-      //     "Principal Phone #": reg.user?.p_phone,
-      //     "Principal Email": reg.user?.p_email,
-      //     "Coordinator Name": reg.user?.c_Name,
-      //     "Coordinator Cell #": reg.user?.c_contact,
-      //     "Coordinator Phone #": reg.user?.c_phone,
-      //     "Coordinator Email": reg.user?.c_email,
-      //     "Coordinator Account Details": reg.user?.c_accountDetails,
-      //     "School Email": reg.user?.email,
-      //     // ...student, // Spread student attributes
-      //   }))
-      // );
-      setExcel(ExcelData);
+          const studentsForExcel = registrations.flatMap((reg: any) =>
+            reg.students.map((student: StudentData) => ({
+              "School id": reg.user?.schoolId,
+              "School Name": reg.user?.schoolName,
+              "Total Students": reg.students.length,
+              "School Address": reg.user?.schoolAddress,
+              "District Name": reg.user?.city,
+              "District Id": reg.user?.district,
+              "School Email": reg.user?.email,
+              "Contact Number": reg.user?.contactNumber,
+              "Principal Name": reg.user?.p_Name,
+              "Principal Cell #": reg.user?.p_contact,
+              "Principal Phone #": reg.user?.p_phone,
+              "Principal Email": reg.user?.p_email,
+              "Coordinator Name": reg.user?.c_Name,
+              "Coordinator Cell #": reg.user?.c_contact,
+              "Coordinator Phone #": reg.user?.c_phone,
+              "Coordinator Email": reg.user?.c_email,
+              "School BankTitle": reg.user?.bankTitle,
+              "Coordinator Account Details": reg.user?.c_accountDetails,
+              ...student, // Spread student attributes
+            }))
+          );
+          const studentsForUtility = registrations.flatMap((reg: any) =>
+            reg.students.map((student: StudentData) => ({
+              ...student, // Spread student attributes
+            }))
+          );
+          setStudentForUtility(studentsForUtility);
+          setStudentForExcel(studentsForExcel);
+          setExcel(ExcelData);
 
-      const extractedData = registrations.map((obj: any) => ({
-        contestId: obj.contestId,
-        schoolName: obj.user.schoolName,
-        schoolId: obj.schoolId,
-        id: obj.id,
-        registeredBy: obj.registeredBy,
-        studentsLength: obj.students.length,
-        email: obj.user.email,
-        paymentProof: obj.paymentProof, // This assumes paymentProof is within the user object
-      }));
-      const schoolsData = registrations
-        .map((obj: any) => ({
-          schoolName: obj.user.schoolName,
-          schoolId: obj.user.schoolId,
-          schoolAddress: obj.user.schoolAddress,
-          schoolPrinPhone: obj.user.p_phone,
-          schoolCorPhone: obj.user.c_phone,
-        }))
-        .sort((a: SchoolDetails, b: SchoolDetails) => a.schoolId - b.schoolId);
-      setLabelsData(schoolsData);
+          const extractedData = registrations.map((obj: any) => ({
+            contestId: obj.contestId,
+            schoolName: obj.user.schoolName,
+            schoolId: obj.schoolId,
+            id: obj.id,
+            registeredBy: obj.registeredBy,
+            studentsLength: obj.students.length,
+            email: obj.user.email,
+            paymentProof: obj.paymentProof, // This assumes paymentProof is within the user object
+          }));
+          const schoolsData = registrations
+            .map((obj: any) => ({
+              schoolName: obj.user.schoolName,
+              schoolId: obj.user.schoolId,
+              district: obj.user.city,
+              schoolAddress: obj.user.schoolAddress,
+              schoolPrinPhone: obj.user.p_contact,
+              schoolCorPhone: obj.user.c_contact,
+              schoolMainPhone: obj.user.contactNumber,
+            }))
+            .sort(
+              (a: SchoolDetails, b: SchoolDetails) => a.schoolId - b.schoolId
+            );
+          setLabelsData(schoolsData);
 
-      setRegData(extractedData);
+          setRegData(extractedData);
+        }
+      } catch (error) {
+        // Check if the error is a cancellation error
+        if (axios.isCancel(error)) {
+          console.log("Request canceled");
+        } else {
+          console.error("Error fetching data:", error);
+        }
+      }
     };
 
     if (typeof params.id === "string") {
@@ -210,13 +268,194 @@ const FetchAllRegistrations = () => {
   }, [params.id]);
 
   const handleClick = () => {
-    if (excel.length > 0) {
-      const ws = XLSX.utils.json_to_sheet(excel);
+    if (regData.length > 0) {
+      // Prepare School Data (existing logic)
+      const schoolData = excel.map((item: any) => ({
+        "School id": item["School id"],
+        "School Name": item["School Name"],
+        "Total Students": item["Total Students"],
+        "School Address": item["School Address"],
+        "District Name": item["District Name"],
+        "District Id": item["District Id"],
+        "School Email": item["School Email"],
+        "Contact Number": item["Contact Number"],
+        "Principal Name": item["Principal Name"],
+        "Principal Cell #": item["Principal Cell #"],
+        "Principal Phone #": item["Principal Phone #"],
+        "Principal Email": item["Principal Email"],
+        "Coordinator Name": item["Coordinator Name"],
+        "Coordinator Cell #": item["Coordinator Cell #"],
+        "Coordinator Phone #": item["Coordinator Phone #"],
+        "Coordinator Email": item["Coordinator Email"],
+        "School BankTitle": item["School BankTitle"],
+        "Coordinator Account Details": item["Coordinator Account Details"],
+        "Updated Time": item.updatedTime,
+        "Created At": item.createdAt,
+      }));
+      console.log(studentForExcel);
+      console.log(registerationsData);
+      // Prepare Student Data (new logic)
+      const studentData: any[] = [];
+      console.log(regData);
+      // Iterate through registrations to extract student details
+      regData.forEach((registration: any) => {
+        // Find the corresponding school data
+        const schoolInfo = excel.find(
+          (school: any) => school["School id"] === registration.schoolId
+        );
+
+        // If the registration has students, add each student to the studentData
+        if (registration.students && registration.students.length > 0) {
+          registration.students.forEach((student: any) => {
+            studentData.push({
+              // School Information
+              "Registration ID": registration.id,
+              "School ID": registration.schoolId,
+              "School Name": schoolInfo ? schoolInfo["School Name"] : "N/A",
+
+              // Student Information
+              "Roll Number": student.rollNumber,
+              "Student Name": student.studentName,
+              "Father Name": student.fatherName,
+              Class: student.class,
+              Level: student.level,
+            });
+          });
+        }
+      });
+
+      // Create workbook and add sheets
       const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Data");
-      XLSX.writeFile(wb, `data.xlsx`);
+
+      // Add School Data sheet
+      const schoolWs = XLSX.utils.json_to_sheet(schoolData);
+      XLSX.utils.book_append_sheet(wb, schoolWs, "School Data");
+
+      // Add Student Data sheet
+      const studentWs = XLSX.utils.json_to_sheet(studentForExcel);
+      XLSX.utils.book_append_sheet(wb, studentWs, "Student Data");
+
+      // Write and save the file
+      XLSX.writeFile(wb, `contest_data.xlsx`);
     } else {
       console.log("No data available to export");
+      toast.error("No data available to export", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  };
+  const handleStudentCountByLevels = async () => {
+    try {
+      // Show loading toast
+      toast.info("Generating report, please wait...", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+
+      const response = await axios.get(
+        `/api/users/contests/${params.id}/getlevelsbyschoolId`
+      );
+
+      const { schools } = response.data;
+      if (!schools || schools.length === 0) {
+        toast.error("No data available to export", {
+          position: "top-right",
+          autoClose: 5000,
+        });
+        return;
+      }
+      const excelData = schools.map((school: any) => ({
+        "School ID": school.schoolId,
+        "School Name": school.schoolName,
+        "Total Students": school.totalStudents,
+        "PRE-ECOLIER (Class 1-2)": school.categories.PRE_ECOLIER,
+        "ECOLIER (Class 3-4)": school.categories.ECOLIER,
+        "BENJAMIN (Class 5-6)": school.categories.BENJAMIN,
+        "CADET (Class 7-8)": school.categories.CADET,
+        "JUNIOR (Class 9-10)": school.categories.JUNIOR,
+        "STUDENT (Class 11-12)": school.categories.STUDENT,
+      }));
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.json_to_sheet(excelData);
+
+      // Add worksheet to workbook
+      XLSX.utils.book_append_sheet(wb, ws, "Student Counts by Level");
+
+      // Generate a suitable filename
+      const fileName = `${
+        contestName || "Contest"
+      }_Student_Counts_By_Level.xlsx`;
+
+      // Write and download the file
+      XLSX.writeFile(wb, fileName);
+
+      // Show success toast
+      toast.success("Report downloaded successfully!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    } catch (error) {
+      console.error("Error generating report:", error);
+      toast.error("Failed to generate report. Please try again.", {
+        position: "top-right",
+        autoClose: 5000,
+      });
+    }
+  };
+  const handleExcelForUtility = () => {
+    if (regData.length > 0) {
+      // Prepare Student Data (new logic)
+      const studentData: any[] = [];
+      console.log(regData);
+      // Iterate through registrations to extract student details
+      regData.forEach((registration: any) => {
+        // Find the corresponding school data
+
+        // If the registration has students, add each student to the studentData
+        if (registration.students && registration.students.length > 0) {
+          registration.students.forEach((student: any) => {
+            studentData.push({
+              // Student Information
+              "Roll Number": student.rollNumber,
+              "Student Name": student.studentName,
+              "Father Name": student.fatherName,
+              Class: student.class,
+              Level: student.level,
+            });
+          });
+        }
+      });
+
+      // Create workbook and add sheets
+      const wb = XLSX.utils.book_new();
+
+      // Add School Data sheet
+
+      // Add Student Data sheet
+      const studentWs = XLSX.utils.json_to_sheet(studentsForUtility);
+      XLSX.utils.book_append_sheet(wb, studentWs, "Student Data");
+
+      // Write and save the file
+      XLSX.writeFile(wb, `contest_data.xlsx`);
+    } else {
+      console.log("No data available to export");
+      toast.error("No data available to export", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
   };
 
@@ -226,6 +465,11 @@ const FetchAllRegistrations = () => {
 
   const handleRegister = () => {
     router.push(`/employee/registerincontest/${params.id}`);
+  };
+  const handleAwardDefinition = () => {
+    abortActiveRequest();
+    setIsLoading(true);
+    router.push(`/employee/createawardcategories/${params.id}`);
   };
 
   const handleDownloadAllLabel = async () => {
@@ -252,11 +496,28 @@ const FetchAllRegistrations = () => {
       console.error("Error downloading the PDF:", error);
     }
   };
+  const handleViewResults = () => {
+    abortActiveRequest(); // Abort any existing request
+    activeRequestController.current = new AbortController();
+    setIsLoading(true);
+
+    router.push(`/employee/results/${params.id}`);
+  };
+  const handleAddResult = () => {
+    setIsLoading(true);
+    onOpen("addResult", {
+      contestId,
+    });
+    setIsLoading(false);
+  };
 
   return (
     <div className="container mx-auto py-10">
       <h1 className="text-3xl text-center my-3 font-bold text-purple-600">
         Registered Schools
+      </h1>
+      <h1 className="text-3xl text-center my-3 font-bold text-purple-600">
+        {contestName}
       </h1>
       <div className="flex flex-wrap -mx-2">
         <div className="w-full md:w-1/2 px-2 mb-6 md:mb-0">
@@ -317,8 +578,30 @@ const FetchAllRegistrations = () => {
             className=" font-medium text-[15px]  tracking-wide"
             variant="default"
             size="lg"
+            onClick={handleStudentCountByLevels}>
+            Download Student Count By Levels
+          </Button>
+          <Button
+            className=" font-medium text-[15px]  tracking-wide"
+            variant="default"
+            size="lg"
+            onClick={handleExcelForUtility}>
+            Export Data For Uitlity
+          </Button>
+          <Button
+            className=" font-medium text-[15px]  tracking-wide"
+            variant="default"
+            size="lg"
             onClick={handleRegister}>
             Register a school
+          </Button>
+          <Button
+            className=" font-medium text-[15px]  tracking-wide"
+            variant="default"
+            disabled={isLoading}
+            size="lg"
+            onClick={handleAwardDefinition}>
+            Update Award Categories
           </Button>
           <Button
             className=" font-medium text-[15px]  tracking-wide"
@@ -326,6 +609,14 @@ const FetchAllRegistrations = () => {
             size="lg"
             onClick={handleDownloadAllLabel}>
             Download Labels
+          </Button>
+          <Button
+            className=" font-medium text-[15px]  tracking-wide"
+            variant="default"
+            size="lg"
+            disabled={isLoading}
+            onClick={handleViewResults}>
+            View Results
           </Button>
           <Button
             variant="default"
@@ -352,6 +643,18 @@ const FetchAllRegistrations = () => {
             onClick={handleClick}>
             Export Data
           </Button>
+          {contestCh == "S" && (
+            <Button
+              className=" font-medium text-[11px]  tracking-wide"
+              variant="default"
+              size="sm">
+              <a
+                href="https://docs.google.com/document/d/18m6ciOBjrL7xrCXJF59Cfiu3SHsNWb_3/edit?usp=sharing&ouid=100155003670788686545&rtpof=true&sd=true"
+                target="_new">
+                Download Answer Sheet
+              </a>
+            </Button>
+          )}
           <Button
             className=" font-medium text-[11px]  tracking-wide"
             variant="default"
@@ -359,6 +662,22 @@ const FetchAllRegistrations = () => {
             onClick={handleRegister}>
             Register a school
           </Button>
+          <Button
+            className=" font-medium text-[11px]  tracking-wide"
+            variant="default"
+            size="sm"
+            onClick={handleAwardDefinition}>
+            Update Award Categories
+          </Button>
+          <Button
+            className=" font-medium text-[11px]  tracking-wide"
+            variant="default"
+            size="sm"
+            disabled={isLoading}
+            onClick={handleViewResults}>
+            View Results
+          </Button>
+
           <Button
             className=" font-medium text-[11px]  tracking-wide"
             variant="default"

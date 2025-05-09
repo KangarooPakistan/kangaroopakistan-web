@@ -3,6 +3,10 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
+import { IoCheckmarkDoneCircle } from "react-icons/io5";
+import { BiSolidXCircle } from "react-icons/bi";
+import { CgMoreO } from "react-icons/cg";
+
 import "react-toastify/dist/ReactToastify.css";
 
 import { Button } from "@/components/ui/button";
@@ -21,17 +25,15 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import SchoolReportDocument from "./SchoolReportDocument";
-import { getSession } from "next-auth/react";
-import CheckList from "./CheckList";
-import { CgMoreO } from "react-icons/cg";
-import AttendanceSheet from "@/app/(routes)/admin/fetchallregistration/[id]/AttendanceSheet";
+import SchoolReportDocument from "../../../admin/fetchallregistration/[id]/SchoolReportDocument";
+import CheckList from "../../../admin/fetchallregistration/[id]/CheckList";
+import AllLabels from "../../../admin/fetchallregistration/[id]/AllLabels";
+import AttendanceSheet from "../../../admin/fetchallregistration/[id]/AttendanceSheet";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -68,6 +70,7 @@ interface profileData {
   contestCh: string;
   contestNo: string;
 }
+
 type RegistrationProps = {
   registration: Registration; // Use the Contest type here
 };
@@ -121,13 +124,17 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       `/employee/enrollstudents/${registration.contestId}/registrationId/${registration.id}`
     );
   };
-  async function generatePdfBlob(students: Student[]) {
-    const doc = <MyDocument students={students} />;
+  async function generatePdfBlob(
+    students: Student[],
+    profileData: profileData
+  ) {
+    const doc = <MyDocument students={students} profileData={profileData} />;
 
     const asPdf = pdf(doc); // Create an empty PDF instance
     const blob = await asPdf.toBlob();
     return blob;
   }
+
   const handleDownloadPdf = async () => {
     try {
       const response = await axios.get(
@@ -145,11 +152,31 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         // If no, or if the number is 200 or less, use the full array
         students = response.data;
       }
+      const res = await axios.get(
+        `/api/users/allusers/getschoolbyregid/${registration.id}`
+      );
+      console.log(res.data.contestId);
+      const contestData = await axios.get(
+        `/api/users/contests/${res.data.contestId}`
+      );
+      console.log(contestData.data);
+      console.log(contestData.data.name);
+      // console.log("res");
+      // console.log(res.data.user.p_fName);
+      const profileData: profileData = {
+        p_Name: res.data.user.p_Name,
+        c_Name: res.data.user.c_Name,
+        email: res.data.user.email,
+        contactNumber: res.data.user.contactNumber,
+        contestName: contestData.data.name,
+        contestCh: contestData.data.contestCh,
+        contestNo: contestData.data.contestNo,
+      };
 
-      const blob = await generatePdfBlob(students);
+      const blob = await generatePdfBlob(students, profileData);
       const pdfName = `answersheet_${response.data[0].schoolId}_part1.pdf`;
 
-      saveAs(blob, "students.pdf");
+      saveAs(blob, pdfName);
     } catch (error) {
       console.error("Error downloading the PDF:", error);
     } finally {
@@ -219,7 +246,27 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         return; // Exit the function as there's nothing more to process
       }
 
-      const blob = await generatePdfBlob(additionalStudents);
+      const res = await axios.get(
+        `/api/users/allusers/getschoolbyregid/${registration.id}`
+      );
+      console.log(res.data.contestId);
+      const contestData = await axios.get(
+        `/api/users/contests/${res.data.contestId}`
+      );
+      console.log(contestData.data);
+      console.log(contestData.data.name);
+      // console.log("res");
+      // console.log(res.data.user.p_fName);
+      const profileData: profileData = {
+        p_Name: res.data.user.p_Name,
+        c_Name: res.data.user.c_Name,
+        email: res.data.user.email,
+        contactNumber: res.data.user.contactNumber,
+        contestName: contestData.data.name,
+        contestCh: contestData.data.contestCh,
+        contestNo: contestData.data.contestNo,
+      };
+      const blob = await generatePdfBlob(additionalStudents, profileData);
       const pdfName = `answersheet_${response.data[0].schoolId}_part2.pdf`;
       saveAs(blob, pdfName);
     } catch (error) {
@@ -229,33 +276,9 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
     }
   };
 
-  // const handleDownloadPdfPuppeteer = async () => {
-  //   try {
-  //     setLoading(true);
-  //     const response = await axios.get(`/api/pdf-generate/${registration.id}`, {
-  //       responseType: "blob", // This tells Axios to expect a binary response
-  //     });
-  //     const file = new Blob([response.data], { type: "application/pdf" });
-  //     const fileURL = URL.createObjectURL(file);
-  //     const link = document.createElement("a");
-  //     link.href = fileURL;
-  //     link.setAttribute("download", "students.pdf"); // or any other name
-  //     document.body.appendChild(link);
-  //     link.click();
-
-  //     // Clean up and revoke the URL object
-  //     URL.revokeObjectURL(link.href);
-  //     document.body.removeChild(link);
-  //   } catch (error) {
-  //     console.error("Error downloading the PDF:", error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
   const handleSchoolDetails = () => {
     router.push(`/employee/userprofile/${data}`);
   };
-
   const generatePdfBlobForSE = async (
     schoolData: Students[],
     profileData: profileData
@@ -268,7 +291,20 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
     const blob = await asPdf.toBlob();
     return blob;
   };
-  const handleSheet = async () => {
+  const generatePdfBlobForAttendanceSheet = async (
+    schoolData: Students[],
+    profileData: profileData
+  ): Promise<Blob> => {
+    const doc = (
+      <AttendanceSheet schoolData={schoolData} profileData={profileData} />
+    );
+
+    const asPdf = pdf(doc); // Create an empty PDF instance
+    const blob = await asPdf.toBlob();
+    return blob;
+  };
+
+  const handleStudentDetails = async () => {
     try {
       const response = await axios.get(
         `/api/users/pdfdownload/${registration.id}`
@@ -287,7 +323,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       // console.log("res");
       // console.log(res.data.user.p_fName);
       const profileData: profileData = {
-        p_Name: res.data.user.p_fName,
+        p_Name: res.data.user.p_Name,
         c_Name: res.data.user.c_Name,
         email: res.data.user.email,
         contactNumber: res.data.user.contactNumber,
@@ -298,79 +334,41 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
 
       // console.log(response.data);
       const schoolData = response.data;
+
       schoolData.sort((a: Student, b: Student) => {
-        const extractNumeric = (rollNumber: string) => {
+        const extractClassAndSerial = (rollNumber: string) => {
           const parts = rollNumber.split("-");
-          const lastPart = parts[parts.length - 2];
-          // console.log(lastPart);
-          // console.log(parseInt(lastPart, 10));
-          return parseInt(lastPart, 10);
+          const classNumber = parseInt(parts[parts.length - 3], 10);
+          const serialNumber = parseInt(parts[parts.length - 2], 10);
+          return { class: classNumber, serial: serialNumber };
         };
 
-        const numericValueA = extractNumeric(a.rollNumber);
-        const numericValueB = extractNumeric(b.rollNumber);
+        const aClassAndSerial = extractClassAndSerial(a.rollNumber);
+        const bClassAndSerial = extractClassAndSerial(b.rollNumber);
 
-        return numericValueA - numericValueB;
+        if (aClassAndSerial.class < bClassAndSerial.class) {
+          return -1;
+        }
+        if (aClassAndSerial.class > bClassAndSerial.class) {
+          return 1;
+        }
+        if (aClassAndSerial.serial < bClassAndSerial.serial) {
+          return -1;
+        }
+        if (aClassAndSerial.serial > bClassAndSerial.serial) {
+          return 1;
+        }
+        return 0;
       });
 
-      // console.log("Sorted schoolData by rollNumber:");
-      // console.log(schoolData);
-
-      // console.log("schoolData"); // This should be an array of ClassData
-
       const schoolId = schoolData[0].schoolId;
-
-      // console.log(schoolId);
-      // This should be an array of ClassData
       const blob = await generatePdfBlobForSE(schoolData, profileData);
       saveAs(blob, `students_data_${schoolId}.pdf`);
-
-      // console.log("link");
     } catch (error) {
       console.error("Error generating the PDF:", error);
     }
   };
-  const handleEmail = async () => {
-    const res = await axios.get(`/api/users/sendemail/${registration.id}`);
-    if (res.status == 200) {
-      toast.success("🦄 Email Sent Successfully 😍", {
-        position: "bottom-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-    } else {
-      toast.error(
-        "Error sending email, Please try again later 😒 " +
-          {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-          }
-      );
-    }
-  };
-  const generatePdfBlobForAttendanceSheet = async (
-    schoolData: Students[],
-    profileData: profileData
-  ): Promise<Blob> => {
-    const doc = (
-      <AttendanceSheet schoolData={schoolData} profileData={profileData} />
-    );
 
-    const asPdf = pdf(doc); // Create an empty PDF instance
-    const blob = await asPdf.toBlob();
-    return blob;
-  };
   const handleAttendanceSheet = async () => {
     try {
       const response = await axios.get(
@@ -438,6 +436,71 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       console.error("Error generating the PDF:", error);
     }
   };
+  const handleReceiptView = () => {
+    router.push(`/employee/viewallrecipts/${registration.id}`);
+
+    // router.push(`/employee/viewregistered/${student.registrationId}`);
+  };
+  const handleEmail = async () => {
+    try {
+      const res = await axios.get(`/api/users/sendemail/${registration.id}`);
+      toast.success("🦄 Email Sent Successfully 😍", {
+        position: "bottom-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    } catch (error: any) {
+      toast.error(
+        "Error sending email, Please try again later 😒 " +
+          {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          }
+      );
+    }
+  };
+  const sendCorrectionEmail = async () => {
+    try {
+      const res = await axios.get(
+        `/api/users/correctionemail/${registration.id}`
+      );
+      toast.success("🦄 Email Sent Successfully 😍", {
+        position: "bottom-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    } catch (error: any) {
+      toast.error(
+        "Error sending email, Please try again later 😒 " +
+          {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          }
+      );
+    }
+  };
   return (
     <>
       <div className="hidden md:block">
@@ -469,11 +532,21 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
               onClick={handleDownloadCheckList}>
               Download CheckList
             </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={handleReceiptView}
+              className="border-y-2 border-solid">
+              View Receipts{" "}
+            </DropdownMenuItem>
 
             <DropdownMenuItem
               className="border-y-2 border-solid"
               onClick={handleEmail}>
               Send Email
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="border-y-2 border-solid"
+              onClick={sendCorrectionEmail}>
+              Send Correction Email
             </DropdownMenuItem>
             <DropdownMenuItem
               className="border-y-2 border-solid"
@@ -488,7 +561,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
             </DropdownMenuItem>
             <DropdownMenuItem
               className="border-y-2 border-solid"
-              onClick={handleSheet}>
+              onClick={handleStudentDetails}>
               Download Student Details
             </DropdownMenuItem>
             <DropdownMenuItem
@@ -504,33 +577,49 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="md:hidden flex flex-wrap ">
-        <Button className="m-2" onClick={handleView}>
+      <div className="md:hidden flex flex-wrap gap-2 py-2 ">
+        <Button className=" text-[11px]" size="sm" onClick={handleView}>
           View
         </Button>
-        <Button className="m-2" onClick={handleRegister}>
+        <Button className="text-[11px]" size="sm" onClick={handleRegister}>
           Register Students
         </Button>
-        <Button className="m-2" onClick={handleDownloadCheckList}>
+        <Button
+          className="text-[11px]"
+          size="sm"
+          onClick={handleDownloadCheckList}>
           Download CheckList
         </Button>
 
-        <Button className="m-2" onClick={handleEmail}>
+        <Button className="text-[11px]" size="sm" onClick={handleEmail}>
           Send Email
         </Button>
-        <Button className="m-2" onClick={handleDownloadPdf}>
+        <Button className="text-[11px]" size="sm" onClick={handleDownloadPdf}>
           Download Answer Sheet
         </Button>
         <Button
-          className="m-2"
+          size="sm"
+          className="text-[11px]"
           onClick={handleDownloadAdditionalPdf}
           disabled={active}>
           Download Answer Sheet Part2
         </Button>
-        <Button className="m-2" onClick={handleSheet}>
+        <Button
+          size="sm"
+          className="text-[11px]"
+          onClick={handleStudentDetails}>
           Download Student Details
         </Button>
-        <Button className="m-2" onClick={handleSchoolDetails}>
+        <Button
+          size="sm"
+          className="text-[11px]"
+          onClick={handleAttendanceSheet}>
+          Download Attendance Sheet
+        </Button>
+        <Button
+          size="sm"
+          className=" text-[11px]"
+          onClick={handleSchoolDetails}>
           View School Details
         </Button>
       </div>
@@ -576,13 +665,17 @@ export const columns: ColumnDef<Registration>[] = [
     cell: ({ row }) => {
       // Access the paymentProof property of the row data
       const paymentProofs = row.original.paymentProof || []; // Fallback to an empty array if undefined
-      return paymentProofs.length > 0 ? "P" : "NP";
+      return paymentProofs.length > 0 ? (
+        <IoCheckmarkDoneCircle className="text-[30px] mx-auto text-center" />
+      ) : (
+        <BiSolidXCircle className="text-[30px] mx-auto text-center" />
+      );
     },
   },
 
   {
+    accessorKey: "More Actions", // This should match the key from your data
     id: "actions",
-    accessorKey: "actions",
     cell: ({ row }) => <RegistrationActions registration={row.original} />,
   },
 ];
@@ -597,16 +690,15 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: 14,
+    textTransform: "uppercase",
     marginBottom: 10,
     fontWeight: "bold",
-
     textAlign: "center",
-    textTransform: "uppercase",
   },
   subHeaderBetween: {
     fontSize: 10,
-    fontWeight: "bold",
     textTransform: "uppercase",
+    fontWeight: "bold",
     marginBottom: 10,
     textAlign: "center",
   },
@@ -627,14 +719,14 @@ const styles = StyleSheet.create({
   },
   studentInfoTitle: {
     fontSize: "14px",
-    textTransform: "uppercase",
     width: "250px",
+    textTransform: "uppercase",
     fontWeight: "heavy",
   },
   studentInfoContent: {
     fontSize: "14px",
-    textTransform: "uppercase",
     fontWeight: "bold",
+    textTransform: "uppercase",
     width: "700px", // Set maximum width to fit the container
     flexWrap: "wrap", // Allow text to wrap
     marginLeft: "20px",
@@ -671,8 +763,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   optionNumber: {
-    textTransform: "uppercase",
     fontSize: 15,
+    textTransform: "uppercase",
     marginTop: 2,
   },
   optionsRow: {
@@ -862,15 +954,14 @@ interface Student {
 
 interface MyDocumentProps {
   students: Student[];
+  profileData: profileData;
 }
 
-const MyDocument: React.FC<MyDocumentProps> = ({ students }) => (
+const MyDocument: React.FC<MyDocumentProps> = ({ students, profileData }) => (
   <Document>
     {students.map((student, index) => (
       <Page size="A4" style={styles.page} key={index}>
-        <Text style={styles.header}>
-          International Kangaroo Mathematics Contest
-        </Text>
+        <Text style={styles.header}>{profileData?.contestName} </Text>
         <Text style={styles.subHeaderBetween}>Answer Sheet</Text>
 
         <Text style={styles.subHeader}>

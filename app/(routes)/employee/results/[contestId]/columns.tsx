@@ -11,6 +11,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 import { useState } from "react";
@@ -34,6 +37,8 @@ export interface StudentReport {
   cRow1: number;
   cRow2: number;
   cRow3: number;
+  missingQuestionsCount: number[];
+
   wrong: number;
   cTotal: number;
   missing: number;
@@ -67,6 +72,8 @@ interface ApiResponse {
     cRow1: number;
     cRow2: number;
     cRow3: number;
+    missingQuestionsCount: number[];
+
     wrong: number;
     cTotal: number;
     missing: number;
@@ -172,6 +179,7 @@ const transformResponse = (response: ApiResponse): StudentReport[] => {
     cRow3: score.cRow3,
     wrong: score.wrong,
     cTotal: score.cTotal,
+    missingQuestionsCount: score.missingQuestionsCount,
     missing: score.missing,
     percentage: score.percentage,
     rankings: score.rankings,
@@ -280,6 +288,7 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
       // if (!data || (!data.results && !data.statistics)) {
       //   throw new Error("Invalid data structure for PDF generation");
       // }
+      console.log("final data");
       console.log(data);
 
       const doc = <IndividualReport data={data} />;
@@ -290,6 +299,79 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
       throw error;
     }
   }
+  const handleSendEmail = async () => {
+    if (!schoolResult.schoolId) {
+      console.error("No school ID provided");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const schoolResultResp = await axios.get(
+        `/api/results/getbyschools/${schoolResult.schoolId}/${params.contestId}`
+      );
+
+      if (!schoolResultResp.data) {
+        throw new Error("No data received from server");
+      }
+
+      const convertedData = schoolResultResp.data?.map((item: any) => ({
+        ...item,
+        scoreId: convertToBigIntOrNumber(item.scoreId),
+        percentage: parseFloat(item.percentage || "0"),
+      }));
+
+      const statistics = countStudentsByAward(convertedData);
+      const dataWithStats = {
+        results: convertedData,
+        statistics: statistics,
+      };
+
+      const blob = await generatePdfBlob(dataWithStats);
+
+      // Convert blob to base64
+      const reader = new FileReader();
+      reader.readAsDataURL(blob);
+      reader.onloadend = async () => {
+        const base64data = reader.result?.toString().split(",")[1];
+
+        // Send to API
+        try {
+          await axios.post("/api/users/sendreportthroughemail", {
+            pdfData: base64data,
+            schoolId: schoolResult.schoolId,
+            contestId: params.contestId,
+          });
+          toast.success("🦄 Email sent successfully", {
+            position: "bottom-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          });
+        } catch (error) {
+          console.log(error);
+          toast.error(" Error while sending email. Please contact developer", {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          });
+        }
+      };
+    } catch (error) {
+      console.error("Error processing school result:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // Usage in your component:
   const handleView = async () => {
@@ -347,6 +429,9 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
     // Now you can work with the transformed data
     console.log(studentResults);
   };
+  const handleViewResults = async () => {
+    router.push(`/employee/results/${params.contestId}/${schoolResult.schoolId}`);
+  };
 
   return (
     <>
@@ -364,9 +449,21 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
             </DropdownMenuLabel>
             <DropdownMenuItem
               className="border-y-2 border-solid"
+              onClick={handleViewResults}
+              disabled={isLoading}>
+              {isLoading ? "Loading..." : "View"}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="border-y-2 border-solid"
               onClick={handleView}
               disabled={isLoading}>
               {isLoading ? "Downloading..." : "Download School Result"}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="border-y-2 border-solid"
+              onClick={handleSendEmail}
+              disabled={isLoading}>
+              {isLoading ? "Downloading..." : "Send Report To Email"}
             </DropdownMenuItem>
             <DropdownMenuItem
               className="border-y-2 border-solid"

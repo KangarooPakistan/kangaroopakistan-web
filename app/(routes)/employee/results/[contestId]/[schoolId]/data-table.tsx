@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { MobileCard } from "../../../admin/fetchallregistration/[id]/MobileCard";
+import { MobileCard } from "../../../../admin/fetchallregistration/[id]/MobileCard";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import * as z from "zod";
 import axios from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { format } from "date-fns";
 import "react-datepicker/dist/react-datepicker.css"; // Import styles
 import DatePicker from "react-datepicker"; // Import react-datepicker
@@ -24,11 +24,12 @@ import { Button } from "@/components/ui/button";
 
 interface Contest {
   name: String;
-  contestNo: String;
   startDate: Date;
   endDate: Date;
   contestDate: String;
   resultDate: String;
+  contestNo: String;
+  contestEnabled: Boolean;
 }
 
 const formSchema = z.object({
@@ -48,6 +49,7 @@ const formSchema = z.object({
   contestDate: z.string(),
   resultDate: z.string(),
   contestNo: z.string(),
+  contestEnabled: z.boolean(),
 });
 
 const initialData: Contest = {
@@ -57,7 +59,9 @@ const initialData: Contest = {
   contestDate: "",
   resultDate: "",
   contestNo: "",
+  contestEnabled: true,
 };
+// kainat
 const UpdateContest = () => {
   const [data, setData] = useState<Contest>(initialData);
   const [cid, setCid] = useState<number>();
@@ -72,8 +76,9 @@ const UpdateContest = () => {
       startDate: new Date(), // Provide a valid initial date value
       endDate: new Date(),
       contestDate: "",
-      resultDate: "",
       contestNo: "",
+      resultDate: "",
+      contestEnabled: true,
     },
   });
 
@@ -103,11 +108,12 @@ const UpdateContest = () => {
 
         form.reset({
           name: response.data.name ?? "",
-          contestNo: response.data.contestNo ?? "",
           startDate: formattedStartDate ?? "",
           endDate: formattedEndDate ?? "",
           contestDate: response.data.contestDate ?? "",
           resultDate: response.data.resultDate ?? "",
+          contestNo: response.data.contestNo ?? "",
+          contestEnabled: response.data.contestEnabled ?? null,
         });
       } catch (error) {}
     };
@@ -122,10 +128,12 @@ const UpdateContest = () => {
     const payload = {
       id: contestId,
       name: values.name, // Spread the form values
-      contestNo: values.contestNo, // Spread the form values
       startDate: values.startDate.toISOString(),
       endDate: values.endDate.toISOString(),
       contestDate: values.contestDate,
+      contestNo: values.contestNo,
+      contestEnabled: values.contestEnabled,
+
       resultDate: values.resultDate,
     };
 
@@ -157,14 +165,14 @@ const UpdateContest = () => {
     }
   };
   return (
-    <div className="container mx-auto py-4">
-      <div className="flex justify-center items-center">
+    <div className="container mx-auto py-4  ">
+      <div className=" mb-4">
         <Button variant="default" onClick={handleBack}>
           Back
         </Button>
       </div>
-      <section className="bg-white mb-12">
-        <div className=" pt-10 h-screen grid grid-cols-1 md:grid-cols-2 gap-2 xl:gap-0">
+      <section className="bg-white">
+        <div className="  py-10 grid grid-cols-1  gap-2 xl:gap-0">
           <div className="w-full rounded-lg shadow-2xl md:mt-0 sm:max-w-md xl:p-0 mx-auto">
             <div className="p-6 space-y-3 md:space-y-6 sm:p-8">
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl ">
@@ -297,6 +305,51 @@ const UpdateContest = () => {
                       </FormItem>
                     )}
                   />
+                  <>
+                    <FormField
+                      // control={form.control}
+                      name="contestEnabled"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="label">
+                            Show this Contest on School Dashboard?
+                          </FormLabel>
+                        </FormItem>
+                      )}
+                    />
+
+                    <Controller
+                      name="contestEnabled"
+                      control={form.control}
+                      render={({ field }) => (
+                        <select
+                          value={
+                            field.value === true
+                              ? "true"
+                              : field.value === false
+                              ? "false"
+                              : ""
+                          }
+                          onChange={(e) => {
+                            const selectedValue = e.target.value;
+                            let newValue;
+                            if (selectedValue === "") {
+                              newValue = null;
+                            } else {
+                              newValue = selectedValue === "true";
+                            }
+                            field.onChange(newValue);
+                          }}
+                          className="w-full p-2 text-xs md:text-base rounded border border-gray-300 focus:outline-none focus:border-blue-500 !mt-0">
+                          <option value="" disabled>
+                            Choose Contest Enabled
+                          </option>
+                          <option value="true">YES</option>
+                          <option value="false">NO</option>
+                        </select>
+                      )}
+                    />
+                  </>
 
                   <div className="flex items-center justify-center mt-16">
                     <Button
