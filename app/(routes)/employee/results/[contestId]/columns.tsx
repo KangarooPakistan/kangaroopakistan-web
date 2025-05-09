@@ -453,7 +453,7 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
               className="border-y-2 border-solid"
               onClick={handleViewResults}
               disabled={isLoading}>
-              {isLoading ? "Loading..." : "View"}
+              {isLoading ? "Loading..." : "View This School's Results"}
             </DropdownMenuItem>
             <DropdownMenuItem
               className="border-y-2 border-solid"
