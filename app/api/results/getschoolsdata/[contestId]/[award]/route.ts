@@ -187,8 +187,8 @@ export async function GET(
         schoolName: schoolName,
         studentDetails: studentInfo
           ? {
-              studentName: studentInfo.studentName,
-              fatherName: studentInfo.fatherName,
+              studentName: studentInfo.studentName.toUpperCase(),
+              fatherName: studentInfo.fatherName.toUpperCase(),
               class: studentInfo.class,
               level: studentInfo.level,
               schoolId: result.schoolId,
