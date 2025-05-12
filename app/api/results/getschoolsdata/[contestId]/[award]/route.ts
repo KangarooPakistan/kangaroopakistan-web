@@ -190,11 +190,11 @@ export async function GET(
               studentName: studentInfo.studentName.toUpperCase(),
               fatherName: studentInfo.fatherName.toUpperCase(),
               class: studentInfo.class,
-              level: studentInfo.level,
+              level: studentInfo.level.toUpperCase(),
               schoolId: result.schoolId,
-              schoolName: schoolName,
+              schoolName: schoolName.,
               district: result.district,
-              city: city,
+              city: city.toUpperCase(),
             }
           : null,
       };
