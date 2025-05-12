@@ -243,6 +243,10 @@ const Results = () => {
     // Process the data
     const { headers, rows } = processDataForExcel(schoolData, resultData);
 
+    // Log to understand the exact structure
+    console.log("Headers:", headers);
+    console.log("Rows sample:", rows.slice(0, 2)); // First two rows
+
     // Create workbook and worksheet
     const XLSX = require("xlsx");
     const workbook = XLSX.utils.book_new();
@@ -250,14 +254,15 @@ const Results = () => {
     // Convert to worksheet format
     const worksheet = XLSX.utils.aoa_to_sheet([headers, ...rows]);
 
-    // Set column widths
-    const colWidths = [
-      { wch: 150 }, // School Name
-      { wch: 25 }, // Student Name
-      { wch: 25 }, // Father Name
-      { wch: 20 }, // Roll Number
-      { wch: 15 }, // Class
-    ];
+    // More dynamic column width setting
+    const colWidths = headers.map((header, index) => ({
+      wch:
+        Math.max(
+          header.length,
+          ...rows.map((row) => String(row[index] || "").length)
+        ) + 5, // Add some padding
+    }));
+
     worksheet["!cols"] = colWidths;
 
     // Add worksheet to workbook
