@@ -251,9 +251,13 @@ const Results = () => {
     const worksheet = XLSX.utils.aoa_to_sheet([headers, ...rows]);
 
     // Set column widths
-    const colWidths = headers.map((header) => ({
-      wch: Math.max(header.length, 15), // minimum width of 15 characters
-    }));
+    const colWidths = [
+      { wch: 150 }, // School Name
+      { wch: 25 }, // Student Name
+      { wch: 25 }, // Father Name
+      { wch: 20 }, // Roll Number
+      { wch: 15 }, // Class
+    ];
     worksheet["!cols"] = colWidths;
 
     // Add worksheet to workbook
