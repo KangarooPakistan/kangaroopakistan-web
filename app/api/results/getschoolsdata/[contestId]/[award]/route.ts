@@ -192,9 +192,9 @@ export async function GET(
               class: studentInfo.class,
               level: studentInfo.level.toUpperCase(),
               schoolId: result.schoolId,
-              schoolName: schoolName.,
+              schoolName: schoolName.toUpperCase(),
               district: result.district,
-              city: city.toUpperCase(),
+              city: city?.toUpperCase(),
             }
           : null,
       };
