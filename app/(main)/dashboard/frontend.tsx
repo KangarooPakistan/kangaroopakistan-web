@@ -117,7 +117,7 @@ const Frontend = () => {
       {mySession && role === "User" && (
         <div className="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-4 mx-auto py-10">
           <div className="bg-white  rounded-2xl shadow-gray-800 shadow-md w-full m-2">
-            <p className="text-purple-600 text-justify p-4 font-bold text-md md:text-xl">
+            {/* <p className="text-purple-600 text-justify p-4 font-bold text-md md:text-xl">
               Participation fee can be paid through Bank Draft/Pay Order, drawn
               in favor of INNOVATIVE LEARNING. OR The fees can also be directly
               transferred to our bank account: <br /> BANK NAME: MCB ISLAMIC
@@ -125,6 +125,16 @@ const Frontend = () => {
               <br /> TITLE: INNOVATIVE LEARNING ACC. # 077 1005053360001 <br />{" "}
               IBAN # PK85 MCIB 0771005053360001 <br /> BRANCH: BAHRIA TOWN
               PHASE 4 RAWALPINDI
+            </p> */}
+
+            <p className="text-purple-600 text-justify p-4 font-bold text-md md:text-xl">
+              Participation fee can be paid through Bank Draft/Pay Order, drawn
+              in favor of INNOVATIVE LEARNING. OR The fees can also be directly
+              transferred to our bank account: <br />
+              BANK NAME: MCB ISLAMIC BANK LTD ACC.``
+              <br /> TITLE: INVENTIVE LEARNING ACC. # 077 1004965640003 <br />{" "}
+              IBAN # PK52 MCIB 0771004965640003 BRANCH: <br /> BRANCH: BAHRIA
+              TOWN PHASE 4 RAWALPINDI
             </p>
           </div>
           {/* <div></div> */}

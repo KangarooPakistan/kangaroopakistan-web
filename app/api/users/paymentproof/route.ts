@@ -108,7 +108,8 @@ export async function POST(request: Request) {
         schoolDetails?.email || "",
         schoolDetails?.p_email || "",
         schoolDetails?.c_email || "",
-        aminaEmail?.email || "",
+        // aminaEmail?.email || "",
+        "valiantsina@kangaroopakistan.org",
         // ebdullahEmail?.email || "",
       ],
 

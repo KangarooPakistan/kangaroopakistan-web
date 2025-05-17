@@ -152,7 +152,7 @@ export async function GET(
         schoolDetails?.email || "",
         schoolDetails?.p_email || "",
         schoolDetails?.c_email || "",
-        aminaEmail?.email || "",
+        "valiantsina@kangaroopakistan.org",
         // ebdullahEmail?.email || "",
       ],
 

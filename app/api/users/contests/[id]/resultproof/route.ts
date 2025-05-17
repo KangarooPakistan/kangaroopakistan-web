@@ -60,7 +60,7 @@ export async function POST(request: Request) {
     const mailOptions: SendMailOptions = {
       from: process.env.AWS_SMTP_EMAIL,
       to: [
-        aminaEmail?.email || "",
+        "valiantsina@kangaroopakistan.org",
         // ebdullahEmail?.email || "",
       ],
 

@@ -72,7 +72,8 @@ export async function POST(request: Request) {
             [schoolDetails.email || "primary"]: "Contest data not found",
             [schoolDetails.p_email || "p_email"]: "Contest data not found",
             [schoolDetails.c_email || "c_email"]: "Contest data not found",
-            [aminaEmail?.email || "amina_email"]: "Contest data not found",
+
+            // [aminaEmail?.email || "amina_email"]: "Contest data not found",
           },
         },
         { status: 404 }
@@ -110,8 +111,6 @@ export async function POST(request: Request) {
               "Sender email configuration missing",
             [schoolDetails.c_email || "c_email"]:
               "Sender email configuration missing",
-            [aminaEmail?.email || "amina_email"]:
-              "Sender email configuration missing",
           },
         },
         { status: 500 }
@@ -141,7 +140,7 @@ www.kangaroopakistan.org`;
       schoolDetails.email,
       schoolDetails.p_email,
       schoolDetails.c_email,
-      aminaEmail?.email,
+      "valiantsina@kangaroopakistan.org",
     ].filter((email) => email);
 
     if (emailAddresses.length === 0) {
@@ -152,7 +151,7 @@ www.kangaroopakistan.org`;
             [schoolDetails.email || "primary"]: "Email not provided",
             [schoolDetails.p_email || "p_email"]: "Email not provided",
             [schoolDetails.c_email || "c_email"]: "Email not provided",
-            [aminaEmail?.email || "amina_email"]: "Email not provided",
+            // [aminaEmail?.email || "amina_email"]: "Email not provided",
           },
         },
         { status: 400 }
@@ -219,7 +218,7 @@ www.kangaroopakistan.org`;
           [schoolDetails?.email || "primary"]: error.message,
           [schoolDetails?.p_email || "p_email"]: error.message,
           [schoolDetails?.c_email || "c_email"]: error.message,
-          [aminaEmail?.email || "amina_email"]: error.message,
+          // [aminaEmail?.email || "amina_email"]: error.message,
         },
       },
       { status: 500 }
