@@ -123,13 +123,15 @@ export async function POST(request: Request) {
 
     const emailBody = `Dear Principal,<br/><br/>
 
-We are delighted to announce the results of the ${contestName} ${year} and extend our heartfelt congratulations to all participating schools and students for their dedication and outstanding performance. Attached, you will find the official results for your review.<br/><br/>
+We are pleased to announce the results of the ${contestName} ${year}. Congratulations to all participating schools and students for their dedication and outstanding performance!.<br/><br/>
 
-Thank you for your participation in ${contestNameShort} ${year}. We look forward to your continued engagement and future achievements!<br/><br/><br/>
+Please find attached the official results for your review.<br/>
+Thank you for your continued  participation in ${contestNameShort} ${year}. We look forward to your ongoing engagement and future achievements.!<br/><br/><br/>
 
 <b>Best regards,</b>
 Team ${contestNameShort}<br/>
-Innovative Learning | Inventive Learning - KSF Pakistan<br/><br/>
+<i>Innovative Learning | Inventive Learning - KSF Pakistan</i><br/><br/>
+
 
 <b>Office</b>: 042-37180505 | 042-37180506<br/>
 <b>Whatsapp</b>: 0333-2111399 | 0321-8403033 | 0319-5080077<br/>
@@ -141,6 +143,7 @@ www.kangaroopakistan.org`;
       schoolDetails.p_email,
       schoolDetails.c_email,
       "valiantsina@kangaroopakistan.org",
+      "kainatkiranrashid2@gmail.com",
     ].filter((email) => email);
 
     if (emailAddresses.length === 0) {
