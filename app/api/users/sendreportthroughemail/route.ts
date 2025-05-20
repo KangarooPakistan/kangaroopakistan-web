@@ -128,7 +128,7 @@ We are pleased to announce the results of the ${contestName} ${year}. Congratula
 Please find attached the official results for your review.<br/>
 Thank you for your continued  participation in ${contestNameShort} ${year}. We look forward to your ongoing engagement and future achievements.!<br/><br/><br/>
 
-<b>Best regards,</b>
+<b>Best regards,</b><br/>
 Team ${contestNameShort}<br/>
 <i>Innovative Learning | Inventive Learning - KSF Pakistan</i><br/><br/>
 
