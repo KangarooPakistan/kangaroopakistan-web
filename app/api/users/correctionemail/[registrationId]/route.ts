@@ -178,6 +178,8 @@ export async function GET(
       <p> Coordinator Email: ${schoolDetails?.c_email}</p>
       <p> Coordinator Phone: ${schoolDetails?.c_phone}</p>
       <p> Coordinator Cell: ${schoolDetails?.c_contact}</p>
+      <p> School Account Details: ${schoolDetails?.bankTitle}</p>
+
       <p> Coordinator Account Details: ${schoolDetails?.c_accountDetails}</p>
       <p> Total Number of students Registered: ${totalStudents.length}</p>
       ${tableHtml}
