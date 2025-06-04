@@ -160,7 +160,7 @@ export async function GET(
       html: `<p><b>Dear Principal / Coordinator,</b></p>
       <p>We hope this message finds you well.</p>
       
-      <p>Thank you for your school’s participation in IKMC 2025. Before we proceed with the printing and dispatch of certificates and awards, we kindly request you to review all participant data (names, spellings, class levels, etc.) to ensure accuracy. </p>
+      <p>Thank you for your school’s participation in IKSC 2025. Before we proceed with the printing and dispatch of certificates and awards, we kindly request you to review all participant data (names, spellings, class levels, etc.) to ensure accuracy. </p>
       <p>If there are any discrepancies or corrections needed, please send us a formal email within 5 days of receiving this message.</p>
       <p>Please note that after this period, the data will be considered final.</p>
       <p><b>CORRECTIONS REQUESTED AFTER 5 DAYS WILL BE SUBJECT TO A REISSUANCE FEE OF RS. 1000/- PER CERTIFICATE..</b></p>

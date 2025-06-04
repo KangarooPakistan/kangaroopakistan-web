@@ -235,7 +235,7 @@ export async function POST(
 
     const mailOptions: SendMailOptions = {
       to: schoolDetails?.email,
-      subject: `Students Added on Kangaroo Contest Management Portal`,
+      subject: `${contestName} 20${year} - Registration Received`,
       html: `<p><b>Dear Sir / Madam,</b></p>
       <p>Please note, we have received the following entries of students for the ${contestName} 20${year}. A total no. of ${totalStudents.length} students were added.  </p>
       <p><b>Next Steps: </b></p>

@@ -158,7 +158,7 @@ export async function GET(
         // ebdullahEmail?.email || "",
       ],
 
-      subject: `Registration Received - ${contestNameShort} ${year}`,
+      subject: `Registration Confirmation - ${contestNameShort} ${year}`,
       html: `<p><b>Dear Sir / Madam,</b></p>
       <p>We are pleased to confirm that your registration for the ${contestName} ${year} is complete, and your payment has been successfully verified. Thank you for your participation! </p>
       
