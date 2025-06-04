@@ -32,6 +32,7 @@ interface UserData {
   c_email: string;
   city: string;
   c_accountDetails: string;
+  bankTitle: string;
 }
 
 function UserProfile({ params }: UserProfileProps) {
@@ -138,6 +139,12 @@ function UserProfile({ params }: UserProfileProps) {
                         School Name
                       </td>
                       <td className="px-2 py-2">{userData.schoolName}</td>
+                    </tr>
+                    <tr>
+                      <td className="px-2 py-2 text-gray-500 font-semibold">
+                        School Bank Title
+                      </td>
+                      <td className="px-2 py-2">{userData.bankTitle}</td>
                     </tr>
                     <tr>
                       <td className="px-2 py-2 text-gray-500 font-semibold">
