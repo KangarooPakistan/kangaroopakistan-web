@@ -72,7 +72,7 @@ export async function POST(request: Request) {
       <p>Below are the details of your institution. Kindly verify, as these details will be used in all official documents: </p>
       <br/>
       
-      <p>Innovative Learning - KSF Pakistan</p>
+      <p>Inventive Learning - KSF Pakistan</p>
       <p><b>Office: </b> 042-37180505 | 042-37180506</p>
       <p><b>Whatsapp: </b>0333-2111399 | 0321-8403033 | 0319-5080077</p>
       <p><b>Address: </b>1st Floor, Plaza 114, Main Boulevard, Phase 6, D.H.A Lahore</p>
