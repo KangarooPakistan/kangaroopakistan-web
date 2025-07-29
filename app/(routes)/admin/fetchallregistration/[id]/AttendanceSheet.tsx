@@ -1417,7 +1417,7 @@ const SmartTextHeadingTop: React.FC<{
           width: "100%",
           textTransform: "uppercase",
           fontWeight: isArabicText ? "700" : "700",
-          fontSize: isArabicText ? "25px" : "25px",
+          fontSize: isArabicText ? "25px" : "20px",
         },
       ]}>
       {text}
