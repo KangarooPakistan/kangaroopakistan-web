@@ -461,8 +461,8 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            marginRight: "50px",
-            marginLeft: "50px",
+            marginRight: "20px",
+            marginLeft: "30px",
             flexDirection: "row",
           }}>
           {profileData?.contestCh === "M" ? (
@@ -488,7 +488,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
               justifyContent: "center",
               display: "flex",
               flexWrap: "wrap",
-              marginLeft: "20px",
+              marginLeft: "10px",
               flexDirection: "row",
             }}>
             <Text style={styles.header}>
