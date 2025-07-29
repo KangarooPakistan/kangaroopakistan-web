@@ -461,7 +461,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             display: "flex",
             justifyContent: "flex-start",
             alignItems: "center",
-            // marginRight: "20px",
+            marginTop: "30px",
             marginLeft: "20px",
             flexDirection: "row",
           }}>
@@ -524,7 +524,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
         <View
           style={{
             marginHorizontal: "20px",
-            marginBottom: "20px",
+            marginBottom: "30px",
             borderWidth: 1,
           }}>
           {/* School ID row */}
@@ -730,7 +730,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             textAlign: "center",
             textTransform: "uppercase",
             marginTop: "10px",
-            marginBottom: "20px",
+            marginBottom: "30px",
             fontFamily: "Helvetica Neue",
             fontWeight: 600,
           }}>
@@ -824,8 +824,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
           style={{
             display: "flex",
             alignItems: "center",
-            marginBottom: "20px",
-
+            marginBottom: "30px",
             justifyContent: "space-between",
             flexDirection: "row",
             marginLeft: "20px",
@@ -845,8 +844,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             justifyContent: "space-between",
             flexDirection: "row",
             marginLeft: "20px",
-            marginBottom: "20px",
-
+            marginBottom: "30px",
             marginRight: "20px",
           }}>
           <Text style={styles.totalStudentsTextNew}>
