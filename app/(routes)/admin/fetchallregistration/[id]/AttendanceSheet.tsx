@@ -511,7 +511,8 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             marginTop: "15px",
             marginBottom: "15px",
             flexDirection: "row",
-            marginHorizontal: "20px",
+            marginLeft: "40px",
+            marginRight: "10px",
             display: "flex",
             justifyContent: "center", // Center horizontally
             alignItems: "center", // Center vertically
