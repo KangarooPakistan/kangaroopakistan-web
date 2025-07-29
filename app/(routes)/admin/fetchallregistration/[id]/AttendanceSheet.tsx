@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
   header: {
     fontSize: "13px",
     textTransform: "uppercase",
-    textAlign: "center",
+    textAlign: "left",
 
     marginVertical: "10px",
     fontFamily: "Helvetica Neue",
