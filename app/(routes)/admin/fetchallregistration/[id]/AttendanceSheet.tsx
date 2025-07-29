@@ -524,7 +524,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
         <View
           style={{
             marginHorizontal: "20px",
-            // marginBottom: "10px",
+            marginBottom: "20px",
             borderWidth: 1,
           }}>
           {/* School ID row */}
@@ -730,7 +730,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             textAlign: "center",
             textTransform: "uppercase",
             marginTop: "10px",
-            marginBottom: "10px",
+            marginBottom: "20px",
             fontFamily: "Helvetica Neue",
             fontWeight: 600,
           }}>
@@ -824,6 +824,8 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
           style={{
             display: "flex",
             alignItems: "center",
+            marginBottom: "20px",
+
             justifyContent: "space-between",
             flexDirection: "row",
             marginLeft: "20px",
@@ -843,6 +845,8 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             justifyContent: "space-between",
             flexDirection: "row",
             marginLeft: "20px",
+            marginBottom: "20px",
+
             marginRight: "20px",
           }}>
           <Text style={styles.totalStudentsTextNew}>
@@ -852,17 +856,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             {schoolData.length}
           </Text>
         </View>
-        <View
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "flex-end",
-          }}>
-          <Image
-            style={styles.image_bottom}
-            src="/MEMBER_AKSF.png" // Replace with your image path or URL
-          />
-        </View>
+
         {/* <Text break></Text> */}
       </Page>
       <Page
