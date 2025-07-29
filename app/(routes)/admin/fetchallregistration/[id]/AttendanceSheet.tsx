@@ -521,7 +521,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
 
         <View
           style={{
-            marginHorizontal: "0px",
+            marginHorizontal: "20px",
             // marginBottom: "10px",
             borderWidth: 1,
           }}>
