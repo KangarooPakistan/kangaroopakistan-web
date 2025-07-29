@@ -488,7 +488,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
               justifyContent: "flex-start",
               display: "flex",
               flexWrap: "wrap",
-              marginLeft: "0px",
+              marginLeft: "10px",
               flexDirection: "row",
             }}>
             <Text style={styles.header}>
