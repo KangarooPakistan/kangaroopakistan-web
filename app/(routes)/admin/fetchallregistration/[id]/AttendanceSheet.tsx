@@ -542,10 +542,10 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
                 style={{
                   flexDirection: "column",
                   justifyContent: "center",
-                  alignItems: "flex-start",
+                  alignItems: "center",
                 }}>
                 <SmartTextHeading text="SCHOOL ID" />
-                <SmartTextHeading text="رمز المدرسة" />
+                {/* <SmartTextHeading text="رمز المدرسة" /> */}
               </View>
             </View>
             <View style={{ width: "70%", padding: "6px" }}>
@@ -570,10 +570,10 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
                 style={{
                   flexDirection: "column",
                   justifyContent: "center",
-                  alignItems: "flex-start",
+                  alignItems: "center",
                 }}>
                 <SmartTextHeading text="CONTACT NUMBER" />
-                <SmartTextHeading text="رقم الهاتف" />
+                {/* <SmartTextHeading text="رقم الهاتف" /> */}
               </View>
             </View>
             <View style={{ width: "70%", padding: "6px" }}>
@@ -597,10 +597,11 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
                 style={{
                   flexDirection: "column",
                   justifyContent: "center",
-                  alignItems: "flex-start",
+                  // alignItems: "flex-start",
+                  alignItems: "center",
                 }}>
                 <SmartTextHeading text="PRINCIPAL NAME" />
-                <SmartTextHeading text="اسم المدير" />
+                {/* <SmartTextHeading text="اسم المدير" /> */}
               </View>
             </View>
             <View style={{ width: "60%", padding: "6px" }}>
@@ -625,10 +626,10 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
                 style={{
                   flexDirection: "column",
                   justifyContent: "center",
-                  alignItems: "flex-start",
+                  alignItems: "center",
                 }}>
                 <SmartTextHeading text="COORDINATOR NAME" />
-                <SmartTextHeading text="اسم المنسق" />
+                {/* <SmartTextHeading text="اسم المنسق" /> */}
               </View>
             </View>
             <View style={{ width: "70%", padding: "6px" }}>
@@ -652,10 +653,12 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
                 style={{
                   flexDirection: "column",
                   justifyContent: "center",
-                  alignItems: "flex-start",
+                  alignItems: "center",
+
+                  // alignItems: "flex-start",
                 }}>
                 <SmartTextHeading text="ADDRESS" />
-                <SmartTextHeading text="العنوان" />
+                {/* <SmartTextHeading text="العنوان" /> */}
               </View>
             </View>
 
@@ -682,10 +685,10 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
                 style={{
                   flexDirection: "column",
                   justifyContent: "center",
-                  alignItems: "flex-start",
+                  alignItems: "center",
                 }}>
                 <SmartTextHeading text="EMAIL ADDRESS" />
-                <SmartTextHeading text="البريد الإلكتروني" />
+                {/* <SmartTextHeading text="البريد الإلكتروني" /> */}
               </View>
             </View>
 
@@ -708,10 +711,10 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
                 style={{
                   flexDirection: "column",
                   justifyContent: "center",
-                  alignItems: "flex-start",
+                  alignItems: "center",
                 }}>
                 <SmartTextHeading text="CONTACT NUMBER" />
-                <SmartTextHeading text="رقم الهاتف" />
+                {/* <SmartTextHeading text="رقم الهاتف" /> */}
               </View>
             </View>
             <View style={{ width: "70%", padding: "6px" }}>
