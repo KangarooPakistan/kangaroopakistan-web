@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFF",
   },
   header: {
-    fontSize: "12px",
+    fontSize: "13px",
     textTransform: "uppercase",
     textAlign: "center",
 
@@ -485,10 +485,10 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
           <View
             style={{
               alignItems: "center",
-              justifyContent: "center",
+              justifyContent: "flex-start",
               display: "flex",
               flexWrap: "wrap",
-              marginLeft: "10px",
+              marginLeft: "0px",
               flexDirection: "row",
             }}>
             <Text style={styles.header}>
