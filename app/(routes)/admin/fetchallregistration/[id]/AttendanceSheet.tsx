@@ -530,6 +530,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             style={{
               flexDirection: "row",
               borderBottomWidth: 1,
+              alignItems: "center",
 
               borderBottomColor: "#ccc",
             }}>
@@ -1312,7 +1313,7 @@ const SmartText: React.FC<{
           direction: isArabicText ? "rtl" : "ltr",
           textAlign: "center", // Ensure text is left-aligned
           fontWeight: isArabicText ? "700" : "400",
-          fontSize: isArabicText ? "14px" : "14px",
+          fontSize: isArabicText ? "14px" : "12px",
           justifyContent: "flex-start",
           textTransform: "uppercase",
           display: "flex",
