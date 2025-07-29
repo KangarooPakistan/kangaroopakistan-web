@@ -70,8 +70,8 @@ Font.register({
 });
 const styles = StyleSheet.create({
   image: {
-    width: 110, // Set the width of your image
-    height: 90, // Set the height of your image
+    width: 80, // Set the width of your image
+    height: 60, // Set the height of your image
     // Optional: add some margin if needed
   },
   image_bottom: {
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFF",
   },
   header: {
-    fontSize: "10px",
+    fontSize: "12px",
     textTransform: "uppercase",
     textAlign: "center",
 
@@ -1313,7 +1313,7 @@ const SmartText: React.FC<{
           direction: isArabicText ? "rtl" : "ltr",
           textAlign: "center", // Ensure text is left-aligned
           fontWeight: isArabicText ? "700" : "400",
-          fontSize: isArabicText ? "14px" : "12px",
+          fontSize: "12px",
           justifyContent: "flex-start",
           textTransform: "uppercase",
           display: "flex",
