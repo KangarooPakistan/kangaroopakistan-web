@@ -521,7 +521,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
 
         <View
           style={{
-            marginHorizontal: "50px",
+            marginHorizontal: "0px",
             // marginBottom: "10px",
             borderWidth: 1,
           }}>
@@ -740,8 +740,8 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             alignItems: "center",
             justifyContent: "space-between",
             flexDirection: "row",
-            marginLeft: "50px",
-            marginRight: "50px",
+            marginLeft: "0px",
+            marginRight: "0px",
           }}>
           <Text style={[styles.totalStudentsText, { backgroundColor: "#fff" }]}>
             preecolier (1 & 2):
