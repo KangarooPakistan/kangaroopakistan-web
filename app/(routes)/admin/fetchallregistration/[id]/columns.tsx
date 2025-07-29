@@ -66,6 +66,7 @@ interface Students {
 interface profileData {
   p_Name: string;
   c_Name: string;
+  p_contact: string;
   email: string;
   contactNumber: string;
   contestName: string;
@@ -139,6 +140,17 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
 
   const handleDownloadPdf = async () => {
     try {
+      toast.info("📄 Starting answer sheet download...", {
+        position: "bottom-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+
       const response = await axios.get(
         `/api/users/pdfdownload/${registration.id}`
       );
@@ -172,6 +184,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         contactNumber: res.data.user.contactNumber,
         contestName: contestData.data.name,
         contestCh: contestData.data.contestCh,
+        p_contact: res.data.user.p_contact,
         contestNo: contestData.data.contestNo,
       };
 
@@ -179,8 +192,28 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       const pdfName = `answersheet_${response.data[0].schoolId}_part1.pdf`;
 
       saveAs(blob, pdfName);
+      toast.success("🦄 Answer Sheet Downloaded Successfully 😍", {
+        position: "bottom-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } catch (error) {
       console.error("Error downloading the PDF:", error);
+      toast.error("Error downloading Answer Sheet, Please try again later 😒", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } finally {
     }
   };
@@ -263,6 +296,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         p_Name: res.data.user.p_Name,
         c_Name: res.data.user.c_Name,
         email: res.data.user.email,
+        p_contact: res.data.user.p_contact,
         contactNumber: res.data.user.contactNumber,
         contestName: contestData.data.name,
         contestCh: contestData.data.contestCh,
@@ -301,12 +335,16 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       <AttendanceSheet schoolData={schoolData} profileData={profileData} />
     );
 
-    const asPdf = pdf(doc); // Create an empty PDF instance
+    const asPdf = pdf(doc);
     const blob = await asPdf.toBlob();
     return blob;
   };
 
   const handleStudentDetails = async () => {
+    const loadingToast = toast.loading("📊 Preparing Student Details...", {
+      position: "bottom-center",
+    });
+
     try {
       const response = await axios.get(
         `/api/users/pdfdownload/${registration.id}`
@@ -328,6 +366,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         p_Name: res.data.user.p_Name,
         c_Name: res.data.user.c_Name,
         email: res.data.user.email,
+        p_contact: res.data.user.p_contact,
         contactNumber: res.data.user.contactNumber,
         contestName: contestData.data.name,
         contestCh: contestData.data.contestCh,
@@ -365,13 +404,54 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
 
       const schoolId = schoolData[0].schoolId;
       const blob = await generatePdfBlobForSE(schoolData, profileData);
+      toast.update(loadingToast, {
+        render: "🦄 pages generated successfully 😍",
+        type: "success",
+        isLoading: false,
+        position: "bottom-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "light",
+      });
+      console.log("blob");
+      console.log(blob);
       saveAs(blob, `students_data_${schoolId}.pdf`);
+      toast.update(loadingToast, {
+        render: "🦄 Student Details Downloaded Successfully 😍",
+        type: "success",
+        isLoading: false,
+        position: "bottom-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "light",
+      });
     } catch (error) {
       console.error("Error generating the PDF:", error);
+      toast.update(loadingToast, {
+        render: "Error downloading Student Details, Please try again later 😒",
+        type: "error",
+        isLoading: false,
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "light",
+      });
     }
   };
 
   const handleAttendanceSheet = async () => {
+    const loadingToast = toast.loading("📋 Preparing Attendance Sheet...", {
+      position: "bottom-center",
+    });
     try {
       const response = await axios.get(
         `/api/users/pdfdownload/${registration.id}`
@@ -391,6 +471,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       // console.log(res.data.user.p_fName);
       const profileData: profileData = {
         p_Name: res.data.user.p_Name,
+        p_contact: res.data.user.p_contact,
         c_Name: res.data.user.c_Name,
         email: res.data.user.email,
         contactNumber: res.data.user.contactNumber,
@@ -433,9 +514,34 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         schoolData,
         profileData
       );
+      console.log(blob);
       saveAs(blob, `attendance_sheet_${schoolId}.pdf`);
+      toast.update(loadingToast, {
+        render: "🦄 Attendance Sheet Downloaded Successfully 😍",
+        type: "success",
+        isLoading: false,
+        position: "bottom-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "light",
+      });
     } catch (error) {
       console.error("Error generating the PDF:", error);
+      toast.update(loadingToast, {
+        render: "Error downloading Attendance Sheet, Please try again later 😒",
+        type: "error",
+        isLoading: false,
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "light",
+      });
     }
   };
   const handleReceiptView = () => {
@@ -756,7 +862,7 @@ const styles = StyleSheet.create({
     display: "flex",
     alignItems: "flex-end",
     justifyContent: "flex-start",
-    borderRadius: "50%",
+    borderRadius: "12.5px",
   },
   questionNumber: {},
   option: {
@@ -787,7 +893,7 @@ const styles = StyleSheet.create({
     borderWidth: "1px",
     borderColor: "black",
     marginRight: "5px",
-    borderRadius: "50%",
+    borderRadius: "7px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -798,7 +904,7 @@ const styles = StyleSheet.create({
     height: "25px",
     marginRight: 4,
     display: "flex",
-    borderRadius: "50%",
+    borderRadius: "12.5px",
     borderWidth: "2px",
     borderColor: "black",
     alignItems: "center",
@@ -895,7 +1001,7 @@ const styles = StyleSheet.create({
     width: "15px",
     height: "15px",
     position: "absolute",
-    borderRadius: "50%",
+    borderRadius: "7.5px",
     backgroundColor: "blue",
   },
   wrongFillingLast: {

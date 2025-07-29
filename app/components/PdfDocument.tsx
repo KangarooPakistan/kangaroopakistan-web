@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
     width: "15px",
     height: "15px",
     position: "absolute",
-    borderRadius: "50%",
+    borderRadius: "7.5px",
     backgroundColor: "blue",
   },
   wrongFillingLast: {

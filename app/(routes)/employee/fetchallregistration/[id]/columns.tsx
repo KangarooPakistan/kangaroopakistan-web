@@ -69,6 +69,7 @@ interface profileData {
   contestName: string;
   contestCh: string;
   contestNo: string;
+  p_contact: string;
 }
 
 type RegistrationProps = {
@@ -171,6 +172,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         contestName: contestData.data.name,
         contestCh: contestData.data.contestCh,
         contestNo: contestData.data.contestNo,
+        p_contact: res.data.user.p_contact,
       };
 
       const blob = await generatePdfBlob(students, profileData);
@@ -261,6 +263,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         p_Name: res.data.user.p_Name,
         c_Name: res.data.user.c_Name,
         email: res.data.user.email,
+        p_contact: res.data.user.p_contact,
         contactNumber: res.data.user.contactNumber,
         contestName: contestData.data.name,
         contestCh: contestData.data.contestCh,
@@ -326,6 +329,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         p_Name: res.data.user.p_Name,
         c_Name: res.data.user.c_Name,
         email: res.data.user.email,
+        p_contact: res.data.user.p_contact,
         contactNumber: res.data.user.contactNumber,
         contestName: contestData.data.name,
         contestCh: contestData.data.contestCh,
@@ -390,6 +394,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       const profileData: profileData = {
         p_Name: res.data.user.p_Name,
         c_Name: res.data.user.c_Name,
+        p_contact: res.data.user.p_contact,
         email: res.data.user.email,
         contactNumber: res.data.user.contactNumber,
         contestName: contestData.data.name,
@@ -754,7 +759,7 @@ const styles = StyleSheet.create({
     display: "flex",
     alignItems: "flex-end",
     justifyContent: "flex-start",
-    borderRadius: "50%",
+    borderRadius: "12.5px",
   },
   questionNumber: {},
   option: {
@@ -785,7 +790,7 @@ const styles = StyleSheet.create({
     borderWidth: "1px",
     borderColor: "black",
     marginRight: "5px",
-    borderRadius: "50%",
+    borderRadius: "7px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -796,7 +801,7 @@ const styles = StyleSheet.create({
     height: "25px",
     marginRight: 4,
     display: "flex",
-    borderRadius: "50%",
+    borderRadius: "12.5px",
     borderWidth: "2px",
     borderColor: "black",
     alignItems: "center",
@@ -893,7 +898,7 @@ const styles = StyleSheet.create({
     width: "15px",
     height: "15px",
     position: "absolute",
-    borderRadius: "50%",
+    borderRadius: "7px",
     backgroundColor: "blue",
   },
   wrongFillingLast: {

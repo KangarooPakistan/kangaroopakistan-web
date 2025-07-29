@@ -24,7 +24,7 @@ interface Student {
 }
 interface profileData {
   p_Name: string;
-
+  p_contact: string;
   c_Name: string;
   email: string;
   contactNumber: string;
@@ -37,24 +37,62 @@ interface AttendanceSheetProps {
   schoolData: Student[];
   profileData: profileData | null | undefined;
 }
+
+Font.register({
+  family: "Roboto",
+  fonts: [
+    { src: "/fonts/Roboto-Regular.ttf" },
+    { src: "/fonts/Roboto-Bold.ttf", fontWeight: 700 },
+  ],
+});
+Font.register({
+  family: "Helvetica Neue",
+  fonts: [
+    { src: "/font/newfont/HelveticaNeueThin.otf", fontWeight: 300 },
+    { src: "/font/newfont/HelveticaNeueRoman.otf", fontWeight: 400 },
+    { src: "/font/newfont/HelveticaNeueMedium.otf", fontWeight: 500 },
+    { src: "/font/newfont/HelveticaNeueBold.otf", fontWeight: 700 },
+    { src: "/font/newfont/HelveticaNeueBlack.otf", fontWeight: 900 },
+  ],
+});
+Font.register({
+  family: "Tajawal",
+  fonts: [
+    { src: "/font/Tajawal-ExtraLight.ttf", fontWeight: 100 },
+    { src: "/font/Tajawal-Light.ttf", fontWeight: 300 },
+    { src: "/font/Tajawal-Regular.ttf", fontWeight: 400 },
+    { src: "/font/Tajawal-Medium.ttf", fontWeight: 500 },
+    { src: "/font/Tajawal-Bold.ttf", fontWeight: 700 },
+    { src: "/font/Tajawal-ExtraBold.ttf", fontWeight: 800 },
+    { src: "/font/Tajawal-Black.ttf", fontWeight: 900 },
+  ],
+  fontWeight: 400,
+});
 const styles = StyleSheet.create({
   image: {
-    width: 70, // Set the width of your image
-    height: 70, // Set the height of your image
-    marginTop: "20px", // Optional: add some margin if needed
+    width: 110, // Set the width of your image
+    height: 90, // Set the height of your image
+    // Optional: add some margin if needed
+  },
+  image_bottom: {
+    marginRight: "20px",
+    width: 160, // Set the width of your image
+    height: 45, // Set the height of your image
+    // Optional: add some margin if needed
   },
   page: {
-    padding: "20px",
+    padding: "10px",
     flexDirection: "column",
     backgroundColor: "#FFF",
   },
   header: {
-    fontSize: "14px",
+    fontSize: "10px",
     textTransform: "uppercase",
     textAlign: "center",
+
     marginVertical: "10px",
-    fontFamily: "Roboto",
-    fontWeight: 600,
+    fontFamily: "Helvetica Neue",
+    fontWeight: 700,
   },
   subHeader: {
     fontSize: "10px",
@@ -67,7 +105,7 @@ const styles = StyleSheet.create({
   },
   subHeaderBelow: {
     marginVertical: "5px",
-    fontSize: "13px",
+    fontSize: "10px",
     textTransform: "uppercase",
 
     fontWeight: "heavy",
@@ -103,10 +141,45 @@ const styles = StyleSheet.create({
   },
   totalStudentsText: {
     fontSize: "12px",
+    width: "500px",
+    padding: "8px",
+    backgroundColor: "#f5f5f5",
     textTransform: "uppercase",
-
-    marginVertical: "5px",
+    fontFamily: "Helvetica Neue",
+    borderTopWidth: 1,
+    borderLeftWidth: 1,
+    borderColor: "#000",
+    textAlign: "left",
+  },
+  totalStudentsTextRight: {
+    fontSize: "12px",
+    width: "500px",
+    padding: "8px",
+    backgroundColor: "#f5f5f5",
+    textTransform: "uppercase",
+    fontFamily: "Helvetica Neue",
+    borderTopWidth: 1,
+    borderRightWidth: 1,
+    borderLeftWidth: 1,
+    borderColor: "#000",
     textAlign: "center",
+  },
+  totalStudentsTextNew: {
+    fontSize: "16px",
+    width: "800px",
+    textTransform: "uppercase",
+    fontFamily: "Helvetica Neue",
+    marginVertical: "7px",
+    textAlign: "left",
+  },
+  totalStudentsTextNewBold: {
+    fontSize: "18px",
+    width: "200px",
+    textTransform: "uppercase",
+    fontFamily: "Helvetica Neue",
+    marginVertical: "7px",
+    textAlign: "left",
+    fontWeight: 700,
   },
   studentTable: {
     marginVertical: "5px",
@@ -115,9 +188,12 @@ const styles = StyleSheet.create({
   },
   tableColHeaderMid: {
     width: "15%",
+
     borderRight: 1,
     borderColor: "#000",
     padding: 2,
+    flexWrap: "wrap",
+
     backgroundColor: "#eee", // Optional for header background
   },
   tableColHeaderLeft: {
@@ -141,15 +217,7 @@ const styles = StyleSheet.create({
     padding: 2,
     flexWrap: "wrap",
   },
-  newView: {
-    borderColor: "#000",
-    border: "1px",
-    display: "flex",
-    justifyContent: "center",
-    flexDirection: "column",
-    alignItems: "center",
-    marginVertical: "10px",
-  },
+  newView: {},
   newViewText: {
     textTransform: "uppercase",
     fontSize: "12px",
@@ -157,7 +225,7 @@ const styles = StyleSheet.create({
     textAlign: "left",
   },
   tableCellHeader: {
-    fontSize: 9,
+    fontSize: 10,
     textTransform: "uppercase",
 
     fontWeight: "bold",
@@ -185,11 +253,18 @@ const styles = StyleSheet.create({
 
   paragraph: {
     fontSize: "10px",
-    marginBottom: 8,
+    marginBottom: 4,
+    fontFamily: "Roboto",
+  },
+
+  paragraphBold: {
+    fontSize: "10px",
+    marginBottom: 4,
+    fontWeight: "extrabold",
     fontFamily: "Roboto",
   },
   spacer: {
-    height: 14, // Adjust this value to increase or decrease space
+    height: 20, // Adjust this value to increase or decrease space
   },
 
   table: {
@@ -197,8 +272,6 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   tableRow: {
-    // margin: "auto",
-
     flexDirection: "row",
     borderBottomWidth: 1,
     borderBottomColor: "#000",
@@ -216,25 +289,48 @@ const styles = StyleSheet.create({
     width: "11%",
     borderStyle: "solid",
     borderWidth: 1,
-    borderLeftWidth: 0,
+    borderLeftWidth: 1,
     borderTopWidth: 0,
   },
   tableColWide: {
     width: "23%",
     borderStyle: "solid",
     borderWidth: 1,
+    flexWrap: "wrap",
+
     borderLeftWidth: 0,
     borderTopWidth: 0,
   },
   tableCell: {
-    margin: "auto",
-    fontSize: 9,
-
-    textAlign: "left",
-    paddingTop: 3,
-    paddingBottom: 3,
+    fontSize: "9px",
+    textTransform: "uppercase",
+    minHeight: "20px",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    maxLines: 2,
+    wordBreak: "break-word",
+    whiteSpace: "pre-wrap",
+    padding: "2px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100% !important",
+    flexWrap: "wrap",
+    fontWeight: "bold",
+    textAlign: "center",
   },
 
+  stylesArabic: {
+    fontFamily: "Tajawal",
+    direction: "rtl",
+    textAlign: "right", // Ensure text is left-aligned
+    fontWeight: "400",
+    fontSize: "10px",
+    justifyContent: "flex-start",
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+  },
   section: {
     display: "flex",
     flexDirection: "column",
@@ -249,28 +345,34 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
   const groupedStudents: Record<string, Record<string, Student[]>> = {};
   const [fontsLoaded, setFontsLoaded] = useState(false);
 
-  useEffect(() => {
-    const loadFonts = async () => {
-      await Font.register({
-        family: "Roboto",
-        fonts: [
-          { src: "/fonts/Roboto-Regular.ttf" },
-          { src: "/fonts/Roboto-Bold.ttf", fontWeight: 700 },
-        ],
-      });
-      // await Font.register({
-      //   family: "Calibri",
-      //   fonts: [
-      //     { src: "/fonts/calibri-regular.ttf" },
-      //     { src: "/fonts/calibri-bold.ttf", fontWeight: 700 },
-      //   ],
-      // });
+  // useEffect(() => {
+  //   const loadFonts = async () => {
+  //     await Font.register({
+  //       family: "Roboto",
+  //       fonts: [
+  //         { src: "/fonts/Roboto-Regular.ttf" },
+  //         { src: "/fonts/Roboto-Bold.ttf", fontWeight: 700 },
+  //       ],
+  //     });
+  //     await Font.register({
+  //       family: "Cairo",
+  //       fonts: [
+  //         { src: "/font/Cairo-ExtraLight.ttf", fontWeight: 100 },
+  //         { src: "/font/Cairo-Light.ttf", fontWeight: 300 },
+  //         { src: "/font/Cairo-Regular.ttf", fontWeight: 400 },
+  //         { src: "/font/Cairo-Medium.ttf", fontWeight: 500 },
+  //         { src: "/font/Cairo-SemiBold.ttf", fontWeight: 600 },
+  //         { src: "/font/Cairo-Bold.ttf", fontWeight: 700 },
+  //         { src: "/font/Cairo-ExtraBold.ttf", fontWeight: 800 },
+  //         { src: "/font/Cairo-Black.ttf", fontWeight: 900 },
+  //       ],
+  //     });
 
-      setFontsLoaded(true);
-    };
+  //     setFontsLoaded(true);
+  //   };
 
-    loadFonts();
-  }, []);
+  //   loadFonts();
+  // }, []);
 
   let preecolierCount = 0;
   let ecolierCount = 0;
@@ -358,8 +460,8 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
           style={{
             display: "flex",
             justifyContent: "space-between",
-            alignItems: "flex-start",
-            marginRight: "20px",
+            alignItems: "center",
+            marginRight: "120px",
             flexDirection: "row",
           }}>
           {profileData?.contestCh === "M" ? (
@@ -381,11 +483,12 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
 
           <View
             style={{
-              alignItems: "flex-start",
-              justifyContent: "space-between",
+              alignItems: "center",
+              justifyContent: "center",
               display: "flex",
+              flexWrap: "wrap",
               marginLeft: "20px",
-              flexDirection: "column",
+              flexDirection: "row",
             }}>
             <Text style={styles.header}>
               {profileData?.contestNo}
@@ -401,286 +504,371 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
               </Text>{" "}
               {profileData?.contestName}
             </Text>
-            <View style={{ display: "flex", justifyContent: "flex-start" }}>
-              <Text
-                style={{
-                  fontSize: "10px",
-                  textTransform: "uppercase",
+          </View>
+        </View>
+        <View
+          style={{
+            marginTop: "15px",
+            marginBottom: "15px",
+            flexDirection: "row",
+            marginHorizontal: "50px",
+            display: "flex",
+            justifyContent: "center", // Center horizontally
+            alignItems: "center", // Center vertically
+          }}>
+          <SmartTextHeadingTop text={schoolData[0].schoolName} />
+        </View>
 
-                  textAlign: "left",
-                  marginVertical: "1px",
-                  fontFamily: "Roboto",
-                  fontWeight: 900,
-                }}>
-                {schoolData[0].schoolName}
-              </Text>
-            </View>
+        <View
+          style={{
+            marginHorizontal: "50px",
+            // marginBottom: "10px",
+            borderWidth: 1,
+          }}>
+          {/* School ID row */}
+          <View
+            style={{
+              flexDirection: "row",
+              borderBottomWidth: 1,
+
+              borderBottomColor: "#ccc",
+            }}>
             <View
               style={{
-                display: "flex",
-                justifyContent: "flex-start",
-                flexDirection: "row",
+                width: "40%",
+                padding: "6px",
               }}>
-              <Text
+              <View
                 style={{
-                  fontSize: "10px",
-                  textTransform: "uppercase",
-
-                  textAlign: "left",
-                  marginVertical: "1px",
-                  fontFamily: "Roboto",
-                  fontWeight: 600, // Keep the label text bold
-                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "flex-start",
                 }}>
-                Institution Code:{" "}
-              </Text>
-              <Text
-                style={{
-                  fontSize: "10px",
-                  textAlign: "left",
-                  textTransform: "uppercase",
-
-                  marginVertical: "1px",
-                  fontFamily: "Roboto",
-                  fontWeight: "normal", // Set fontWeight to normal for the school ID
-                  display: "flex",
-                }}>
-                {schoolData[0].schoolId}
-              </Text>
+                <SmartTextHeading text="SCHOOL ID" />
+                <SmartTextHeading text="رمز المدرسة" />
+              </View>
             </View>
-            <View
-              style={{
-                display: "flex",
-                justifyContent: "flex-start",
-                flexDirection: "row",
-              }}>
-              <Text
-                style={{
-                  fontSize: "10px",
-                  textTransform: "uppercase",
-
-                  textAlign: "left",
-                  marginVertical: "1px",
-                  fontFamily: "Roboto",
-                  fontWeight: 600, // Keep the label text bold
-                  display: "flex",
-                }}>
-                Address:{" "}
-              </Text>
-              <Text
-                style={{
-                  fontSize: "10px",
-                  textAlign: "left",
-                  textTransform: "uppercase",
-
-                  marginVertical: "1px",
-                  fontFamily: "Roboto",
-                  fontWeight: "normal", // Set fontWeight to normal for the school ID
-                  display: "flex",
-                }}>
-                {schoolData[0].address}
-              </Text>
-            </View>
-            <View
-              style={{
-                display: "flex",
-                justifyContent: "flex-start",
-                flexDirection: "row",
-              }}>
-              <Text
-                style={{
-                  fontSize: "10px",
-                  textTransform: "uppercase",
-
-                  textAlign: "left",
-                  marginVertical: "1px",
-                  fontFamily: "Roboto",
-                  fontWeight: 600, // Keep the label text bold
-                  display: "flex",
-                }}>
-                Contact Number:{" "}
-              </Text>
-              <Text
-                style={{
-                  fontSize: "10px",
-                  textTransform: "uppercase",
-
-                  textAlign: "left",
-                  marginVertical: "1px",
-                  fontFamily: "Roboto",
-                  fontWeight: "normal", // Set fontWeight to normal for the school ID
-                  display: "flex",
-                }}>
-                {profileData?.contactNumber}
-              </Text>
-            </View>
-            <View
-              style={{
-                display: "flex",
-                justifyContent: "flex-start",
-                flexDirection: "row",
-              }}>
-              <Text
-                style={{
-                  fontSize: "10px",
-                  textAlign: "left",
-                  marginVertical: "1px",
-                  textTransform: "uppercase",
-
-                  fontFamily: "Roboto",
-                  fontWeight: 600, // Keep the label text bold
-                  display: "flex",
-                }}>
-                Email Address:{" "}
-              </Text>
-              <Text
-                style={{
-                  fontSize: "10px",
-                  textTransform: "uppercase",
-
-                  textAlign: "left",
-                  marginVertical: "1px",
-                  fontFamily: "Roboto",
-                  fontWeight: "normal", // Set fontWeight to normal for the school ID
-                  display: "flex",
-                }}>
-                {profileData?.email}
-              </Text>
-            </View>
-            <View
-              style={{
-                display: "flex",
-                justifyContent: "flex-start",
-                flexDirection: "row",
-              }}>
-              <Text
-                style={{
-                  fontSize: "10px",
-                  textTransform: "uppercase",
-
-                  textAlign: "left",
-                  marginVertical: "1px",
-                  fontFamily: "Roboto",
-                  fontWeight: 600, // Keep the label text bold
-                  display: "flex",
-                }}>
-                Principal Name:{" "}
-              </Text>
-              <Text
-                style={{
-                  fontSize: "10px",
-                  textTransform: "uppercase",
-
-                  textAlign: "left",
-                  marginVertical: "1px",
-                  fontFamily: "Roboto",
-                  fontWeight: "normal", // Set fontWeight to normal for the school ID
-                  display: "flex",
-                }}>
-                {profileData?.p_Name}
-              </Text>
-            </View>
-            <View
-              style={{
-                display: "flex",
-                justifyContent: "flex-start",
-                flexDirection: "row",
-              }}>
-              <Text
-                style={{
-                  fontSize: "10px",
-                  textTransform: "uppercase",
-
-                  textAlign: "left",
-                  marginVertical: "1px",
-                  fontFamily: "Roboto",
-                  fontWeight: 600, // Keep the label text bold
-                  display: "flex",
-                }}>
-                Coordinator Name:{" "}
-              </Text>
-              <Text
-                style={{
-                  fontSize: "10px",
-                  textTransform: "uppercase",
-
-                  textAlign: "left",
-                  marginVertical: "1px",
-                  fontFamily: "Roboto",
-                  fontWeight: "normal", // Set fontWeight to normal for the school ID
-                  display: "flex",
-                }}>
-                {profileData?.c_Name}{" "}
-              </Text>
+            <View style={{ width: "70%", padding: "6px" }}>
+              <SmartText text={schoolData[0].schoolId} />
             </View>
           </View>
-          <View></View>
+
+          {/* Contact Number row */}
+          <View
+            style={{
+              flexDirection: "row",
+              borderBottomWidth: 1,
+              borderBottomColor: "#ccc",
+              backgroundColor: "#f5f5f5",
+            }}>
+            <View
+              style={{
+                width: "40%",
+                padding: "6px",
+              }}>
+              <View
+                style={{
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "flex-start",
+                }}>
+                <SmartTextHeading text="CONTACT NUMBER" />
+                <SmartTextHeading text="رقم الهاتف" />
+              </View>
+            </View>
+            <View style={{ width: "70%", padding: "6px" }}>
+              <SmartText text={profileData?.contactNumber} />
+            </View>
+          </View>
+
+          {/* Principal Name row */}
+          <View
+            style={{
+              flexDirection: "row",
+              borderBottomWidth: 1,
+              borderBottomColor: "#ccc",
+            }}>
+            <View
+              style={{
+                width: "40%",
+                padding: "6px",
+              }}>
+              <View
+                style={{
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "flex-start",
+                }}>
+                <SmartTextHeading text="PRINCIPAL NAME" />
+                <SmartTextHeading text="اسم المدير" />
+              </View>
+            </View>
+            <View style={{ width: "60%", padding: "6px" }}>
+              <SmartText text={profileData?.p_Name} />
+            </View>
+          </View>
+
+          {/* Coordinator Name row */}
+          <View
+            style={{
+              flexDirection: "row",
+              borderBottomWidth: 1,
+              borderBottomColor: "#ccc",
+              backgroundColor: "#f5f5f5",
+            }}>
+            <View
+              style={{
+                width: "40%",
+                padding: "6px",
+              }}>
+              <View
+                style={{
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "flex-start",
+                }}>
+                <SmartTextHeading text="COORDINATOR NAME" />
+                <SmartTextHeading text="اسم المنسق" />
+              </View>
+            </View>
+            <View style={{ width: "70%", padding: "6px" }}>
+              <SmartText text={profileData?.c_Name} />
+            </View>
+          </View>
+
+          {/* Address row */}
+          <View
+            style={{
+              flexDirection: "row",
+              borderBottomWidth: 1,
+              borderBottomColor: "#ccc",
+            }}>
+            <View
+              style={{
+                width: "40%",
+                padding: "6px",
+              }}>
+              <View
+                style={{
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "flex-start",
+                }}>
+                <SmartTextHeading text="ADDRESS" />
+                <SmartTextHeading text="العنوان" />
+              </View>
+            </View>
+
+            <View style={{ width: "70%", padding: "6px" }}>
+              <SmartText text={schoolData[0].address} />
+            </View>
+          </View>
+
+          {/* Email row */}
+          <View
+            style={{
+              flexDirection: "row",
+              borderBottomWidth: 1,
+              borderBottomColor: "#ccc",
+              backgroundColor: "#f5f5f5",
+            }}>
+            <View
+              style={{
+                width: "40%",
+                backgroundColor: "#f5f5f5",
+                padding: "6px",
+              }}>
+              <View
+                style={{
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "flex-start",
+                }}>
+                <SmartTextHeading text="EMAIL ADDRESS" />
+                <SmartTextHeading text="البريد الإلكتروني" />
+              </View>
+            </View>
+
+            <View style={{ width: "70%", padding: "6px" }}>
+              <SmartTextBold text={profileData?.email} />
+            </View>
+          </View>
+
+          {/* Second Contact Number row (from p_contact) */}
+          <View
+            style={{
+              flexDirection: "row",
+            }}>
+            <View
+              style={{
+                width: "40%",
+                padding: "6px",
+              }}>
+              <View
+                style={{
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "flex-start",
+                }}>
+                <SmartTextHeading text="CONTACT NUMBER" />
+                <SmartTextHeading text="رقم الهاتف" />
+              </View>
+            </View>
+            <View style={{ width: "70%", padding: "6px" }}>
+              <SmartText text={profileData?.p_contact} />
+            </View>
+          </View>
         </View>
         <Text
           style={{
-            fontSize: "14px",
+            fontSize: "18px",
             textAlign: "center",
             textTransform: "uppercase",
-
-            marginVertical: "8px",
-            fontFamily: "Roboto",
-            fontWeight: 600, // Keep the label text bold
-            display: "flex",
+            marginTop: "10px",
+            marginBottom: "10px",
+            fontFamily: "Helvetica Neue",
+            fontWeight: 600,
           }}>
           List of registered students
         </Text>
-        <View style={styles.newView}>
-          {/* <Text style={styles.totalStudentsText}>Total Students by Level</Text> */}
-          <Text style={styles.totalStudentsText}>
-            Total # Pre Ecolier: {preecolierCount}
-          </Text>
-          <Text style={styles.totalStudentsText}>
-            Total # Ecolier: {ecolierCount}
-          </Text>
-          <Text style={styles.totalStudentsText}>
-            Total # Benjamin: {benjaminCount}
-          </Text>
-          <Text style={styles.totalStudentsText}>
-            Total # Cadet: {cadetCount}
-          </Text>
-          <Text style={styles.totalStudentsText}>
-            Total # Junior: {juniorCount}
-          </Text>
-          <Text style={styles.totalStudentsText}>
-            Total # Student: {studentCount}
+        <View
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexDirection: "row",
+            marginLeft: "50px",
+            marginRight: "50px",
+          }}>
+          <Text style={[styles.totalStudentsText, { backgroundColor: "#fff" }]}>
+            preecolier (1 & 2):
+          </Text>{" "}
+          <Text
+            style={[
+              styles.totalStudentsTextRight,
+              { backgroundColor: "#fff" },
+            ]}>
+            {preecolierCount}
           </Text>
         </View>
         <View
           style={{
             display: "flex",
-            flexDirection: "column",
+            alignItems: "center",
             justifyContent: "space-between",
+            flexDirection: "row",
+            marginLeft: "50px",
+            marginRight: "50px",
           }}>
-          <Text style={styles.totalStudentsText}>
-            Total Number of Students : {schoolData.length}
-          </Text>
-          <View style={{ marginTop: 340 }}>
-            <Text style={styles.totalStudentsText}>
-              Please return this attendance sheet and answer sheets to the
-              following
-            </Text>
-            <Text style={styles.totalStudentsText}>
-              address: Innovative Learning
-            </Text>
-            <Text style={styles.totalStudentsText}>
-              First floor, Plaza 114, Main Boulevard, Block J, DHA Phase 6
-              Lahore
-            </Text>
-            <Text style={styles.totalStudentsText}>
-              Tel. 0333-2111399, 0321-8403033
-            </Text>
-          </View>
+          <Text style={styles.totalStudentsText}>Ecolier (3 & 4):</Text>{" "}
+          <Text style={[styles.totalStudentsTextRight]}>{ecolierCount}</Text>
         </View>
-
-        <Text break></Text>
+        <View
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexDirection: "row",
+            marginLeft: "50px",
+            marginRight: "50px",
+          }}>
+          <Text style={[styles.totalStudentsText, { backgroundColor: "#fff" }]}>
+            Benjamin (5 & 6):
+          </Text>{" "}
+          <Text
+            style={[
+              styles.totalStudentsTextRight,
+              { backgroundColor: "#fff" },
+            ]}>
+            {benjaminCount}
+          </Text>
+        </View>
+        <View
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexDirection: "row",
+            marginLeft: "50px",
+            marginRight: "50px",
+          }}>
+          <Text style={styles.totalStudentsText}>Cadet (7 & 8):</Text>{" "}
+          <Text style={styles.totalStudentsTextRight}>{cadetCount}</Text>
+        </View>
+        <View
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexDirection: "row",
+            marginLeft: "50px",
+            marginRight: "50px",
+          }}>
+          <Text style={[styles.totalStudentsText, { backgroundColor: "#fff" }]}>
+            Junior (9 & 10):
+          </Text>{" "}
+          <Text
+            style={[
+              styles.totalStudentsTextRight,
+              { backgroundColor: "#fff" },
+            ]}>
+            {juniorCount}
+          </Text>
+        </View>
+        <View
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexDirection: "row",
+            marginLeft: "50px",
+            marginRight: "50px",
+          }}>
+          <Text style={[styles.totalStudentsText, { borderBottom: 1 }]}>
+            Student (11 & 12):
+          </Text>
+          <Text style={[styles.totalStudentsTextRight, { borderBottom: 1 }]}>
+            {studentCount}
+          </Text>
+        </View>
+        <View
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexDirection: "row",
+            marginLeft: "50px",
+            marginRight: "50px",
+          }}>
+          <Text style={styles.totalStudentsTextNew}>
+            Total Number of Students:
+          </Text>{" "}
+          <Text style={styles.totalStudentsTextNewBold}>
+            {schoolData.length}
+          </Text>
+        </View>
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "flex-end",
+          }}>
+          <Image
+            style={styles.image_bottom}
+            src="/MEMBER_AKSF.png" // Replace with your image path or URL
+          />
+        </View>
+        {/* <Text break></Text> */}
+      </Page>
+      <Page
+        size="A4"
+        style={{
+          padding: "20px",
+        }}>
         <Text style={styles.title}>ATTENDANCE SHEET</Text>
         <Text style={styles.header}>{profileData?.contestName}</Text>
         <Text style={styles.paragraph}>Dear Principal,</Text>
+
         <Text style={styles.paragraph}>
           We are pleased to inform you that your school is participating in the
           {profileData?.contestName}. Attached with this letter are the contest
@@ -1038,11 +1226,21 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
         <Text style={styles.paragraph}>
           COO Innovative Learning - KSF Pakistan
         </Text>
-        <Text break></Text>
+      </Page>
+      <Page
+        size="A4"
+        style={{
+          paddingVertical: "60px",
+          paddingHorizontal: "30px",
+        }}>
         <View style={styles.table}>
           <View style={styles.tableRow}>
-            <View style={[styles.tableColHeader, { borderLeftWidth: 1 }]}>
-              <Text style={styles.tableCellHeader}>SR.NO</Text>
+            <View
+              style={[
+                styles.tableColHeader,
+                { borderLeftWidth: 1, borderLeftColor: "black" },
+              ]}>
+              <Text style={styles.tableCellHeader}>NO</Text>
             </View>
             <View style={[styles.tableColHeader, { width: "23%" }]}>
               <Text style={styles.tableCellHeader}>ROLL NUMBER</Text>
@@ -1057,7 +1255,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
               <Text style={styles.tableCellHeader}>CLASS</Text>
             </View>
             <View style={styles.tableColHeader}>
-              <Text style={styles.tableCellHeader}>ATTENDANCE (P/A)</Text>
+              <Text style={styles.tableCellHeader}>P/A</Text>
             </View>
           </View>
           {schoolData.map((student, index) => (
@@ -1069,10 +1267,16 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
                 <Text style={styles.tableCell}>{student.rollNumber}</Text>
               </View>
               <View style={styles.tableColWide}>
-                <Text style={styles.tableCell}>{student.studentName}</Text>
+                <SmartTextTable
+                  text={student.studentName}
+                  style={styles.tableCell}
+                />
               </View>
               <View style={styles.tableColWide}>
-                <Text style={styles.tableCell}>{student.fatherName}</Text>
+                <SmartTextTable
+                  text={student.fatherName}
+                  style={styles.tableCell}
+                />
               </View>
               <View style={styles.tableCol}>
                 <Text style={styles.tableCell}>{student.studentClass}</Text>
@@ -1089,3 +1293,160 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
 };
 
 export default AttendanceSheet;
+
+const SmartText: React.FC<{
+  text: string | number | null | undefined;
+  style?: any;
+}> = ({ text, style }) => {
+  const isArabicText = /[\u0600-\u06FF]/.test(String(text || ""));
+
+  return (
+    <Text
+      style={[
+        style,
+        {
+          fontFamily: isArabicText ? "Tajawal" : "Helvetica Neue",
+          direction: isArabicText ? "rtl" : "ltr",
+          textAlign: "center", // Ensure text is left-aligned
+          fontWeight: isArabicText ? "700" : "400",
+          fontSize: isArabicText ? "14px" : "14px",
+          justifyContent: "flex-start",
+          textTransform: "uppercase",
+          display: "flex",
+          flexWrap: "wrap",
+          flexDirection: "row",
+          alignItems: "center",
+          whiteSpace: "pre-wrap", // Allow wrapping
+          width: "100%",
+          flexShrink: 1, // Allow shrinking
+          flexGrow: 0, // Don't allow growing
+          wordBreak: "break-word",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+
+          // marginVertical: isArabicText ? "1px" : "2px",
+        },
+      ]}>
+      {text}
+    </Text>
+  );
+};
+const SmartTextBold: React.FC<{
+  text: string | number | null | undefined;
+  style?: any;
+}> = ({ text, style }) => {
+  const isArabicText = /[\u0600-\u06FF]/.test(String(text || ""));
+
+  return (
+    <Text
+      style={[
+        style,
+        {
+          fontFamily: isArabicText ? "Tajawal" : "Helvetica Neue",
+          direction: isArabicText ? "rtl" : "ltr",
+          textAlign: "center", // Ensure text is left-aligned
+          fontWeight: isArabicText ? "700" : "900",
+          textDecoration: "underline",
+          fontSize: isArabicText ? "14px" : "14px",
+          justifyContent: "flex-start",
+          display: "flex",
+          flexWrap: "wrap",
+          flexDirection: "row",
+          alignItems: "center",
+          whiteSpace: "pre-wrap", // Allow wrapping
+          width: "100%",
+          flexShrink: 1, // Allow shrinking
+          flexGrow: 0, // Don't allow growing
+          wordBreak: "break-word",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+
+          // marginVertical: isArabicText ? "1px" : "2px",
+        },
+      ]}>
+      {text}
+    </Text>
+  );
+};
+const SmartTextHeading: React.FC<{
+  text: string | null | undefined;
+  style?: any;
+}> = ({ text, style }) => {
+  const isArabicText = /[\u0600-\u06FF]/.test(text || "");
+
+  return (
+    <Text
+      style={[
+        style,
+        {
+          fontFamily: isArabicText ? "Tajawal" : "Helvetica Neue",
+          direction: isArabicText ? "rtl" : "ltr",
+          textAlign: "left", // Ensure text is left-aligned
+          fontWeight: isArabicText ? "700" : "700",
+          fontSize: isArabicText ? "12px" : "12px",
+          alignSelf: "flex-center", // Align self to the start (left)
+          justifyContent: "flex-start",
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+        },
+      ]}>
+      {text}
+    </Text>
+  );
+};
+
+const SmartTextHeadingTop: React.FC<{
+  text: string | null | undefined;
+  style?: any;
+}> = ({ text, style }) => {
+  const isArabicText = /[\u0600-\u06FF]/.test(text || "");
+
+  return (
+    <Text
+      style={[
+        style,
+        {
+          fontFamily: isArabicText ? "Tajawal" : "Helvetica Neue",
+          direction: isArabicText ? "rtl" : "ltr",
+          textAlign: "center",
+          width: "100%",
+          textTransform: "uppercase",
+          fontWeight: isArabicText ? "700" : "700",
+          fontSize: isArabicText ? "25px" : "25px",
+        },
+      ]}>
+      {text}
+    </Text>
+  );
+};
+
+const SmartTextTable: React.FC<{
+  text: string | null | undefined;
+  style?: any;
+}> = ({ text, style }) => {
+  const isArabicText = /[\u0600-\u06FF]/.test(text || "");
+
+  return (
+    <Text
+      style={[
+        style,
+        {
+          fontFamily: isArabicText ? "Tajawal" : "Helvetica Neue",
+          textAlign: isArabicText ? "center" : "center",
+          fontWeight: isArabicText ? "400" : "400",
+          fontSize: isArabicText ? "8.5px" : "10px",
+          verticalAlign: "middle",
+          alignSelf: "flex-end",
+          justifyContent: "flex-end",
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          minWidth: "400px",
+          maxWidth: "100%",
+        },
+      ]}>
+      {text}
+    </Text>
+  );
+};
