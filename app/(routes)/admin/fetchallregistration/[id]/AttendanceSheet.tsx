@@ -462,7 +462,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             justifyContent: "space-between",
             alignItems: "center",
             marginRight: "0px",
-            marginLeft: "30px",
+            marginLeft: "0px",
             flexDirection: "row",
           }}>
           {profileData?.contestCh === "M" ? (
