@@ -70,8 +70,8 @@ Font.register({
 });
 const styles = StyleSheet.create({
   image: {
-    width: 80, // Set the width of your image
-    height: 60, // Set the height of your image
+    width: 70, // Set the width of your image
+    height: 50, // Set the height of your image
     // Optional: add some margin if needed
   },
   image_bottom: {
@@ -531,7 +531,6 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
               flexDirection: "row",
               borderBottomWidth: 1,
               alignItems: "center",
-
               borderBottomColor: "#ccc",
             }}>
             <View
