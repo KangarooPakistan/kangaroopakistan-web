@@ -70,7 +70,7 @@ Font.register({
 });
 const styles = StyleSheet.create({
   image: {
-    width: 70, // Set the width of your image
+    width: 50, // Set the width of your image
     height: 50, // Set the height of your image
     // Optional: add some margin if needed
   },
