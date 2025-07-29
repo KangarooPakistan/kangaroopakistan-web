@@ -459,7 +459,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
         <View
           style={{
             display: "flex",
-            justifyContent: "space-between",
+            justifyContent: "flex-start",
             alignItems: "center",
             marginRight: "0px",
             marginLeft: "0px",
@@ -515,7 +515,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             marginLeft: "10px",
             marginRight: "10px",
             display: "flex",
-            justifyContent: "center", // Center horizontally
+            justifyContent: "flex-start", // Center horizontally
             alignItems: "center", // Center vertically
           }}>
           <SmartTextHeadingTop text={schoolData[0].schoolName} />
