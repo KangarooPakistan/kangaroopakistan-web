@@ -511,7 +511,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             marginTop: "15px",
             marginBottom: "15px",
             flexDirection: "row",
-            marginHorizontal: "50px",
+            marginHorizontal: "20px",
             display: "flex",
             justifyContent: "center", // Center horizontally
             alignItems: "center", // Center vertically
@@ -740,8 +740,8 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             alignItems: "center",
             justifyContent: "space-between",
             flexDirection: "row",
-            marginLeft: "0px",
-            marginRight: "0px",
+            marginLeft: "20px",
+            marginRight: "20px",
           }}>
           <Text style={[styles.totalStudentsText, { backgroundColor: "#fff" }]}>
             preecolier (1 & 2):
@@ -760,8 +760,8 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             alignItems: "center",
             justifyContent: "space-between",
             flexDirection: "row",
-            marginLeft: "50px",
-            marginRight: "50px",
+            marginLeft: "20px",
+            marginRight: "20px",
           }}>
           <Text style={styles.totalStudentsText}>Ecolier (3 & 4):</Text>{" "}
           <Text style={[styles.totalStudentsTextRight]}>{ecolierCount}</Text>
@@ -772,8 +772,8 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             alignItems: "center",
             justifyContent: "space-between",
             flexDirection: "row",
-            marginLeft: "50px",
-            marginRight: "50px",
+            marginLeft: "20px",
+            marginRight: "20px",
           }}>
           <Text style={[styles.totalStudentsText, { backgroundColor: "#fff" }]}>
             Benjamin (5 & 6):
@@ -792,8 +792,8 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             alignItems: "center",
             justifyContent: "space-between",
             flexDirection: "row",
-            marginLeft: "50px",
-            marginRight: "50px",
+            marginLeft: "20px",
+            marginRight: "20px",
           }}>
           <Text style={styles.totalStudentsText}>Cadet (7 & 8):</Text>{" "}
           <Text style={styles.totalStudentsTextRight}>{cadetCount}</Text>
@@ -804,8 +804,8 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             alignItems: "center",
             justifyContent: "space-between",
             flexDirection: "row",
-            marginLeft: "50px",
-            marginRight: "50px",
+            marginLeft: "20px",
+            marginRight: "20px",
           }}>
           <Text style={[styles.totalStudentsText, { backgroundColor: "#fff" }]}>
             Junior (9 & 10):
@@ -824,8 +824,8 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             alignItems: "center",
             justifyContent: "space-between",
             flexDirection: "row",
-            marginLeft: "50px",
-            marginRight: "50px",
+            marginLeft: "20px",
+            marginRight: "20px",
           }}>
           <Text style={[styles.totalStudentsText, { borderBottom: 1 }]}>
             Student (11 & 12):
@@ -840,8 +840,8 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             alignItems: "center",
             justifyContent: "space-between",
             flexDirection: "row",
-            marginLeft: "50px",
-            marginRight: "50px",
+            marginLeft: "20px",
+            marginRight: "20px",
           }}>
           <Text style={styles.totalStudentsTextNew}>
             Total Number of Students:
