@@ -229,6 +229,7 @@ const FetchAllRegistrations = () => {
             registeredBy: obj.registeredBy,
             studentsLength: obj.students.length,
             email: obj.user.email,
+            students: obj.students, // Add this line
             paymentProof: obj.paymentProof, // This assumes paymentProof is within the user object
           }));
           const schoolsData = registrations
@@ -292,12 +293,10 @@ const FetchAllRegistrations = () => {
         "Updated Time": item.updatedTime,
         "Created At": item.createdAt,
       }));
-      console.log(studentForExcel);
-      console.log(registerationsData);
-      // Prepare Student Data (new logic)
+
+      // Prepare Student Data with only specific columns
       const studentData: any[] = [];
-      console.log(regData);
-      // Iterate through registrations to extract student details
+
       regData.forEach((registration: any) => {
         // Find the corresponding school data
         const schoolInfo = excel.find(
@@ -306,19 +305,18 @@ const FetchAllRegistrations = () => {
 
         // If the registration has students, add each student to the studentData
         if (registration.students && registration.students.length > 0) {
-          registration.students.forEach((student: any) => {
+          registration.students.forEach((student: any, index: number) => {
             studentData.push({
-              // School Information
-              "Registration ID": registration.id,
               "School ID": registration.schoolId,
               "School Name": schoolInfo ? schoolInfo["School Name"] : "N/A",
-
-              // Student Information
-              "Roll Number": student.rollNumber,
-              "Student Name": student.studentName,
-              "Father Name": student.fatherName,
-              Class: student.class,
-              Level: student.level,
+              "Total Students": registration.students.length,
+              "District Name": schoolInfo ? schoolInfo["District Name"] : "N/A",
+              rollNumber: student.rollNumber,
+              studentName: student.studentName?.toUpperCase() || "",
+              fatherName: student.fatherName?.toUpperCase() || "",
+              class: student.class,
+              level: student.level,
+              registrationId: registration.id,
             });
           });
         }
@@ -331,8 +329,8 @@ const FetchAllRegistrations = () => {
       const schoolWs = XLSX.utils.json_to_sheet(schoolData);
       XLSX.utils.book_append_sheet(wb, schoolWs, "School Data");
 
-      // Add Student Data sheet
-      const studentWs = XLSX.utils.json_to_sheet(studentForExcel);
+      // Add Student Data sheet with only the specified columns
+      const studentWs = XLSX.utils.json_to_sheet(studentData);
       XLSX.utils.book_append_sheet(wb, studentWs, "Student Data");
 
       // Write and save the file
