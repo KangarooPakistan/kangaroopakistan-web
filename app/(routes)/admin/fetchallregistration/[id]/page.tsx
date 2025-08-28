@@ -88,7 +88,9 @@ const FetchAllRegistrations = () => {
   const router = useRouter();
   const [contestId, setContestId] = useState("");
   const [regData, setRegData] = useState<Registration[]>([]);
-  const [excel, setExcel] = useState([]); // This makes sure `excel` is an array
+  const [excel, setExcel] = useState<
+    Array<Record<string, string | number | undefined>>
+  >([]); // Explicitly type excel for correct inference
   const [totalSchools, setTotalSchools] = useState<number>(0);
   const [allStudents, setAllStudents] = useState<Student[]>([]);
   const [preEculier, setPreEculier] = useState<number>(0);
@@ -273,7 +275,7 @@ const FetchAllRegistrations = () => {
       // Prepare School Data (existing logic)
       const schoolData = excel.map((item: any) => ({
         "School id": item["School id"],
-        "School Name": item["School Name"],
+        "School Name": item["School Name"]?.toUpperCase(),
         "Total Students": item["Total Students"],
         "School Address": item["School Address"],
         "District Name": item["District Name"],
@@ -308,7 +310,9 @@ const FetchAllRegistrations = () => {
           registration.students.forEach((student: any, index: number) => {
             studentData.push({
               "School ID": registration.schoolId,
-              "School Name": schoolInfo ? schoolInfo["School Name"] : "N/A",
+              "School Name": schoolInfo
+                ? String(schoolInfo["School Name"] ?? "").toUpperCase()
+                : "N/A", // Add toUpperCase() here
               "Total Students": registration.students.length,
               "District Name": schoolInfo ? schoolInfo["District Name"] : "N/A",
               rollNumber: student.rollNumber,
