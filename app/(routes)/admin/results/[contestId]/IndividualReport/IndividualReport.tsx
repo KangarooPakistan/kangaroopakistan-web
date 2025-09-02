@@ -522,7 +522,7 @@ const RankingsTable: React.FC<{ student: StudentReport }> = ({ student }) => (
   <View
     style={{
       marginTop: 20,
-      border: 1,
+      borderWidth: 1,
       borderColor: "#000000",
     }}>
     {/* Header */}
@@ -530,7 +530,7 @@ const RankingsTable: React.FC<{ student: StudentReport }> = ({ student }) => (
       style={{
         backgroundColor: "#FFE4E1",
         padding: 8,
-        borderBottom: 1,
+        borderBottomWidth: 1,
         borderBottomColor: "#000000",
       }}>
       <Text
@@ -552,14 +552,14 @@ const RankingsTable: React.FC<{ student: StudentReport }> = ({ student }) => (
       <View
         style={{
           flex: 2,
-          borderRight: 1,
+          borderRightWidth: 1,
           marginRight: 10,
           borderRightColor: "#000000",
         }}>
         {/* Header */}
         <View
           style={{
-            borderBottom: 1,
+            borderBottomWidth: 1,
             backgroundColor: "#f2f2f2",
             borderBottomColor: "#000000",
             padding: 8,
@@ -580,7 +580,7 @@ const RankingsTable: React.FC<{ student: StudentReport }> = ({ student }) => (
         <View
           style={{
             flexDirection: "row",
-            borderBottom: 1,
+            borderBottomWidth: 1,
             height: 28,
             borderBottomColor: "#000000",
           }}>
@@ -590,7 +590,7 @@ const RankingsTable: React.FC<{ student: StudentReport }> = ({ student }) => (
               paddingHorizontal: 6,
               paddingVertical: 4,
               fontSize: 12,
-              borderRight: 1,
+              borderRightWidth: 1,
 
               fontWeight: "bold",
               borderRightColor: "#000000",
@@ -615,7 +615,7 @@ const RankingsTable: React.FC<{ student: StudentReport }> = ({ student }) => (
         <View
           style={{
             flexDirection: "row",
-            borderBottom: 1,
+            borderBottomWidth: 1,
             height: 28,
             borderBottomColor: "#000000",
           }}>
@@ -624,7 +624,7 @@ const RankingsTable: React.FC<{ student: StudentReport }> = ({ student }) => (
               flex: 3,
               paddingHorizontal: 6,
               paddingVertical: 4,
-              borderRight: 1,
+              borderRightWidth: 1,
               borderRightColor: "#000000",
               fontSize: 12,
               fontWeight: "bold",
@@ -656,7 +656,7 @@ const RankingsTable: React.FC<{ student: StudentReport }> = ({ student }) => (
               flex: 3,
               paddingHorizontal: 6,
               paddingVertical: 4,
-              borderRight: 1,
+              borderRightWidth: 1,
               borderRightColor: "#000000",
               fontSize: 12,
               fontWeight: "bold",
@@ -696,12 +696,12 @@ const RankingsTable: React.FC<{ student: StudentReport }> = ({ student }) => (
           flex: 1,
           marginLeft: 10,
           borderLeftColor: "#000000",
-          borderLeft: 1,
+          borderLeftWidth: 1,
         }}>
         {/* Header */}
         <View
           style={{
-            borderBottom: 1,
+            borderBottomWidth: 1,
             backgroundColor: "#f2f2f2",
             borderBottomColor: "#000000",
             // padding: 6,
@@ -726,7 +726,7 @@ const RankingsTable: React.FC<{ student: StudentReport }> = ({ student }) => (
         {/* School Rank */}
         <View
           style={{
-            borderBottom: 1,
+            borderBottomWidth: 1,
             borderBottomColor: "#000000",
             paddingHorizontal: 6,
             paddingTop: 6,
@@ -744,7 +744,7 @@ const RankingsTable: React.FC<{ student: StudentReport }> = ({ student }) => (
         {/* District Rank */}
         <View
           style={{
-            borderBottom: 1,
+            borderBottomWidth: 1,
 
             height: 28,
             borderBottomColor: "#000000",
