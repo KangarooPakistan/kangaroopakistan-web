@@ -90,13 +90,16 @@ const ContestActions: React.FC<StudentActionsProps> = ({ student }) => {
         // `/api/users/pdfdownload/${registration.id}`
         `/api/users/registrations/${student.registrationId}`
       );
-      console.log(registrationResponse.data[0]);
+
+      console.log(registrationResponse.data[0].contestName);
+
       const apiStudentData = await axios.get(
         // `/api/users/pdfdownload/${registration.id}`
         `/api/users/registrations/${student.registrationId}/${student.id}`
       );
       console.log(apiStudentData);
       const studentData: StudentData = {
+        contestName: registrationResponse.data[0].contestName,
         rollNumber: apiStudentData.data.rollNumber,
         studentName: apiStudentData.data.studentName,
         fatherName: apiStudentData.data.fatherName,
@@ -307,6 +310,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     borderWidth: 2,
     borderColor: "black",
+    borderLeftWidth: 2,
+    borderRightWidth: 2,
+    borderTopWidth: 2,
+    borderBottomWidth: 2,
+    borderLeftColor: "black",
+    borderRightColor: "black",
+    borderTopColor: "black",
+    borderBottomColor: "black",
     padding: 10,
     // paddingVertical:
     // flex: 1,
@@ -402,10 +413,19 @@ const styles = StyleSheet.create({
     height: "100%",
     backgroundColor: "black",
   },
+
   instBox: {
     borderWidth: 1,
-    padding: "10px",
     borderColor: "black",
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderLeftColor: "black",
+    borderRightColor: "black",
+    borderTopColor: "black",
+    borderBottomColor: "black",
+    padding: "10px",
     marginVertical: "20px",
   },
   cross: {
@@ -510,6 +530,7 @@ const styles = StyleSheet.create({
 
 interface StudentData {
   rollNumber: string;
+  contestName: string;
   studentName: string;
   fatherName: string;
   studentLevel: string;
@@ -527,9 +548,7 @@ interface MyDocumentProps {
 const MyDocument: React.FC<MyDocumentProps> = ({ student }) => (
   <Document>
     <Page size="A4" style={styles.page}>
-      <Text style={styles.header}>
-        International Kangaroo Mathematics Contest
-      </Text>
+      <Text style={styles.header}>{student.contestName}</Text>
       <Text style={styles.subHeaderBetween}>Answer Sheet</Text>
 
       <Text style={styles.subHeader}>
