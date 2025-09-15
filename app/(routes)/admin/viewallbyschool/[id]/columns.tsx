@@ -294,6 +294,7 @@ const styles = StyleSheet.create({
     marginBottom: 1,
   },
   studentInfoTitle: {
+    textTransform: "uppercase",
     fontSize: "14px",
     width: "250px",
     fontWeight: "heavy",
@@ -304,6 +305,7 @@ const styles = StyleSheet.create({
     width: "700px", // Set maximum width to fit the container
     flexWrap: "wrap", // Allow text to wrap
     marginLeft: "20px",
+    textTransform: "uppercase",
   },
   answerGrid: {
     flexDirection: "row",
@@ -387,6 +389,7 @@ const styles = StyleSheet.create({
     position: "relative", // Needed to
   },
   optionText: {
+    textTransform: "uppercase",
     fontSize: 8,
     textAlign: "center",
   },
