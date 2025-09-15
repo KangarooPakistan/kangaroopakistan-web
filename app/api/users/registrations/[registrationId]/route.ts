@@ -18,7 +18,23 @@ export async function GET(
       },
     });
 
-    return NextResponse.json(registrations, { status: 200 });
+    // Map over registrations to add ContestName at the top level
+    const registrationsWithContestName = await Promise.all(
+      registrations.map(async (registration) => {
+        // Fetch contest data using contestId
+        const contest = await db.contest.findUnique({
+          where: { id: registration.contestId },
+          select: { name: true },
+        });
+
+        return {
+          ...registration,
+          ContestName: contest?.name || null,
+        };
+      })
+    );
+
+    return NextResponse.json(registrationsWithContestName, { status: 200 });
   } catch (error) {
     // return NextResponse.json(params.registrationId,  { status: 400 });
     return NextResponse.json(

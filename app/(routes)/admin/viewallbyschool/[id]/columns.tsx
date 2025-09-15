@@ -90,13 +90,15 @@ const ContestActions: React.FC<StudentActionsProps> = ({ student }) => {
         // `/api/users/pdfdownload/${registration.id}`
         `/api/users/registrations/${student.registrationId}`
       );
-      console.log(registrationResponse.data[0]);
+
+      const contestName = registrationResponse.data[0].ContestName;
       const apiStudentData = await axios.get(
         // `/api/users/pdfdownload/${registration.id}`
         `/api/users/registrations/${student.registrationId}/${student.id}`
       );
       console.log(apiStudentData);
       const studentData: StudentData = {
+        contestName: contestName,
         rollNumber: apiStudentData.data.rollNumber,
         studentName: apiStudentData.data.studentName,
         fatherName: apiStudentData.data.fatherName,
@@ -265,11 +267,10 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: 14,
+    textTransform: "uppercase",
     marginBottom: 10,
     fontWeight: "bold",
-
     textAlign: "center",
-    textTransform: "uppercase",
   },
   subHeaderBetween: {
     fontSize: 10,
@@ -511,6 +512,7 @@ const styles = StyleSheet.create({
 
 interface StudentData {
   rollNumber: string;
+  contestName: string;
   studentName: string;
   fatherName: string;
   studentLevel: string;
@@ -528,9 +530,7 @@ interface MyDocumentProps {
 const MyDocument: React.FC<MyDocumentProps> = ({ student }) => (
   <Document>
     <Page size="A4" style={styles.page}>
-      <Text style={styles.header}>
-        International Kangaroo Mathematics Contest
-      </Text>
+      <Text style={styles.header}>{student.contestName}</Text>
       <Text style={styles.subHeaderBetween}>Answer Sheet</Text>
 
       <Text style={styles.subHeader}>
