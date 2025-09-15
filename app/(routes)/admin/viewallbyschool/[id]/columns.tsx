@@ -311,6 +311,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     borderWidth: 2,
     borderColor: "black",
+    borderLeftWidth: 2,
+    borderRightWidth: 2,
+    borderTopWidth: 2,
+    borderBottomWidth: 2,
+    borderLeftColor: "black",
+    borderRightColor: "black",
+    borderTopColor: "black",
+    borderBottomColor: "black",
     padding: 10,
     // paddingVertical:
     // flex: 1,
@@ -409,8 +417,16 @@ const styles = StyleSheet.create({
   },
   instBox: {
     borderWidth: 1,
-    padding: "10px",
     borderColor: "black",
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderLeftColor: "black",
+    borderRightColor: "black",
+    borderTopColor: "black",
+    borderBottomColor: "black",
+    padding: "10px",
     marginVertical: "20px",
   },
   cross: {
@@ -584,7 +600,6 @@ const MyDocument: React.FC<MyDocumentProps> = ({ student }) => (
         {/* ... other student info rows */}
       </View>
       <View style={styles.instBox}>
-        {/* Row with correct filling example */}
         <Text style={styles.optionText}>
           Choose only one of the five proposed answers[A,B,C,D,E] and fill in
           the box with your answer. Example of correctly filled table of answer
