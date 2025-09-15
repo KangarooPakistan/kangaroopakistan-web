@@ -91,15 +91,13 @@ const ContestActions: React.FC<StudentActionsProps> = ({ student }) => {
         `/api/users/registrations/${student.registrationId}`
       );
 
-      console.log(registrationResponse.data[0].contestName);
-
       const apiStudentData = await axios.get(
         // `/api/users/pdfdownload/${registration.id}`
         `/api/users/registrations/${student.registrationId}/${student.id}`
       );
       console.log(apiStudentData);
       const studentData: StudentData = {
-        contestName: registrationResponse.data[0].contestName,
+        contestName: registrationResponse.data[0].ContestName,
         rollNumber: apiStudentData.data.rollNumber,
         studentName: apiStudentData.data.studentName,
         fatherName: apiStudentData.data.fatherName,
