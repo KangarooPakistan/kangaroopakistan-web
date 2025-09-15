@@ -297,6 +297,7 @@ const styles = StyleSheet.create({
   studentInfoTitle: {
     fontSize: "14px",
     width: "250px",
+    textTransform: "uppercase",
     fontWeight: "heavy",
   },
   studentInfoContent: {
