@@ -145,11 +145,12 @@ const styles = StyleSheet.create({
     padding: "8px",
     backgroundColor: "#f5f5f5",
     textTransform: "uppercase",
+
     fontFamily: "Helvetica Neue",
     borderTopWidth: 1,
     borderLeftWidth: 1,
     borderColor: "#000",
-    textAlign: "left",
+    textAlign: "center",
   },
   totalStudentsTextRight: {
     fontSize: "12px",
@@ -273,7 +274,6 @@ const styles = StyleSheet.create({
   },
   tableRow: {
     flexDirection: "row",
-    borderBottomWidth: 1,
     borderBottomColor: "#000",
     borderBottomStyle: "solid",
   },
@@ -289,8 +289,19 @@ const styles = StyleSheet.create({
     width: "11%",
     borderStyle: "solid",
     borderWidth: 1,
+
+    borderLeftWidth: 0,
+    borderTopWidth: 0,
+    // borderLeftWidth: 1,
+  },
+
+  tableColStart: {
+    width: "11%",
+    borderStyle: "solid",
+    borderWidth: 1,
     borderLeftWidth: 1,
     borderTopWidth: 0,
+    // borderLeftWidth: 1,
   },
   tableColWide: {
     width: "23%",
@@ -311,8 +322,8 @@ const styles = StyleSheet.create({
     wordBreak: "break-word",
     whiteSpace: "pre-wrap",
     padding: "2px",
+    alignItems: "flex-end",
     display: "flex",
-    alignItems: "center",
     justifyContent: "center",
     width: "100% !important",
     flexWrap: "wrap",
@@ -551,7 +562,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
               </View>
             </View>
             <View style={{ width: "70%", padding: "6px" }}>
-              <SmartText text={schoolData[0].schoolId} />
+              <SmartTextBold text={schoolData[0].schoolId} />
             </View>
           </View>
 
@@ -695,7 +706,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             </View>
 
             <View style={{ width: "70%", padding: "6px" }}>
-              <SmartTextBold text={profileData?.email} />
+              <SmartText text={profileData?.email} />
             </View>
           </View>
 
@@ -742,8 +753,8 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             alignItems: "center",
             justifyContent: "space-between",
             flexDirection: "row",
-            marginLeft: "20px",
-            marginRight: "20px",
+            marginLeft: "120px",
+            marginRight: "120px",
           }}>
           <Text style={[styles.totalStudentsText, { backgroundColor: "#fff" }]}>
             preecolier (1 & 2):
@@ -762,8 +773,8 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             alignItems: "center",
             justifyContent: "space-between",
             flexDirection: "row",
-            marginLeft: "20px",
-            marginRight: "20px",
+            marginLeft: "120px",
+            marginRight: "120px",
           }}>
           <Text style={styles.totalStudentsText}>Ecolier (3 & 4):</Text>{" "}
           <Text style={[styles.totalStudentsTextRight]}>{ecolierCount}</Text>
@@ -774,8 +785,8 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             alignItems: "center",
             justifyContent: "space-between",
             flexDirection: "row",
-            marginLeft: "20px",
-            marginRight: "20px",
+            marginLeft: "120px",
+            marginRight: "120px",
           }}>
           <Text style={[styles.totalStudentsText, { backgroundColor: "#fff" }]}>
             Benjamin (5 & 6):
@@ -794,8 +805,8 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             alignItems: "center",
             justifyContent: "space-between",
             flexDirection: "row",
-            marginLeft: "20px",
-            marginRight: "20px",
+            marginLeft: "120px",
+            marginRight: "120px",
           }}>
           <Text style={styles.totalStudentsText}>Cadet (7 & 8):</Text>{" "}
           <Text style={styles.totalStudentsTextRight}>{cadetCount}</Text>
@@ -806,8 +817,8 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             alignItems: "center",
             justifyContent: "space-between",
             flexDirection: "row",
-            marginLeft: "20px",
-            marginRight: "20px",
+            marginLeft: "120px",
+            marginRight: "120px",
           }}>
           <Text style={[styles.totalStudentsText, { backgroundColor: "#fff" }]}>
             Junior (9 & 10):
@@ -827,8 +838,8 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             marginBottom: "30px",
             justifyContent: "space-between",
             flexDirection: "row",
-            marginLeft: "20px",
-            marginRight: "20px",
+            marginLeft: "120px",
+            marginRight: "120px",
           }}>
           <Text style={[styles.totalStudentsText, { borderBottom: 1 }]}>
             Student (11 & 12):
@@ -843,9 +854,9 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             alignItems: "center",
             justifyContent: "space-between",
             flexDirection: "row",
-            marginLeft: "20px",
             marginBottom: "30px",
-            marginRight: "20px",
+            marginRight: "100px",
+            marginLeft: "120px",
           }}>
           <Text style={styles.totalStudentsTextNew}>
             Total Number of Students:
@@ -897,7 +908,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             </View>
             <View style={[styles.tableColHeader, { width: "35%" }]}>
               <Text style={styles.tableCellHeader}>
-                No. of Answer Sheets & Booklets Sent
+                No. of Answer Sheets & Booklets Received
               </Text>
             </View>
             <View style={[styles.tableColHeader, { width: "20%" }]}>
@@ -905,7 +916,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             </View>
           </View>
           <View style={styles.tableRow}>
-            <View style={[styles.tableCol, { width: "10%" }]}>
+            <View style={[styles.tableColStart, { width: "10%" }]}>
               <Text style={styles.tableCell}>1.</Text>
             </View>
             <View style={[styles.tableCol, { width: "35%" }]}>
@@ -919,7 +930,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             </View>
           </View>
           <View style={styles.tableRow}>
-            <View style={[styles.tableCol, { width: "10%" }]}>
+            <View style={[styles.tableColStart, { width: "10%" }]}>
               <Text style={styles.tableCell}>2.</Text>
             </View>
             <View style={[styles.tableCol, { width: "35%" }]}>
@@ -933,7 +944,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             </View>
           </View>
           <View style={styles.tableRow}>
-            <View style={[styles.tableCol, { width: "10%" }]}>
+            <View style={[styles.tableColStart, { width: "10%" }]}>
               <Text style={styles.tableCell}>3.</Text>
             </View>
             <View style={[styles.tableCol, { width: "35%" }]}>
@@ -947,10 +958,10 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             </View>
           </View>
           <View style={styles.tableRow}>
-            <View style={[styles.tableCol, { width: "10%" }]}>
+            <View style={[styles.tableColStart, { width: "10%" }]}>
               <Text style={styles.tableCell}>4.</Text>
             </View>
-            <View style={[styles.tableCol, { width: "35%" }]}>
+            <View style={[styles.tableColStart, { width: "35%" }]}>
               <Text style={styles.tableCell}>Cadet (Class 7 & 8)</Text>
             </View>
             <View style={[styles.tableCol, { width: "35%" }]}>
@@ -961,7 +972,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             </View>
           </View>
           <View style={styles.tableRow}>
-            <View style={[styles.tableCol, { width: "10%" }]}>
+            <View style={[styles.tableColStart, { width: "10%" }]}>
               <Text style={styles.tableCell}>5.</Text>
             </View>
             <View style={[styles.tableCol, { width: "35%" }]}>
@@ -975,7 +986,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             </View>
           </View>
           <View style={styles.tableRow}>
-            <View style={[styles.tableCol, { width: "10%" }]}>
+            <View style={[styles.tableColStart, { width: "10%" }]}>
               <Text style={styles.tableCell}>6.</Text>
             </View>
             <View style={[styles.tableCol, { width: "35%" }]}>
@@ -1040,7 +1051,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             </View>
 
             <View style={styles.tableRow}>
-              <View style={[styles.tableCol, { width: "10%" }]}>
+              <View style={[styles.tableColStart, { width: "10%" }]}>
                 <Text style={styles.tableCell}>1.</Text>
               </View>
               <View style={[styles.tableCol, { width: "25%" }]}>
@@ -1058,7 +1069,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             </View>
 
             <View style={styles.tableRow}>
-              <View style={[styles.tableCol, { width: "10%" }]}>
+              <View style={[styles.tableColStart, { width: "10%" }]}>
                 <Text style={styles.tableCell}>2.</Text>
               </View>
               <View style={[styles.tableCol, { width: "25%" }]}>
@@ -1076,7 +1087,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             </View>
 
             <View style={styles.tableRow}>
-              <View style={[styles.tableCol, { width: "10%" }]}>
+              <View style={[styles.tableColStart, { width: "10%" }]}>
                 <Text style={styles.tableCell}>3.</Text>
               </View>
               <View style={[styles.tableCol, { width: "25%" }]}>
@@ -1094,7 +1105,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             </View>
 
             <View style={styles.tableRow}>
-              <View style={[styles.tableCol, { width: "10%" }]}>
+              <View style={[styles.tableColStart, { width: "10%" }]}>
                 <Text style={styles.tableCell}>4.</Text>
               </View>
               <View style={[styles.tableCol, { width: "25%" }]}>
@@ -1112,7 +1123,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             </View>
 
             <View style={styles.tableRow}>
-              <View style={[styles.tableCol, { width: "10%" }]}>
+              <View style={[styles.tableColStart, { width: "10%" }]}>
                 <Text style={styles.tableCell}>5.</Text>
               </View>
               <View style={[styles.tableCol, { width: "25%" }]}>
@@ -1130,7 +1141,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
             </View>
 
             <View style={styles.tableRow}>
-              <View style={[styles.tableCol, { width: "10%" }]}>
+              <View style={[styles.tableColStart, { width: "10%" }]}>
                 <Text style={styles.tableCell}>6.</Text>
               </View>
               <View style={[styles.tableCol, { width: "25%" }]}>
@@ -1257,7 +1268,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
           </View>
           {schoolData.map((student, index) => (
             <View style={styles.tableRow} key={student.rollNumber}>
-              <View style={styles.tableCol}>
+              <View style={styles.tableColStart}>
                 <Text style={styles.tableCell}>{index + 1}</Text>
               </View>
               <View style={styles.tableColWide}>
