@@ -1354,7 +1354,7 @@ const SmartTextBold: React.FC<{
           direction: isArabicText ? "rtl" : "ltr",
           textAlign: "center", // Ensure text is left-aligned
           fontWeight: isArabicText ? "700" : "900",
-          textDecoration: "underline",
+          // textDecoration: "underline",
           fontSize: isArabicText ? "14px" : "14px",
           justifyContent: "flex-start",
           display: "flex",
