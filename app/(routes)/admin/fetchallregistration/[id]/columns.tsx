@@ -829,11 +829,11 @@ const styles = StyleSheet.create({
     fontSize: "14px",
     width: "250px",
     textTransform: "uppercase",
-    fontWeight: "heavy",
+    // fontWeight: "heavy",
   },
   studentInfoContent: {
     fontSize: "14px",
-    fontWeight: "bold",
+    // fontWeight: "bold",
     textTransform: "uppercase",
     width: "700px", // Set maximum width to fit the container
     flexWrap: "wrap", // Allow text to wrap

@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
   },
   studentInfoContent: {
     fontSize: "14px",
-    fontWeight: "bold",
+    // fontWeight: "bold",
     width: "700px", // Set maximum width to fit the container
     flexWrap: "wrap", // Allow text to wrap
     marginLeft: "20px",
