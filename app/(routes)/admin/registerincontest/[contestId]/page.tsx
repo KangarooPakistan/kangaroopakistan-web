@@ -18,7 +18,7 @@ const RegisterInContest = () => {
       setUsers(response.data);
     };
     fetchData();
-  });
+  }, []);
   const handleBack = () => {
     router.back();
   };
