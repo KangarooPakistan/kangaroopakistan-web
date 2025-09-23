@@ -1268,28 +1268,28 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
           </View>
           {schoolData.map((student, index) => (
             <View style={styles.tableRow} key={student.rollNumber}>
-              <View style={[styles.tableColStart, { paddingTop: "15px" }]}>
+              <View style={[styles.tableColStart]}>
                 <Text style={styles.tableCell}>{index + 1}</Text>
               </View>
-              <View style={[styles.tableColWide, { paddingTop: "15px" }]}>
+              <View style={[styles.tableColWide]}>
                 <Text style={styles.tableCell}>{student.rollNumber}</Text>
               </View>
-              <View style={[styles.tableColWide, { paddingTop: "15px" }]}>
+              <View style={[styles.tableColWide]}>
                 <SmartTextTable
                   text={student.studentName}
                   style={styles.tableCell}
                 />
               </View>
-              <View style={[styles.tableColWide, { paddingTop: "15px" }]}>
+              <View style={[styles.tableColWide]}>
                 <SmartTextTable
                   text={student.fatherName}
                   style={styles.tableCell}
                 />
               </View>
-              <View style={[styles.tableCol, { paddingTop: "15px" }]}>
+              <View style={[styles.tableCol]}>
                 <Text style={styles.tableCell}>{student.studentClass}</Text>
               </View>
-              <View style={[styles.tableCol, { paddingTop: "15px" }]}>
+              <View style={[styles.tableCol]}>
                 <Text style={styles.tableCell}></Text>
               </View>
             </View>
