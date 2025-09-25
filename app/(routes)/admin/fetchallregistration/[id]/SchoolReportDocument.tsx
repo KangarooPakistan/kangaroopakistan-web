@@ -116,8 +116,21 @@ const styles = StyleSheet.create({
     borderBottom: 1,
     borderColor: "#000",
     alignItems: "center",
+    wrap: false, // Prevent the row from wrapping/breaking
+    break: false,
     height: 24, // Adjust the height as needed
   },
+  tableRowBreakable: {
+    flexDirection: "row",
+    borderBottom: 1,
+    borderColor: "#000",
+    alignItems: "center",
+    minHeight: 24, // Use minHeight instead of fixed height for flexible content
+    wrap: false,
+    orphans: 1, // Minimum lines to keep together
+    widows: 1, // Minimum lines to keep together
+  },
+
   tableColHeaderMid: {
     width: "25%",
     borderRight: 1,
@@ -177,7 +190,12 @@ const styles = StyleSheet.create({
 
     fontWeight: "bold",
     textAlign: "center", // Center align header text
+    overflow: "hidden",
   },
+  tableSectionKeepTogether: {
+    break: false, // Prevent page break within this section
+  },
+
   title: {
     fontSize: 16,
     fontFamily: "Roboto",
@@ -646,6 +664,7 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                   Total Students of Class {cls}: {students.length}
                 </Text>
                 <View style={styles.studentTable}>
+                  {/* Table Header */}
                   <View style={styles.tableRow}>
                     <View style={styles.tableColHeaderLeft}>
                       <Text style={styles.tableCell}>Roll No</Text>
@@ -660,21 +679,41 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                       <Text style={styles.tableCell}>Class</Text>
                     </View>
                   </View>
+
+                  {/* Student Rows with improved page break handling */}
                   {students.map((student, idx) => (
-                    <View key={idx} style={styles.tableRow}>
+                    <View
+                      key={idx}
+                      style={styles.tableRowBreakable}
+                      wrap={false} // Prevent this specific row from breaking
+                    >
                       <View style={styles.tableColLeft}>
                         <Text style={styles.tableCell}>
                           {student.rollNumber}
                         </Text>
                       </View>
                       <View style={styles.tableColMid}>
-                        <Text style={styles.tableCell}>
-                          {student.studentName}
+                        <Text
+                          style={{
+                            ...styles.tableCell,
+                            // Truncate very long names if needed
+                            overflow: "hidden",
+                          }}>
+                          {student.studentName.length > 25
+                            ? `${student.studentName.substring(0, 22)}...`
+                            : student.studentName}
                         </Text>
                       </View>
                       <View style={styles.tableColMid}>
-                        <Text style={styles.tableCell}>
-                          {student.fatherName}
+                        <Text
+                          style={{
+                            ...styles.tableCell,
+                            // Truncate very long father names if needed
+                            overflow: "hidden",
+                          }}>
+                          {student.fatherName.length > 25
+                            ? `${student.fatherName.substring(0, 22)}...`
+                            : student.fatherName}
                         </Text>
                       </View>
                       <View style={styles.tableCol}>
