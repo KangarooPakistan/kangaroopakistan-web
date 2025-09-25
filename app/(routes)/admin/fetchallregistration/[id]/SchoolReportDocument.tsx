@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
     marginTop: "20px", // Optional: add some margin if needed
   },
   page: {
-    padding: "20px",
+    padding: "15px",
     flexDirection: "column",
     backgroundColor: "#FFF",
   },
