@@ -117,7 +117,20 @@ const styles = StyleSheet.create({
     borderColor: "#000",
     alignItems: "center",
     height: 24, // Adjust the height as needed
+    wrap: false, // Prevent the row from wrapping/breaking
+    break: false, // Prevent page break within the row
   },
+  tableRowBreakable: {
+    flexDirection: "row",
+    borderBottom: 1,
+    borderColor: "#000",
+    alignItems: "center",
+    minHeight: 24, // Use minHeight instead of fixed height for flexible content
+    wrap: false,
+    orphans: 1, // Minimum lines to keep together
+    widows: 1, // Minimum lines to keep together
+  },
+
   tableColHeaderMid: {
     width: "25%",
     borderRight: 1,
@@ -182,12 +195,16 @@ const styles = StyleSheet.create({
   tableCell: {
     fontSize: "9px",
     textTransform: "uppercase",
-
+    overflow: "hidden", // Hide overflow text
     width: "100%",
     flexWrap: "wrap",
     fontWeight: "bold",
     textAlign: "center", // Center align cell text
   },
+  tableSectionKeepTogether: {
+    break: false, // Prevent page break within this section
+  },
+
   section: {
     display: "flex",
     flexDirection: "column",
@@ -549,7 +566,11 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
             <Text style={styles.subHeader}>{getStudentLevel(level)} Level</Text>
             {Object.entries(classes).map(([cls, students]) => (
               <View key={cls} style={{ marginBottom: "0px" }}>
+                <Text style={styles.totalStudentsText}>
+                  Total Students of Class {cls}: {students.length}
+                </Text>
                 <View style={styles.studentTable}>
+                  {/* Table Header */}
                   <View style={styles.tableRow}>
                     <View style={styles.tableColHeaderLeft}>
                       <Text style={styles.tableCell}>Roll No</Text>
@@ -564,21 +585,41 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                       <Text style={styles.tableCell}>Class</Text>
                     </View>
                   </View>
+
+                  {/* Student Rows with improved page break handling */}
                   {students.map((student, idx) => (
-                    <View key={idx} style={styles.tableRow}>
+                    <View
+                      key={idx}
+                      style={styles.tableRowBreakable}
+                      wrap={false} // Prevent this specific row from breaking
+                    >
                       <View style={styles.tableColLeft}>
                         <Text style={styles.tableCell}>
                           {student.rollNumber}
                         </Text>
                       </View>
                       <View style={styles.tableColMid}>
-                        <Text style={styles.tableCell}>
-                          {student.studentName}
+                        <Text
+                          style={{
+                            ...styles.tableCell,
+                            // Truncate very long names if needed
+                            overflow: "hidden",
+                          }}>
+                          {student.studentName.length > 25
+                            ? `${student.studentName.substring(0, 22)}...`
+                            : student.studentName}
                         </Text>
                       </View>
                       <View style={styles.tableColMid}>
-                        <Text style={styles.tableCell}>
-                          {student.fatherName}
+                        <Text
+                          style={{
+                            ...styles.tableCell,
+                            // Truncate very long father names if needed
+                            overflow: "hidden",
+                          }}>
+                          {student.fatherName.length > 25
+                            ? `${student.fatherName.substring(0, 22)}...`
+                            : student.fatherName}
                         </Text>
                       </View>
                       <View style={styles.tableCol}>
@@ -589,9 +630,6 @@ const SchoolReportDocument: React.FC<SchoolReportProps> = ({
                     </View>
                   ))}
                 </View>
-                <Text style={styles.totalStudentsText}>
-                  Total Students of Class {cls}: {students.length}
-                </Text>
               </View>
             ))}
           </View>
