@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
     width: "25%",
     borderRight: 1,
     borderColor: "#000",
-    padding: 2,
+    padding: 1,
     flexWrap: "wrap",
   },
   newView: {
