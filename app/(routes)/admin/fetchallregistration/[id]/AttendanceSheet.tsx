@@ -304,7 +304,7 @@ const styles = StyleSheet.create({
     // borderLeftWidth: 1,
   },
   tableColWide: {
-    width: "23%",
+    width: "25%",
     borderStyle: "solid",
     borderWidth: 1,
     flexWrap: "wrap",
