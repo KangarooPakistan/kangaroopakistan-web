@@ -138,6 +138,17 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
 
   const handleDownloadPdf = async () => {
     try {
+      toast.info("📄 Starting answer sheet download...", {
+        position: "bottom-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+
       const response = await axios.get(
         `/api/users/pdfdownload/${registration.id}`
       );
@@ -153,6 +164,33 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         // If no, or if the number is 200 or less, use the full array
         students = response.data;
       }
+
+      students.sort((a: Student, b: Student) => {
+        const extractClassAndSerial = (rollNumber: string) => {
+          const parts = rollNumber.split("-");
+          const classNumber = parseInt(parts[parts.length - 3], 10);
+          const serialNumber = parseInt(parts[parts.length - 2], 10);
+          return { class: classNumber, serial: serialNumber };
+        };
+
+        const aClassAndSerial = extractClassAndSerial(a.rollNumber);
+        const bClassAndSerial = extractClassAndSerial(b.rollNumber);
+
+        if (aClassAndSerial.class < bClassAndSerial.class) {
+          return -1;
+        }
+        if (aClassAndSerial.class > bClassAndSerial.class) {
+          return 1;
+        }
+        if (aClassAndSerial.serial < bClassAndSerial.serial) {
+          return -1;
+        }
+        if (aClassAndSerial.serial > bClassAndSerial.serial) {
+          return 1;
+        }
+        return 0;
+      });
+
       const res = await axios.get(
         `/api/users/allusers/getschoolbyregid/${registration.id}`
       );
@@ -162,8 +200,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       );
       console.log(contestData.data);
       console.log(contestData.data.name);
-      // console.log("res");
-      // console.log(res.data.user.p_fName);
+
       const profileData: profileData = {
         p_Name: res.data.user.p_Name,
         c_Name: res.data.user.c_Name,
@@ -171,16 +208,36 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         contactNumber: res.data.user.contactNumber,
         contestName: contestData.data.name,
         contestCh: contestData.data.contestCh,
-        contestNo: contestData.data.contestNo,
         p_contact: res.data.user.p_contact,
+        contestNo: contestData.data.contestNo,
       };
 
       const blob = await generatePdfBlob(students, profileData);
       const pdfName = `answersheet_${response.data[0].schoolId}_part1.pdf`;
 
       saveAs(blob, pdfName);
+      toast.success("🦄 Answer Sheet Downloaded Successfully 😍", {
+        position: "bottom-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } catch (error) {
       console.error("Error downloading the PDF:", error);
+      toast.error("Error downloading Answer Sheet, Please try again later 😒", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } finally {
     }
   };
@@ -227,55 +284,6 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
     } catch (error) {
       console.error("Error downloading the PDF:", error);
     } finally {
-    }
-  };
-  const handleDownloadAdditionalPdf = async () => {
-    try {
-      const response = await axios.get(
-        `/api/users/pdfdownload/${registration.id}`
-      );
-      console.log(response);
-
-      let additionalStudents: Student[] = [];
-
-      // Check if the response contains more than 200 students
-      if (response.data.length > 200) {
-        // If yes, slice the array to keep only the students from 201 onwards
-        additionalStudents = response.data.slice(200); // Starts from index 200, which is the 201st student
-      } else {
-        // If there are not more than 200 students, there's no additional data to process
-        console.log("No additional students to download.");
-        return; // Exit the function as there's nothing more to process
-      }
-
-      const res = await axios.get(
-        `/api/users/allusers/getschoolbyregid/${registration.id}`
-      );
-      console.log(res.data.contestId);
-      const contestData = await axios.get(
-        `/api/users/contests/${res.data.contestId}`
-      );
-      console.log(contestData.data);
-      console.log(contestData.data.name);
-      // console.log("res");
-      // console.log(res.data.user.p_fName);
-      const profileData: profileData = {
-        p_Name: res.data.user.p_Name,
-        c_Name: res.data.user.c_Name,
-        email: res.data.user.email,
-        p_contact: res.data.user.p_contact,
-        contactNumber: res.data.user.contactNumber,
-        contestName: contestData.data.name,
-        contestCh: contestData.data.contestCh,
-        contestNo: contestData.data.contestNo,
-      };
-      const blob = await generatePdfBlob(additionalStudents, profileData);
-      const pdfName = `answersheet_${response.data[0].schoolId}_part2.pdf`;
-      saveAs(blob, pdfName);
-    } catch (error) {
-      console.error("Error downloading the additional PDF:", error);
-    } finally {
-      // You can add any cleanup code here if necessary
     }
   };
 
@@ -504,6 +512,84 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
             theme: "light",
           }
       );
+    }
+  };
+  const handleDownloadAdditionalPdf = async () => {
+    try {
+      const response = await axios.get(
+        `/api/users/pdfdownload/${registration.id}`
+      );
+      console.log(response);
+
+      let additionalStudents: Student[] = [];
+
+      if (response.data.length > 200) {
+        additionalStudents = response.data.slice(200);
+      } else {
+        console.log("No additional students to download.");
+        return;
+      }
+
+      additionalStudents.sort((a: Student, b: Student) => {
+        const extractClassAndSerial = (rollNumber: string) => {
+          const parts = rollNumber.split("-");
+          const classNumber = parseInt(parts[parts.length - 3], 10);
+          const serialNumber = parseInt(parts[parts.length - 2], 10);
+          return { class: classNumber, serial: serialNumber };
+        };
+
+        const aClassAndSerial = extractClassAndSerial(a.rollNumber);
+        const bClassAndSerial = extractClassAndSerial(b.rollNumber);
+
+        if (aClassAndSerial.class < bClassAndSerial.class) {
+          return -1;
+        }
+        if (aClassAndSerial.class > bClassAndSerial.class) {
+          return 1;
+        }
+        if (aClassAndSerial.serial < bClassAndSerial.serial) {
+          return -1;
+        }
+        if (aClassAndSerial.serial > bClassAndSerial.serial) {
+          return 1;
+        }
+        return 0;
+      });
+
+      if (response.data.length > 200) {
+        additionalStudents = response.data.slice(200);
+      } else {
+        console.log("No additional students to download.");
+        return;
+      }
+
+      const res = await axios.get(
+        `/api/users/allusers/getschoolbyregid/${registration.id}`
+      );
+      console.log(res.data.contestId);
+      const contestData = await axios.get(
+        `/api/users/contests/${res.data.contestId}`
+      );
+      console.log(contestData.data);
+      console.log(contestData.data.name);
+      // console.log("res");
+      // console.log(res.data.user.p_fName);
+      const profileData: profileData = {
+        p_Name: res.data.user.p_Name,
+        c_Name: res.data.user.c_Name,
+        email: res.data.user.email,
+        p_contact: res.data.user.p_contact,
+        contactNumber: res.data.user.contactNumber,
+        contestName: contestData.data.name,
+        contestCh: contestData.data.contestCh,
+        contestNo: contestData.data.contestNo,
+      };
+      const blob = await generatePdfBlob(additionalStudents, profileData);
+      const pdfName = `answersheet_${response.data[0].schoolId}_part2.pdf`;
+      saveAs(blob, pdfName);
+    } catch (error) {
+      console.error("Error downloading the additional PDF:", error);
+    } finally {
     }
   };
   return (
