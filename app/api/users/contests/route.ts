@@ -132,11 +132,11 @@ export async function GET(req: NextRequest, res: NextResponse) {
     }
 
     // Query the database to get contests with the specified contestTypeId
-    // Sort by createdAt in descending order (newest first)
+    // Sort by startDate in descending order (newest first)
     const contests = await db.contest.findMany({
       where: { contestTypeId: contestTypeId },
       orderBy: {
-        createdAt: 'desc'
+        startDate: 'desc'
       }
     });
 
