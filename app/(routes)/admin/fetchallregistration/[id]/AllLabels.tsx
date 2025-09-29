@@ -142,7 +142,7 @@ const AllLabels: React.FC<AllLabelsProps> = ({ schoolDetails }) => {
 
           <View style={styles.fromBlock}>
             <Text style={[styles.text, styles.bold]}>From</Text>
-            <Text style={[styles.text, styles.bold]}>Innovative Learning </Text>
+            <Text style={[styles.text, styles.bold]}>INVENTIVE LEARNING </Text>
             <Text style={styles.subText}>
               1st FLOOR, PLAZA 114, MAIN BOULEVARD, PHASE 6 DHA, LAHORE{" "}
             </Text>
