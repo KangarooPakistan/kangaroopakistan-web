@@ -126,7 +126,7 @@ const AllLabelsShort: React.FC<AllLabelsProps> = ({ schoolDetails }) => {
           <View style={styles.fromBlock}>
             <Text style={styles.text}>From:</Text>
             <Text style={[styles.text, styles.bold]}>
-              Innovative Learning - KSF Pakistan
+              INVENTIVE Learning - KSF Pakistan
             </Text>
             <Text style={styles.subText}>
               2nd Floor, Plaza 114, Main Boulevard, Phase 6 DHA, Lahore
