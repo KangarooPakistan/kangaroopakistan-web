@@ -77,7 +77,7 @@ const ContestActions: React.FC<StudentActionsProps> = ({ student }) => {
     );
   };
   async function generatePdfBlob(student: StudentData) {
-    const doc = <MyDocument student={student} />;
+    const doc = <SinglePdf student={student} />;
 
     const asPdf = pdf(doc); // Create an empty PDF instance
     const blob = await asPdf.toBlob();
@@ -546,7 +546,7 @@ interface MyDocumentProps {
   student: StudentData;
 }
 
-const MyDocument: React.FC<MyDocumentProps> = ({ student }) => (
+export const SinglePdf: React.FC<MyDocumentProps> = ({ student }) => (
   <Document>
     <Page size="A4" style={styles.page}>
       <Text style={styles.header}>{student.contestName}</Text>

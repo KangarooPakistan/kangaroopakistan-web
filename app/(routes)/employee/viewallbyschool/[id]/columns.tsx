@@ -27,6 +27,7 @@ import { saveAs } from "file-saver";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { CgMoreO } from "react-icons/cg";
+import { SinglePdf } from "@/app/(routes)/admin/viewallbyschool/[id]/columns";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -77,7 +78,7 @@ const ContestActions: React.FC<StudentActionsProps> = ({ student }) => {
     );
   };
   async function generatePdfBlob(student: StudentData) {
-    const doc = <MyDocument student={student} />;
+    const doc = <SinglePdf student={student} />;
 
     const asPdf = pdf(doc); // Create an empty PDF instance
     const blob = await asPdf.toBlob();
