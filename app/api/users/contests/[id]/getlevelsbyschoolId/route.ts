@@ -49,8 +49,7 @@ export async function GET(
       // Return the formatted school data
       return {
         schoolId: registration.schoolId,
-        schoolName:
-          registration.schoolName || registration.user.schoolName || "",
+        schoolName: registration.user.schoolName || "",
         totalStudents: registration.students.length,
         categories: categoryCount,
       };
