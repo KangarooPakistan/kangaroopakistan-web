@@ -104,7 +104,7 @@ const ContestActions: React.FC<StudentActionsProps> = ({ student }) => {
         fatherName: apiStudentData.data.fatherName,
         studentLevel: apiStudentData.data.level,
         studentClass: apiStudentData.data.class, // Note the mapping from `class` to `studentClass`
-        schoolName: registrationResponse.data[0].schoolName, // Use the `schoolName` from the previous API response
+        schoolName: registrationResponse.data[0].user.schoolName, // Use the `schoolName` from the previous API response
         address: registrationResponse.data[0].user.schoolAddress, // Set these as null if they are optional and not available
         districtCode: registrationResponse.data[0].user.district,
         schoolId: registrationResponse.data[0].user.schoolId,
