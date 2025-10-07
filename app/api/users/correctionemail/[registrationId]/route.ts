@@ -4,6 +4,8 @@ import transporter from "@/app/lib/emailTransporter";
 import nodemailer from "nodemailer";
 import { SendMailOptions } from "nodemailer";
 import emailManager from "@/app/lib/emailManager";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export async function GET(
   request: Request,

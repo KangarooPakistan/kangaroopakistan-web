@@ -2,6 +2,8 @@ import { db } from "@/app/lib/prisma";
 import { NextResponse } from "next/server";
 import { Score, Contest, Result, Student } from "@prisma/client";
 import { Decimal } from "@prisma/client/runtime/library";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 interface ProcessedScore
   extends Omit<Score, "id" | "score" | "totalMarks" | "percentage"> {

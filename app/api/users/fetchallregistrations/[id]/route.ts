@@ -1,6 +1,8 @@
 import { NextResponse, NextRequest } from "next/server";
 import { db } from "@/app/lib/prisma";
 import zlib from "zlib";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export async function GET(
   req: Request,
@@ -21,7 +23,10 @@ export async function GET(
     const json = JSON.stringify(registrations);
     const compressedData = zlib.gzipSync(json);
 
-    return new NextResponse(compressedData, {
+    // Convert Buffer to Uint8Array for compatibility with Response API
+    const compressedUint8 = new Uint8Array(compressedData);
+
+    return new NextResponse(compressedUint8, {
       status: 200,
       headers: {
         "Content-Encoding": "gzip",

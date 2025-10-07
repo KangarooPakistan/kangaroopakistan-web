@@ -1,5 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import { renderToStaticMarkup } from "react-dom/server";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 import { getToken } from "next-auth/jwt";
 import { getServerSession } from "next-auth";

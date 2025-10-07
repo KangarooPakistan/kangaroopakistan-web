@@ -2,6 +2,8 @@ import { NextResponse, NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 import { getServerSession } from "next-auth";
 import { db } from "@/app/lib/prisma";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 interface ContestTypeData {
   contestName: string;

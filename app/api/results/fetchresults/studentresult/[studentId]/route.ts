@@ -1,5 +1,7 @@
 import { db } from "@/app/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 // Helper function to safely serialize BigInt values
 function serializeData(data: any): any {

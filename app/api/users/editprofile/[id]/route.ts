@@ -1,6 +1,8 @@
 import { NextResponse, NextRequest } from "next/server";
 import { db } from "@/app/lib/prisma";
 import bcrypt from "bcryptjs";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 interface UserData {
   email: string;
