@@ -45,7 +45,7 @@ const schema = zod.object({
 });
 
 const Register = () => {
-  const [duplicateError, setDuplicateError] = useState<string | null>(null);
+  const [duplicateErrors, setDuplicateErrors] = useState<{[key: number]: string}>({});
   const { id, regId } = useParams<{ id: string; regId: string }>();
 
   const router = useRouter();
@@ -120,6 +120,52 @@ const Register = () => {
     },
   });
 
+  // Real-time duplicate detection functions
+  const findDuplicateIndex = (students: StudentData[], currentIndex: number) => {
+    const currentName = students[currentIndex]?.studentName?.trim();
+    const currentFatherName = students[currentIndex]?.fatherName?.trim();
+    
+    if (!currentName || !currentFatherName) return -1;
+    
+    for (let i = 0; i < students.length; i++) {
+      if (i !== currentIndex) {
+        const name = students[i]?.studentName?.trim();
+        const fatherName = students[i]?.fatherName?.trim();
+        
+        if (name && fatherName && currentName === name && currentFatherName === fatherName) {
+          return i;
+        }
+      }
+    }
+    return -1;
+  };
+
+  const updateDuplicateErrors = (students: StudentData[]) => {
+    const newErrors: {[key: number]: string} = {};
+    
+    students.forEach((student, index) => {
+      const duplicateIndex = findDuplicateIndex(students, index);
+      if (duplicateIndex !== -1) {
+        if (duplicateIndex < index) {
+          newErrors[index] = "This student already exists above";
+        } else {
+          newErrors[index] = "This student already exists below";
+        }
+      }
+    });
+    
+    setDuplicateErrors(newErrors);
+    return Object.keys(newErrors).length > 0;
+  };
+
+  // Watch for form changes and update duplicate errors in real-time
+  const watchedStudents = watch("students");
+  useEffect(() => {
+    if (watchedStudents && watchedStudents.length > 0) {
+      updateDuplicateErrors(watchedStudents);
+    }
+  }, [watchedStudents]);
+
   const isDuplicate = (formData: FormData, index: number) => {
     const currentName = formData.students[index].studentName;
     const currentFatherName = formData.students[index].fatherName;
@@ -139,12 +185,12 @@ const Register = () => {
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
 
-    const hasDuplicates = data.students.some((student, index) =>
-      isDuplicate(data, index)
-    );
+    // Check for duplicates using the new system
+    const hasDuplicates = updateDuplicateErrors(data.students);
 
     if (hasDuplicates) {
-      setDuplicateError("Name and Father's name must be unique");
+      setIsSubmitting(false);
+      return;
     } else {
       // Proceed with form submission
       const studentsArray = data.students;
@@ -198,8 +244,6 @@ const Register = () => {
 
         // Handle errors appropriately
       }
-
-      setDuplicateError(null); // Clear any previous error
     }
   };
   const handleFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
@@ -257,6 +301,15 @@ const Register = () => {
     control,
     name: "students",
   });
+
+  const handleRemoveStudent = (index: number) => {
+    remove(index);
+    // Clear any duplicate errors after removal
+    setTimeout(() => {
+      const currentStudents = watch("students");
+      updateDuplicateErrors(currentStudents);
+    }, 0);
+  };
 
   const handleClassChange = (classValue: string, index: number) => {
     console.log(classValue);
@@ -342,12 +395,22 @@ const Register = () => {
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="mx-auto p-4 border border-gray-300 rounded-lg">
-        {duplicateError && <p className="text-red-500">{duplicateError}</p>}
         {fields.map((field, index) => (
           <div
             key={field.id}
-            className="mb-4 p-2 border-solid border-2 border-grey-600 ">
-            <div className="grid items-center lg:space-x-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+            className="mb-4 p-2 border-solid border-2 border-grey-600 relative">
+            {/* Individual Delete Button - only show if more than 1 student */}
+            {fields.length > 1 && (
+              <button
+                type="button"
+                onClick={() => handleRemoveStudent(index)}
+                className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold z-10"
+                title="Delete this student"
+              >
+                ❌
+              </button>
+            )}
+            <div className="grid items-center lg:space-x-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 pr-8">
               <div className="md:mr-4 lg:mr-0">
                 <input
                   {...register(`students.${index}.studentName`)}
@@ -357,6 +420,12 @@ const Register = () => {
                 {errors?.students?.[index]?.studentName && (
                   <p className="text-red-500">
                     {errors.students[index]?.studentName?.message}
+                  </p>
+                )}
+                {/* Inline duplicate error */}
+                {duplicateErrors[index] && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {duplicateErrors[index]}
                   </p>
                 )}
               </div>
@@ -459,9 +528,17 @@ const Register = () => {
           <div className="flex justify-center sm:block mt-4 sm:mt-0">
             <button
               type="submit"
-              disabled={isSubmitting} // Disable the button if isSubmitting is true
-              className=" bg-green-500 hover:bg-green-600 text-white p-3 text-xs sm:text-base sm:px-4 sm:py-2 rounded">
-              {isSubmitting ? "Submitting..." : "Submit Form"}
+              disabled={isSubmitting || Object.keys(duplicateErrors).length > 0} 
+              className={`${
+                Object.keys(duplicateErrors).length > 0
+                  ? "bg-red-500 hover:bg-red-600"
+                  : "bg-green-500 hover:bg-green-600"
+              } text-white p-3 text-xs sm:text-base sm:px-4 sm:py-2 rounded`}>
+              {isSubmitting 
+                ? "Submitting..." 
+                : Object.keys(duplicateErrors).length > 0 
+                  ? "Fix Duplicate Errors" 
+                  : "Submit Form"}
             </button>
           </div>
         </div>
