@@ -123,7 +123,7 @@ export async function POST(request: Request) {
       <p> School ID: ${schoolDetails?.schoolId}</p>
       <p> School Name: ${schoolDetails?.schoolName}</p>
       <p> School Address: ${schoolDetails?.schoolAddress}</p>
-      <p> School Address: ${schoolDetails?.bankTitle}</p>
+      <p> School Account Details: ${schoolDetails?.bankTitle}</p>
       <p> Official Login Email Address: ${schoolDetails?.email}</p>
       <p> Principal Name: ${schoolDetails?.p_Name}</p>
       <p> Principal Email: ${schoolDetails?.p_email}</p>
