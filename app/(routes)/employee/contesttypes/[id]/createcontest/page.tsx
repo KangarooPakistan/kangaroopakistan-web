@@ -227,6 +227,10 @@ const CreateContest = () => {
                             disabled={isLoading}
                             selected={field.value}
                             onChange={(date: Date | null) => {
+                              if (date) {
+                                // Set time to end of day (23:59:59)
+                                date.setHours(23, 59, 59, 999);
+                              }
                               field.onChange(date);
                             }}
                             dateFormat="yyyy/MM/dd"

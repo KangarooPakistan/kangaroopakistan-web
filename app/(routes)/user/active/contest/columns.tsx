@@ -33,14 +33,19 @@ const ContestActions: React.FC<ContestActionsProps> = ({ contest }) => {
   useEffect(() => {
     const currentDate = new Date();
     // Split the contest.endDate string and rearrange it into a valid format
-    const dateParts = contest.endDate.split("/"); // splits "16/02/24 Fri" into ["16", "02", "24 Fri"]
-    const year = `20${dateParts[2].slice(0, 2)}`; // takes "24" and turns it into "2024"
-    const month = dateParts[1]; // month is "02"
-    const day = dateParts[0]; // day is "16"
+    // Format is now "23/10/25 Thu 23:59" (DD/MM/YY Day HH:MM)
+    const parts = contest.endDate.split(" "); // splits into ["23/10/25", "Thu", "23:59"]
+    const dateParts = parts[0].split("/"); // splits "23/10/25" into ["23", "10", "25"]
+    const timeParts = parts[2] ? parts[2].split(":") : ["23", "59"]; // splits "23:59" into ["23", "59"]
+    
+    const year = `20${dateParts[2]}`; // takes "25" and turns it into "2025"
+    const month = dateParts[1]; // month is "10"
+    const day = dateParts[0]; // day is "23"
+    const hours = timeParts[0]; // hours is "23"
+    const minutes = timeParts[1]; // minutes is "59"
 
-    // Construct a new date string in a format the Date constructor can understand
-    // Note: Months are 0-indexed in JavaScript Date, so subtract 1 from the month
-    const formattedDate = `${year}-${month}-${day}`; // "2024-02-16"
+    // Construct a new date string in ISO format
+    const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}:00`;
 
     // Convert formatted date string to Date object
     const contestEndDate = new Date(formattedDate);

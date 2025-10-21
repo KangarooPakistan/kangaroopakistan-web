@@ -26,8 +26,8 @@ const ViewAllContests: React.FC = () => {
           // Format start date as DD/MM/YY Day
           const formattedStartDate = formatDate(startDate);
 
-          // Format end date as DD/MM/YY Day
-          const formattedEndDate = formatDate(endDate);
+          // Format end date as DD/MM/YY Day HH:MM
+          const formattedEndDate = formatDateWithTime(endDate);
 
           return {
             ...contest,
@@ -57,6 +57,22 @@ const ViewAllContests: React.FC = () => {
       .slice(2)} ${new Intl.DateTimeFormat("en-US", {
       weekday: "short",
     }).format(date)}`;
+  };
+
+  // Helper function to format date with time as DD/MM/YY Day HH:MM
+  const formatDateWithTime = (date: Date): string => {
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    return `${date.getDate().toString().padStart(2, "0")}/${(
+      date.getMonth() + 1
+    )
+      .toString()
+      .padStart(2, "0")}/${date
+      .getFullYear()
+      .toString()
+      .slice(2)} ${new Intl.DateTimeFormat("en-US", {
+      weekday: "short",
+    }).format(date)} ${hours}:${minutes}`;
   };
   const handleBack = () => {
     router.back();
