@@ -259,10 +259,17 @@ const UpdateContest = () => {
                             selected={field.value}
                             onChange={(date: Date | null) => {
                               if (date) {
-                                // Set time to end of day (23:59:59)
-                                date.setHours(23, 59, 59, 999);
+                                // Set time to 23:59:59 Pakistan time (PKT is UTC+5)
+                                // Create a date string in Pakistan timezone
+                                const year = date.getFullYear();
+                                const month = String(date.getMonth() + 1).padStart(2, '0');
+                                const day = String(date.getDate()).padStart(2, '0');
+                                // Set to 23:59:59 in Pakistan time, which needs to be stored as 18:59:59 UTC
+                                const pakistanEndDate = new Date(`${year}-${month}-${day}T18:59:59.999Z`);
+                                field.onChange(pakistanEndDate);
+                              } else {
+                                field.onChange(date);
                               }
-                              field.onChange(date);
                             }}
                             dateFormat="yyyy/MM/dd"
                             placeholderText="Pick a date"

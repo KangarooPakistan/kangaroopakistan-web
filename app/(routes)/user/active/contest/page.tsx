@@ -59,19 +59,22 @@ const ViewAllContests: React.FC = () => {
     }).format(date)}`;
   };
 
-  // Helper function to format date with time as DD/MM/YY Day HH:MM
+  // Helper function to format date with time as DD/MM/YY Day HH:MM (in Pakistan timezone)
   const formatDateWithTime = (date: Date): string => {
-    const hours = date.getHours().toString().padStart(2, "0");
-    const minutes = date.getMinutes().toString().padStart(2, "0");
-    return `${date.getDate().toString().padStart(2, "0")}/${(
-      date.getMonth() + 1
+    // Convert to Pakistan timezone (UTC+5)
+    const pakistanTime = new Date(date.toLocaleString('en-US', { timeZone: 'Asia/Karachi' }));
+    const hours = pakistanTime.getHours().toString().padStart(2, "0");
+    const minutes = pakistanTime.getMinutes().toString().padStart(2, "0");
+    return `${pakistanTime.getDate().toString().padStart(2, "0")}/${(
+      pakistanTime.getMonth() + 1
     )
       .toString()
-      .padStart(2, "0")}/${date
+      .padStart(2, "0")}/${pakistanTime
       .getFullYear()
       .toString()
       .slice(2)} ${new Intl.DateTimeFormat("en-US", {
       weekday: "short",
+      timeZone: "Asia/Karachi"
     }).format(date)} ${hours}:${minutes}`;
   };
   const handleBack = () => {

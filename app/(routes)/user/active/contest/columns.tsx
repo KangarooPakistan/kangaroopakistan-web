@@ -31,9 +31,12 @@ const ContestActions: React.FC<ContestActionsProps> = ({ contest }) => {
   const router = useRouter();
   const [isDisable, setIsDisable] = useState<boolean>();
   useEffect(() => {
+    // Get current time in Pakistan timezone
     const currentDate = new Date();
+    const currentPakistanTime = new Date(currentDate.toLocaleString('en-US', { timeZone: 'Asia/Karachi' }));
+    
     // Split the contest.endDate string and rearrange it into a valid format
-    // Format is now "23/10/25 Thu 23:59" (DD/MM/YY Day HH:MM)
+    // Format is now "23/10/25 Thu 23:59" (DD/MM/YY Day HH:MM) in Pakistan timezone
     const parts = contest.endDate.split(" "); // splits into ["23/10/25", "Thu", "23:59"]
     const dateParts = parts[0].split("/"); // splits "23/10/25" into ["23", "10", "25"]
     const timeParts = parts[2] ? parts[2].split(":") : ["23", "59"]; // splits "23:59" into ["23", "59"]
@@ -44,14 +47,12 @@ const ContestActions: React.FC<ContestActionsProps> = ({ contest }) => {
     const hours = timeParts[0]; // hours is "23"
     const minutes = timeParts[1]; // minutes is "59"
 
-    // Construct a new date string in ISO format
-    const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}:00`;
-
-    // Convert formatted date string to Date object
+    // Construct a date string representing Pakistan time and compare in Pakistan timezone
+    const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}:59`;
     const contestEndDate = new Date(formattedDate);
 
-    // Check if the current date is past the contest end date
-    const isContestEnded = currentDate > contestEndDate;
+    // Check if the current Pakistan time is past the contest end date
+    const isContestEnded = currentPakistanTime > contestEndDate;
     setIsDisable(isContestEnded);
   }, [contest.endDate]);
   const handleRegister = () => {

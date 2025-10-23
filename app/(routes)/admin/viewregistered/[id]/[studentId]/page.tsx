@@ -133,8 +133,11 @@ const EditStudent = () => {
       );
       console.log(contestData.data.endDate);
       const endDate = new Date(contestData.data.endDate);
+      // Get current time in Pakistan timezone for accurate comparison
       const currentDate = new Date();
-      const isContestEnded = currentDate > endDate;
+      const currentPakistanTime = new Date(currentDate.toLocaleString('en-US', { timeZone: 'Asia/Karachi' }));
+      const endDatePakistan = new Date(endDate.toLocaleString('en-US', { timeZone: 'Asia/Karachi' }));
+      const isContestEnded = currentPakistanTime > endDatePakistan;
       console.log(isContestEnded);
       setIsAvailable(isContestEnded);
 
