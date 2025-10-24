@@ -4,6 +4,28 @@ import { db } from "@/app/lib/prisma";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
+// Function to extract timestamp from filename
+const extractTimestampFromUrl = (url: string): Date | null => {
+  try {
+    // Extract filename from URL
+    // Example: https://bucket.s3.region.amazonaws.com/filename_1234567890.jpg
+    const filename = url.split("/").pop() || "";
+
+    // Extract timestamp from filename (format: originalname_timestamp.extension)
+    const match = filename.match(/_(\d{13})\./);
+
+    if (match && match[1]) {
+      const timestamp = parseInt(match[1], 10);
+      return new Date(timestamp);
+    }
+
+    return null;
+  } catch (error) {
+    console.error("Error extracting timestamp from URL:", error);
+    return null;
+  }
+};
+
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
@@ -45,70 +67,75 @@ export async function GET(request: NextRequest) {
     }
 
     // Convert dates to Pakistan Time (UTC+5)
-    // Set start date to 00:00:00 Pakistan Time
     const pkStartDate = new Date(startDate);
     pkStartDate.setHours(0, 0, 0, 0);
-    // Convert to UTC by subtracting 5 hours
     const utcStartDate = new Date(pkStartDate.getTime() - 5 * 60 * 60 * 1000);
 
-    // Set end date to 23:59:59 Pakistan Time
     const pkEndDate = new Date(endDate);
     pkEndDate.setHours(23, 59, 59, 999);
-    // Convert to UTC by subtracting 5 hours
     const utcEndDate = new Date(pkEndDate.getTime() - 5 * 60 * 60 * 1000);
 
     console.log("Fetching receipts for contest:", contestId);
-    console.log("Date range:", {
-      startDatePK: pkStartDate.toLocaleString("en-US", {
-        timeZone: "Asia/Karachi",
-      }),
-      endDatePK: pkEndDate.toLocaleString("en-US", {
-        timeZone: "Asia/Karachi",
-      }),
-      utcStartDate: utcStartDate.toISOString(),
-      utcEndDate: utcEndDate.toISOString(),
+    console.log("Date range (UTC):", {
+      start: utcStartDate.toISOString(),
+      end: utcEndDate.toISOString(),
     });
 
-    // Fetch payment proofs within the date range for specific contest
-    const paymentProofs = await (db as any).paymentProof.findMany({
+    // Get all registrations for this contest
+    const registrations = await db.registration.findMany({
       where: {
-        createdAt: {
-          gte: utcStartDate,
-          lte: utcEndDate,
-        },
-        registration: {
-          contestId: contestId,
-        },
+        contestId: contestId,
       },
-      include: {
-        registration: {
-          include: {
-            user: {
-              select: {
-                schoolId: true,
-                schoolName: true,
-                email: true,
-                contactNumber: true,
-              },
-            },
-            contest: {
-              select: {
-                id: true,
-                name: true,
-                contestCh: true,
-              },
-            },
-          },
-        },
-      },
-      orderBy: {
-        createdAt: "desc",
+      select: {
+        id: true,
+        contestId: true,
+        schoolId: true,
+        schoolName: true,
+        registeredBy: true,
+        createdAt: true,
       },
     });
 
-    console.log(`Found ${paymentProofs.length} receipts for contest ${contestId}`);
+    if (registrations.length === 0) {
+      return NextResponse.json(
+        {
+          message: "No registrations found for this contest",
+          data: [],
+        },
+        { status: 200 }
+      );
+    }
 
-    if (paymentProofs.length === 0) {
+    const registrationIds = registrations.map((r) => r.id);
+
+    // Fetch all payment proofs for these registrations
+    const paymentProofs = await db.paymentproof.findMany({
+      where: {
+        registrationId: {
+          in: registrationIds,
+        },
+      },
+    });
+
+    console.log(`Found ${paymentProofs.length} total payment proofs`);
+
+    // Filter payment proofs by timestamp extracted from URL
+    const filteredPaymentProofs = paymentProofs.filter((proof) => {
+      const uploadDate = extractTimestampFromUrl(proof.imageUrl);
+
+      if (!uploadDate) {
+        console.warn(`Could not extract timestamp from URL: ${proof.imageUrl}`);
+        return false;
+      }
+
+      return uploadDate >= utcStartDate && uploadDate <= utcEndDate;
+    });
+
+    console.log(
+      `Found ${filteredPaymentProofs.length} receipts within date range`
+    );
+
+    if (filteredPaymentProofs.length === 0) {
       return NextResponse.json(
         {
           message: "No receipts found for the selected date range and contest",
@@ -118,7 +145,112 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    return NextResponse.json(paymentProofs, { status: 200 });
+    // Get unique user IDs - Using Array.from instead of spread operator
+    const userIdsSet = new Set(registrations.map((r) => r.registeredBy));
+    const userIds = Array.from(userIdsSet);
+
+    // Fetch users
+    const users = await db.user.findMany({
+      where: {
+        id: {
+          in: userIds,
+        },
+      },
+      select: {
+        id: true,
+        schoolId: true,
+        schoolName: true,
+        email: true,
+        contactNumber: true,
+        district: true,
+        city: true,
+      },
+    });
+
+    // Fetch contest
+    const contest = await db.contest.findUnique({
+      where: {
+        id: contestId,
+      },
+      select: {
+        id: true,
+        name: true,
+        contestCh: true,
+      },
+    });
+
+    // Create maps
+    const registrationMap = new Map(registrations.map((r) => [r.id, r]));
+    const userMap = new Map(users.map((u) => [u.id, u]));
+
+    // Enrich data and sort by upload date (descending)
+    const enrichedPaymentProofs = filteredPaymentProofs
+      .map((proof) => {
+        const registration = registrationMap.get(proof.registrationId);
+        const user = registration
+          ? userMap.get(registration.registeredBy)
+          : null;
+        const uploadDate = extractTimestampFromUrl(proof.imageUrl);
+
+        return {
+          proof,
+          registration,
+          user,
+          uploadDate,
+        };
+      })
+      .sort((a, b) => {
+        // Sort by upload date descending (newest first)
+        if (!a.uploadDate || !b.uploadDate) return 0;
+        return b.uploadDate.getTime() - a.uploadDate.getTime();
+      })
+      .map(({ proof, registration, user, uploadDate }, index) => {
+        return {
+          "S.No": index + 1,
+          "Receipt ID": proof.id,
+          "Registration ID": proof.registrationId,
+          "School ID": user?.schoolId || registration?.schoolId || "N/A",
+          "School Name": user?.schoolName || registration?.schoolName || "N/A",
+          "Contest Name": contest?.name || "N/A",
+          "Image URL": proof.imageUrl,
+          "Upload Date": uploadDate
+            ? new Date(uploadDate).toLocaleString("en-PK", {
+                timeZone: "Asia/Karachi",
+              })
+            : "N/A",
+          // Raw data for frontend
+          id: proof.id,
+          imageUrl: proof.imageUrl,
+          registrationId: proof.registrationId,
+          createdAt: uploadDate,
+          registration: {
+            id: registration?.id,
+            contestId: registration?.contestId,
+            schoolId: registration?.schoolId,
+            schoolName: registration?.schoolName,
+            user: user
+              ? {
+                  schoolId: user.schoolId,
+                  schoolName: user.schoolName,
+                  email: user.email,
+                  contactNumber: user.contactNumber,
+                  district: user.district,
+                  city: user.city,
+                }
+              : null,
+            contest: contest,
+          },
+        };
+      });
+
+    return NextResponse.json(
+      {
+        data: enrichedPaymentProofs,
+        contest: contest,
+        total: enrichedPaymentProofs.length,
+      },
+      { status: 200 }
+    );
   } catch (error: any) {
     console.error("Error fetching payment proofs:", error);
     return NextResponse.json(
