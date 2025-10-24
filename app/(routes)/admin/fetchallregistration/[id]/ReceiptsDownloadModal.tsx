@@ -73,9 +73,10 @@ export const ReceiptsDownloadModal = ({
         },
       });
 
-      const receipts = response.data;
+      // Handle the response structure - check if data is nested
+      const receiptsData = response.data.data || response.data;
 
-      if (!receipts || receipts.length === 0) {
+      if (!receiptsData || receiptsData.length === 0) {
         toast.warning("No receipts found for the selected date range", {
           position: "top-right",
           autoClose: 3000,
@@ -85,7 +86,7 @@ export const ReceiptsDownloadModal = ({
       }
 
       toast.info(
-        `Found ${receipts.length} receipt(s). Preparing download...`,
+        `Found ${receiptsData.length} receipt(s). Preparing download...`,
         {
           position: "top-right",
           autoClose: 2000,
@@ -93,17 +94,27 @@ export const ReceiptsDownloadModal = ({
       );
 
       // Prepare data for Excel
-      const excelData = receipts.map((receipt: any, index: number) => ({
+      const excelData = receiptsData.map((receipt: any, index: number) => ({
         "S.No": index + 1,
-        "Receipt ID": receipt.id,
-        "Registration ID": receipt.registrationId,
-        "School ID": receipt.registration?.schoolId || "N/A",
-        "School Name": receipt.registration?.user?.schoolName || "N/A",
-        "Contest Name": receipt.registration?.contest?.name || "N/A",
-        "Image URL": receipt.imageUrl,
-        "Upload Date": new Date(receipt.createdAt).toLocaleString("en-PK", {
-          timeZone: "Asia/Karachi",
-        }),
+        "Receipt ID": receipt.id || receipt["Receipt ID"],
+        "Registration ID": receipt.registrationId || receipt["Registration ID"],
+        "School ID":
+          receipt.registration?.schoolId || receipt["School ID"] || "N/A",
+        "School Name":
+          receipt.registration?.schoolName ||
+          receipt["School Name"] ||
+          receipt.registration?.user?.schoolName ||
+          "N/A",
+        "Contest Name":
+          receipt.registration?.contest?.name ||
+          receipt["Contest Name"] ||
+          contestName,
+        "Image URL": receipt.imageUrl || receipt["Image URL"],
+        "Upload Date":
+          receipt["Upload Date"] ||
+          new Date(receipt.createdAt).toLocaleString("en-PK", {
+            timeZone: "Asia/Karachi",
+          }),
       }));
 
       // Create workbook and worksheet
@@ -134,41 +145,101 @@ export const ReceiptsDownloadModal = ({
         autoClose: false,
       });
 
-      const imagePromises = receipts.map(async (receipt: any) => {
-        try {
-          const schoolId = receipt.registration?.schoolId || "unknown";
-          const imageUrl = receipt.imageUrl;
+      let successCount = 0;
+      let failCount = 0;
 
-          // Fetch image as blob
-          const imageResponse = await axios.get(imageUrl, {
-            responseType: "blob",
-          });
+      const imagePromises = receiptsData.map(
+        async (receipt: any, index: number) => {
+          try {
+            const schoolId =
+              receipt.registration?.schoolId ||
+              receipt["School ID"] ||
+              "unknown";
+            const imageUrl = receipt.imageUrl || receipt["Image URL"];
 
-          // Get file extension from URL
-          const urlParts = imageUrl.split(".");
-          const extension = urlParts[urlParts.length - 1].split("?")[0];
-          const imageName = `${schoolId}_receipt_${receipt.id}.${extension}`;
+            if (!imageUrl) {
+              console.warn(`No image URL for receipt ${receipt.id || index}`);
+              failCount++;
+              return;
+            }
 
-          // Add image to ZIP
-          imagesFolder?.file(imageName, imageResponse.data);
-        } catch (error) {
-          console.error(
-            `Failed to download image for receipt ${receipt.id}:`,
-            error
-          );
+            // Fetch image as blob with proper headers
+            const imageResponse = await axios.get(imageUrl, {
+              responseType: "blob",
+              timeout: 30000, // 30 second timeout
+              headers: {
+                Accept: "image/*",
+              },
+            });
+
+            // Get file extension from URL or content type
+            let extension = "jpg"; // default
+            const urlMatch = imageUrl.match(/\.([a-zA-Z0-9]+)(\?|$)/);
+            if (urlMatch) {
+              extension = urlMatch[1];
+            } else if (imageResponse.headers["content-type"]) {
+              const contentType = imageResponse.headers["content-type"];
+              extension = contentType.split("/")[1]?.split(";")[0] || "jpg";
+            }
+
+            const receiptId = receipt.id || receipt["Receipt ID"] || index;
+            const imageName = `${schoolId}_receipt_${receiptId}.${extension}`;
+
+            // Add image to ZIP
+            if (imagesFolder) {
+              imagesFolder.file(imageName, imageResponse.data);
+              successCount++;
+            }
+          } catch (error: any) {
+            console.error(
+              `Failed to download image for receipt ${receipt.id || index}:`,
+              error.message
+            );
+            failCount++;
+          }
         }
-      });
+      );
 
       await Promise.all(imagePromises);
 
       toast.dismiss();
+
+      if (successCount === 0) {
+        toast.error(
+          "Failed to download any images. Please check the image URLs.",
+          {
+            position: "top-right",
+            autoClose: 5000,
+          }
+        );
+        setIsLoading(false);
+        return;
+      }
+
+      if (failCount > 0) {
+        toast.warning(
+          `Downloaded ${successCount} image(s). ${failCount} failed to download.`,
+          {
+            position: "top-right",
+            autoClose: 4000,
+          }
+        );
+      }
+
       toast.info("Creating ZIP file...", {
         position: "top-right",
         autoClose: 2000,
       });
 
       // Generate and download ZIP file
-      const zipBlob = await zip.generateAsync({ type: "blob" });
+      const zipBlob = await zip.generateAsync({
+        type: "blob",
+        compression: "DEFLATE",
+        compressionOptions: {
+          level: 6,
+        },
+      });
+
       const zipFileName = `${contestName}_receipts_${format(
         startDate,
         "yyyy-MM-dd"
@@ -176,7 +247,7 @@ export const ReceiptsDownloadModal = ({
       saveAs(zipBlob, zipFileName);
 
       toast.success(
-        `Successfully downloaded ${receipts.length} receipt(s) with images!`,
+        `Successfully downloaded ${successCount} receipt(s) with images!`,
         {
           position: "top-right",
           autoClose: 3000,
@@ -226,8 +297,7 @@ export const ReceiptsDownloadModal = ({
                   className={cn(
                     "w-full justify-start text-left font-normal",
                     !startDate && "text-muted-foreground"
-                  )}
-                >
+                  )}>
                   <CalendarIcon className="mr-2 h-4 w-4" />
                   {startDate ? (
                     format(startDate, "PPP")
@@ -261,10 +331,13 @@ export const ReceiptsDownloadModal = ({
                   className={cn(
                     "w-full justify-start text-left font-normal",
                     !endDate && "text-muted-foreground"
-                  )}
-                >
+                  )}>
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {endDate ? format(endDate, "PPP") : <span>Pick end date</span>}
+                  {endDate ? (
+                    format(endDate, "PPP")
+                  ) : (
+                    <span>Pick end date</span>
+                  )}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
@@ -300,8 +373,7 @@ export const ReceiptsDownloadModal = ({
             <Button
               onClick={handleDownload}
               disabled={isLoading || !startDate || !endDate}
-              className="bg-purple-600 hover:bg-purple-700"
-            >
+              className="bg-purple-600 hover:bg-purple-700">
               {isLoading ? (
                 <>
                   <span className="animate-spin mr-2">⏳</span>
