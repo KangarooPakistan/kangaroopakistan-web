@@ -16,6 +16,7 @@ import { pdf } from "@react-pdf/renderer";
 import AllLabelsShort from "./AllLabelsShort";
 import Link from "next/link";
 import { useModal } from "@/hooks/use-modal-store";
+import { ReceiptsDownloadModal } from "./ReceiptsDownloadModal";
 
 export const dynamic = "force-dynamic"; // Ensures this page is always rendered server-side
 
@@ -106,6 +107,7 @@ const FetchAllRegistrations = () => {
   const [studentForExcel, setStudentForExcel] = useState([]);
   const [studentsForUtility, setStudentForUtility] = useState([]);
   const [contestName, setContestName] = useState("");
+  const [showReceiptsModal, setShowReceiptsModal] = useState(false);
   const activeRequestController = useRef<AbortController | null>(null);
 
   const abortActiveRequest = () => {
@@ -546,6 +548,10 @@ const FetchAllRegistrations = () => {
     setIsLoading(false);
   };
 
+  const handleDownloadReceipts = () => {
+    setShowReceiptsModal(true);
+  };
+
   return (
     <div className="container mx-auto py-10">
       <h1 className="text-3xl text-center my-3 font-bold text-purple-600">
@@ -677,6 +683,13 @@ const FetchAllRegistrations = () => {
             onClick={handleDownloadAllLabelsShort}>
             Download Short Labels
           </Button>
+          <Button
+            variant="default"
+            size="lg"
+            className=" font-medium text-[15px]  tracking-wide"
+            onClick={handleDownloadReceipts}>
+            Download Receipts
+          </Button>
         </div>
       </div>
       <div className="block md:hidden">
@@ -751,9 +764,22 @@ const FetchAllRegistrations = () => {
             onClick={handleDownloadAllLabelsShort}>
             Download Short Labels
           </Button>
+          <Button
+            className=" font-medium text-[11px]  tracking-wide"
+            variant="default"
+            size="sm"
+            onClick={handleDownloadReceipts}>
+            Download Receipts
+          </Button>
         </div>
       </div>
       <DataTable columns={columns} data={regData} />
+      <ReceiptsDownloadModal
+        contestId={params.id as string}
+        contestName={contestName}
+        open={showReceiptsModal}
+        onClose={() => setShowReceiptsModal(false)}
+      />
     </div>
   );
 };
