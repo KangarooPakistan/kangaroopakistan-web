@@ -290,7 +290,7 @@ export const ReceiptsDownloadModal = ({
             <label className="text-sm font-medium text-gray-700">
               Start Date
             </label>
-            <Popover>
+            <Popover modal={true}>
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
@@ -306,7 +306,10 @@ export const ReceiptsDownloadModal = ({
                   )}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
+              <PopoverContent
+                className="w-auto p-0"
+                align="start"
+                sideOffset={4}>
                 <Calendar
                   mode="single"
                   selected={startDate}
@@ -324,7 +327,7 @@ export const ReceiptsDownloadModal = ({
             <label className="text-sm font-medium text-gray-700">
               End Date
             </label>
-            <Popover>
+            <Popover modal={true}>
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
@@ -340,7 +343,10 @@ export const ReceiptsDownloadModal = ({
                   )}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
+              <PopoverContent
+                className="w-auto p-0"
+                align="start"
+                sideOffset={4}>
                 <Calendar
                   mode="single"
                   selected={endDate}
