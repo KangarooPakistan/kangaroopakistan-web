@@ -109,7 +109,7 @@ export async function GET(request: NextRequest) {
     const registrationIds = registrations.map((r) => r.id);
 
     // Fetch all payment proofs for these registrations
-    const paymentProofs = await db.paymentproof.findMany({
+    const paymentProofs = await db.paymentProof.findMany({
       where: {
         registrationId: {
           in: registrationIds,
@@ -120,7 +120,7 @@ export async function GET(request: NextRequest) {
     console.log(`Found ${paymentProofs.length} total payment proofs`);
 
     // Filter payment proofs by timestamp extracted from URL
-    const filteredPaymentProofs = paymentProofs.filter((proof) => {
+    const filteredPaymentProofs = paymentProofs.filter((proof: any) => {
       const uploadDate = extractTimestampFromUrl(proof.imageUrl);
 
       if (!uploadDate) {
