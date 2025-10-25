@@ -598,6 +598,9 @@ const UserRegister = () => {
       case "Rawalakot":
         districtValue = "503";
         break;
+      case "Ghizer":
+        districtValue = "504";
+        break;
       // Add more cases if needed
       default:
         break;
