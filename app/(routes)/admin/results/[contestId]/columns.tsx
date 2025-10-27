@@ -471,6 +471,38 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
               disabled={isLoading}>
               {isLoading ? "Downloading..." : "Download Individual Report "}
             </DropdownMenuItem>
+            <DropdownMenuItem
+              className="border-y-2 border-solid"
+              onClick={async () => {
+                try {
+                  setIsLoading(true);
+                  await axios.post(`/api/results/hold/${params.contestId}/${schoolResult.schoolId}`, { hold: true });
+                  toast.success("Results held for this school.");
+                } catch (e) {
+                  toast.error("Failed to hold results.");
+                } finally {
+                  setIsLoading(false);
+                }
+              }}
+              disabled={isLoading}>
+              {isLoading ? "Processing..." : "Hold Result (Hide from User)"}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="border-y-2 border-solid"
+              onClick={async () => {
+                try {
+                  setIsLoading(true);
+                  await axios.post(`/api/results/hold/${params.contestId}/${schoolResult.schoolId}`, { hold: false });
+                  toast.success("Results unheld for this school.");
+                } catch (e) {
+                  toast.error("Failed to unhold results.");
+                } finally {
+                  setIsLoading(false);
+                }
+              }}
+              disabled={isLoading}>
+              {isLoading ? "Processing..." : "Unhold Result (Show to User)"}
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

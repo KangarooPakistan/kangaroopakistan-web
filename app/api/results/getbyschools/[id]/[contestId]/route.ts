@@ -39,6 +39,24 @@ export async function GET(
 ) {
   try {
     const schoolIdInt = parseInt(params.id, 10);
+
+    // Check if results are on hold for this school and contest (user-facing route)
+    const holdRecord = await db.resultHold.findUnique({
+      where: {
+        contestId_schoolId: {
+          contestId: params.contestId,
+          schoolId: schoolIdInt,
+        },
+      },
+      select: { hold: true },
+    });
+    if (holdRecord?.hold) {
+      return NextResponse.json(
+        { error: "Results are currently on hold for your school." },
+        { status: 403 }
+      );
+    }
+
     const resultsProof = await db.resultProof.findFirst({
       where: {
         contestId: params.contestId,

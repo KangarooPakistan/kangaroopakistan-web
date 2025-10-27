@@ -131,6 +131,29 @@ export async function POST(request: Request) {
 
     console.log("Results generated successfully");
 
+    // 6. Ensure ResultHold records exist for all schools for this contest (default hold=false)
+    try {
+      const uniqueSchoolIds = Array.from(
+        new Set(resultsData.map((r) => r.schoolId))
+      ).filter((id): id is number => typeof id === "number");
+
+      if (uniqueSchoolIds.length > 0) {
+        await db.resultHold.createMany({
+          data: uniqueSchoolIds.map((schoolId) => ({
+            contestId,
+            schoolId,
+            hold: false,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          })),
+          skipDuplicates: true, // thanks to composite PK (contestId, schoolId)
+        });
+      }
+    } catch (e) {
+      console.warn("Failed to seed ResultHold records:", e);
+      // continue without failing entire request
+    }
+
     return NextResponse.json(
       {
         message: "Results regenerated successfully",
