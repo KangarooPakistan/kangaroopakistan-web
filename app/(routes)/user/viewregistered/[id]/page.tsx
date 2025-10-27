@@ -12,6 +12,8 @@ import { pdf } from "@react-pdf/renderer";
 import { saveAs } from "file-saver";
 import Link from "next/link";
 import SchoolAwardsPdf from "@/app/(routes)/admin/results/[contestId]/SchoolAwardsPdf/SchoolAwardsPdf";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 // type ProfileData = {
 //   p_fName: string;
 //   p_mName: string;
@@ -171,6 +173,8 @@ function ViewRegistered({ params, searchParams }: PageProps) {
   const { onOpen } = useModal();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [isHeld, setIsHeld] = useState<boolean | null>(null);
+  const [statusMessage, setStatusMessage] = useState<string>("");
 
   const [registrationId, setRegistrationId] = useState<string>();
   const [preEculier, setPreEculier] = useState<number>(0);
@@ -273,6 +277,25 @@ function ViewRegistered({ params, searchParams }: PageProps) {
     };
     fetch();
   }, [params.id]);
+
+  // Check hold status whenever schoolId is known
+  useEffect(() => {
+    const checkHold = async () => {
+      try {
+        if (!schoolId || !params.id) return;
+        const resp = await axios.get(`/api/results/hold/${params.id}/${schoolId}`);
+        setIsHeld(!!resp.data?.hold);
+        if (resp.data?.hold) {
+          setStatusMessage("Results are currently on hold by the administrator. Please check back later.");
+        } else {
+          setStatusMessage("");
+        }
+      } catch (e) {
+        // fail silently
+      }
+    };
+    checkHold();
+  }, [schoolId, params.id]);
   const handleClick = () => {
     router.push(`/user/viewallrecipts/${registrationId}`);
   };
@@ -299,13 +322,17 @@ function ViewRegistered({ params, searchParams }: PageProps) {
   }
 
   const handleView = async () => {
-    // if (!schoolResult.schoolId) {
-    //   console.error("No school ID provided");
-    //   return;
-    // }
-
     setIsLoading(true);
     try {
+      // pre-check hold status to provide instant UX response
+      const holdResp = await axios.get(`/api/results/hold/${params.id}/${schoolId}`);
+      if (holdResp.data?.hold) {
+        setIsHeld(true);
+        setStatusMessage("Results are currently on hold by the administrator. Please check back later.");
+        toast.info("Results are currently on hold for your school.");
+        return;
+      }
+
       const schoolResultResp = await axios.get(
         `/api/results/getbyschools/${schoolId}/${params.id}`
       );
@@ -331,9 +358,21 @@ function ViewRegistered({ params, searchParams }: PageProps) {
       console.log(schoolId);
       const blob = await generatePdfBlobForResults(dataWithStats);
       saveAs(blob, `School_${schoolId}_Results.pdf`);
-    } catch (error) {
-      console.error("Error processing school result:", error);
-      // Show error to user here
+    } catch (error: any) {
+      // Robust UX on errors (including hold response from API)
+      if (axios.isAxiosError(error)) {
+        const status = error.response?.status;
+        const message = (error.response?.data as any)?.error || "Failed to download results.";
+        if (status === 403) {
+          setIsHeld(true);
+          setStatusMessage("Results are currently on hold by the administrator. Please check back later.");
+          toast.info(message);
+        } else {
+          toast.error(message);
+        }
+      } else {
+        toast.error("Something went wrong while downloading results.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -485,6 +524,7 @@ function ViewRegistered({ params, searchParams }: PageProps) {
       />
 
       <div className="py-4">
+        <ToastContainer position="bottom-center" theme="light" />
         <div className="flex flex-wrap -mx-2">
           <div className="w-full md:w-1/2 px-2 mb-6 md:mb-0">
             <div className="bg-purple-400 rounded-lg shadow-lg p-6 text-white transform transition duration-500 hover:scale-105">
@@ -540,9 +580,18 @@ function ViewRegistered({ params, searchParams }: PageProps) {
             </Button>
           </div>
           <div className="w-full sm:w-1/2 md:w-1/4 p-1">
-            <Button className="w-full" onClick={handleView}>
-              Download Results
+            <Button
+              className="w-full"
+              onClick={handleView}
+              disabled={isLoading || isHeld === true}
+            >
+              {isLoading ? "Preparing results..." : isHeld ? "Results on hold" : "Download Results"}
             </Button>
+            {isHeld ? (
+              <p className="mt-2 text-sm text-red-600">
+                {statusMessage || "Results are currently on hold. Please try again later."}
+              </p>
+            ) : null}
           </div>
           <div className="w-full sm:w-1/2 md:w-1/4 p-1">
             <Button className="w-full" onClick={handleSheet}>
