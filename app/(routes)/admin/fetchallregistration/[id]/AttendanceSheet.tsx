@@ -489,7 +489,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
           ) : (
             <Image
               style={styles.image}
-              src="/innovative-learning.jpg" // Replace with your image path or URL
+              src="/innventive_learning.jpg" // Replace with your image path or URL
             />
           )}
 
@@ -1232,7 +1232,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
         <Text style={styles.paragraph}>Best regards,</Text>
         <Text style={styles.paragraph}>Khalid Rasul Awan</Text>
         <Text style={styles.paragraph}>
-          COO Innovative Learning - KSF Pakistan
+          COO Innventive Learning - KSF Pakistan
         </Text>
       </Page>
       <Page
