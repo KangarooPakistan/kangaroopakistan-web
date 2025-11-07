@@ -131,6 +131,7 @@ const FetchAllRegistrations = () => {
         // Only proceed with state updates if the request hasn't been cancelled
         if (!signal.aborted) {
           setContestName(contestData.data.name);
+          setContestCh(contestData.data.contestCh);
           setTotalSchools(registrations.length);
 
           const totalPayments = registrations.reduce(
@@ -339,8 +340,16 @@ const FetchAllRegistrations = () => {
       const studentWs = XLSX.utils.json_to_sheet(studentData);
       XLSX.utils.book_append_sheet(wb, studentWs, "Student Data");
 
-      // Write and save the file
-      XLSX.writeFile(wb, `${contestName}_contest_data.xlsx`);
+      // Write and save the file with dynamic naming based on contestCh
+      let fileName = "contest_data.xlsx";
+      if (contestCh === "S") {
+        fileName = "IKSC_contest_data.xlsx";
+      } else if (contestCh === "M") {
+        fileName = "IKMC_contest_data.xlsx";
+      } else if (contestCh === "L") {
+        fileName = "IKLC_contest_data.xlsx";
+      }
+      XLSX.writeFile(wb, fileName);
     } else {
       console.log("No data available to export");
       toast.error("No data available to export", {
@@ -446,8 +455,16 @@ const FetchAllRegistrations = () => {
       const studentWs = XLSX.utils.json_to_sheet(studentsForUtility);
       XLSX.utils.book_append_sheet(wb, studentWs, "Student Data");
 
-      // Write and save the file
-      XLSX.writeFile(wb, `${contestName}_contest_data.xlsx`);
+      // Write and save the file with dynamic naming based on contestCh
+      let fileName = "contest_data.xlsx";
+      if (contestCh === "S") {
+        fileName = "IKSC_contest_data.xlsx";
+      } else if (contestCh === "M") {
+        fileName = "IKMC_contest_data.xlsx";
+      } else if (contestCh === "L") {
+        fileName = "IKLC_contest_data.xlsx";
+      }
+      XLSX.writeFile(wb, fileName);
     } else {
       console.log("No data available to export");
       toast.error("No data available to export", {
