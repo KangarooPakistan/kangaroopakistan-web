@@ -379,12 +379,12 @@ const FetchAllRegistrations = () => {
         "School ID": school.schoolId,
         "School Name": school.schoolName,
         "Total Students": school.totalStudents,
-        "PRE-ECOLIER (Class 1-2)": school.categories.PRE_ECOLIER,
-        "ECOLIER (Class 3-4)": school.categories.ECOLIER,
-        "BENJAMIN (Class 5-6)": school.categories.BENJAMIN,
-        "CADET (Class 7-8)": school.categories.CADET,
-        "JUNIOR (Class 9-10)": school.categories.JUNIOR,
-        "STUDENT (Class 11-12)": school.categories.STUDENT,
+        "PRE-ECOLIER": school.categories.PRE_ECOLIER,
+        ECOLIER: school.categories.ECOLIER,
+        BENJAMIN: school.categories.BENJAMIN,
+        CADET: school.categories.CADET,
+        JUNIOR: school.categories.JUNIOR,
+        STUDENT: school.categories.STUDENT,
       }));
       const wb = XLSX.utils.book_new();
       const ws = XLSX.utils.json_to_sheet(excelData);
