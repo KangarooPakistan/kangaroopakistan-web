@@ -80,7 +80,7 @@ type RegistrationProps = {
 const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
   const router = useRouter();
   const [data, setData] = useState();
-  const [active, setActive] = useState(false);
+  const [totalStudents, setTotalStudents] = useState<number>(0);
   useEffect(() => {
     const controller = new AbortController();
     const signal = controller.signal;
@@ -96,11 +96,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
           { signal }
         );
         console.log(response.data.length);
-        if (response.data.length > 200) {
-          setActive(false);
-        } else {
-          setActive(true);
-        }
+        setTotalStudents(response.data.length);
         console.log(res);
         setData(res.data.id);
       } catch (error) {
@@ -138,9 +134,10 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
     return blob;
   }
 
-  const handleDownloadPdf = async () => {
+  const CHUNK_SIZE = 200;
+  const handleDownloadPdfPart = async (partIndex: number) => {
     try {
-      toast.info("📄 Starting answer sheet download...", {
+      toast.info(`📄 Starting answer sheet download (Part ${partIndex + 1})...`, {
         position: "bottom-center",
         autoClose: 3000,
         hideProgressBar: false,
@@ -155,16 +152,13 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         `/api/users/pdfdownload/${registration.id}`
       );
       console.log(response);
-      console.log(response.data.length);
-      let students: Student[];
+      const start = partIndex * CHUNK_SIZE;
+      const end = Math.min(start + CHUNK_SIZE, response.data.length);
+      let students: Student[] = response.data.slice(start, end);
 
-      // Check if the response contains more than 200 students
-      if (response.data.length > 200) {
-        // If yes, slice the array to keep only the first 200 students
-        students = response.data.slice(0, 200);
-      } else {
-        // If no, or if the number is 200 or less, use the full array
-        students = response.data;
+      if (!students.length) {
+        toast.error("No students found for this part.", { position: "top-right" });
+        return;
       }
 
       students.sort((a: Student, b: Student) => {
@@ -196,12 +190,9 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       const res = await axios.get(
         `/api/users/allusers/getschoolbyregid/${registration.id}`
       );
-      console.log(res.data.contestId);
       const contestData = await axios.get(
         `/api/users/contests/${res.data.contestId}`
       );
-      console.log(contestData.data);
-      console.log(contestData.data.name);
 
       const profileData: profileData = {
         p_Name: res.data.user.p_Name,
@@ -215,7 +206,7 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       };
 
       const blob = await generatePdfBlob(students, profileData);
-      const pdfName = `answersheet_${response.data[0].schoolId}_part1.pdf`;
+      const pdfName = `answersheet_${students[0].schoolId}_part${partIndex + 1}.pdf`;
 
       saveAs(blob, pdfName);
       toast.success("🦄 Answer Sheet Downloaded Successfully 😍", {
@@ -285,84 +276,6 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       saveAs(blob, pdfName);
     } catch (error) {
       console.error("Error downloading the PDF:", error);
-    } finally {
-    }
-  };
-  const handleDownloadAdditionalPdf = async () => {
-    try {
-      const response = await axios.get(
-        `/api/users/pdfdownload/${registration.id}`
-      );
-      console.log(response);
-
-      let additionalStudents: Student[] = [];
-
-      if (response.data.length > 200) {
-        additionalStudents = response.data.slice(200);
-      } else {
-        console.log("No additional students to download.");
-        return;
-      }
-
-      additionalStudents.sort((a: Student, b: Student) => {
-        const extractClassAndSerial = (rollNumber: string) => {
-          const parts = rollNumber.split("-");
-          const classNumber = parseInt(parts[parts.length - 3], 10);
-          const serialNumber = parseInt(parts[parts.length - 2], 10);
-          return { class: classNumber, serial: serialNumber };
-        };
-
-        const aClassAndSerial = extractClassAndSerial(a.rollNumber);
-        const bClassAndSerial = extractClassAndSerial(b.rollNumber);
-
-        if (aClassAndSerial.class < bClassAndSerial.class) {
-          return -1;
-        }
-        if (aClassAndSerial.class > bClassAndSerial.class) {
-          return 1;
-        }
-        if (aClassAndSerial.serial < bClassAndSerial.serial) {
-          return -1;
-        }
-        if (aClassAndSerial.serial > bClassAndSerial.serial) {
-          return 1;
-        }
-        return 0;
-      });
-
-      if (response.data.length > 200) {
-        additionalStudents = response.data.slice(200);
-      } else {
-        console.log("No additional students to download.");
-        return;
-      }
-
-      const res = await axios.get(
-        `/api/users/allusers/getschoolbyregid/${registration.id}`
-      );
-      console.log(res.data.contestId);
-      const contestData = await axios.get(
-        `/api/users/contests/${res.data.contestId}`
-      );
-      console.log(contestData.data);
-      console.log(contestData.data.name);
-      // console.log("res");
-      // console.log(res.data.user.p_fName);
-      const profileData: profileData = {
-        p_Name: res.data.user.p_Name,
-        c_Name: res.data.user.c_Name,
-        email: res.data.user.email,
-        p_contact: res.data.user.p_contact,
-        contactNumber: res.data.user.contactNumber,
-        contestName: contestData.data.name,
-        contestCh: contestData.data.contestCh,
-        contestNo: contestData.data.contestNo,
-      };
-      const blob = await generatePdfBlob(additionalStudents, profileData);
-      const pdfName = `answersheet_${response.data[0].schoolId}_part2.pdf`;
-      saveAs(blob, pdfName);
-    } catch (error) {
-      console.error("Error downloading the additional PDF:", error);
     } finally {
     }
   };
@@ -711,17 +624,20 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
               onClick={sendCorrectionEmail}>
               Send Correction Email
             </DropdownMenuItem>
-            <DropdownMenuItem
-              className="border-y-2 border-solid"
-              onClick={handleDownloadPdf}>
-              Download Answer Sheet
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className="border-y-2 border-solid"
-              onClick={handleDownloadAdditionalPdf}
-              disabled={active}>
-              Download Answer Sheet Part2
-            </DropdownMenuItem>
+            {totalStudents > 0 ? (
+              Array.from({ length: Math.ceil(totalStudents / CHUNK_SIZE) }).map((_, i) => (
+                <DropdownMenuItem
+                  key={`answersheet-part-${i}`}
+                  className="border-y-2 border-solid"
+                  onClick={() => handleDownloadPdfPart(i)}>
+                  {i === 0 ? "Download Answer Sheet" : `Download Answer Sheet ${i + 1}`}
+                </DropdownMenuItem>
+              ))
+            ) : (
+              <DropdownMenuItem className="border-y-2 border-solid" disabled>
+                Download Answer Sheet
+              </DropdownMenuItem>
+            )}
             <DropdownMenuItem
               className="border-y-2 border-solid"
               onClick={handleStudentDetails}>
@@ -757,16 +673,21 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         <Button className="text-[11px]" size="sm" onClick={handleEmail}>
           Send Email
         </Button>
-        <Button className="text-[11px]" size="sm" onClick={handleDownloadPdf}>
-          Download Answer Sheet
-        </Button>
-        <Button
-          size="sm"
-          className="text-[11px]"
-          onClick={handleDownloadAdditionalPdf}
-          disabled={active}>
-          Download Answer Sheet Part2
-        </Button>
+        {totalStudents > 0 ? (
+          Array.from({ length: Math.ceil(totalStudents / CHUNK_SIZE) }).map((_, i) => (
+            <Button
+              key={`answersheet-part-mobile-${i}`}
+              className="text-[11px]"
+              size="sm"
+              onClick={() => handleDownloadPdfPart(i)}>
+              {i === 0 ? "Download Answer Sheet" : `Download Answer Sheet ${i + 1}`}
+            </Button>
+          ))
+        ) : (
+          <Button className="text-[11px]" size="sm" disabled>
+            Download Answer Sheet
+          </Button>
+        )}
         <Button
           size="sm"
           className="text-[11px]"
