@@ -340,7 +340,7 @@ const FetchAllRegistrations = () => {
       XLSX.utils.book_append_sheet(wb, studentWs, "Student Data");
 
       // Write and save the file
-      XLSX.writeFile(wb, `contest_data.xlsx`);
+      XLSX.writeFile(wb, `${contestName}_contest_data.xlsx`);
     } else {
       console.log("No data available to export");
       toast.error("No data available to export", {
@@ -447,7 +447,7 @@ const FetchAllRegistrations = () => {
       XLSX.utils.book_append_sheet(wb, studentWs, "Student Data");
 
       // Write and save the file
-      XLSX.writeFile(wb, `contest_data.xlsx`);
+      XLSX.writeFile(wb, `${contestName}_contest_data.xlsx`);
     } else {
       console.log("No data available to export");
       toast.error("No data available to export", {
