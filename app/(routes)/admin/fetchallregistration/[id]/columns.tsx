@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SchoolReportDocument from "./SchoolReportDocument";
 import { getSession } from "next-auth/react";
 import CheckList from "./CheckList";
@@ -78,9 +78,27 @@ type RegistrationProps = {
   registration: Registration; // Use the Contest type here
 };
 const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
+  // Helpers (use 'any' to avoid type order issues)
+  function extractClassAndSerial(rollNumber: string) {
+    const parts = rollNumber.split("-");
+    const classNumber = parseInt(parts[parts.length - 3], 10);
+    const serialNumber = parseInt(parts[parts.length - 2], 10);
+    return { class: classNumber, serial: serialNumber };
+  }
+  function sortStudentsByRollNumber(arr: any[]): any[] {
+    return [...arr].sort((a, b) => {
+      const aKey = extractClassAndSerial(a.rollNumber);
+      const bKey = extractClassAndSerial(b.rollNumber);
+      if (aKey.class !== bKey.class) return aKey.class - bKey.class;
+      return aKey.serial - bKey.serial;
+    });
+  }
   const router = useRouter();
   const [data, setData] = useState();
   const [totalStudents, setTotalStudents] = useState<number>(0);
+  const [studentsCache, setStudentsCache] = useState<any[] | null>(null);
+  const [profileCache, setProfileCache] = useState<profileData | null>(null);
+  const pdfInstanceRef = useRef<any | null>(null);
   useEffect(() => {
     const controller = new AbortController();
     const signal = controller.signal;
@@ -95,9 +113,11 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
           `/api/users/pdfdownload/${registration.id}`,
           { signal }
         );
-        console.log(response.data.length);
-        setTotalStudents(response.data.length);
-        console.log(res);
+        const fetched: any[] = response.data;
+        setTotalStudents(fetched.length);
+        // Pre-sort once and cache
+        const sorted = sortStudentsByRollNumber(fetched);
+        setStudentsCache(sorted);
         setData(res.data.id);
       } catch (error) {
         if (axios.isCancel(error)) {
@@ -129,8 +149,11 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
   ) {
     const doc = <MyDocument students={students} profileData={profileData} />;
 
-    const asPdf = pdf(doc); // Create an empty PDF instance
-    const blob = await asPdf.toBlob();
+    if (!pdfInstanceRef.current) {
+      pdfInstanceRef.current = pdf();
+    }
+    pdfInstanceRef.current.updateContainer(doc);
+    const blob = await pdfInstanceRef.current.toBlob();
     return blob;
   }
 
@@ -148,62 +171,47 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
         theme: "light",
       });
 
-      const response = await axios.get(
-        `/api/users/pdfdownload/${registration.id}`
-      );
-      console.log(response);
+      // Use cached students if available
+      let sorted = studentsCache;
+      if (!sorted) {
+        const response = await axios.get(
+          `/api/users/pdfdownload/${registration.id}`
+        );
+        sorted = sortStudentsByRollNumber(response.data as any[]);
+        setStudentsCache(sorted);
+        setTotalStudents((response.data as any[]).length);
+      }
       const start = partIndex * CHUNK_SIZE;
-      const end = Math.min(start + CHUNK_SIZE, response.data.length);
-      let students: Student[] = response.data.slice(start, end);
+      const end = Math.min(start + CHUNK_SIZE, sorted.length);
+      const students: Student[] = (sorted as any[]).slice(start, end) as Student[];
 
       if (!students.length) {
         toast.error("No students found for this part.", { position: "top-right" });
         return;
       }
 
-      students.sort((a: Student, b: Student) => {
-        const extractClassAndSerial = (rollNumber: string) => {
-          const parts = rollNumber.split("-");
-          const classNumber = parseInt(parts[parts.length - 3], 10);
-          const serialNumber = parseInt(parts[parts.length - 2], 10);
-          return { class: classNumber, serial: serialNumber };
+      // Use cached profile if available
+      let profileData: profileData | null = profileCache;
+      if (!profileData) {
+        const res = await axios.get(
+          `/api/users/allusers/getschoolbyregid/${registration.id}`
+        );
+        const contestData = await axios.get(
+          `/api/users/contests/${res.data.contestId}`
+        );
+
+        profileData = {
+          p_Name: res.data.user.p_Name,
+          c_Name: res.data.user.c_Name,
+          email: res.data.user.email,
+          contactNumber: res.data.user.contactNumber,
+          contestName: contestData.data.name,
+          contestCh: contestData.data.contestCh,
+          p_contact: res.data.user.p_contact,
+          contestNo: contestData.data.contestNo,
         };
-
-        const aClassAndSerial = extractClassAndSerial(a.rollNumber);
-        const bClassAndSerial = extractClassAndSerial(b.rollNumber);
-
-        if (aClassAndSerial.class < bClassAndSerial.class) {
-          return -1;
-        }
-        if (aClassAndSerial.class > bClassAndSerial.class) {
-          return 1;
-        }
-        if (aClassAndSerial.serial < bClassAndSerial.serial) {
-          return -1;
-        }
-        if (aClassAndSerial.serial > bClassAndSerial.serial) {
-          return 1;
-        }
-        return 0;
-      });
-
-      const res = await axios.get(
-        `/api/users/allusers/getschoolbyregid/${registration.id}`
-      );
-      const contestData = await axios.get(
-        `/api/users/contests/${res.data.contestId}`
-      );
-
-      const profileData: profileData = {
-        p_Name: res.data.user.p_Name,
-        c_Name: res.data.user.c_Name,
-        email: res.data.user.email,
-        contactNumber: res.data.user.contactNumber,
-        contestName: contestData.data.name,
-        contestCh: contestData.data.contestCh,
-        p_contact: res.data.user.p_contact,
-        contestNo: contestData.data.contestNo,
-      };
+        setProfileCache(profileData);
+      }
 
       const blob = await generatePdfBlob(students, profileData);
       const pdfName = `answersheet_${students[0].schoolId}_part${partIndex + 1}.pdf`;
@@ -1269,9 +1277,14 @@ const generateVerticalNumbers = (totalNumbers: number, numColumns: number) => {
   return grid;
 };
 
+// Precompute grids and options once
+const GRID_24 = generateVerticalNumbers(24, 3);
+const GRID_30 = generateVerticalNumbers(30, 3);
+const OPTIONS = ["A", "B", "C", "D", "E"];
+
 // Render the numbers inside your PDF document
 const VerticalNumberGrid = ({ totalNumbers = 30 }) => {
-  const grid = generateVerticalNumbers(totalNumbers, 3);
+  const grid = totalNumbers === 24 ? GRID_24 : GRID_30;
 
   return (
     <View style={styles.answerGrid}>
@@ -1290,7 +1303,7 @@ const VerticalNumberGrid = ({ totalNumbers = 30 }) => {
               </View>
               {/* Render the options A, B, C, D, E */}
               {number &&
-                "ABCDE".split("").map((option) => (
+                OPTIONS.map((option) => (
                   <View key={option} style={styles.optionBoxForAnswers}>
                     <Text style={styles.option}>{option}</Text>
                   </View>
