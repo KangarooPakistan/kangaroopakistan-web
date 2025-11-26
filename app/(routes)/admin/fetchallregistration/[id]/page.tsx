@@ -2,6 +2,8 @@
 
 import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
+import { Input } from "@/components/ui/input";
+
 import React, { useEffect, useRef, useState } from "react";
 import { Registration, columns, PaymentProof } from "./columns";
 import { DataTable } from "./data-table";
@@ -109,6 +111,12 @@ const FetchAllRegistrations = () => {
   const [contestName, setContestName] = useState("");
   const [showReceiptsModal, setShowReceiptsModal] = useState(false);
   const activeRequestController = useRef<AbortController | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [importInsertedCount, setImportInsertedCount] = useState<number | null>(
+    null
+  );
 
   const abortActiveRequest = () => {
     if (activeRequestController.current) {
@@ -568,6 +576,90 @@ const FetchAllRegistrations = () => {
   const handleDownloadReceipts = () => {
     setShowReceiptsModal(true);
   };
+  const handleUploadScores = async () => {
+    try {
+      if (!selectedFile) return;
+      setUploading(true);
+      setUploadProgress(0);
+      setImportInsertedCount(null);
+
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+      formData.append("contestId", String(params.id));
+
+      const { data } = await axios.post(
+        "/api/results/scores/import",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+          onUploadProgress: (progressEvent) => {
+            if (progressEvent.total) {
+              const percent = Math.round(
+                (progressEvent.loaded * 100) / progressEvent.total
+              );
+              setUploadProgress(percent);
+            }
+          },
+        }
+      );
+
+      toast.success("Scores imported successfully", {
+        position: "bottom-center",
+      });
+      setImportInsertedCount(data.insertedCount ?? null);
+    } catch (error: any) {
+      const msg = error?.response?.data?.message || "Failed to import scores";
+      toast.error(msg, { position: "top-right" });
+    } finally {
+      setUploading(false);
+    }
+  };
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    setSelectedFile(file);
+    setUploadProgress(0);
+    setImportInsertedCount(null);
+  };
+
+  const handleAppendScores = async () => {
+    try {
+      if (!selectedFile) return;
+      setUploading(true);
+      setUploadProgress(0);
+      setImportInsertedCount(null);
+
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+      formData.append("contestId", String(params.id));
+      formData.append("mode", "append");
+
+      const { data } = await axios.post(
+        "/api/results/scores/import",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+          onUploadProgress: (progressEvent) => {
+            if (progressEvent.total) {
+              const percent = Math.round(
+                (progressEvent.loaded * 100) / progressEvent.total
+              );
+              setUploadProgress(percent);
+            }
+          },
+        }
+      );
+
+      const inserted = data.insertedCount ?? 0;
+      const skipped = data.skippedCount ?? 0;
+      toast.success(`Appended ${inserted} rows, skipped ${skipped}`);
+      setImportInsertedCount(inserted);
+    } catch (error: any) {
+      const msg = error?.response?.data?.message || "Failed to append scores";
+      toast.error(msg, { position: "top-right" });
+    } finally {
+      setUploading(false);
+    }
+  };
 
   return (
     <div className="container mx-auto py-10">
@@ -789,6 +881,55 @@ const FetchAllRegistrations = () => {
             Download Receipts
           </Button>
         </div>
+      </div>
+      <div className="mt-6 border rounded-md p-4 bg-white shadow-sm">
+        <h2 className="text-xl font-semibold mb-2">Import Scores (Excel)</h2>
+        <p className="text-sm text-gray-600 mb-4">
+          Upload an .xlsx file with the expected columns. Existing scores for
+          this contest will be replaced.
+        </p>
+        <div className="flex flex-col md:flex-row items-start md:items-center gap-3">
+          <Input
+            type="file"
+            accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            onChange={handleFileChange}
+            disabled={uploading}
+            className="max-w-sm"
+          />
+          <Button
+            onClick={handleUploadScores}
+            disabled={!selectedFile || uploading}>
+            {uploading ? "Uploading..." : "Upload & Replace Scores"}
+          </Button>
+          <Button
+            variant="default"
+            disabled={!selectedFile || uploading}
+            onClick={handleAppendScores}>
+            {uploading ? "Uploading..." : "Append Scores"}
+          </Button>
+          {importInsertedCount !== null && (
+            <span className="text-sm text-gray-700">
+              Inserted: {importInsertedCount}
+            </span>
+          )}
+          {importInsertedCount !== null && (
+            <Button
+              variant="default"
+              size="sm"
+              disabled={isLoading}
+              onClick={handleGenerateResults}>
+              Regenerate Results
+            </Button>
+          )}
+        </div>
+        {uploading && (
+          <div className="w-full h-3 bg-gray-200 rounded mt-3 overflow-hidden">
+            <div
+              className="h-full bg-[#891538] transition-all"
+              style={{ width: `${uploadProgress}%` }}
+            />
+          </div>
+        )}
       </div>
       <DataTable columns={columns} data={regData} />
       <ReceiptsDownloadModal
