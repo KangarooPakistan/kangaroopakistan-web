@@ -200,11 +200,44 @@ interface SchoolAwardsPdfProps {
   };
 }
 
-const CellContent = ({ children }: { children: React.ReactNode }) => (
-  <View style={styles.cellContent}>
-    <Text style={styles.tableCell}>{children}</Text>
-  </View>
-);
+const makeTextBreakable = (text: string, maxChunkSize: number = 12): string => {
+  if (!text) return "";
+
+  // Split by spaces to handle each word separately
+  const words = text.split(" ");
+
+  const processedWords = words.map((word) => {
+    // Add break opportunity after hyphens
+    let processedWord = word.replace(/-/g, "-\u200B");
+
+    // If still a long continuous string, break it into chunks
+    if (processedWord.replace(/\u200B/g, "").length > maxChunkSize) {
+      const chunks = [];
+      let remaining = processedWord;
+      while (remaining.length > maxChunkSize) {
+        chunks.push(remaining.slice(0, maxChunkSize));
+        remaining = remaining.slice(maxChunkSize);
+      }
+      if (remaining) chunks.push(remaining);
+      processedWord = chunks.join("\u200B");
+    }
+
+    return processedWord;
+  });
+
+  return processedWords.join(" ");
+};
+
+const CellContent = ({ children }: { children: React.ReactNode }) => {
+  const text = String(children || "");
+  const breakableText = makeTextBreakable(text, 12);
+
+  return (
+    <View style={styles.cellContent}>
+      <Text style={styles.tableCell}>{breakableText}</Text>
+    </View>
+  );
+};
 
 const SchoolAwardsPdf: React.FC<SchoolAwardsPdfProps> = ({ data }) => {
   const [fontsLoaded, setFontsLoaded] = useState(false);
