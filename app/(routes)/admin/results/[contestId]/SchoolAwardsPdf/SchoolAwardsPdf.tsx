@@ -200,37 +200,17 @@ interface SchoolAwardsPdfProps {
   };
 }
 
-const makeTextBreakable = (text: string, maxChunkSize: number = 12): string => {
+const makeTextBreakable = (text: string): string => {
   if (!text) return "";
 
-  // Split by spaces to handle each word separately
-  const words = text.split(" ");
-
-  const processedWords = words.map((word) => {
-    // Add break opportunity after hyphens
-    let processedWord = word.replace(/-/g, "-\u200B");
-
-    // If still a long continuous string, break it into chunks
-    if (processedWord.replace(/\u200B/g, "").length > maxChunkSize) {
-      const chunks = [];
-      let remaining = processedWord;
-      while (remaining.length > maxChunkSize) {
-        chunks.push(remaining.slice(0, maxChunkSize));
-        remaining = remaining.slice(maxChunkSize);
-      }
-      if (remaining) chunks.push(remaining);
-      processedWord = chunks.join("\u200B");
-    }
-
-    return processedWord;
-  });
-
-  return processedWords.join(" ");
+  // Only add break opportunity after hyphens
+  // Don't force break long words - let them wrap naturally
+  return text.replace(/-/g, "-\u200B");
 };
 
 const CellContent = ({ children }: { children: React.ReactNode }) => {
   const text = String(children || "");
-  const breakableText = makeTextBreakable(text, 12);
+  const breakableText = makeTextBreakable(text);
 
   return (
     <View style={styles.cellContent}>
