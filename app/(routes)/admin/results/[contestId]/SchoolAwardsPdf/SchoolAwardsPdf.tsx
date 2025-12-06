@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRightWidth: 0,
     borderBottomWidth: 0,
-    borderLeftWidth: 0, // Add this line
+    borderLeftWidth: 0, // Add this line to remove left border
   },
   tableRow: {
     flexDirection: "row",
@@ -63,7 +63,8 @@ const styles = StyleSheet.create({
     width: "7%",
     borderStyle: "solid",
     borderWidth: 1,
-    borderLeftWidth: 0,
+    borderLeftWidth: 1, // Change from 0 to 1 (add left border to first column)
+
     fontSize: 8,
     borderTopWidth: 0,
     backgroundColor: "#f0f0f0",
@@ -71,10 +72,11 @@ const styles = StyleSheet.create({
   },
   tableColHeaderLarge: {
     width: "18%",
+    borderLeftWidth: 1, // Change from 0 to 1 (add left border to first column)
+
     fontSize: 8,
     borderStyle: "solid",
     borderWidth: 1,
-    borderLeftWidth: 0,
     borderTopWidth: 0,
     backgroundColor: "#f0f0f0",
     padding: 4,
