@@ -157,6 +157,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
+    textTransform: "uppercase",
     maxWidth: "100%", // Add this
     width: "100%",
     minHeight: 15,
