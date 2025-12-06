@@ -70,9 +70,20 @@ const styles = StyleSheet.create({
     backgroundColor: "#f0f0f0",
     paddingTop: 4,
   },
+  tableColHeaderFirst: {
+    width: "7%",
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderLeftWidth: 1, // Change from 0 to 1 (add left border to first column)
+
+    fontSize: 8,
+    borderTopWidth: 0,
+    backgroundColor: "#f0f0f0",
+    paddingTop: 4,
+  },
   tableColHeaderLarge: {
     width: "18%",
-    borderLeftWidth: 0, // Change from 0 to 1 (add left border to first column)
+    borderLeftWidth: 0,
 
     fontSize: 8,
     borderStyle: "solid",
@@ -293,7 +304,7 @@ const SchoolAwardsPdf: React.FC<SchoolAwardsPdfProps> = ({ data }) => {
             <View style={styles.tableColHeaderLarge}>
               <Text style={styles.tableCellHeader}>FATHER NAME</Text>
             </View>
-            <View style={styles.tableColHeader}>
+            <View style={styles.tableColHeaderFirst}>
               <Text style={styles.tableCellHeader}>CLASS</Text>
             </View>
             <View style={styles.tableColHeaderLarge}>
