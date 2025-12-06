@@ -268,7 +268,7 @@ const SchoolAwardsPdf: React.FC<SchoolAwardsPdfProps> = ({ data }) => {
         </View>
 
         <View style={styles.table}>
-          <View style={styles.tableRow}>
+          <View style={styles.tableRow} wrap={false}>
             <View style={styles.tableColHeader}>
               <Text style={styles.tableCellHeader}>SR. NO.</Text>
             </View>
