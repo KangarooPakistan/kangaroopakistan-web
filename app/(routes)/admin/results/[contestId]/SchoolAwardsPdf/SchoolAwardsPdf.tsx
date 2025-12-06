@@ -150,6 +150,8 @@ const styles = StyleSheet.create({
     fontSize: 8,
     textAlign: "center",
     wordWrap: "break-word",
+    wordBreak: "break-word", // Add this
+    overflow: "hidden", // Add this
   },
   cellContent: {
     display: "flex",
