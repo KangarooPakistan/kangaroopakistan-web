@@ -354,7 +354,8 @@ const StudentReportPage: React.FC<{ student: StudentReport }> = ({
             : "Inventive Learning KSF - Pakistan congratulates you on your"}{" "}
           participation in the {student.constestNo}th {student.contestName}. You
           participated at
-          {getLevelWithClass(student.level)} and your results are as follows:
+          {getLevelWithClass(student.level)} level and your results are as
+          follows:
         </Text>
         <View style={styles.marksRow}>
           <View style={{ display: "flex", flexDirection: "row" }}>
