@@ -96,6 +96,15 @@ const styles = StyleSheet.create({
     borderStyle: "solid",
     borderWidth: 1,
     fontSize: 8,
+    borderLeftWidth: 0,
+    borderTopWidth: 0,
+    padding: 4,
+  },
+  tableColFirst: {
+    width: "7%",
+    borderStyle: "solid",
+    borderWidth: 1,
+    fontSize: 8,
     borderLeftWidth: 1,
     borderTopWidth: 0,
     padding: 4,
@@ -300,7 +309,7 @@ const SchoolAwardsPdf: React.FC<SchoolAwardsPdfProps> = ({ data }) => {
 
           {results.map((item, index) => (
             <View key={index} style={styles.tableRow} wrap={false}>
-              <View style={styles.tableCol}>
+              <View style={styles.tableColFirst}>
                 <CellContent>{index + 1}</CellContent>
               </View>
               <View style={styles.tableColLargeR}>
