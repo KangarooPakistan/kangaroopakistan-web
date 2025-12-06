@@ -200,17 +200,17 @@ interface SchoolAwardsPdfProps {
   };
 }
 
-const makeTextBreakable = (text: string): string => {
-  if (!text) return "";
-
-  // Only add break opportunity after hyphens
-  // Don't force break long words - let them wrap naturally
-  return text.replace(/-/g, "-\u200B");
-};
-
-const CellContent = ({ children }: { children: React.ReactNode }) => {
+const CellContent = ({
+  children,
+  allowBreak = true,
+}: {
+  children: React.ReactNode;
+  allowBreak?: boolean;
+}) => {
   const text = String(children || "");
-  const breakableText = makeTextBreakable(text);
+
+  // Only apply breaking logic if allowBreak is true
+  const breakableText = allowBreak ? text.replace(/-/g, "-\u200B") : text;
 
   return (
     <View style={styles.cellContent}>
@@ -218,7 +218,6 @@ const CellContent = ({ children }: { children: React.ReactNode }) => {
     </View>
   );
 };
-
 const SchoolAwardsPdf: React.FC<SchoolAwardsPdfProps> = ({ data }) => {
   const [fontsLoaded, setFontsLoaded] = useState(false);
 
@@ -339,7 +338,7 @@ const SchoolAwardsPdf: React.FC<SchoolAwardsPdfProps> = ({ data }) => {
                 <CellContent>{index + 1}</CellContent>
               </View>
               <View style={styles.tableColLargeR}>
-                <CellContent>{item.rollNumber}</CellContent>
+                <CellContent allowBreak={false}>{index + 1}</CellContent>
               </View>
               <View style={styles.tableColLarge}>
                 <CellContent>{item.studentName}</CellContent>
