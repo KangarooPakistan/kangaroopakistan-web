@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     width: "7%",
     borderStyle: "solid",
     borderWidth: 1,
-    borderLeftWidth: 0, // Change from 0 to 1 (add left border to first column)
+    borderLeftWidth: 1, // Change from 0 to 1 (add left border to first column)
 
     fontSize: 8,
     borderTopWidth: 0,
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     width: "7%",
     borderStyle: "solid",
     borderWidth: 1,
-    borderLeftWidth: 1, // Change from 0 to 1 (add left border to first column)
+    borderLeftWidth: 0, // Change from 0 to 1 (add left border to first column)
 
     fontSize: 8,
     borderTopWidth: 0,
