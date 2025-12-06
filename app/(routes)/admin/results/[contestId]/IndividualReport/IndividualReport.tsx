@@ -94,6 +94,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: 10,
     marginRight: 150,
+    gap: 10,
   },
   attemptedSection: {
     marginBottom: 20,
