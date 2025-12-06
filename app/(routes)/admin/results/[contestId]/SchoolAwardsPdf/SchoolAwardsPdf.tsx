@@ -83,11 +83,12 @@ const styles = StyleSheet.create({
   },
   tableColHeaderLarge: {
     width: "18%",
-    borderLeftWidth: 0,
 
     fontSize: 8,
     borderStyle: "solid",
     borderWidth: 1,
+    borderLeftWidth: 0,
+    borderRightWidth: 0,
     borderTopWidth: 0,
     backgroundColor: "#f0f0f0",
     padding: 4,
