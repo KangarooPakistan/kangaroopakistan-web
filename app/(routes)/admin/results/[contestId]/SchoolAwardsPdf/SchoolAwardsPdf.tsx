@@ -53,6 +53,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRightWidth: 0,
     borderBottomWidth: 0,
+    borderLeftWidth: 0, // Add this line
   },
   tableRow: {
     flexDirection: "row",
