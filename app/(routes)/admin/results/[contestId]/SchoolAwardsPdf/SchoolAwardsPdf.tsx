@@ -296,7 +296,7 @@ const SchoolAwardsPdf: React.FC<SchoolAwardsPdfProps> = ({ data }) => {
           </View>
 
           {results.map((item, index) => (
-            <View key={index} style={styles.tableRow}>
+            <View key={index} style={styles.tableRow} wrap={false}>
               <View style={styles.tableCol}>
                 <CellContent>{index + 1}</CellContent>
               </View>
