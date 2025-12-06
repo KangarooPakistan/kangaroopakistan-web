@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     paddingTop: 4,
   },
   tableColHeaderLarge: {
-    width: "20%",
+    width: "18%",
 
     fontSize: 8,
     borderStyle: "solid",
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   tableColLarge: {
-    width: "20%",
+    width: "18%",
     borderStyle: "solid",
     borderWidth: 1,
     fontSize: 8,
@@ -151,7 +151,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     wordWrap: "break-word",
     wordBreak: "break-word", // Add this
-    overflow: "hidden", // Add this
   },
   cellContent: {
     display: "flex",
