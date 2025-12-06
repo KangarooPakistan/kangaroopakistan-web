@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     borderStyle: "solid",
     borderWidth: 1,
     borderLeftWidth: 0,
-    borderRightWidth: 0,
+    // borderRightWidth: 0,
     borderTopWidth: 0,
     backgroundColor: "#f0f0f0",
     padding: 4,
