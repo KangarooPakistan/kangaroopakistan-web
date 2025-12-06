@@ -157,6 +157,8 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
+    maxWidth: "100%", // Add this
+    width: "100%",
     minHeight: 15,
   },
 });
@@ -209,12 +211,17 @@ const CellContent = ({
 }) => {
   const text = String(children || "");
 
-  // Only apply breaking logic if allowBreak is true
-  const breakableText = allowBreak ? text.replace(/-/g, "-\u200B") : text;
+  // If allowBreak is true and text contains hyphens, split at hyphens
+  let displayText = text;
+  if (allowBreak && text.includes("-")) {
+    // Split at hyphens and rejoin with newlines
+    const parts = text.split("-");
+    displayText = parts.join("-\n"); // Force line break after each hyphen
+  }
 
   return (
     <View style={styles.cellContent}>
-      <Text style={styles.tableCell}>{breakableText}</Text>
+      <Text style={styles.tableCell}>{displayText}</Text>
     </View>
   );
 };
@@ -338,7 +345,7 @@ const SchoolAwardsPdf: React.FC<SchoolAwardsPdfProps> = ({ data }) => {
                 <CellContent>{index + 1}</CellContent>
               </View>
               <View style={styles.tableColLargeR}>
-                <CellContent allowBreak={false}>{index + 1}</CellContent>
+                <CellContent allowBreak={false}>{item.rollNumber}</CellContent>
               </View>
               <View style={styles.tableColLarge}>
                 <CellContent>{item.studentName}</CellContent>
