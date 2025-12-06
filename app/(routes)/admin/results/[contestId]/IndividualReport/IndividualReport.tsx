@@ -357,7 +357,7 @@ const StudentReportPage: React.FC<{ student: StudentReport }> = ({
         </Text>
         <View style={styles.marksRow}>
           <View style={{ display: "flex", flexDirection: "row" }}>
-            <Text>Total Marks: </Text>
+            <Text>Total Possible Marks: </Text>
             <Text style={{ fontWeight: "extrabold" }}>
               {student.totalMarks}{" "}
             </Text>
@@ -365,6 +365,12 @@ const StudentReportPage: React.FC<{ student: StudentReport }> = ({
           <View style={{ display: "flex", flexDirection: "row" }}>
             <Text>Marks Obtained: </Text>
             <Text style={{ fontWeight: "extrabold" }}>{student.score} </Text>
+          </View>
+          <View style={{ display: "flex", flexDirection: "row" }}>
+            <Text>Percentage: </Text>
+            <Text style={{ fontWeight: "extrabold" }}>
+              {student.percentage}{" "}
+            </Text>
           </View>
         </View>
       </View>
