@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
   },
   tableColHeaderLarge: {
     width: "18%",
-    borderLeftWidth: 1, // Change from 0 to 1 (add left border to first column)
+    borderLeftWidth: 0, // Change from 0 to 1 (add left border to first column)
 
     fontSize: 8,
     borderStyle: "solid",
