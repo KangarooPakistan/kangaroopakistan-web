@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     paddingTop: 4,
   },
   tableColHeaderLarge: {
-    width: "18%",
+    width: "20%",
 
     fontSize: 8,
     borderStyle: "solid",
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   tableColLarge: {
-    width: "18%",
+    width: "20%",
     borderStyle: "solid",
     borderWidth: 1,
     fontSize: 8,
