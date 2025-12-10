@@ -55,7 +55,10 @@ const loadFontBytesOnce = async (): Promise<FontBytes> => {
     if (malayalamBoldRes.ok) {
       result.malayalamBold = await malayalamBoldRes.arrayBuffer();
     } else {
-      console.warn("Failed to fetch Malayalam Bold font:", malayalamBoldRes.status);
+      console.warn(
+        "Failed to fetch Malayalam Bold font:",
+        malayalamBoldRes.status
+      );
     }
   } catch (error) {
     console.warn("Failed to load Malayalam fonts:", error);
@@ -231,7 +234,7 @@ export async function generateStudentCertificate(
   const { width, height } = firstPage.getSize();
 
   // Left margin: ~1 inch from the left edge (PDF points: 72pt = 1 inch)
-  const leftMargin = 72;
+  const leftMargin = 360;
 
   // Prepare text values with safe defaults and proper processing
   const studentName = processTextForCapitalization(
