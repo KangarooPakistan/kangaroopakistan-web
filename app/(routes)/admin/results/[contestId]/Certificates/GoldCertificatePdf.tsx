@@ -149,9 +149,9 @@ const getStudentNameFontSize = (
 ): number => {
   const nameLength = studentNameLength || text.length;
   if (nameLength > 30) {
-    return isArabic ? 25 : 22;
+    return isArabic ? 25 : 25;
   } else {
-    return isArabic ? 25 : 30;
+    return isArabic ? 25 : 34;
   }
 };
 
@@ -162,9 +162,9 @@ const getFatherNameFontSize = (
 ): number => {
   const nameLength = studentNameLength || text.length;
   if (nameLength > 30) {
-    return isArabic ? 20 : 20;
+    return isArabic ? 20 : 22;
   } else {
-    return isArabic ? 20 : 24;
+    return isArabic ? 20 : 28;
   }
 };
 
@@ -234,7 +234,7 @@ export async function generateStudentCertificate(
   const { width, height } = firstPage.getSize();
 
   // Left margin: ~1 inch from the left edge (PDF points: 72pt = 1 inch)
-  const leftMargin = 130;
+  const leftMargin = 140;
 
   // Prepare text values with safe defaults and proper processing
   const studentName = processTextForCapitalization(
