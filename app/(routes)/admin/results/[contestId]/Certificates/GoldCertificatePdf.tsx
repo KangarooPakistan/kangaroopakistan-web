@@ -246,7 +246,12 @@ const wrapTextToLines = (
 
   for (const word of words) {
     const candidate = current ? `${current} ${word}` : word;
-    const width = measureTextWidthWithTracking(candidate, font, fontSize, tracking);
+    const width = measureTextWidthWithTracking(
+      candidate,
+      font,
+      fontSize,
+      tracking
+    );
 
     if (width <= maxWidth || !current) {
       current = candidate;
@@ -343,7 +348,7 @@ export async function generateStudentCertificate(
   const { width, height } = firstPage.getSize();
 
   // Left margin: ~1 inch from the left edge (PDF points: 72pt = 1 inch)
-  const leftMargin = 140;
+  const leftMargin = 440;
 
   // Prepare text values with safe defaults and proper processing
   const studentName = processTextForCapitalization(
