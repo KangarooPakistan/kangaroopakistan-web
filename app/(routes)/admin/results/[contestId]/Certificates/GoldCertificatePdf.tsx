@@ -347,8 +347,10 @@ export async function generateStudentCertificate(
   const firstPage = pages[0];
   const { width, height } = firstPage.getSize();
 
-  // Left margin: ~1 inch from the left edge (PDF points: 72pt = 1 inch)
-  const leftMargin = 440;
+  // Horizontal text band: left 140, right 440 (all text centered within this band)
+  const bandLeft = 140;
+  const bandRight = 440;
+  const bandCenterX = (bandLeft + bandRight) / 2; // 290
 
   // Prepare text values with safe defaults and proper processing
   const studentName = processTextForCapitalization(
@@ -406,18 +408,19 @@ export async function generateStudentCertificate(
     ? studentNameFont.widthOfTextAtSize(studentName, studentNameFontSize)
     : studentName.length * (studentNameFontSize * 0.6);
 
-  // Keep student name left-aligned at leftMargin
+  // Center student name within [bandLeft, bandRight]
+  const studentNameX = bandCenterX - studentNameWidth / 2;
   firstPage.drawText(studentName, {
-    x: leftMargin,
+    x: studentNameX,
     y: baseY,
     size: studentNameFontSize,
     font: studentNameFont,
     color: rgb(0, 0, 0),
-    maxWidth: width - leftMargin * 2,
+    maxWidth: bandRight - bandLeft,
   });
 
-  // Horizontal center of the student name text block
-  const studentNameCenterX = leftMargin + studentNameWidth / 2;
+  // Horizontal center for all subsequent text in the band
+  const studentNameCenterX = bandCenterX;
 
   // Tracking for non-student text (letter spacing)
   const bodyTracking = 0.5; // adjust between 0.5–1.0 for more/less spacing
@@ -483,7 +486,7 @@ export async function generateStudentCertificate(
 
   // 6. Draw school name (processed with special case handling)
   const schoolNameY = rollY - 25;
-  const maxSchoolWidth = width / 2; // half of the full PDF width
+  const maxSchoolWidth = bandRight - bandLeft; // constrain to the band width
 
   const schoolLines = wrapTextToLines(
     processedSchoolName,
