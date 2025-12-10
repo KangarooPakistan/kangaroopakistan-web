@@ -171,9 +171,9 @@ const getStudentNameFontSize = (
 ): number => {
   const nameLength = studentNameLength || text.length;
   if (nameLength > 30) {
-    return isArabic ? 25 : 25;
+    return isArabic ? 25 : 27;
   } else {
-    return isArabic ? 25 : 34;
+    return isArabic ? 25 : 36;
   }
 };
 
@@ -191,7 +191,7 @@ const getFatherNameFontSize = (
 };
 
 const getSchoolNameFontSize = (text: string, isArabic: boolean): number => {
-  return isArabic ? 20 : 15;
+  return isArabic ? 20 : 20;
 };
 
 // Get award template path (matching React PDF logic)
@@ -386,7 +386,7 @@ export async function generateStudentCertificate(
   firstPage.drawText(classText, {
     x: studentNameCenterX - classWidth / 2,
     y: classY,
-    size: 12,
+    size: 14,
     font: fonts.avenir || fonts.malayalam || studentNameFont,
     color: rgb(0, 0, 0),
   });
@@ -401,7 +401,7 @@ export async function generateStudentCertificate(
   firstPage.drawText(rollText, {
     x: studentNameCenterX - rollWidth / 2,
     y: rollY,
-    size: 11,
+    size: 14,
     font: fonts.avenir || fonts.malayalam || studentNameFont,
     color: rgb(0, 0, 0),
   });
