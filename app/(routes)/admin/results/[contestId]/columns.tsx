@@ -19,8 +19,10 @@ import axios from "axios";
 import { useState } from "react";
 import { pdf } from "@react-pdf/renderer";
 import { saveAs } from "file-saver";
+import JSZip from "jszip";
 import SchoolAwardsPdf from "./SchoolAwardsPdf/SchoolAwardsPdf";
 import IndividualReport from "./IndividualReport/IndividualReport";
+import { generateStudentCertificates } from "./Certificates/GoldCertificatePdf";
 
 export interface StudentReport {
   schoolName: string;
@@ -61,6 +63,22 @@ export interface StudentReport {
   };
   contestName: string;
   suffix: string;
+}
+export interface CertificateApiResponse {
+  AwardLevel: string | null;
+  class: number;
+  studentName: string | null;
+  fatherName: string | null;
+  schoolName: string | null;
+  rollNumber: string | null;
+}
+export interface StudentReportForCertificates {
+  AwardLevel: string | null;
+  class: number;
+  studentName: string | null;
+  fatherName: string | null;
+  schoolName: string | null;
+  rollNumber: string | null;
 }
 
 interface ApiResponse {
@@ -188,6 +206,49 @@ const transformResponse = (response: ApiResponse): StudentReport[] => {
     suffix: score.parsedRollNumber.suffix,
     year: score.parsedRollNumber.year,
   }));
+};
+export const transformResponseForCertificates = (
+  response: CertificateApiResponse[]
+): StudentReportForCertificates[] => {
+  console.log("Transforming certificates response:", response.length, "items");
+
+  const transformed = response
+    .filter((item, index) => {
+      if (!item) {
+        console.warn(`Filtering out null/undefined item at index ${index}`);
+        return false;
+      }
+      if (!item.studentName || item.studentName.trim() === "") {
+        console.warn(
+          `Filtering out item with empty studentName at index ${index}:`,
+          item
+        );
+        return false;
+      }
+      if (!item.rollNumber || item.rollNumber.trim() === "") {
+        console.warn(
+          `Filtering out item with empty rollNumber at index ${index}:`,
+          item
+        );
+        return false;
+      }
+      return true;
+    })
+    .map(
+      (item): StudentReportForCertificates => ({
+        AwardLevel: item.AwardLevel,
+        class: item.class,
+        studentName: item.studentName ? item.studentName.trim() : null,
+        rollNumber: item.rollNumber ? item.rollNumber.trim() : null,
+        fatherName: item.fatherName ? item.fatherName.trim() : null,
+        schoolName: item.schoolName ? item.schoolName.trim() : null,
+      })
+    );
+
+  console.log(
+    `Transformed ${transformed.length} valid certificates from ${response.length} total`
+  );
+  return transformed;
 };
 
 // Helper Functions
@@ -433,6 +494,144 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
     router.push(`/admin/results/${params.contestId}/${schoolResult.schoolId}`);
   };
 
+  const handleCertificatesWithPdfEditing = async () => {
+    setIsLoading(true);
+    try {
+      const loadingToast = toast.loading("Preparing certificates...");
+
+      const response = await axios.get<CertificateApiResponse[]>(
+        `/api/results/certificates/${params.contestId}/${schoolResult.schoolId}`
+      );
+
+      console.log("Raw certificates data:", response.data);
+      const studentResults = transformResponseForCertificates(response.data);
+      console.log("Transformed certificates data:", studentResults);
+
+      toast.update(loadingToast, {
+        render: `Generating ${studentResults.length} certificates...`,
+        type: "info",
+        isLoading: true,
+      });
+
+      const zip = new JSZip();
+      const folder = zip.folder("certificates");
+
+      // Keep track of successfully added certificates
+      let successfullyAdded = 0;
+      const failedStudents: string[] = [];
+
+      // Process in smaller chunks
+      const chunkSize = 5;
+      let processedCount = 0;
+
+      for (let i = 0; i < studentResults.length; i += chunkSize) {
+        const chunk = studentResults.slice(i, i + chunkSize);
+
+        try {
+          // Use the new PDF editing function instead of React PDF
+          const validChunk = chunk
+            .filter(
+              (student) =>
+                typeof student.rollNumber === "string" &&
+                student.rollNumber !== null
+            )
+            .map((student) => ({
+              ...student,
+              rollNumber: student.rollNumber as string,
+            }));
+          const pdfBlobs = await generateStudentCertificates(validChunk);
+
+          // Add each PDF to the ZIP with better error handling
+          for (const pdf of pdfBlobs) {
+            if (pdf.blob && pdf.studentName && pdf.blob.size > 0) {
+              const fileName = `${pdf.studentName.replace(
+                /[^a-zA-Z0-9]/g,
+                "_"
+              )}_${pdf.rollNumber}.pdf`;
+              folder?.file(fileName, pdf.blob);
+              successfullyAdded++;
+              console.log(
+                `✓ Added to ZIP: ${fileName} (${pdf.blob.size} bytes)`
+              );
+            } else {
+              console.warn(`✗ Skipping invalid PDF:`, {
+                studentName: pdf.studentName,
+                blobSize: pdf.blob?.size || 0,
+              });
+              failedStudents.push(pdf.studentName || "Unknown");
+            }
+          }
+        } catch (chunkError) {
+          console.error(
+            `Error processing chunk ${Math.floor(i / chunkSize) + 1}:`,
+            chunkError
+          );
+          // Add failed students from this chunk to the list
+          chunk.forEach((student) => {
+            if (student.studentName) {
+              failedStudents.push(student.studentName);
+            }
+          });
+        }
+
+        processedCount += chunk.length;
+        toast.update(loadingToast, {
+          render: `Processed ${processedCount} of ${studentResults.length} certificates... (${successfullyAdded} successful)`,
+          type: "info",
+          isLoading: true,
+        });
+
+        // Delay between chunks
+        await new Promise((resolve) => setTimeout(resolve, 200));
+      }
+
+      if (successfullyAdded === 0) {
+        throw new Error("No certificates were successfully generated");
+      }
+
+      toast.update(loadingToast, {
+        render: "Finalizing ZIP file...",
+        type: "info",
+        isLoading: true,
+      });
+
+      const zipContent = await zip.generateAsync({
+        type: "blob",
+        compression: "DEFLATE",
+        compressionOptions: { level: 6 },
+      });
+
+      const fileName = `Certificates_School_${schoolResult.schoolId}_Success_${successfullyAdded}_Total_${studentResults.length}.zip`;
+      saveAs(zipContent, fileName);
+
+      // Show detailed completion message
+      let message = `Successfully generated ${successfullyAdded} of ${studentResults.length} certificates!`;
+      if (failedStudents.length > 0) {
+        message += ` Failed: ${failedStudents.length} (check console for details)`;
+        console.log("Failed students:", failedStudents);
+      }
+
+      toast.update(loadingToast, {
+        render: message,
+        type: failedStudents.length > 0 ? "warning" : "success",
+        isLoading: false,
+        autoClose: 8000,
+      });
+    } catch (error) {
+      console.error("Certificate generation failed:", error);
+      toast.error(
+        `Failed to generate certificates: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`,
+        {
+          autoClose: 5000,
+        }
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <>
       <div className="hidden md:block">
@@ -476,7 +675,10 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
               onClick={async () => {
                 try {
                   setIsLoading(true);
-                  await axios.post(`/api/results/hold/${params.contestId}/${schoolResult.schoolId}`, { hold: true });
+                  await axios.post(
+                    `/api/results/hold/${params.contestId}/${schoolResult.schoolId}`,
+                    { hold: true }
+                  );
                   toast.success("Results held for this school.");
                 } catch (e) {
                   toast.error("Failed to hold results.");
@@ -488,11 +690,22 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
               {isLoading ? "Processing..." : "Hold Result (Hide from User)"}
             </DropdownMenuItem>
             <DropdownMenuItem
+              className="border-y-2 border-solid bg-blue-800 text-white"
+              onClick={handleCertificatesWithPdfEditing}
+              disabled={isLoading}>
+              {isLoading
+                ? "Downloading..."
+                : "Download Certificates - With PDF Editing"}
+            </DropdownMenuItem>
+            <DropdownMenuItem
               className="border-y-2 border-solid"
               onClick={async () => {
                 try {
                   setIsLoading(true);
-                  await axios.post(`/api/results/hold/${params.contestId}/${schoolResult.schoolId}`, { hold: false });
+                  await axios.post(
+                    `/api/results/hold/${params.contestId}/${schoolResult.schoolId}`,
+                    { hold: false }
+                  );
                   toast.success("Results unheld for this school.");
                 } catch (e) {
                   toast.error("Failed to unhold results.");
