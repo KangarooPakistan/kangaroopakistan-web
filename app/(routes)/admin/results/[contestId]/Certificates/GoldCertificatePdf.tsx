@@ -186,7 +186,7 @@ const getFatherNameFontSize = (
   if (nameLength > 30) {
     return isArabic ? 20 : 22;
   } else {
-    return isArabic ? 20 : 28;
+    return isArabic ? 20 : 24;
   }
 };
 
@@ -339,7 +339,7 @@ export async function generateStudentCertificate(
 
   // 2. Draw "S/o, D/o" text - Reduced gap from student name
   const soDoY = baseY - (isStudentNameArabic ? 25 : 25);
-  const soDoText = "S/o , D/o";
+  const soDoText = "S/o | D/o";
   const soDoWidth = fonts.avenir
     ? fonts.avenir.widthOfTextAtSize(soDoText, 12)
     : soDoText.length * (12 * 0.6);
