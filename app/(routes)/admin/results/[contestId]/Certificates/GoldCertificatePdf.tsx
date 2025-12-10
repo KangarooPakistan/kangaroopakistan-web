@@ -17,21 +17,8 @@ const loadCustomFonts = async (pdfDoc: PDFDocument) => {
 
   const fonts: { [key: string]: any } = {};
 
-  try {
-    // Load Arabic font - Almarai (matching react-pdf)
-    const almaraiRegularBytes = await fetch(
-      "/fonts/IBM/Almarai-Regular.ttf"
-    ).then((res) => res.arrayBuffer());
-    fonts.almaraiRegular = await pdfDoc.embedFont(almaraiRegularBytes);
-
-    const almaraiBoldBytes = await fetch("/fonts/IBM/Almarai-Bold.ttf").then(
-      (res) => res.arrayBuffer()
-    );
-    fonts.almaraiBold = await pdfDoc.embedFont(almaraiBoldBytes);
-  } catch (error) {
-    console.warn("Failed to load Almarai fonts:", error);
-  }
-
+  // Almarai (Arabic) fonts are no longer used for "Download Certificates - With PDF Editing",
+  // so we intentionally skip loading them to improve performance and reduce network requests.
   try {
     // Load English decorative font - Snell Roundhand (matching react-pdf)
     const snellBytes = await fetch(
