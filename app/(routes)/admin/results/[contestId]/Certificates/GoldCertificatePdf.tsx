@@ -205,30 +205,28 @@ export async function generateStudentCertificate(
   const className = student.class || 0;
   const rollNumber = student.rollNumber || "N/A";
 
-  // Check if text is Arabic
-  const isStudentNameArabic = isArabicText(studentName);
-  const isFatherNameArabic = isArabicText(fatherName);
-  const isSchoolNameArabicText = isSchoolNameArabic(schoolName);
+  // For "Download Certificates - With PDF Editing" we only expect English text,
+  // so skip Arabic text detection and always treat content as English.
+  const isStudentNameArabic = false;
+  const isFatherNameArabic = false;
+  const isSchoolNameArabicText = false;
 
   // Process school name
   const processedSchoolName = processSchoolNameText(schoolName);
 
-  // Calculate font sizes
+  // Calculate font sizes assuming English layout
   const studentNameLength = studentName.length;
   const studentNameFontSize = getStudentNameFontSize(
     studentName,
-    isStudentNameArabic,
+    false,
     studentNameLength
   );
   const fatherNameFontSize = getFatherNameFontSize(
     fatherName,
-    isFatherNameArabic,
+    false,
     studentNameLength
   );
-  const schoolNameFontSize = getSchoolNameFontSize(
-    schoolName,
-    isSchoolNameArabicText
-  );
+  const schoolNameFontSize = getSchoolNameFontSize(schoolName, false);
 
   // Determine if this is a participation certificate and set proper top position
   const isParticipationCertificate =
