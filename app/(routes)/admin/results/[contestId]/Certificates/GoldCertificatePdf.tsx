@@ -194,6 +194,83 @@ const getSchoolNameFontSize = (text: string, isArabic: boolean): number => {
   return isArabic ? 20 : 20;
 };
 
+// Text measurement and drawing helpers for letter spacing and wrapping
+const measureTextWidthWithTracking = (
+  text: string,
+  font: any,
+  fontSize: number,
+  tracking: number
+) => {
+  if (!font) {
+    return text.length * (fontSize * 0.6 + tracking);
+  }
+  const baseWidth = font.widthOfTextAtSize(text, fontSize);
+  const extra = Math.max(0, text.length - 1) * tracking;
+  return baseWidth + extra;
+};
+
+const drawCenteredTextWithTracking = (
+  page: any,
+  text: string,
+  options: {
+    centerX: number;
+    y: number;
+    font: any;
+    size: number;
+    color: any;
+    tracking: number;
+  }
+) => {
+  const { centerX, y, font, size, color, tracking } = options;
+  const totalWidth = measureTextWidthWithTracking(text, font, size, tracking);
+  let x = centerX - totalWidth / 2;
+
+  for (const ch of text) {
+    const w = font ? font.widthOfTextAtSize(ch, size) : size * 0.6;
+    page.drawText(ch, { x, y, size, font, color });
+    x += w + tracking;
+  }
+};
+
+const wrapTextToLines = (
+  text: string,
+  font: any,
+  fontSize: number,
+  maxWidth: number,
+  tracking: number,
+  maxLines: number
+): string[] => {
+  const words = text.split(/\s+/).filter(Boolean);
+  const lines: string[] = [];
+  let current = "";
+
+  for (const word of words) {
+    const candidate = current ? `${current} ${word}` : word;
+    const width = measureTextWidthWithTracking(candidate, font, fontSize, tracking);
+
+    if (width <= maxWidth || !current) {
+      current = candidate;
+    } else {
+      lines.push(current);
+      current = word;
+      if (lines.length === maxLines - 1) {
+        // Last allowed line; put all remaining words here
+        break;
+      }
+    }
+  }
+
+  if (current) {
+    if (lines.length < maxLines) {
+      lines.push(current);
+    } else {
+      lines[lines.length - 1] = `${lines[lines.length - 1]} ${current}`;
+    }
+  }
+
+  return lines;
+};
+
 // Get award template path (matching React PDF logic)
 const getAwardTemplatePath = (
   awardLevel: string | null | undefined
@@ -337,19 +414,20 @@ export async function generateStudentCertificate(
   // Horizontal center of the student name text block
   const studentNameCenterX = leftMargin + studentNameWidth / 2;
 
+  // Tracking for non-student text (letter spacing)
+  const bodyTracking = 0.5; // adjust between 0.5–1.0 for more/less spacing
+
   // 2. Draw "S/o, D/o" text - Reduced gap from student name
   const soDoY = baseY - (isStudentNameArabic ? 25 : 25);
   const soDoText = "S/o | D/o";
-  const soDoWidth = fonts.avenir
-    ? fonts.avenir.widthOfTextAtSize(soDoText, 12)
-    : soDoText.length * (12 * 0.6);
 
-  firstPage.drawText(soDoText, {
-    x: studentNameCenterX - soDoWidth / 2,
+  drawCenteredTextWithTracking(firstPage, soDoText, {
+    centerX: studentNameCenterX,
     y: soDoY,
-    size: 12,
     font: fonts.avenir || fonts.malayalam || studentNameFont,
+    size: 12,
     color: rgb(0, 0, 0),
+    tracking: bodyTracking,
   });
 
   // 3. Draw father name - KEEP ORIGINAL CASE (lowercase as in React PDF SmartText2)
@@ -363,62 +441,66 @@ export async function generateStudentCertificate(
   };
   const fatherNameLowercase = toTitleCase(fatherName); // Convert to lowercase as in original
 
-  const fatherNameWidth = fatherNameFont
-    ? fatherNameFont.widthOfTextAtSize(fatherNameLowercase, fatherNameFontSize)
-    : fatherNameLowercase.length * (fatherNameFontSize * 0.6);
-
-  firstPage.drawText(fatherNameLowercase, {
-    x: studentNameCenterX - fatherNameWidth / 2,
+  drawCenteredTextWithTracking(firstPage, fatherNameLowercase, {
+    centerX: studentNameCenterX,
     y: fatherNameY,
-    size: fatherNameFontSize,
     font: fatherNameFont,
+    size: fatherNameFontSize,
     color: rgb(0, 0, 0),
-    maxWidth: width - leftMargin * 2,
+    tracking: bodyTracking,
   });
 
   // 4. Draw class information
   const classY = fatherNameY - (isFatherNameArabic ? 25 : 25);
   const classText = `Year / Grade ${className}`;
-  const classWidth = fonts.avenir
-    ? fonts.avenir.widthOfTextAtSize(classText, 12)
-    : classText.length * (12 * 0.6);
 
-  firstPage.drawText(classText, {
-    x: studentNameCenterX - classWidth / 2,
+  drawCenteredTextWithTracking(firstPage, classText, {
+    centerX: studentNameCenterX,
     y: classY,
-    size: 14,
     font: fonts.avenir || fonts.malayalam || studentNameFont,
+    size: 14,
     color: rgb(0, 0, 0),
+    tracking: bodyTracking,
   });
 
   // 5. Draw roll number
   const rollY = classY - 15;
   const rollText = `Roll # ${rollNumber}`;
-  const rollWidth = fonts.avenir
-    ? fonts.avenir.widthOfTextAtSize(rollText, 11)
-    : rollText.length * (11 * 0.6);
 
-  firstPage.drawText(rollText, {
-    x: studentNameCenterX - rollWidth / 2,
+  drawCenteredTextWithTracking(firstPage, rollText, {
+    centerX: studentNameCenterX,
     y: rollY,
-    size: 14,
     font: fonts.avenir || fonts.malayalam || studentNameFont,
+    size: 14,
     color: rgb(0, 0, 0),
+    tracking: bodyTracking,
   });
 
   // 6. Draw school name (processed with special case handling)
   const schoolNameY = rollY - 25;
-  const schoolNameWidth = schoolNameFont
-    ? schoolNameFont.widthOfTextAtSize(processedSchoolName, schoolNameFontSize)
-    : processedSchoolName.length * (schoolNameFontSize * 0.6);
+  const maxSchoolWidth = width / 2; // half of the full PDF width
 
-  firstPage.drawText(processedSchoolName, {
-    x: studentNameCenterX - schoolNameWidth / 2,
-    y: schoolNameY,
-    size: schoolNameFontSize,
-    font: schoolNameFont,
-    color: rgb(0, 0, 0),
-    maxWidth: width - leftMargin * 2,
+  const schoolLines = wrapTextToLines(
+    processedSchoolName,
+    schoolNameFont,
+    schoolNameFontSize,
+    maxSchoolWidth,
+    bodyTracking,
+    2 // max 2 lines
+  );
+
+  const schoolLineHeight = schoolNameFontSize + 2;
+
+  schoolLines.forEach((line, index) => {
+    const lineY = schoolNameY - index * schoolLineHeight;
+    drawCenteredTextWithTracking(firstPage, line, {
+      centerX: studentNameCenterX,
+      y: lineY,
+      font: schoolNameFont,
+      size: schoolNameFontSize,
+      color: rgb(0, 0, 0),
+      tracking: bodyTracking,
+    });
   });
 
   return await pdfDoc.save();
