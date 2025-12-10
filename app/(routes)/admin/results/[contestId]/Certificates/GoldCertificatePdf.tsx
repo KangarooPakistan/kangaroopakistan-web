@@ -18,6 +18,7 @@ type FontBytes = {
   snell?: ArrayBuffer;
   malayalam?: ArrayBuffer;
   malayalamBold?: ArrayBuffer;
+  avenir?: ArrayBuffer;
 };
 
 let fontBytesCache: FontBytes | null = null;
@@ -42,7 +43,7 @@ const loadFontBytesOnce = async (): Promise<FontBytes> => {
     console.warn("Failed to load Snell Roundhand font:", error);
   }
 
-  // Load Malayalam fonts (matching react-pdf)
+  // Load Malayalam fonts (kept for fallback only)
   try {
     const malayalamRes = await fetch("/fonts/malayalam-mn.ttf");
     if (malayalamRes.ok) {
@@ -62,6 +63,18 @@ const loadFontBytesOnce = async (): Promise<FontBytes> => {
     }
   } catch (error) {
     console.warn("Failed to load Malayalam fonts:", error);
+  }
+
+  // Load Avenir font for all non-student-name text
+  try {
+    const avenirRes = await fetch("/fonts/Avenir/Avenir Book.ttf");
+    if (avenirRes.ok) {
+      result.avenir = await avenirRes.arrayBuffer();
+    } else {
+      console.warn("Failed to fetch Avenir font:", avenirRes.status);
+    }
+  } catch (error) {
+    console.warn("Failed to load Avenir font:", error);
   }
 
   fontBytesCache = result;
@@ -92,6 +105,15 @@ const loadCustomFonts = async (pdfDoc: PDFDocument) => {
     }
   } catch (error) {
     console.warn("Failed to embed Malayalam fonts:", error);
+  }
+
+  // Embed Avenir (body) font
+  try {
+    if (fontBytes.avenir) {
+      fonts.avenir = await pdfDoc.embedFont(fontBytes.avenir);
+    }
+  } catch (error) {
+    console.warn("Failed to embed Avenir font:", error);
   }
 
   return fonts;
@@ -292,13 +314,10 @@ export async function generateStudentCertificate(
     ? fonts.almaraiBold || fonts.malayalamBold
     : fonts.snell || fonts.malayalamBold;
 
-  const fatherNameFont = isFatherNameArabic
-    ? fonts.almaraiBold || fonts.malayalamBold
-    : fonts.snell || fonts.malayalamBold;
+  // Student name keeps using Snell; all other text uses Avenir (fallback to Malayalam)
+  const fatherNameFont = fonts.avenir || fonts.malayalamBold || fonts.malayalam;
 
-  const schoolNameFont = isSchoolNameArabicText
-    ? fonts.almaraiBold || fonts.malayalamBold
-    : fonts.malayalamBold || fonts.malayalam;
+  const schoolNameFont = fonts.avenir || fonts.malayalamBold || fonts.malayalam;
 
   // 1. Draw student name (processed with title case and "II" handling)
   const studentNameWidth = studentNameFont
@@ -317,15 +336,15 @@ export async function generateStudentCertificate(
   // 2. Draw "S/o, D/o" text - Reduced gap from student name
   const soDoY = baseY - (isStudentNameArabic ? 25 : 25);
   const soDoText = "S/o , D/o";
-  const soDoWidth = fonts.malayalam
-    ? fonts.malayalam.widthOfTextAtSize(soDoText, 12)
+  const soDoWidth = fonts.avenir
+    ? fonts.avenir.widthOfTextAtSize(soDoText, 12)
     : soDoText.length * (12 * 0.6);
 
   firstPage.drawText(soDoText, {
-    x: leftMargin + 150,
+    x: leftMargin,
     y: soDoY,
     size: 12,
-    font: fonts.malayalam || studentNameFont,
+    font: fonts.avenir || fonts.malayalam || studentNameFont,
     color: rgb(0, 0, 0),
   });
 
@@ -356,30 +375,30 @@ export async function generateStudentCertificate(
   // 4. Draw class information
   const classY = fatherNameY - (isFatherNameArabic ? 25 : 25);
   const classText = `Year / Grade ${className}`;
-  const classWidth = fonts.malayalam
-    ? fonts.malayalam.widthOfTextAtSize(classText, 12)
+  const classWidth = fonts.avenir
+    ? fonts.avenir.widthOfTextAtSize(classText, 12)
     : classText.length * (12 * 0.6);
 
   firstPage.drawText(classText, {
     x: leftMargin,
     y: classY,
     size: 12,
-    font: fonts.malayalam || studentNameFont,
+    font: fonts.avenir || fonts.malayalam || studentNameFont,
     color: rgb(0, 0, 0),
   });
 
   // 5. Draw roll number
   const rollY = classY - 15;
   const rollText = `Roll # ${rollNumber}`;
-  const rollWidth = fonts.malayalam
-    ? fonts.malayalam.widthOfTextAtSize(rollText, 11)
+  const rollWidth = fonts.avenir
+    ? fonts.avenir.widthOfTextAtSize(rollText, 11)
     : rollText.length * (11 * 0.6);
 
   firstPage.drawText(rollText, {
     x: leftMargin,
     y: rollY,
     size: 11,
-    font: fonts.malayalam || studentNameFont,
+    font: fonts.avenir || fonts.malayalam || studentNameFont,
     color: rgb(0, 0, 0),
   });
 
