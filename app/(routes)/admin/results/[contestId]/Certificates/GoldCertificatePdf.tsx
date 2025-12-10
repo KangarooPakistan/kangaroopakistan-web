@@ -416,7 +416,6 @@ export async function generateStudentCertificate(
     size: studentNameFontSize,
     font: studentNameFont,
     color: rgb(0, 0, 0),
-    maxWidth: bandRight - bandLeft,
   });
 
   // Horizontal center for all subsequent text in the band
