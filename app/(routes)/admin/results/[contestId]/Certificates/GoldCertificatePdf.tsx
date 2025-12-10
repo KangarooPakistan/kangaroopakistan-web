@@ -11,37 +11,84 @@ export type StudentReportForCertificates = {
   AwardLevel: string | null | undefined;
 };
 
+// Load font bytes once per browser session to avoid repeated network fetches
+// for every single certificate. We still need to embed fonts into each PDF
+// document separately, but the font *data* is cached.
+type FontBytes = {
+  snell?: ArrayBuffer;
+  malayalam?: ArrayBuffer;
+  malayalamBold?: ArrayBuffer;
+};
+
+let fontBytesCache: FontBytes | null = null;
+
+const loadFontBytesOnce = async (): Promise<FontBytes> => {
+  if (fontBytesCache) return fontBytesCache;
+
+  const result: FontBytes = {};
+
+  // Almarai (Arabic) fonts are no longer used for "Download Certificates - With PDF Editing",
+  // so we intentionally skip loading them to improve performance and reduce network requests.
+
+  // Load English decorative font - Snell Roundhand (matching react-pdf)
+  try {
+    const snellRes = await fetch("/fonts/Snell-Roundhand-Bold-Script.otf");
+    if (snellRes.ok) {
+      result.snell = await snellRes.arrayBuffer();
+    } else {
+      console.warn("Failed to fetch Snell Roundhand font:", snellRes.status);
+    }
+  } catch (error) {
+    console.warn("Failed to load Snell Roundhand font:", error);
+  }
+
+  // Load Malayalam fonts (matching react-pdf)
+  try {
+    const malayalamRes = await fetch("/fonts/malayalam-mn.ttf");
+    if (malayalamRes.ok) {
+      result.malayalam = await malayalamRes.arrayBuffer();
+    } else {
+      console.warn("Failed to fetch Malayalam font:", malayalamRes.status);
+    }
+
+    const malayalamBoldRes = await fetch("/fonts/malayalam-mn-bold.ttf");
+    if (malayalamBoldRes.ok) {
+      result.malayalamBold = await malayalamBoldRes.arrayBuffer();
+    } else {
+      console.warn("Failed to fetch Malayalam Bold font:", malayalamBoldRes.status);
+    }
+  } catch (error) {
+    console.warn("Failed to load Malayalam fonts:", error);
+  }
+
+  fontBytesCache = result;
+  return result;
+};
+
 // Load custom fonts for PDF-lib (matching your React PDF fonts)
 const loadCustomFonts = async (pdfDoc: PDFDocument) => {
   pdfDoc.registerFontkit(fontkit);
 
   const fonts: { [key: string]: any } = {};
+  const fontBytes = await loadFontBytesOnce();
 
-  // Almarai (Arabic) fonts are no longer used for "Download Certificates - With PDF Editing",
-  // so we intentionally skip loading them to improve performance and reduce network requests.
   try {
-    // Load English decorative font - Snell Roundhand (matching react-pdf)
-    const snellBytes = await fetch(
-      "/fonts/Snell-Roundhand-Bold-Script.otf"
-    ).then((res) => res.arrayBuffer());
-    fonts.snell = await pdfDoc.embedFont(snellBytes);
+    if (fontBytes.snell) {
+      fonts.snell = await pdfDoc.embedFont(fontBytes.snell);
+    }
   } catch (error) {
-    console.warn("Failed to load Snell Roundhand font:", error);
+    console.warn("Failed to embed Snell Roundhand font:", error);
   }
 
   try {
-    // Load Malayalam font (matching react-pdf)
-    const malayalamBytes = await fetch("/fonts/malayalam-mn.ttf").then((res) =>
-      res.arrayBuffer()
-    );
-    fonts.malayalam = await pdfDoc.embedFont(malayalamBytes);
-
-    const malayalamBoldBytes = await fetch("/fonts/malayalam-mn-bold.ttf").then(
-      (res) => res.arrayBuffer()
-    );
-    fonts.malayalamBold = await pdfDoc.embedFont(malayalamBoldBytes);
+    if (fontBytes.malayalam) {
+      fonts.malayalam = await pdfDoc.embedFont(fontBytes.malayalam);
+    }
+    if (fontBytes.malayalamBold) {
+      fonts.malayalamBold = await pdfDoc.embedFont(fontBytes.malayalamBold);
+    }
   } catch (error) {
-    console.warn("Failed to load Malayalam fonts:", error);
+    console.warn("Failed to embed Malayalam fonts:", error);
   }
 
   return fonts;
