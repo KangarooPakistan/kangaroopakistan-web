@@ -67,7 +67,7 @@ const loadFontBytesOnce = async (): Promise<FontBytes> => {
 
   // Load Avenir font for all non-student-name text
   try {
-    const avenirRes = await fetch("/fonts/Avenir/Avenir Regular.ttf");
+    const avenirRes = await fetch("/fonts/Avenir/Avenir Book.ttf");
     if (avenirRes.ok) {
       result.avenir = await avenirRes.arrayBuffer();
     } else {
