@@ -183,31 +183,41 @@ const getAwardTemplatePath = (
     case "GOLD":
       return "/templates/gold_award.pdf";
     case "SILVER":
-      return "/templates/gold_award.pdf";
+      return "/templates/silver_award.pdf";
     case "BRONZE":
       return "/templates/bronze_award.pdf";
     case "THREE_STAR":
-      return "/templates/gold_award.pdf";
+      return "/templates/three_star_award.pdf";
     case "TWO_STAR":
-      return "/templates/bronze_award.pdf";
+      return "/templates/two_star_award.pdf";
     case "ONE_STAR":
-      return "/templates/bronze_award.pdf";
+      return "/templates/one_star_award.pdf";
     case "PARTICIPATION":
-      return "/templates/bronze_award.pdf";
+      return "/templates/participation_award.pdf";
     default:
       return "/templates/participation_award.pdf";
   }
 };
 
-// Load certificate template
+// Cache certificate template bytes per template path so we don't re-download
+// the same PDF for every student or repeated "Download Certificates" clicks.
+const templateCache: Record<string, Uint8Array> = {};
+
 const loadCertificateTemplate = async (
   templatePath: string
 ): Promise<Uint8Array> => {
+  if (templateCache[typeof templatePath === "string" ? templatePath : ""]) {
+    return templateCache[templatePath];
+  }
+
   const response = await fetch(templatePath);
   if (!response.ok) {
     throw new Error(`Failed to load certificate template: ${templatePath}`);
   }
-  return new Uint8Array(await response.arrayBuffer());
+
+  const bytes = new Uint8Array(await response.arrayBuffer());
+  templateCache[templatePath] = bytes;
+  return bytes;
 };
 
 // Generate individual certificate
