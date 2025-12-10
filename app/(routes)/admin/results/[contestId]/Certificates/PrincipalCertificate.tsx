@@ -259,7 +259,7 @@ export async function generatePrincipalCertificates(
         principal,
         templateBytes
       );
-      const blob = new Blob([pdfBytes as Uint8Array<ArrayBuffer>], {
+      const blob = new Blob([new Uint8Array(pdfBytes)], {
         type: "application/pdf",
       });
 
