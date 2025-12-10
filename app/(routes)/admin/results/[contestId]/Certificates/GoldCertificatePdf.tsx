@@ -234,7 +234,7 @@ export async function generateStudentCertificate(
   const { width, height } = firstPage.getSize();
 
   // Left margin: ~1 inch from the left edge (PDF points: 72pt = 1 inch)
-  const leftMargin = 360;
+  const leftMargin = 150;
 
   // Prepare text values with safe defaults and proper processing
   const studentName = processTextForCapitalization(
