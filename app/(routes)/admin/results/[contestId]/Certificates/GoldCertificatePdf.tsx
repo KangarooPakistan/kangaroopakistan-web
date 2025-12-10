@@ -183,6 +183,9 @@ export async function generateStudentCertificate(
   const firstPage = pages[0];
   const { width, height } = firstPage.getSize();
 
+  // Left margin: ~1 inch from the left edge (PDF points: 72pt = 1 inch)
+  const leftMargin = 72;
+
   // Prepare text values with safe defaults and proper processing
   const studentName = processTextForCapitalization(
     student.studentName || "Student Name"
@@ -243,12 +246,12 @@ export async function generateStudentCertificate(
     : studentName.length * (studentNameFontSize * 0.6);
 
   firstPage.drawText(studentName, {
-    x: (width - studentNameWidth) / 2,
+    x: leftMargin,
     y: baseY,
     size: studentNameFontSize,
     font: studentNameFont,
     color: rgb(0, 0, 0),
-    maxWidth: width - 100,
+    maxWidth: width - leftMargin * 2,
   });
 
   // 2. Draw "S/o, D/o" text - Reduced gap from student name
@@ -259,7 +262,7 @@ export async function generateStudentCertificate(
     : soDoText.length * (12 * 0.6);
 
   firstPage.drawText(soDoText, {
-    x: (width - soDoWidth) / 2,
+    x: leftMargin,
     y: soDoY,
     size: 12,
     font: fonts.malayalam || studentNameFont,
@@ -282,12 +285,12 @@ export async function generateStudentCertificate(
     : fatherNameLowercase.length * (fatherNameFontSize * 0.6);
 
   firstPage.drawText(fatherNameLowercase, {
-    x: (width - fatherNameWidth) / 2,
+    x: leftMargin,
     y: fatherNameY,
     size: fatherNameFontSize,
     font: fatherNameFont,
     color: rgb(0, 0, 0),
-    maxWidth: width - 100,
+    maxWidth: width - leftMargin * 2,
   });
 
   // 4. Draw class information
@@ -298,7 +301,7 @@ export async function generateStudentCertificate(
     : classText.length * (12 * 0.6);
 
   firstPage.drawText(classText, {
-    x: (width - classWidth) / 2,
+    x: leftMargin,
     y: classY,
     size: 12,
     font: fonts.malayalam || studentNameFont,
@@ -313,7 +316,7 @@ export async function generateStudentCertificate(
     : rollText.length * (11 * 0.6);
 
   firstPage.drawText(rollText, {
-    x: (width - rollWidth) / 2,
+    x: leftMargin,
     y: rollY,
     size: 11,
     font: fonts.malayalam || studentNameFont,
@@ -327,12 +330,12 @@ export async function generateStudentCertificate(
     : processedSchoolName.length * (schoolNameFontSize * 0.6);
 
   firstPage.drawText(processedSchoolName, {
-    x: (width - schoolNameWidth) / 2,
+    x: leftMargin,
     y: schoolNameY,
     size: schoolNameFontSize,
     font: schoolNameFont,
     color: rgb(0, 0, 0),
-    maxWidth: width - 100,
+    maxWidth: width - leftMargin * 2,
   });
 
   return await pdfDoc.save();
