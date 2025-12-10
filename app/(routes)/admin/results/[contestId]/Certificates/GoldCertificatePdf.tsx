@@ -324,6 +324,7 @@ export async function generateStudentCertificate(
     ? studentNameFont.widthOfTextAtSize(studentName, studentNameFontSize)
     : studentName.length * (studentNameFontSize * 0.6);
 
+  // Keep student name left-aligned at leftMargin
   firstPage.drawText(studentName, {
     x: leftMargin,
     y: baseY,
@@ -333,6 +334,9 @@ export async function generateStudentCertificate(
     maxWidth: width - leftMargin * 2,
   });
 
+  // Horizontal center of the student name text block
+  const studentNameCenterX = leftMargin + studentNameWidth / 2;
+
   // 2. Draw "S/o, D/o" text - Reduced gap from student name
   const soDoY = baseY - (isStudentNameArabic ? 25 : 25);
   const soDoText = "S/o , D/o";
@@ -341,7 +345,7 @@ export async function generateStudentCertificate(
     : soDoText.length * (12 * 0.6);
 
   firstPage.drawText(soDoText, {
-    x: leftMargin,
+    x: studentNameCenterX - soDoWidth / 2,
     y: soDoY,
     size: 12,
     font: fonts.avenir || fonts.malayalam || studentNameFont,
@@ -364,7 +368,7 @@ export async function generateStudentCertificate(
     : fatherNameLowercase.length * (fatherNameFontSize * 0.6);
 
   firstPage.drawText(fatherNameLowercase, {
-    x: leftMargin,
+    x: studentNameCenterX - fatherNameWidth / 2,
     y: fatherNameY,
     size: fatherNameFontSize,
     font: fatherNameFont,
@@ -380,7 +384,7 @@ export async function generateStudentCertificate(
     : classText.length * (12 * 0.6);
 
   firstPage.drawText(classText, {
-    x: leftMargin,
+    x: studentNameCenterX - classWidth / 2,
     y: classY,
     size: 12,
     font: fonts.avenir || fonts.malayalam || studentNameFont,
@@ -395,7 +399,7 @@ export async function generateStudentCertificate(
     : rollText.length * (11 * 0.6);
 
   firstPage.drawText(rollText, {
-    x: leftMargin,
+    x: studentNameCenterX - rollWidth / 2,
     y: rollY,
     size: 11,
     font: fonts.avenir || fonts.malayalam || studentNameFont,
@@ -409,7 +413,7 @@ export async function generateStudentCertificate(
     : processedSchoolName.length * (schoolNameFontSize * 0.6);
 
   firstPage.drawText(processedSchoolName, {
-    x: leftMargin,
+    x: studentNameCenterX - schoolNameWidth / 2,
     y: schoolNameY,
     size: schoolNameFontSize,
     font: schoolNameFont,
