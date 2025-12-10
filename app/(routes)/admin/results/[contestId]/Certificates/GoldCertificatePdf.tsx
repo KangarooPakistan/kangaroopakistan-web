@@ -274,7 +274,7 @@ export async function generateStudentCertificate(
     "/templates/participation_award.pdf";
 
   // FIXED: Different top positions for participation vs other certificates
-  const topPosition = isParticipationCertificate ? 280 : 270;
+  const topPosition = isParticipationCertificate ? 290 : 280;
   const baseY = height - topPosition;
 
   // Select fonts (matching React PDF font selection)
@@ -312,7 +312,7 @@ export async function generateStudentCertificate(
     : soDoText.length * (12 * 0.6);
 
   firstPage.drawText(soDoText, {
-    x: leftMargin,
+    x: leftMargin + 150,
     y: soDoY,
     size: 12,
     font: fonts.malayalam || studentNameFont,
