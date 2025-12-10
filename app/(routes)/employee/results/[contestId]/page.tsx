@@ -89,18 +89,17 @@ const Results = () => {
         );
         console.log(contestData);
         setContestName(contestData.data.name);
-        const data = await axios.get(
-          `/api/results/fetchresults/${params.contestId}`
-        );
+
+        // Only fetch aggregated school data for the table on initial load.
+        // The full results list (which can be 18k+ rows) is fetched lazily
+        // only when needed for Excel export, to keep initial page load fast.
         const resp = await axios.get(
           `/api/results/getschoolsdata/${params.contestId}`
         );
         setSchoolData(resp.data);
-        setResult(data.data);
         setLoadData(false);
         console.log("resp");
         console.log(resp);
-        console.log(data);
 
         toast.success("🦄 Table data fetched successfully", {
           position: "bottom-center",
@@ -113,7 +112,8 @@ const Results = () => {
           theme: "light",
         });
       } catch (error: any) {
-        toast.error(" " + error.response.data.message, {
+        console.error(error);
+        toast.error(" " + (error.response?.data?.message || "Failed to load data"), {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -126,7 +126,7 @@ const Results = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [params.contestId]);
 
   async function generatePdfBlob(data: Result[], winnerType: string) {
     console.log(data);
@@ -265,10 +265,27 @@ const Results = () => {
 
   const handleExcel = async () => {
     try {
+      setIsLoading(true);
+
+      // Lazily load heavy results only when Excel export is requested.
+      let resultsData: Result[] = result;
+      if (!resultsData || resultsData.length === 0) {
+        const data = await axios.get<Result[]>(
+          `/api/results/fetchresults/${params.contestId}`
+        );
+        resultsData = data.data;
+        setResult(resultsData);
+      }
+
       console.log(schoolData);
-      console.log(result);
-      downloadExcel(schoolData, result);
-    } catch (error) {}
+      console.log(resultsData);
+      downloadExcel(schoolData, resultsData);
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to generate Excel sheet");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleCount = async () => {
