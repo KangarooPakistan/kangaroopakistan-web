@@ -240,7 +240,6 @@ const drawCenteredTextWithTracking = (
     x += w + tracking;
   }
 };
-
 const wrapTextToLines = (
   text: string,
   font: any,
@@ -253,7 +252,8 @@ const wrapTextToLines = (
   const lines: string[] = [];
   let current = "";
 
-  for (const word of words) {
+  for (let i = 0; i < words.length; i++) {
+    const word = words[i];
     const candidate = current ? `${current} ${word}` : word;
     const width = measureTextWidthWithTracking(
       candidate,
@@ -265,26 +265,29 @@ const wrapTextToLines = (
     if (width <= maxWidth || !current) {
       current = candidate;
     } else {
+      // Current line is full, save it
       lines.push(current);
-      current = word;
-      if (lines.length === maxLines - 1) {
-        // Last allowed line; put all remaining words here
+
+      // Check if we're at the last allowed line
+      if (lines.length === maxLines) {
+        // Put all remaining words on this last line (even if it overflows slightly)
+        const remaining = words.slice(i).join(" ");
+        current = remaining;
         break;
       }
+
+      // Start new line with current word
+      current = word;
     }
   }
 
+  // Add the last line
   if (current) {
-    if (lines.length < maxLines) {
-      lines.push(current);
-    } else {
-      lines[lines.length - 1] = `${lines[lines.length - 1]} ${current}`;
-    }
+    lines.push(current);
   }
 
   return lines;
 };
-
 // Get award template path (matching React PDF logic)
 const getAwardTemplatePath = (
   awardLevel: string | null | undefined
