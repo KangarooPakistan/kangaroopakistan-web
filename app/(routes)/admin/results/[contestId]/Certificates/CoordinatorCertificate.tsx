@@ -20,59 +20,60 @@ type CoordinatorFontBytes = {
 
 let coordinatorFontBytesCache: CoordinatorFontBytes | null = null;
 
-const loadCoordinatorFontBytesOnce = async (): Promise<CoordinatorFontBytes> => {
-  if (coordinatorFontBytesCache) return coordinatorFontBytesCache;
+const loadCoordinatorFontBytesOnce =
+  async (): Promise<CoordinatorFontBytes> => {
+    if (coordinatorFontBytesCache) return coordinatorFontBytesCache;
 
-  const result: CoordinatorFontBytes = {};
+    const result: CoordinatorFontBytes = {};
 
-  try {
-    const almaraiRes = await fetch("/fonts/IBM/Almarai-Bold.ttf");
-    if (almaraiRes.ok) {
-      result.almarai = await almaraiRes.arrayBuffer();
-    } else {
-      console.warn("Failed to fetch Almarai font:", almaraiRes.status);
+    try {
+      const almaraiRes = await fetch("/fonts/IBM/Almarai-Bold.ttf");
+      if (almaraiRes.ok) {
+        result.almarai = await almaraiRes.arrayBuffer();
+      } else {
+        console.warn("Failed to fetch Almarai font:", almaraiRes.status);
+      }
+    } catch (error) {
+      console.warn("Failed to load Almarai font:", error);
     }
-  } catch (error) {
-    console.warn("Failed to load Almarai font:", error);
-  }
 
-  try {
-    const snellRes = await fetch("/fonts/Snell-Roundhand-Bold-Script.otf");
-    if (snellRes.ok) {
-      result.snell = await snellRes.arrayBuffer();
-    } else {
-      console.warn("Failed to fetch Snell Roundhand font:", snellRes.status);
+    try {
+      const snellRes = await fetch("/fonts/Snell-Roundhand-Bold-Script.otf");
+      if (snellRes.ok) {
+        result.snell = await snellRes.arrayBuffer();
+      } else {
+        console.warn("Failed to fetch Snell Roundhand font:", snellRes.status);
+      }
+    } catch (error) {
+      console.warn("Failed to load Snell Roundhand font:", error);
     }
-  } catch (error) {
-    console.warn("Failed to load Snell Roundhand font:", error);
-  }
 
-  try {
-    const ubuntuRes = await fetch("/fonts/Ubuntu-Bold.ttf");
-    if (ubuntuRes.ok) {
-      result.ubuntu = await ubuntuRes.arrayBuffer();
-    } else {
-      console.warn("Failed to fetch Ubuntu font:", ubuntuRes.status);
+    try {
+      const ubuntuRes = await fetch("/fonts/Ubuntu-Bold.ttf");
+      if (ubuntuRes.ok) {
+        result.ubuntu = await ubuntuRes.arrayBuffer();
+      } else {
+        console.warn("Failed to fetch Ubuntu font:", ubuntuRes.status);
+      }
+    } catch (error) {
+      console.warn("Failed to load Ubuntu font:", error);
     }
-  } catch (error) {
-    console.warn("Failed to load Ubuntu font:", error);
-  }
 
-  // Load Avenir font for body text (to match Download Certificates - With Pdf Editing)
-  try {
-    const avenirRes = await fetch("/fonts/Avenir/Avenir Book.ttf");
-    if (avenirRes.ok) {
-      result.avenir = await avenirRes.arrayBuffer();
-    } else {
-      console.warn("Failed to fetch Avenir font:", avenirRes.status);
+    // Load Avenir font for body text (to match Download Certificates - With Pdf Editing)
+    try {
+      const avenirRes = await fetch("/fonts/Avenir/Avenir Book.ttf");
+      if (avenirRes.ok) {
+        result.avenir = await avenirRes.arrayBuffer();
+      } else {
+        console.warn("Failed to fetch Avenir font:", avenirRes.status);
+      }
+    } catch (error) {
+      console.warn("Failed to load Avenir font:", error);
     }
-  } catch (error) {
-    console.warn("Failed to load Avenir font:", error);
-  }
 
-  coordinatorFontBytesCache = result;
-  return result;
-};
+    coordinatorFontBytesCache = result;
+    return result;
+  };
 
 const loadCustomFonts = async (pdfDoc: PDFDocument) => {
   pdfDoc.registerFontkit(fontkit);
@@ -319,7 +320,7 @@ export async function generateCoordinatorCertificate(
 
   // Layout settings to match Download Certificates - With Pdf Editing
   const bandLeft = 140;
-  const bandRight = 440;
+  const bandRight = 500;
   const bandCenterX = (bandLeft + bandRight) / 2;
 
   const topPosition = 280; // keep aligned with student certificates
