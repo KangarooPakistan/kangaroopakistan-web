@@ -9,40 +9,86 @@ export type CoordinatorDetails = {
 
 export type CoordinatorDetailsList = CoordinatorDetails[];
 
-// Load custom fonts for PDF-lib
-const loadCustomFonts = async (pdfDoc: PDFDocument) => {
-  pdfDoc.registerFontkit(fontkit);
+// Load custom fonts for PDF-lib with per-session font byte caching
+// so we do not hit the network on every certificate generation.
+type CoordinatorFontBytes = {
+  almarai?: ArrayBuffer;
+  snell?: ArrayBuffer;
+  ubuntu?: ArrayBuffer;
+};
 
-  const fonts: { [key: string]: any } = {};
+let coordinatorFontBytesCache: CoordinatorFontBytes | null = null;
+
+const loadCoordinatorFontBytesOnce = async (): Promise<CoordinatorFontBytes> => {
+  if (coordinatorFontBytesCache) return coordinatorFontBytesCache;
+
+  const result: CoordinatorFontBytes = {};
 
   try {
-    // Load Arabic font - Almarai (matching react-pdf)
-    const almaraiBytes = await fetch("/fonts/IBM/Almarai-Bold.ttf").then(
-      (res) => res.arrayBuffer()
-    );
-    fonts.almarai = await pdfDoc.embedFont(almaraiBytes);
+    const almaraiRes = await fetch("/fonts/IBM/Almarai-Bold.ttf");
+    if (almaraiRes.ok) {
+      result.almarai = await almaraiRes.arrayBuffer();
+    } else {
+      console.warn("Failed to fetch Almarai font:", almaraiRes.status);
+    }
   } catch (error) {
     console.warn("Failed to load Almarai font:", error);
   }
 
   try {
-    // Load English decorative font - Snell Roundhand (matching react-pdf)
-    const snellBytes = await fetch(
-      "/fonts/Snell-Roundhand-Bold-Script.otf"
-    ).then((res) => res.arrayBuffer());
-    fonts.snell = await pdfDoc.embedFont(snellBytes);
+    const snellRes = await fetch("/fonts/Snell-Roundhand-Bold-Script.otf");
+    if (snellRes.ok) {
+      result.snell = await snellRes.arrayBuffer();
+    } else {
+      console.warn("Failed to fetch Snell Roundhand font:", snellRes.status);
+    }
   } catch (error) {
     console.warn("Failed to load Snell Roundhand font:", error);
   }
 
   try {
-    // Load Ubuntu font (matching react-pdf)
-    const ubuntuBytes = await fetch("/fonts/Ubuntu-Bold.ttf").then((res) =>
-      res.arrayBuffer()
-    );
-    fonts.ubuntu = await pdfDoc.embedFont(ubuntuBytes);
+    const ubuntuRes = await fetch("/fonts/Ubuntu-Bold.ttf");
+    if (ubuntuRes.ok) {
+      result.ubuntu = await ubuntuRes.arrayBuffer();
+    } else {
+      console.warn("Failed to fetch Ubuntu font:", ubuntuRes.status);
+    }
   } catch (error) {
     console.warn("Failed to load Ubuntu font:", error);
+  }
+
+  coordinatorFontBytesCache = result;
+  return result;
+};
+
+const loadCustomFonts = async (pdfDoc: PDFDocument) => {
+  pdfDoc.registerFontkit(fontkit);
+
+  const fonts: { [key: string]: any } = {};
+  const fontBytes = await loadCoordinatorFontBytesOnce();
+
+  try {
+    if (fontBytes.almarai) {
+      fonts.almarai = await pdfDoc.embedFont(fontBytes.almarai);
+    }
+  } catch (error) {
+    console.warn("Failed to embed Almarai font:", error);
+  }
+
+  try {
+    if (fontBytes.snell) {
+      fonts.snell = await pdfDoc.embedFont(fontBytes.snell);
+    }
+  } catch (error) {
+    console.warn("Failed to embed Snell Roundhand font:", error);
+  }
+
+  try {
+    if (fontBytes.ubuntu) {
+      fonts.ubuntu = await pdfDoc.embedFont(fontBytes.ubuntu);
+    }
+  } catch (error) {
+    console.warn("Failed to embed Ubuntu font:", error);
   }
 
   return fonts;
@@ -85,13 +131,21 @@ const getSchoolNameFontSize = (text: string, isArabic: boolean): number => {
   return isArabic ? (textLength < 30 ? 26 : 22) : textLength < 30 ? 24 : 20;
 };
 
-// Load your existing PDF template
+// Load your existing PDF template with simple in-memory caching so we
+// avoid repeated network requests for every batch or click.
+let coordinatorTemplateBytesCache: Uint8Array | null = null;
+
 const loadCertificateTemplate = async (): Promise<Uint8Array> => {
+  if (coordinatorTemplateBytesCache) return coordinatorTemplateBytesCache;
+
   const response = await fetch("/templates/coordinator_certificates.pdf");
   if (!response.ok) {
     throw new Error("Failed to load certificate template");
   }
-  return new Uint8Array(await response.arrayBuffer());
+
+  const bytes = new Uint8Array(await response.arrayBuffer());
+  coordinatorTemplateBytesCache = bytes;
+  return bytes;
 };
 
 // Generate certificate using your existing PDF template
