@@ -320,7 +320,7 @@ export async function generateCoordinatorCertificate(
 
   // Layout settings to match Download Certificates - With Pdf Editing
   const bandLeft = 140;
-  const bandRight = 500;
+  const bandRight = 600;
   const bandCenterX = (bandLeft + bandRight) / 2;
 
   const topPosition = 280; // keep aligned with student certificates
