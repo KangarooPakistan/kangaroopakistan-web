@@ -16,6 +16,7 @@ type PrincipalFontBytes = {
   almarai?: ArrayBuffer;
   snell?: ArrayBuffer;
   ubuntu?: ArrayBuffer;
+  avenir?: ArrayBuffer;
 };
 
 let principalFontBytesCache: PrincipalFontBytes | null = null;
@@ -58,6 +59,18 @@ const loadPrincipalFontBytesOnce = async (): Promise<PrincipalFontBytes> => {
     console.warn("Failed to load Ubuntu font:", error);
   }
 
+  // Load Avenir font for body text (to match Download Certificates - With Pdf Editing)
+  try {
+    const avenirRes = await fetch("/fonts/Avenir/Avenir Book.ttf");
+    if (avenirRes.ok) {
+      result.avenir = await avenirRes.arrayBuffer();
+    } else {
+      console.warn("Failed to fetch Avenir font:", avenirRes.status);
+    }
+  } catch (error) {
+    console.warn("Failed to load Avenir font:", error);
+  }
+
   principalFontBytesCache = result;
   return result;
 };
@@ -90,6 +103,14 @@ const loadCustomFonts = async (pdfDoc: PDFDocument) => {
     }
   } catch (error) {
     console.warn("Failed to embed Ubuntu font:", error);
+  }
+
+  try {
+    if (fontBytes.avenir) {
+      fonts.avenir = await pdfDoc.embedFont(fontBytes.avenir);
+    }
+  } catch (error) {
+    console.warn("Failed to embed Avenir font:", error);
   }
 
   return fonts;
@@ -130,6 +151,107 @@ const getCoordinatorNameFontSize = (
 const getSchoolNameFontSize = (text: string, isArabic: boolean): number => {
   const textLength = text.length;
   return isArabic ? (textLength < 30 ? 26 : 22) : textLength < 30 ? 24 : 20;
+};
+
+// Text helpers copied from GoldCertificatePdf to match layout and styling
+const processTextForCapitalization = (text: string): string => {
+  if (!text) return text;
+
+  // First apply title case to the entire text
+  let processedText = text.replace(/\w\S*/g, (txt) => {
+    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+  });
+
+  // Then replace " Ii " with " II " (after title case conversion)
+  processedText = processedText.replace(/\s+Ii\s+/g, " II ");
+
+  return processedText;
+};
+
+const measureTextWidthWithTracking = (
+  text: string,
+  font: any,
+  fontSize: number,
+  tracking: number
+) => {
+  if (!font) {
+    return text.length * (fontSize * 0.6 + tracking);
+  }
+  const baseWidth = font.widthOfTextAtSize(text, fontSize);
+  const extra = Math.max(0, text.length - 1) * tracking;
+  return baseWidth + extra;
+};
+
+const drawCenteredTextWithTracking = (
+  page: any,
+  text: string,
+  options: {
+    centerX: number;
+    y: number;
+    font: any;
+    size: number;
+    color: any;
+    tracking: number;
+  }
+) => {
+  const { centerX, y, font, size, color, tracking } = options;
+  const totalWidth = measureTextWidthWithTracking(text, font, size, tracking);
+  let x = centerX - totalWidth / 2;
+
+  for (const ch of text) {
+    const w = font ? font.widthOfTextAtSize(ch, size) : size * 0.6;
+    page.drawText(ch, { x, y, size, font, color });
+    x += w + tracking;
+  }
+};
+
+const wrapTextToLines = (
+  text: string,
+  font: any,
+  fontSize: number,
+  maxWidth: number,
+  tracking: number,
+  maxLines: number
+): string[] => {
+  const words = text.split(/\s+/).filter(Boolean);
+  const lines: string[] = [];
+  let current = "";
+
+  for (let i = 0; i < words.length; i++) {
+    const word = words[i];
+    const candidate = current ? `${current} ${word}` : word;
+    const width = measureTextWidthWithTracking(
+      candidate,
+      font,
+      fontSize,
+      tracking
+    );
+
+    if (width <= maxWidth || !current) {
+      current = candidate;
+    } else {
+      // Current line is full, save it
+      lines.push(current);
+
+      // Check if we're at the last allowed line
+      if (lines.length === maxLines) {
+        // Put all remaining words on this last line (even if it overflows slightly)
+        const remaining = words.slice(i).join(" ");
+        current = remaining;
+        break;
+      }
+
+      // Start new line with current word
+      current = word;
+    }
+  }
+
+  // Add the last line
+  if (current) {
+    lines.push(current);
+  }
+
+  return lines;
 };
 
 // Load your existing PDF template with simple in-memory caching so we
@@ -196,71 +318,75 @@ export async function generatePrincipalCertificate(
     isSchoolNameArabicText
   );
 
-  // Text positioning - matching react-pdf positioning logic
-  // React-pdf uses top: 255/260, converting to pdf-lib bottom-up coordinate system
-  const nameY = height - (isCNameArabic ? 315 : 315);
+  // Layout settings to match Download Certificates - With Pdf Editing
+  const bandLeft = 140;
+  const bandRight = 440;
+  const bandCenterX = (bandLeft + bandRight) / 2;
 
-  // Select appropriate fonts (matching react-pdf font selection)
+  const topPosition = 280; // keep aligned with student certificates
+  const baseY = height - topPosition;
+
+  const bodyTracking = 0.5;
+
+  // Principal name processing (same capitalization behavior)
+  const displayCoordinatorName = isCNameArabic
+    ? coordinatorName
+    : processTextForCapitalization(coordinatorName);
+
   const nameFont = isCNameArabic
-    ? fonts.almarai || fonts.ubuntu // Fallback to ubuntu if almarai fails
-    : fonts.snell || fonts.ubuntu; // Fallback to ubuntu if snell fails
+    ? fonts.almarai || fonts.ubuntu
+    : fonts.snell || fonts.ubuntu;
 
-  // Calculate text width for centering
-  const nameWidth = nameFont
-    ? nameFont.widthOfTextAtSize(toTitleCase(coordinatorName), nameFontSize)
-    : coordinatorName.length * (nameFontSize * 0.6); // Fallback estimation
-  // Draw coordinator name (matching react-pdf styling)
-  firstPage.drawText(toTitleCase(coordinatorName), {
-    x: (width - nameWidth) / 2, // Center horizontally
-    y: nameY,
-    size: nameFontSize,
+  // 1. Principal name
+  drawCenteredTextWithTracking(firstPage, displayCoordinatorName, {
+    centerX: bandCenterX,
+    y: baseY,
     font: nameFont,
+    size: nameFontSize,
     color: rgb(0, 0, 0),
-    maxWidth: width - 100, // Leave margin (matching react-pdf minWidth: 300, maxWidth: 100%)
+    tracking: bodyTracking,
   });
 
-  // Calculate School ID position (tighter spacing to match react-pdf visual result)
-  const schoolIdMarginTop = isCNameArabic ? 35 : 40; // matching original spacing
-  const schoolIdY = nameY - schoolIdMarginTop;
-
+  // 2. School ID line
+  const schoolIdY = baseY - 35;
   const schoolIdText = `School ID: ${schoolId}`;
-  const schoolIdWidth = fonts.ubuntu
-    ? fonts.ubuntu.widthOfTextAtSize(schoolIdText, 16)
-    : schoolIdText.length * (16 * 0.6); // Fallback estimation
 
-  // Draw school ID (matching react-pdf styling)
-  firstPage.drawText(schoolIdText, {
-    x: (width - schoolIdWidth) / 2, // Center horizontally
+  drawCenteredTextWithTracking(firstPage, schoolIdText, {
+    centerX: bandCenterX,
     y: schoolIdY,
-    size: 16, // Fixed size matching react-pdf
-    font: fonts.ubuntu || nameFont, // Use Ubuntu font as in react-pdf
+    font: fonts.avenir || fonts.ubuntu || nameFont,
+    size: 16,
     color: rgb(0, 0, 0),
+    tracking: bodyTracking,
   });
 
-  // Calculate School Name position (tighter spacing to match react-pdf visual result)
-  const schoolNameMarginTop = isSchoolNameArabicText ? 32 : 35; // matching original spacing
-  const schoolNameY = schoolIdY - schoolNameMarginTop;
-
-  // Select school name font (matching react-pdf font selection)
+  // 3. School name (wrapped, same band and spacing)
+  const schoolNameY = schoolIdY - 25;
   const schoolNameFont = isSchoolNameArabicText
-    ? fonts.almarai || fonts.ubuntu // Use Almarai for Arabic
-    : fonts.ubuntu || nameFont; // Use Ubuntu for English
+    ? fonts.almarai || fonts.ubuntu
+    : fonts.avenir || fonts.ubuntu || nameFont;
 
-  const schoolNameWidth = schoolNameFont
-    ? schoolNameFont.widthOfTextAtSize(
-        toTitleCase(processedSchoolName),
-        schoolNameFontSize
-      )
-    : processedSchoolName.length * (schoolNameFontSize * 0.6); // Fallback estimation
+  const maxSchoolWidth = bandRight - bandLeft;
+  const schoolLines = wrapTextToLines(
+    processedSchoolName,
+    schoolNameFont,
+    schoolNameFontSize,
+    maxSchoolWidth,
+    bodyTracking,
+    2
+  );
+  const schoolLineHeight = schoolNameFontSize + 2;
 
-  // Draw school name (matching react-pdf styling and processing)
-  firstPage.drawText(processedSchoolName, {
-    x: (width - schoolNameWidth) / 2, // Center horizontally
-    y: schoolNameY,
-    size: schoolNameFontSize,
-    font: schoolNameFont,
-    color: rgb(0, 0, 0),
-    maxWidth: width - 100, // Leave margin (matching react-pdf)
+  schoolLines.forEach((line, index) => {
+    const lineY = schoolNameY - index * schoolLineHeight;
+    drawCenteredTextWithTracking(firstPage, line, {
+      centerX: bandCenterX,
+      y: lineY,
+      font: schoolNameFont,
+      size: schoolNameFontSize,
+      color: rgb(0, 0, 0),
+      tracking: bodyTracking,
+    });
   });
 
   return await pdfDoc.save();
