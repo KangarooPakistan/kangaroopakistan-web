@@ -190,8 +190,17 @@ const getFatherNameFontSize = (
   }
 };
 
-const getSchoolNameFontSize = (text: string, isArabic: boolean): number => {
-  return isArabic ? 20 : 20;
+const getSchoolNameFontSize = (
+  text: string,
+  isArabic: boolean,
+  schoolNameLength?: number
+): number => {
+  const nameLength = schoolNameLength || text.length;
+  if (nameLength > 30) {
+    return isArabic ? 20 : 16;
+  } else {
+    return isArabic ? 20 : 20;
+  }
 };
 
 // Text measurement and drawing helpers for letter spacing and wrapping
@@ -372,6 +381,7 @@ export async function generateStudentCertificate(
 
   // Calculate font sizes assuming English layout
   const studentNameLength = studentName.length;
+  const schoolNameLength = schoolName.length;
   const studentNameFontSize = getStudentNameFontSize(
     studentName,
     false,
@@ -382,7 +392,11 @@ export async function generateStudentCertificate(
     false,
     studentNameLength
   );
-  const schoolNameFontSize = getSchoolNameFontSize(schoolName, false);
+  const schoolNameFontSize = getSchoolNameFontSize(
+    schoolName,
+    false,
+    schoolNameLength
+  );
 
   // Determine if this is a participation certificate and set proper top position
   const isParticipationCertificate =
