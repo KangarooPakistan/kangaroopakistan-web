@@ -459,7 +459,7 @@ export async function generateStudentCertificate(
 
   // 4. Draw class information
   const classY = fatherNameY - (isFatherNameArabic ? 25 : 25);
-  const classText = `Year / Grade ${className}`;
+  const classText = `Grade ${className}`;
 
   drawCenteredTextWithTracking(firstPage, classText, {
     centerX: studentNameCenterX,
