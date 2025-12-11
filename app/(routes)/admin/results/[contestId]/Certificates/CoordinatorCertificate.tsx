@@ -361,7 +361,7 @@ export async function generateCoordinatorCertificate(
   });
 
   // 3. School name (wrapped, same band and spacing)
-  const schoolNameY = schoolIdY - 25;
+  const schoolNameY = schoolIdY - 35;
   const schoolNameFont = isSchoolNameArabicText
     ? fonts.almarai || fonts.ubuntu
     : fonts.avenir || fonts.ubuntu || nameFont;

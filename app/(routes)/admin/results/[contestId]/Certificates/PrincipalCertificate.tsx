@@ -145,7 +145,7 @@ const getCoordinatorNameFontSize = (
   isArabic: boolean
 ): number => {
   const textLength = text.length;
-  return isArabic ? (textLength < 30 ? 24 : 22) : textLength < 30 ? 26 : 20;
+  return isArabic ? (textLength < 30 ? 24 : 28) : textLength < 30 ? 26 : 26;
 };
 
 const getSchoolNameFontSize = (text: string, isArabic: boolean): number => {
@@ -361,7 +361,7 @@ export async function generatePrincipalCertificate(
   });
 
   // 3. School name (wrapped, same band and spacing)
-  const schoolNameY = schoolIdY - 25;
+  const schoolNameY = schoolIdY - 35;
   const schoolNameFont = isSchoolNameArabicText
     ? fonts.almarai || fonts.ubuntu
     : fonts.avenir || fonts.ubuntu || nameFont;
