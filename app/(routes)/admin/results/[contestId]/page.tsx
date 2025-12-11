@@ -10,18 +10,42 @@ import { utils, writeFile } from "xlsx";
 
 import { pdf } from "@react-pdf/renderer";
 import { saveAs } from "file-saver";
-import { toast, ToastContainer } from "react-toastify";
+import { toast, ToastContainer, Id } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import * as XLSX from "xlsx";
 
 import { ca } from "date-fns/locale";
 import QuestionStatsPdf from "../QuestionStats/QuestionStats";
+import JSZip from "jszip";
+import {
+  ensureFontsLoaded,
+  registerFonts,
+} from "./Certificates/GoldCertificate";
+import { generatePrincipalCertificates } from "./Certificates/PrincipalCertificate";
+import {
+  CoordinatorDetails,
+  CoordinatorDetailsList,
+  generateCoordinatorCertificates,
+} from "./Certificates/CoordinatorCertificate";
 
 export type Contest = {
   contestDate: string;
   name: string;
 };
 
+type PrincipalDetails = {
+  schoolId: number;
+  schoolName: string;
+  p_Name: string;
+};
+
+type PrincipalDetailsList = PrincipalDetails[];
+
+export type CoordinatorPdfBlob = {
+  blob: Blob;
+  coordinatorName: string;
+  schoolId: number;
+};
 export type Score = {
   rollNo: string;
   score: string;
@@ -71,6 +95,11 @@ export type SchoolData = {
   seniorBronzeCount: number; // Added for senior bronze count
 };
 
+type PrincipalPdfBlob = {
+  blob: Blob;
+  principalName: string;
+  schoolId: number;
+};
 const Results = () => {
   const [schoolData, setSchoolData] = useState([]);
   const params = useParams();
@@ -113,16 +142,19 @@ const Results = () => {
         });
       } catch (error: any) {
         console.error(error);
-        toast.error(" " + (error.response?.data?.message || "Failed to load data"), {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
+        toast.error(
+          " " + (error.response?.data?.message || "Failed to load data"),
+          {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          }
+        );
       }
     };
     fetchData();
@@ -839,6 +871,607 @@ const Results = () => {
   const handleBack = () => {
     router.back();
   };
+  const handlePrincipalDetails = async () => {
+    setIsLoading(true);
+    let loadingToast: Id | undefined;
+
+    try {
+      loadingToast = toast.loading("Preparing principal certificates...");
+
+      // Step 1: Fetch principal details
+      const response = await axios.get<PrincipalDetailsList>(
+        `/api/users/getprincipalanddetails/${params.contestId}`
+      );
+
+      const principalResults: PrincipalDetailsList = response.data;
+      console.log("Raw principal details data:", principalResults);
+
+      if (!principalResults || principalResults.length === 0) {
+        throw new Error("No principal details found");
+      }
+
+      // Enhanced Arabic-friendly filename sanitization
+      const sanitizeFilename = (
+        name: string | null | undefined,
+        fallback: string = "Unknown"
+      ): string => {
+        if (!name || typeof name !== "string") {
+          return fallback;
+        }
+
+        // Keep Arabic characters, English letters, numbers, spaces, and basic punctuation
+        // Only remove filesystem-invalid characters
+        const cleaned = name
+          .replace(/[<>:"/\\|?*]/g, "") // Remove only filesystem-invalid characters
+          .replace(/\s+/g, "_") // Replace multiple spaces with single underscore
+          .replace(/_{2,}/g, "_") // Replace multiple underscores with single
+          .trim();
+
+        // If the result is empty or only underscores, use fallback
+        if (!cleaned || /^_+$/.test(cleaned) || cleaned.length < 1) {
+          return `${fallback}_${Date.now()}`;
+        }
+
+        return cleaned;
+      };
+
+      // Create safe filename with uniqueness guarantee
+      const createSafeFilename = (
+        principalName: string,
+        schoolId: number,
+        index: number
+      ): string => {
+        let safeName = sanitizeFilename(principalName, `Principal_${schoolId}`);
+
+        // If sanitization results in very short or problematic name, use structured fallback
+        if (safeName.length < 2 || /^_+$/.test(safeName)) {
+          safeName = `Principal_${schoolId}_${index + 1}`;
+        }
+
+        return `${safeName}_Principal_School_${schoolId}.pdf`;
+      };
+
+      // Debug logging for Arabic names
+      console.log("=== PRINCIPAL NAMES DEBUG ===");
+      principalResults.forEach((principal: PrincipalDetails, index: number) => {
+        console.log(`${index + 1}. Original: "${principal.p_Name}"`);
+        console.log(`   School: "${principal.schoolName}"`);
+        console.log(`   SchoolId: ${principal.schoolId}`);
+        console.log(`   Sanitized: "${sanitizeFilename(principal.p_Name)}"`);
+        console.log(
+          `   Final filename: "${createSafeFilename(
+            principal.p_Name,
+            principal.schoolId,
+            index
+          )}"`
+        );
+        console.log("---");
+      });
+      console.log("=== END DEBUG ===");
+
+      toast.update(loadingToast, {
+        render: `Generating ${principalResults.length} principal certificates...`,
+        type: "info",
+        isLoading: true,
+      });
+
+      // Step 2: Initialize ZIP file
+      const zip = new JSZip();
+      const folder = zip.folder("principal_certificates");
+
+      // Keep track of successfully added certificates
+      let successfullyAdded = 0;
+      const failedPrincipals: string[] = [];
+      const usedFilenames = new Set<string>();
+      const processedPrincipals: string[] = [];
+
+      // Step 3: Process in smaller chunks to manage memory
+      const chunkSize = 3; // Reduced for better memory management with Arabic text
+      let processedCount = 0;
+
+      // Ensure fonts are loaded (assuming similar font requirements as student certificates)
+      await ensureFontsLoaded();
+      await registerFonts();
+
+      for (let i = 0; i < principalResults.length; i += chunkSize) {
+        const chunk = principalResults.slice(i, i + chunkSize);
+
+        try {
+          console.log(
+            `Processing chunk ${
+              Math.floor(i / chunkSize) + 1
+            } with principals:`,
+            chunk.map((p: PrincipalDetails) => ({
+              name: p.p_Name,
+              schoolId: p.schoolId,
+            }))
+          );
+
+          const pdfBlobs: PrincipalPdfBlob[] =
+            await generatePrincipalCertificates(chunk);
+
+          console.log(
+            `Generated ${pdfBlobs.length} PDFs for chunk ${
+              Math.floor(i / chunkSize) + 1
+            }`
+          );
+
+          // Add each PDF to the ZIP with enhanced error handling
+          for (let j = 0; j < pdfBlobs.length; j++) {
+            const pdf: PrincipalPdfBlob = pdfBlobs[j];
+            const originalIndex = i + j;
+            const originalPrincipal: PrincipalDetails | undefined =
+              principalResults[originalIndex];
+
+            console.log(`Processing PDF ${j + 1}:`, {
+              principalName: pdf.principalName,
+              schoolId: pdf.schoolId,
+              blobExists: !!pdf.blob,
+              blobSize: pdf.blob?.size || 0,
+              hasPrincipalName: !!pdf.principalName,
+            });
+
+            if (pdf.blob && pdf.principalName && pdf.blob.size > 0) {
+              // Create unique filename
+              let fileName = createSafeFilename(
+                pdf.principalName,
+                pdf.schoolId,
+                originalIndex
+              );
+              let counter = 1;
+
+              // Ensure filename uniqueness
+              while (usedFilenames.has(fileName)) {
+                const nameWithoutExt = fileName.replace(".pdf", "");
+                fileName = `${nameWithoutExt}_${counter}.pdf`;
+                counter++;
+              }
+
+              usedFilenames.add(fileName);
+              folder?.file(fileName, pdf.blob);
+              successfullyAdded++;
+              processedPrincipals.push(pdf.principalName);
+
+              console.log(
+                `✓ Added to ZIP: ${fileName} (${pdf.blob.size} bytes)`
+              );
+              console.log(`   Original name: "${pdf.principalName}"`);
+              console.log(
+                `   School: "${originalPrincipal?.schoolName || "Unknown"}"`
+              );
+            } else {
+              const failureReason: string[] = [];
+              if (!pdf.blob) failureReason.push("no blob");
+              if (!pdf.principalName) failureReason.push("no principal name");
+              if (pdf.blob && pdf.blob.size <= 0)
+                failureReason.push("empty blob");
+
+              console.warn(`✗ Skipping invalid PDF:`, {
+                originalName: pdf.principalName,
+                schoolId: pdf.schoolId,
+                blobSize: pdf.blob?.size || 0,
+                hasBlob: !!pdf.blob,
+                hasName: !!pdf.principalName,
+                failureReasons: failureReason,
+              });
+
+              const failedName =
+                pdf.principalName ||
+                originalPrincipal?.p_Name ||
+                `Unknown-${pdf.schoolId}`;
+              failedPrincipals.push(failedName);
+            }
+          }
+
+          // Clear references to help garbage collection
+          pdfBlobs.length = 0;
+        } catch (chunkError) {
+          console.error(
+            `Error processing chunk ${Math.floor(i / chunkSize) + 1}:`,
+            chunkError
+          );
+
+          // Add all principals from failed chunk to failed list
+          chunk.forEach((principal: PrincipalDetails) => {
+            if (principal.p_Name) {
+              failedPrincipals.push(principal.p_Name);
+              console.error(
+                `Failed to process principal: "${principal.p_Name}" from school: "${principal.schoolName}"`
+              );
+            }
+          });
+        }
+
+        processedCount += chunk.length;
+        toast.update(loadingToast, {
+          render: `Processed ${processedCount} of ${principalResults.length} principal certificates... (${successfullyAdded} successful)`,
+          type: "info",
+          isLoading: true,
+        });
+
+        // Delay between chunks to prevent memory issues
+        await new Promise((resolve) => setTimeout(resolve, 500));
+      }
+
+      // Step 4: Validation and summary
+      console.log("=== PROCESSING SUMMARY ===");
+      console.log("Expected principals:", principalResults.length);
+      console.log("Successfully processed:", successfullyAdded);
+      console.log("Failed principals:", failedPrincipals.length);
+      console.log(
+        "Total accounted for:",
+        successfullyAdded + failedPrincipals.length
+      );
+
+      if (failedPrincipals.length > 0) {
+        console.log("Failed principal names:");
+        failedPrincipals.forEach((name: string, index: number) => {
+          console.log(`  ${index + 1}. "${name}"`);
+        });
+      }
+
+      console.log("Successfully processed principal names:");
+      processedPrincipals.forEach((name: string, index: number) => {
+        console.log(`  ${index + 1}. "${name}"`);
+      });
+      console.log("=== END SUMMARY ===");
+
+      if (successfullyAdded === 0) {
+        throw new Error(
+          "No principal certificates were successfully generated"
+        );
+      }
+
+      toast.update(loadingToast, {
+        render: "Finalizing ZIP file...",
+        type: "info",
+        isLoading: true,
+      });
+
+      // Step 5: Generate and save the ZIP file
+      const zipContent = await zip.generateAsync({
+        type: "blob",
+        compression: "DEFLATE",
+        compressionOptions: { level: 6 },
+      });
+
+      const timestamp = new Date().toISOString().split("T")[0];
+      const fileName = `Principal_Certificates_Contest_${params.contestId}_${timestamp}_Success_${successfullyAdded}_Total_${principalResults.length}.zip`;
+      saveAs(zipContent, fileName);
+
+      // Step 6: Show detailed completion message
+      let message = `Successfully generated ${successfullyAdded} of ${principalResults.length} principal certificates!`;
+      if (failedPrincipals.length > 0) {
+        message += ` Failed: ${failedPrincipals.length} (check console for details)`;
+        console.log("Failed principals list:", failedPrincipals);
+      }
+
+      toast.update(loadingToast, {
+        render: message,
+        type: failedPrincipals.length > 0 ? "warning" : "success",
+        isLoading: false,
+        autoClose: 10000,
+      });
+    } catch (error) {
+      console.error("Principal certificate generation failed:", error);
+
+      if (loadingToast) {
+        toast.dismiss(loadingToast);
+      }
+
+      toast.error(
+        `Failed to generate principal certificates: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`,
+        {
+          autoClose: 8000,
+        }
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const handleCoordinatorDetails = async () => {
+    setIsLoading(true);
+    let loadingToast: Id | undefined;
+
+    try {
+      loadingToast = toast.loading("Preparing coordinator certificates...");
+
+      // Step 1: Fetch coordinator details
+      const response = await axios.get<CoordinatorDetailsList>(
+        `/api/users/getcoordinatordetails/${params.contestId}`
+      );
+
+      const coordinatorResults: CoordinatorDetailsList = response.data;
+      console.log("Raw coordinator details data:", coordinatorResults);
+
+      if (!coordinatorResults || coordinatorResults.length === 0) {
+        throw new Error("No coordinator details found");
+      }
+
+      // Enhanced Arabic-friendly filename sanitization
+      const sanitizeFilename = (
+        name: string | null | undefined,
+        fallback: string = "Unknown"
+      ): string => {
+        if (!name || typeof name !== "string") {
+          return fallback;
+        }
+
+        // Keep Arabic characters, English letters, numbers, spaces, and basic punctuation
+        // Only remove filesystem-invalid characters
+        const cleaned = name
+          .replace(/[<>:"/\\|?*]/g, "") // Remove only filesystem-invalid characters
+          .replace(/\s+/g, "_") // Replace multiple spaces with single underscore
+          .replace(/_{2,}/g, "_") // Replace multiple underscores with single
+          .trim();
+
+        // If the result is empty or only underscores, use fallback
+        if (!cleaned || /^_+$/.test(cleaned) || cleaned.length < 1) {
+          return `${fallback}_${Date.now()}`;
+        }
+
+        return cleaned;
+      };
+
+      // Create safe filename with uniqueness guarantee
+      const createSafeFilename = (
+        coordinatorName: string,
+        schoolId: number,
+        index: number
+      ): string => {
+        let safeName = sanitizeFilename(
+          coordinatorName,
+          `Coordinator_${schoolId}`
+        );
+
+        // If sanitization results in very short or problematic name, use structured fallback
+        if (safeName.length < 2 || /^_+$/.test(safeName)) {
+          safeName = `Coordinator_${schoolId}_${index + 1}`;
+        }
+
+        return `${safeName}_School_${schoolId}.pdf`;
+      };
+
+      // Debug logging for Arabic names
+      console.log("=== COORDINATOR NAMES DEBUG ===");
+      coordinatorResults.forEach(
+        (coordinator: CoordinatorDetails, index: number) => {
+          console.log(`${index + 1}. Original: "${coordinator.c_Name}"`);
+          console.log(`   School: "${coordinator.schoolName}"`);
+          console.log(`   SchoolId: ${coordinator.schoolId}`);
+          console.log(
+            `   Sanitized: "${sanitizeFilename(coordinator.c_Name)}"`
+          );
+          console.log(
+            `   Final filename: "${createSafeFilename(
+              coordinator.c_Name,
+              coordinator.schoolId,
+              index
+            )}"`
+          );
+          console.log("---");
+        }
+      );
+      console.log("=== END DEBUG ===");
+
+      toast.update(loadingToast, {
+        render: `Generating ${coordinatorResults.length} coordinator certificates...`,
+        type: "info",
+        isLoading: true,
+      });
+
+      // Step 2: Initialize ZIP file
+      const zip = new JSZip();
+      const folder = zip.folder("coordinator_certificates");
+
+      let successfullyAdded = 0;
+      const failedCoordinators: string[] = [];
+      const usedFilenames = new Set<string>();
+      const processedCoordinators: string[] = [];
+      const chunkSize = 3;
+      let processedCount = 0;
+      await ensureFontsLoaded();
+      await registerFonts();
+
+      for (let i = 0; i < coordinatorResults.length; i += chunkSize) {
+        const chunk = coordinatorResults.slice(i, i + chunkSize);
+
+        try {
+          console.log(
+            `Processing chunk ${
+              Math.floor(i / chunkSize) + 1
+            } with coordinators:`,
+            chunk.map((c: CoordinatorDetails) => ({
+              name: c.c_Name,
+              schoolId: c.schoolId,
+            }))
+          );
+
+          const pdfBlobs: CoordinatorPdfBlob[] =
+            await generateCoordinatorCertificates(chunk);
+
+          console.log(
+            `Generated ${pdfBlobs.length} PDFs for chunk ${
+              Math.floor(i / chunkSize) + 1
+            }`
+          );
+
+          // Add each PDF to the ZIP with enhanced error handling
+          for (let j = 0; j < pdfBlobs.length; j++) {
+            const pdf: CoordinatorPdfBlob = pdfBlobs[j];
+            const originalIndex = i + j;
+            const originalCoordinator: CoordinatorDetails | undefined =
+              coordinatorResults[originalIndex];
+
+            console.log(`Processing PDF ${j + 1}:`, {
+              coordinatorName: pdf.coordinatorName,
+              schoolId: pdf.schoolId,
+              blobExists: !!pdf.blob,
+              blobSize: pdf.blob?.size || 0,
+              hasCoordinatorName: !!pdf.coordinatorName,
+            });
+
+            if (pdf.blob && pdf.coordinatorName && pdf.blob.size > 0) {
+              // Create unique filename
+              let fileName = createSafeFilename(
+                pdf.coordinatorName,
+                pdf.schoolId,
+                originalIndex
+              );
+              let counter = 1;
+
+              // Ensure filename uniqueness
+              while (usedFilenames.has(fileName)) {
+                const nameWithoutExt = fileName.replace(".pdf", "");
+                fileName = `${nameWithoutExt}_${counter}.pdf`;
+                counter++;
+              }
+
+              usedFilenames.add(fileName);
+              folder?.file(fileName, pdf.blob);
+              successfullyAdded++;
+              processedCoordinators.push(pdf.coordinatorName);
+
+              console.log(
+                `✓ Added to ZIP: ${fileName} (${pdf.blob.size} bytes)`
+              );
+              console.log(`   Original name: "${pdf.coordinatorName}"`);
+              console.log(
+                `   School: "${originalCoordinator?.schoolName || "Unknown"}"`
+              );
+            } else {
+              const failureReason: string[] = [];
+              if (!pdf.blob) failureReason.push("no blob");
+              if (!pdf.coordinatorName)
+                failureReason.push("no coordinator name");
+              if (pdf.blob && pdf.blob.size <= 0)
+                failureReason.push("empty blob");
+
+              console.warn(`✗ Skipping invalid PDF:`, {
+                originalName: pdf.coordinatorName,
+                schoolId: pdf.schoolId,
+                blobSize: pdf.blob?.size || 0,
+                hasBlob: !!pdf.blob,
+                hasName: !!pdf.coordinatorName,
+                failureReasons: failureReason,
+              });
+
+              const failedName =
+                pdf.coordinatorName ||
+                originalCoordinator?.c_Name ||
+                `Unknown-${pdf.schoolId}`;
+              failedCoordinators.push(failedName);
+            }
+          }
+
+          // Clear references to help garbage collection
+          pdfBlobs.length = 0;
+        } catch (chunkError) {
+          console.error(
+            `Error processing chunk ${Math.floor(i / chunkSize) + 1}:`,
+            chunkError
+          );
+          chunk.forEach((coordinator: CoordinatorDetails) => {
+            if (coordinator.c_Name) {
+              failedCoordinators.push(coordinator.c_Name);
+              console.error(
+                `Failed to process coordinator: "${coordinator.c_Name}" from school: "${coordinator.schoolName}"`
+              );
+            }
+          });
+        }
+
+        processedCount += chunk.length;
+        toast.update(loadingToast, {
+          render: `Processed ${processedCount} of ${coordinatorResults.length} coordinator certificates... (${successfullyAdded} successful)`,
+          type: "info",
+          isLoading: true,
+        });
+
+        // Delay between chunks to prevent memory issues
+        await new Promise((resolve) => setTimeout(resolve, 500));
+      }
+
+      // Step 4: Validation and summary
+      console.log("=== PROCESSING SUMMARY ===");
+      console.log("Expected coordinators:", coordinatorResults.length);
+      console.log("Successfully processed:", successfullyAdded);
+      console.log("Failed coordinators:", failedCoordinators.length);
+      console.log(
+        "Total accounted for:",
+        successfullyAdded + failedCoordinators.length
+      );
+
+      if (failedCoordinators.length > 0) {
+        console.log("Failed coordinator names:");
+        failedCoordinators.forEach((name: string, index: number) => {
+          console.log(`  ${index + 1}. "${name}"`);
+        });
+      }
+
+      console.log("Successfully processed coordinator names:");
+      processedCoordinators.forEach((name: string, index: number) => {
+        console.log(`  ${index + 1}. "${name}"`);
+      });
+      console.log("=== END SUMMARY ===");
+
+      if (successfullyAdded === 0) {
+        throw new Error(
+          "No coordinator certificates were successfully generated"
+        );
+      }
+
+      toast.update(loadingToast, {
+        render: "Finalizing ZIP file...",
+        type: "info",
+        isLoading: true,
+      });
+
+      // Step 5: Generate and save the ZIP file
+      const zipContent = await zip.generateAsync({
+        type: "blob",
+        compression: "DEFLATE",
+        compressionOptions: { level: 6 },
+      });
+
+      const timestamp = new Date().toISOString().split("T")[0];
+      const fileName = `Coordinator_Certificates_Contest_${params.contestId}_${timestamp}_Success_${successfullyAdded}_Total_${coordinatorResults.length}.zip`;
+      saveAs(zipContent, fileName);
+
+      // Step 6: Show detailed completion message
+      let message = `Successfully generated ${successfullyAdded} of ${coordinatorResults.length} coordinator certificates!`;
+      if (failedCoordinators.length > 0) {
+        message += ` Failed: ${failedCoordinators.length} (check console for details)`;
+        console.log("Failed coordinators list:", failedCoordinators);
+      }
+
+      toast.update(loadingToast, {
+        render: message,
+        type: failedCoordinators.length > 0 ? "warning" : "success",
+        isLoading: false,
+        autoClose: 10000,
+      });
+    } catch (error) {
+      console.error("Coordinator certificate generation failed:", error);
+
+      if (loadingToast) {
+        toast.dismiss(loadingToast);
+      }
+
+      toast.error(
+        `Failed to generate coordinator certificates: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`,
+        {
+          autoClose: 8000,
+        }
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <div className="container mx-auto py-10">
       <h1 className="text-3xl text-center my-3 font-bold text-purple-600">
@@ -856,6 +1489,22 @@ const Results = () => {
             disabled={isLoading}
             onClick={handleBack}>
             Back
+          </Button>
+          <Button
+            className="bg-blue-800 text-white font-medium text-[15px]  tracking-wide"
+            variant="default"
+            size="lg"
+            disabled={isLoading}
+            onClick={handleCoordinatorDetails}>
+            Download Coordinator Certificates
+          </Button>
+          <Button
+            className="bg-blue-800 text-white font-medium text-[15px]  tracking-wide"
+            variant="secondary"
+            size="lg"
+            disabled={isLoading}
+            onClick={handlePrincipalDetails}>
+            Download Principal Certificates
           </Button>
           <Button
             className=" font-medium text-[15px]  tracking-wide"
