@@ -323,7 +323,7 @@ export async function generatePrincipalCertificate(
   const bandRight = 600;
   const bandCenterX = (bandLeft + bandRight) / 2;
 
-  const topPosition = 800; // keep aligned with student certificates
+  const topPosition = 500; // keep aligned with student certificates
   const baseY = height - topPosition;
 
   const bodyTracking = 0.5;
