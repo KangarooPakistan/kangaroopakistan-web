@@ -145,7 +145,11 @@ const getCoordinatorNameFontSize = (
   isArabic: boolean
 ): number => {
   const textLength = text.length;
-  return isArabic ? (textLength < 30 ? 24 : 36) : textLength < 30 ? 26 : 27;
+  if (textLength > 30) {
+    return isArabic ? 25 : 27;
+  } else {
+    return isArabic ? 25 : 36;
+  }
 };
 
 const getSchoolNameFontSize = (text: string, isArabic: boolean): number => {
