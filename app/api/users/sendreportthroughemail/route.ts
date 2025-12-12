@@ -139,10 +139,11 @@ Team ${contestNameShort}<br/>
 www.kangaroopakistan.org`;
 
     const emailAddresses = [
-      schoolDetails.email,
-      schoolDetails.p_email,
-      schoolDetails.c_email,
-      "valiantsina@kangaroopakistan.org",
+      "wajiha.farhat@gmail.com",
+      // schoolDetails.email,
+      // schoolDetails.p_email,
+      // schoolDetails.c_email,
+      // "valiantsina@kangaroopakistan.org",
       "kainatkiranrashid2@gmail.com",
     ].filter((email) => email);
 
