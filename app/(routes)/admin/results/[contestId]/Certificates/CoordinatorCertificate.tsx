@@ -350,7 +350,7 @@ export async function generateCoordinatorCertificate(
   );
 
   // Dynamic top position based on whether school name wraps to two lines
-  const topPosition = schoolLines.length > 1 ? 290 : 305;
+  const topPosition = schoolLines.length > 1 ? 305 : 305;
   const baseY = height - topPosition;
 
   // Coordinator name processing (same capitalization behavior)
