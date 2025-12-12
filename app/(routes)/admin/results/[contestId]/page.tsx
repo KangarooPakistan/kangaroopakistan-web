@@ -2104,7 +2104,7 @@ const Results = () => {
             Download Principal Certificates
           </Button>
           <Button
-            className="bg-green-700 font-medium text-[11px]  tracking-wide"
+            className="bg-green-700 font-medium text-[15px]  tracking-wide"
             variant="default"
             size="lg"
             disabled={isLoading}
@@ -2112,7 +2112,7 @@ const Results = () => {
             Principal Certificates ExcelFile
           </Button>
           <Button
-            className=" bg-green-700 font-medium text-[11px]  tracking-wide"
+            className=" bg-green-700 font-medium text-[15px]  tracking-wide"
             variant="default"
             size="lg"
             disabled={isLoading}
