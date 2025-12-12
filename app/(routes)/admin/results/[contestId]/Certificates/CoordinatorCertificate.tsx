@@ -323,19 +323,36 @@ export async function generateCoordinatorCertificate(
   const bandRight = 600;
   const bandCenterX = (bandLeft + bandRight) / 2;
 
-  const topPosition = 280; // keep aligned with student certificates
-  const baseY = height - topPosition;
-
   const bodyTracking = 0.5;
+
+  // Choose font for school name and pre-wrap to know how many lines we'll have
+  // Arabic: Almarai, fallback to Avenir (then Ubuntu only as a last resort)
+  // English: use Avenir instead of Ubuntu
+  const nameFont = isCNameArabic
+    ? fonts.almarai || fonts.ubuntu
+    : fonts.snell || fonts.ubuntu;
+  const schoolNameFont = isSchoolNameArabicText
+    ? fonts.almarai || fonts.avenir || fonts.ubuntu
+    : fonts.avenir || nameFont;
+
+  const maxSchoolWidth = bandRight - bandLeft;
+  const schoolLines = wrapTextToLines(
+    processedSchoolName,
+    schoolNameFont,
+    schoolNameFontSize,
+    maxSchoolWidth,
+    bodyTracking,
+    2
+  );
+
+  // Dynamic top position based on whether school name wraps to two lines
+  const topPosition = schoolLines.length > 1 ? 280 : 295;
+  const baseY = height - topPosition;
 
   // Coordinator name processing (same capitalization behavior)
   const displayCoordinatorName = isCNameArabic
     ? coordinatorName
     : processTextForCapitalization(coordinatorName);
-
-  const nameFont = isCNameArabic
-    ? fonts.almarai || fonts.ubuntu
-    : fonts.snell || fonts.ubuntu;
 
   // 1. Coordinator name
   drawCenteredTextWithTracking(firstPage, displayCoordinatorName, {
@@ -354,7 +371,8 @@ export async function generateCoordinatorCertificate(
   drawCenteredTextWithTracking(firstPage, schoolIdText, {
     centerX: bandCenterX,
     y: schoolIdY,
-    font: fonts.avenir || fonts.ubuntu || nameFont,
+    // For English text, prefer Avenir instead of Ubuntu
+    font: fonts.avenir || nameFont,
     size: 16,
     color: rgb(0, 0, 0),
     tracking: bodyTracking,
@@ -362,19 +380,6 @@ export async function generateCoordinatorCertificate(
 
   // 3. School name (wrapped, same band and spacing)
   const schoolNameY = schoolIdY - 35;
-  const schoolNameFont = isSchoolNameArabicText
-    ? fonts.almarai || fonts.ubuntu
-    : fonts.avenir || fonts.ubuntu || nameFont;
-
-  const maxSchoolWidth = bandRight - bandLeft;
-  const schoolLines = wrapTextToLines(
-    processedSchoolName,
-    schoolNameFont,
-    schoolNameFontSize,
-    maxSchoolWidth,
-    bodyTracking,
-    2
-  );
   const schoolLineHeight = schoolNameFontSize + 2;
 
   schoolLines.forEach((line, index) => {
