@@ -2097,20 +2097,29 @@ const Results = () => {
           </Button>
           <Button
             className="bg-blue-800 text-white font-medium text-[15px]  tracking-wide"
-            variant="default"
-            size="lg"
-            disabled={isLoading}
-            onClick={handleCoordinatorDetailsCustom}>
-            Download Coordinator Certificates (Custom)
-          </Button>
-          <Button
-            className="bg-blue-800 text-white font-medium text-[15px]  tracking-wide"
             variant="secondary"
             size="lg"
             disabled={isLoading}
             onClick={handlePrincipalDetails}>
             Download Principal Certificates
           </Button>
+          <Button
+            className="bg-green-700 font-medium text-[11px]  tracking-wide"
+            variant="default"
+            size="lg"
+            disabled={isLoading}
+            onClick={handlePrincipalDetailsCustom}>
+            Principal Certificates ExcelFile
+          </Button>
+          <Button
+            className=" bg-green-700 font-medium text-[11px]  tracking-wide"
+            variant="default"
+            size="lg"
+            disabled={isLoading}
+            onClick={handleCoordinatorDetailsCustom}>
+            Coordinator Certificates ExcelFile
+          </Button>
+
           <Button
             className=" font-medium text-[15px]  tracking-wide"
             variant="default"
