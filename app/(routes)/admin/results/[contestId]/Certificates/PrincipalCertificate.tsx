@@ -320,7 +320,7 @@ export async function generatePrincipalCertificate(
 
   // Layout settings to match Download Certificates - With Pdf Editing
   const bandLeft = 140;
-  const bandRight = 440;
+  const bandRight = 600;
   const bandCenterX = (bandLeft + bandRight) / 2;
 
   const bodyTracking = 0.5;
