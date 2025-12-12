@@ -2284,7 +2284,7 @@ const Results = () => {
             size="sm"
             disabled={isLoading}
             onClick={handleCoordinatorDetails}>
-            Coordinator Certificates Excel
+            Coordinator Certificates
           </Button>
           <Button
             className=" font-medium text-[11px]  tracking-wide"
@@ -2300,7 +2300,7 @@ const Results = () => {
             size="sm"
             disabled={isLoading}
             onClick={handleCoordinatorDetailsCustom}>
-            Coordinator Certificates (Custom)
+            Coordinator Certificates ExcelFile
           </Button>
           <Button
             className=" font-medium text-[11px]  tracking-wide"
