@@ -479,16 +479,90 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
     }
   };
   const handleIndividualReport = async () => {
-    const response = await axios.get<ApiResponse>(
-      `/api/results/individualreports/${params.contestId}/${schoolResult.schoolId}`
-    );
-    console.log(response);
+    try {
+      setIsLoading(true);
 
-    const studentResults: StudentReport[] = transformResponse(response.data);
-    const blob = await generatePdfBlobForIR(studentResults);
-    saveAs(blob, `School_${schoolResult.schoolId}_IndividualReport.pdf`);
-    // Now you can work with the transformed data
-    console.log(studentResults);
+      const response = await axios.get(
+        `/api/results/individualreports/${params.contestId}/${schoolResult.schoolId}`
+      );
+
+      console.log(response);
+      const studentResults: StudentReport[] = transformResponse(response.data);
+
+      // Filter out students with incorrect percentage calculations
+      const validStudents = studentResults.filter((student) => {
+        const calculatedPercentage = (student.score / student.totalMarks) * 100;
+        const storedPercentage = student.percentage;
+
+        // Allow for small floating point differences (within 0.01%)
+        const percentageDifference = Math.abs(
+          calculatedPercentage - storedPercentage
+        );
+        const isValid = percentageDifference < 0.01;
+
+        if (!isValid) {
+          console.warn(
+            `Skipping student ${student.studentName} (${student.rollNumber}): ` +
+              `Stored percentage (${storedPercentage.toFixed(
+                2
+              )}%) doesn't match ` +
+              `calculated percentage (${calculatedPercentage.toFixed(2)}%)`
+          );
+        }
+
+        return isValid;
+      });
+
+      console.log(
+        `Filtered ${validStudents.length} valid students from ${studentResults.length} total students`
+      );
+
+      if (validStudents.length === 0) {
+        toast.warning("No valid student records found for individual reports", {
+          position: "top-right",
+          autoClose: 5000,
+        });
+        return;
+      }
+
+      // Show info toast if some students were skipped
+      if (validStudents.length < studentResults.length) {
+        toast.info(
+          `Generating reports for ${validStudents.length} students. ` +
+            `${
+              studentResults.length - validStudents.length
+            } students skipped due to data inconsistencies.`,
+          {
+            position: "top-right",
+            autoClose: 6000,
+          }
+        );
+      }
+
+      const blob = await generatePdfBlobForIR(validStudents);
+      saveAs(blob, `School_${schoolResult.schoolId}_IndividualReport.pdf`);
+
+      console.log(validStudents);
+
+      toast.success(
+        `Individual reports generated successfully for ${validStudents.length} students!`,
+        {
+          position: "bottom-center",
+          autoClose: 4000,
+        }
+      );
+    } catch (error) {
+      console.error("Error generating individual reports:", error);
+      toast.error(
+        "Failed to generate individual reports. Please contact developer",
+        {
+          position: "top-right",
+          autoClose: 5000,
+        }
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
   const handleViewResults = async () => {
     router.push(`/admin/results/${params.contestId}/${schoolResult.schoolId}`);
