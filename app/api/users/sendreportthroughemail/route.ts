@@ -123,10 +123,10 @@ export async function POST(request: Request) {
 
     const emailBody = `Dear Principal,<br/><br/>
 
-We are pleased to announce the results of the ${contestName} ${year}. Congratulations to all participating schools and students for their dedication and outstanding performance!.<br/><br/>
+We are pleased to announce the results of the ${contestName} ${year}. Congratulations to all participating schools and students for their dedication and outstanding performance!<br/><br/>
 
 Please find attached the official results for your review.<br/>
-Thank you for your continued  participation in ${contestNameShort} ${year}. We look forward to your ongoing engagement and future achievements.!<br/><br/><br/>
+Thank you for your continued  participation in ${contestNameShort} ${year}. We look forward to your ongoing engagement and future achievements.<br/><br/><br/>
 
 <b>Best regards,</b><br/>
 Team ${contestNameShort}<br/>
