@@ -45,7 +45,9 @@ const schema = zod.object({
 });
 
 const Register = () => {
-  const [duplicateErrors, setDuplicateErrors] = useState<{[key: number]: string}>({});
+  const [duplicateErrors, setDuplicateErrors] = useState<{
+    [key: number]: string;
+  }>({});
   const { id, sid } = useParams<{ id: string; sid: string }>();
   const [currentUserEmail, setCurrentUserEmail] = useState<string | null>();
 
@@ -123,18 +125,26 @@ const Register = () => {
   });
 
   // Real-time duplicate detection functions
-  const findDuplicateIndex = (students: StudentData[], currentIndex: number) => {
+  const findDuplicateIndex = (
+    students: StudentData[],
+    currentIndex: number
+  ) => {
     const currentName = students[currentIndex]?.studentName?.trim();
     const currentFatherName = students[currentIndex]?.fatherName?.trim();
-    
+
     if (!currentName || !currentFatherName) return -1;
-    
+
     for (let i = 0; i < students.length; i++) {
       if (i !== currentIndex) {
         const name = students[i]?.studentName?.trim();
         const fatherName = students[i]?.fatherName?.trim();
-        
-        if (name && fatherName && currentName === name && currentFatherName === fatherName) {
+
+        if (
+          name &&
+          fatherName &&
+          currentName === name &&
+          currentFatherName === fatherName
+        ) {
           return i;
         }
       }
@@ -143,8 +153,8 @@ const Register = () => {
   };
 
   const updateDuplicateErrors = (students: StudentData[]) => {
-    const newErrors: {[key: number]: string} = {};
-    
+    const newErrors: { [key: number]: string } = {};
+
     students.forEach((student, index) => {
       const duplicateIndex = findDuplicateIndex(students, index);
       if (duplicateIndex !== -1) {
@@ -155,7 +165,7 @@ const Register = () => {
         }
       }
     });
-    
+
     setDuplicateErrors(newErrors);
     return Object.keys(newErrors).length > 0;
   };
@@ -404,8 +414,7 @@ const Register = () => {
                 type="button"
                 onClick={() => handleRemoveStudent(index)}
                 className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold z-10"
-                title="Delete this student"
-              >
+                title="Delete this student">
                 ❌
               </button>
             )}
@@ -460,11 +469,11 @@ const Register = () => {
                       <option value="05">FIVE</option>
                       <option value="06">SIX</option>
                       <option value="07">SEVEN</option>
-                      <option value="08">EIGHT/O LEVEL-I</option>
-                      <option value="09">NINE/O LEVEL-I & II</option>
-                      <option value="10">TEN/O LEVEL-II & III</option>
-                      <option value="11">ELEVEN/O LEVEL-III & A LEVEL-I</option>
-                      <option value="12">TWELVE/A LEVEL-I & II</option>
+                      <option value="08">EIGHT</option>
+                      <option value="09">NINE</option>
+                      <option value="10">TEN</option>
+                      <option value="11">ELEVEN</option>
+                      <option value="12">TWELVE</option>
                     </select>
                   )}
                 />
@@ -527,17 +536,17 @@ const Register = () => {
           <div className="flex justify-center sm:block mt-4 sm:mt-0">
             <button
               type="submit"
-              disabled={isSubmitting || Object.keys(duplicateErrors).length > 0} 
+              disabled={isSubmitting || Object.keys(duplicateErrors).length > 0}
               className={`${
                 Object.keys(duplicateErrors).length > 0
                   ? "bg-red-500 hover:bg-red-600"
                   : "bg-green-500 hover:bg-green-600"
               } text-white p-3 text-xs sm:text-base sm:px-4 sm:py-2 rounded`}>
-              {isSubmitting 
-                ? "Submitting..." 
-                : Object.keys(duplicateErrors).length > 0 
-                  ? "Fix Duplicate Errors" 
-                  : "Submit Form"}
+              {isSubmitting
+                ? "Submitting..."
+                : Object.keys(duplicateErrors).length > 0
+                ? "Fix Duplicate Errors"
+                : "Submit Form"}
             </button>
           </div>
         </div>

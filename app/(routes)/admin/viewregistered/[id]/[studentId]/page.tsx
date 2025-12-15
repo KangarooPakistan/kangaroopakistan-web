@@ -135,8 +135,12 @@ const EditStudent = () => {
       const endDate = new Date(contestData.data.endDate);
       // Get current time in Pakistan timezone for accurate comparison
       const currentDate = new Date();
-      const currentPakistanTime = new Date(currentDate.toLocaleString('en-US', { timeZone: 'Asia/Karachi' }));
-      const endDatePakistan = new Date(endDate.toLocaleString('en-US', { timeZone: 'Asia/Karachi' }));
+      const currentPakistanTime = new Date(
+        currentDate.toLocaleString("en-US", { timeZone: "Asia/Karachi" })
+      );
+      const endDatePakistan = new Date(
+        endDate.toLocaleString("en-US", { timeZone: "Asia/Karachi" })
+      );
       const isContestEnded = currentPakistanTime > endDatePakistan;
       console.log(isContestEnded);
       setIsAvailable(isContestEnded);
@@ -314,11 +318,11 @@ const EditStudent = () => {
                       <option value="05">FIVE</option>
                       <option value="06">SIX</option>
                       <option value="07">SEVEN</option>
-                      <option value="08">EIGHT/O LEVEL-I</option>
-                      <option value="09">NINE/O LEVEL-I & II</option>
-                      <option value="10">TEN/O LEVEL-II & III</option>
-                      <option value="11">ELEVEN/O LEVEL-III & A LEVEL-I</option>
-                      <option value="12">TWELVE/A LEVEL-I & II</option>
+                      <option value="08">EIGHT</option>
+                      <option value="09">NINE</option>
+                      <option value="10">TEN</option>
+                      <option value="11">ELEVEN</option>
+                      <option value="12">TWELVE</option>
                     </select>
                   )}
                 />
