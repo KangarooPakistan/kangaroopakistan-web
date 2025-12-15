@@ -307,6 +307,88 @@ export async function GET(
     // Process raw scores
     const processedAllScores = allContestScores.map(processRawScore);
 
+    // Find the student's score first to validate
+    const studentScore = processedAllScores.find(
+      (score) => score.rollNo === rollNumber
+    );
+
+    if (!studentScore) {
+      return NextResponse.json(
+        { message: "Student score not found" },
+        { status: 404 }
+      );
+    }
+
+    // Validate percentage calculation
+    const score = Number(studentScore.score) || 0;
+    const totalMarks = Number(studentScore.totalMarks) || 0;
+    const storedPercentage = Number(studentScore.percentage) || 0;
+
+    // Calculate expected percentage with small tolerance for floating point differences
+    const calculatedPercentage =
+      totalMarks > 0 ? (score / totalMarks) * 100 : 0;
+    const tolerance = 0.01; // Allow for small floating point differences
+    const isPercentageValid =
+      Math.abs(calculatedPercentage - storedPercentage) < tolerance;
+
+    console.log(
+      `Score: ${score}, Total: ${totalMarks}, Stored %: ${storedPercentage}, Calculated %: ${calculatedPercentage}, Valid: ${isPercentageValid}`
+    );
+
+    // If percentage is invalid, return response without rankings
+    if (!isPercentageValid) {
+      const missingQuestions = getMissingQuestions(
+        studentScore.description,
+        studentInfo.class
+      );
+
+      const missingQuestionsArray = Array.isArray(missingQuestions)
+        ? missingQuestions
+        : [missingQuestions];
+
+      const processedScoreWithoutRankings = {
+        ...convertBigIntToNumber(studentScore),
+        student: {
+          studentName: studentInfo.studentName,
+          fatherName: studentInfo.fatherName,
+          class: studentInfo.class,
+          level: studentInfo.level,
+        },
+        parsedRollNumber: {
+          year,
+          district: districtCode,
+          school: schoolId,
+          class: classNum,
+          serialNum,
+          suffix,
+        },
+        missingQuestionsCount: missingQuestionsArray,
+        // Explicitly set rankings to null or omit them
+        rankings: null,
+        validationError: "Percentage mismatch detected",
+      };
+
+      return NextResponse.json(
+        {
+          schoolId: schoolIntId,
+          schoolName: schoolInfo?.schoolName || null,
+          city: schoolInfo?.city || null,
+          schoolAddress: schoolInfo?.schoolAddress || null,
+          student: {
+            rollNumber: studentInfo?.rollNumber,
+            name: studentInfo?.studentName,
+            class: studentInfo?.class,
+            level: studentInfo?.level,
+            fatherName: studentInfo?.fatherName,
+          },
+          totalScores: 1,
+          scores: [processedScoreWithoutRankings],
+        },
+        { status: 200 }
+      );
+    }
+
+    // Continue with normal flow if percentage is valid
     // Separate scores by different contexts
     const schoolScores = processedAllScores.filter((score) =>
       score.rollNo?.includes(`-${paddedSchoolId}-`)
@@ -330,18 +412,6 @@ export async function GET(
       processedAllScores,
       classNum
     );
-
-    // Find the student's score
-    const studentScore = processedAllScores.find(
-      (score) => score.rollNo === rollNumber
-    );
-
-    if (!studentScore) {
-      return NextResponse.json(
-        { message: "Student score not found" },
-        { status: 404 }
-      );
-    }
 
     // Find rankings
     const schoolRank = schoolClassRankings.find((s) => s.rollNo === rollNumber);

@@ -1,5 +1,3 @@
-// results page
-
 "use client";
 import React, { useState } from "react";
 import axios from "axios";
@@ -52,7 +50,8 @@ interface StudentScore {
         rank: number;
         totalParticipants: number;
       };
-    };
+    } | null;
+    validationError?: string;
   }>;
 }
 
@@ -157,6 +156,11 @@ const StudentResultsPage = () => {
     }
   };
 
+  // Check if any score has valid rankings
+  const hasValidRankings = studentData?.scores.some(
+    (score) => score.rankings !== null && score.rankings !== undefined
+  );
+
   return (
     <div className="max-w-lg  mx-auto p-6 m-10 bg-white shadow-md rounded-lg">
       <div className="mb-4">
@@ -192,12 +196,18 @@ const StudentResultsPage = () => {
         <div className="mt-6 bg-gray-50 p-4 rounded-md">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-bold">Student Results</h2>
-            <button
-              onClick={handleIndividualReportDownload}
-              disabled={downloadLoading}
-              className="bg-green-600 text-white py-1 px-3 rounded-md hover:bg-green-700 focus:outline-none">
-              {downloadLoading ? "Downloading..." : "Download Report"}
-            </button>
+            {hasValidRankings ? (
+              <button
+                onClick={handleIndividualReportDownload}
+                disabled={downloadLoading}
+                className="bg-green-600 text-white py-1 px-3 rounded-md hover:bg-green-700 focus:outline-none">
+                {downloadLoading ? "Downloading..." : "Download Report"}
+              </button>
+            ) : (
+              <div className="text-sm text-red-600 font-medium">
+                No individual report found
+              </div>
+            )}
           </div>
 
           <div className="mb-2">
@@ -228,6 +238,15 @@ const StudentResultsPage = () => {
               <div>
                 <strong>Percentage:</strong> {score.percentage?.toFixed(2)}%
               </div>
+
+              {/* Show validation error if present */}
+              {score.validationError && (
+                <div className="mt-2 p-2 bg-yellow-50 border border-yellow-400 text-yellow-700 rounded text-sm">
+                  <strong>Note:</strong> {score.validationError}
+                </div>
+              )}
+
+              {/* Only show rankings if they exist and are not null */}
               {score.rankings && (
                 <div className="mt-2">
                   <strong>Rankings:</strong>
@@ -243,6 +262,13 @@ const StudentResultsPage = () => {
                     Overall Rank: {score.rankings.overall.rank} /{" "}
                     {score.rankings.overall.totalParticipants}
                   </div>
+                </div>
+              )}
+
+              {/* Show message if rankings are missing */}
+              {!score.rankings && (
+                <div className="mt-2 p-2 bg-gray-100 border border-gray-300 text-gray-600 rounded text-sm">
+                  Rankings not available for this result
                 </div>
               )}
             </div>
