@@ -188,7 +188,7 @@ const AwardsPdf: React.FC<Props> = ({ data, winnerType }) => {
 
           {/* Table Data */}
           {data.map((item, index) => (
-            <View key={index} style={styles.tableRow}>
+            <View key={index} style={styles.tableRow} wrap={false}>
               <View style={styles.tableCol}>
                 <CellContent>{index + 1}</CellContent>
               </View>
