@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     borderStyle: "solid",
     borderWidth: 1,
     borderLeftWidth: 1,
-    borderRightWidth: 0,
+    borderRightWidth: 1,
     borderTopWidth: 0,
     backgroundColor: "#f0f0f0",
     padding: 4, // Increased padding
@@ -97,6 +97,16 @@ const styles = StyleSheet.create({
     fontSize: 8,
     borderLeftWidth: 1,
     borderRightWidth: 0,
+    borderTopWidth: 0,
+    padding: 4, // Increased padding
+  },
+  tableColLargeLast: {
+    width: "22%",
+    borderStyle: "solid",
+    borderWidth: 1,
+    fontSize: 8,
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
     borderTopWidth: 0,
     padding: 4, // Increased padding
   },
@@ -212,7 +222,7 @@ const AwardsPdf: React.FC<Props> = ({ data, winnerType }) => {
               <View style={styles.tableCol}>
                 <CellContent>{item.class}</CellContent>
               </View>
-              <View style={styles.tableColLarge}>
+              <View style={styles.tableColLargeLast}>
                 <CellContent>{item.schoolName}</CellContent>
               </View>
               {/* <View style={styles.tableColLarge}>
