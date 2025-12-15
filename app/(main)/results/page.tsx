@@ -86,8 +86,6 @@ const StudentResultsPage = () => {
       const response = await axios.get(
         `/api/results/getbyrollnumber/${rollNumber}`
       );
-      console.log("response.data");
-      console.log(response.data);
       setStudentData(response.data);
     } catch (err) {
       console.log(err);
@@ -232,12 +230,18 @@ const StudentResultsPage = () => {
               <div>
                 <strong>Date:</strong> {score.contest.contestDate || "N/A"}
               </div>
-              <div>
-                <strong>Score:</strong> {score.score} / {score.totalMarks}
-              </div>
-              <div>
-                <strong>Percentage:</strong> {score.percentage?.toFixed(2)}%
-              </div>
+
+              {/* Only show score and percentage if rankings are available */}
+              {score.rankings && (
+                <>
+                  <div>
+                    <strong>Score:</strong> {score.score} / {score.totalMarks}
+                  </div>
+                  <div>
+                    <strong>Percentage:</strong> {score.percentage?.toFixed(2)}%
+                  </div>
+                </>
+              )}
 
               {/* Show validation error if present */}
               {score.validationError && (
