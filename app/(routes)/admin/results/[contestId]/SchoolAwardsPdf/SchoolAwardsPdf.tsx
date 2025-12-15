@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRightWidth: 0,
     borderBottomWidth: 0,
-    borderLeftWidth: 0, // Add this line to remove left border
+    borderLeftWidth: 0,
   },
   tableRow: {
     flexDirection: "row",
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     width: "7%",
     borderStyle: "solid",
     borderWidth: 1,
-    borderLeftWidth: 1, // Change from 0 to 1 (add left border to first column)
+    borderLeftWidth: 1,
 
     fontSize: 8,
     borderTopWidth: 0,
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     width: "7%",
     borderStyle: "solid",
     borderWidth: 1,
-    borderLeftWidth: 0, // Change from 0 to 1 (add left border to first column)
+    borderLeftWidth: 0,
 
     fontSize: 8,
     borderTopWidth: 0,
@@ -88,7 +88,6 @@ const styles = StyleSheet.create({
     borderStyle: "solid",
     borderWidth: 1,
     borderLeftWidth: 0,
-    // borderRightWidth: 0,
     borderTopWidth: 0,
     backgroundColor: "#f0f0f0",
     padding: 4,
@@ -150,7 +149,7 @@ const styles = StyleSheet.create({
     fontSize: 8,
     textAlign: "center",
     wordWrap: "break-word",
-    wordBreak: "break-word", // Add this
+    wordBreak: "break-word",
   },
   cellContent: {
     display: "flex",
@@ -158,7 +157,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     textTransform: "uppercase",
-    maxWidth: "100%", // Add this
+    maxWidth: "100%",
     width: "100%",
     minHeight: 15,
   },
@@ -212,12 +211,10 @@ const CellContent = ({
 }) => {
   const text = String(children || "");
 
-  // If allowBreak is true and text contains hyphens, split at hyphens
   let displayText = text;
   if (allowBreak && text.includes("-")) {
-    // Split at hyphens and rejoin with newlines
     const parts = text.split("-");
-    displayText = parts.join("-\n"); // Force line break after each hyphen
+    displayText = parts.join("-\n");
   }
 
   return (
@@ -226,6 +223,37 @@ const CellContent = ({
     </View>
   );
 };
+
+// Helper function to validate score and percentage
+const validateScoreAndPercentage = (item: SchoolResultPdf) => {
+  const classNum = parseInt(item.class);
+  const score = parseFloat(item.score?.score);
+  const percentage = parseFloat(item.percentage);
+
+  // Check if values are valid numbers
+  if (isNaN(classNum) || isNaN(score) || isNaN(percentage)) {
+    return { score: "NIL", percentage: "NIL" };
+  }
+
+  // Determine total marks based on class
+  const totalMarks = classNum >= 1 && classNum <= 4 ? 120 : 150;
+
+  // Calculate expected percentage
+  const expectedPercentage = (score / totalMarks) * 100;
+
+  // Check if the percentage matches (with small tolerance for floating point)
+  const isValid = Math.abs(percentage - expectedPercentage) < 0.01;
+
+  if (isValid) {
+    return {
+      score: item.score?.score || "N/A",
+      percentage: item.percentage || "N/A",
+    };
+  } else {
+    return { score: "NIL", percentage: "NIL" };
+  }
+};
+
 const SchoolAwardsPdf: React.FC<SchoolAwardsPdfProps> = ({ data }) => {
   const [fontsLoaded, setFontsLoaded] = useState(false);
 
@@ -247,6 +275,7 @@ const SchoolAwardsPdf: React.FC<SchoolAwardsPdfProps> = ({ data }) => {
   console.log(results);
   console.log("results");
   console.log(statistics);
+
   useEffect(() => {
     const loadFonts = async () => {
       await Font.register({
@@ -273,8 +302,6 @@ const SchoolAwardsPdf: React.FC<SchoolAwardsPdfProps> = ({ data }) => {
           Contact Number:
           {results[0].schoolDetails.contactNumber}
         </Text>
-
-        {/* <Text style={styles.title}>School Awards Report</Text> */}
 
         <View style={styles.statsSection}>
           <Text style={styles.title}>Award Statistics</Text>
@@ -340,34 +367,40 @@ const SchoolAwardsPdf: React.FC<SchoolAwardsPdfProps> = ({ data }) => {
             </View>
           </View>
 
-          {results.map((item, index) => (
-            <View key={index} style={styles.tableRow} wrap={false}>
-              <View style={styles.tableColFirst}>
-                <CellContent>{index + 1}</CellContent>
+          {results.map((item, index) => {
+            const validatedData = validateScoreAndPercentage(item);
+
+            return (
+              <View key={index} style={styles.tableRow} wrap={false}>
+                <View style={styles.tableColFirst}>
+                  <CellContent>{index + 1}</CellContent>
+                </View>
+                <View style={styles.tableColLargeR}>
+                  <CellContent allowBreak={false}>
+                    {item.rollNumber}
+                  </CellContent>
+                </View>
+                <View style={styles.tableColLarge}>
+                  <CellContent>{item.studentName}</CellContent>
+                </View>
+                <View style={styles.tableColLarge}>
+                  <CellContent>{item.fatherName}</CellContent>
+                </View>
+                <View style={styles.tableCol}>
+                  <CellContent>{item.class}</CellContent>
+                </View>
+                <View style={styles.tableColLarge}>
+                  <CellContent>{validatedData.score}</CellContent>
+                </View>
+                <View style={styles.tableColLarge}>
+                  <CellContent>{validatedData.percentage}</CellContent>
+                </View>
+                <View style={styles.tableColLarge}>
+                  <CellContent>{item.AwardLevel || "N/A"}</CellContent>
+                </View>
               </View>
-              <View style={styles.tableColLargeR}>
-                <CellContent allowBreak={false}>{item.rollNumber}</CellContent>
-              </View>
-              <View style={styles.tableColLarge}>
-                <CellContent>{item.studentName}</CellContent>
-              </View>
-              <View style={styles.tableColLarge}>
-                <CellContent>{item.fatherName}</CellContent>
-              </View>
-              <View style={styles.tableCol}>
-                <CellContent>{item.class}</CellContent>
-              </View>
-              <View style={styles.tableColLarge}>
-                <CellContent>{item.score?.score || "N/A"}</CellContent>
-              </View>
-              <View style={styles.tableColLarge}>
-                <CellContent>{item.percentage || "N/A"}</CellContent>
-              </View>
-              <View style={styles.tableColLarge}>
-                <CellContent>{item.AwardLevel || "N/A"}</CellContent>
-              </View>
-            </View>
-          ))}
+            );
+          })}
         </View>
       </Page>
     </Document>
