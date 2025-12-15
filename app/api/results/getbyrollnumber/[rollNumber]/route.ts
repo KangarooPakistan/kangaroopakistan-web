@@ -348,6 +348,20 @@ export async function GET(
 
       const processedScoreWithoutRankings = {
         ...convertBigIntToNumber(studentScore),
+        // Set all score-related fields to null
+        cRow1: null,
+        cRow2: null,
+        cRow3: null,
+        cTotal: null,
+        creditScore: null,
+        description: null,
+        missing: null,
+        percentage: null,
+        score: null,
+        totalMarks: null,
+        wrong: null,
+        contestId: studentScore.contestId, // Keep contestId
+        rollNo: studentScore.rollNo, // Keep rollNo
         student: {
           studentName: studentInfo.studentName,
           fatherName: studentInfo.fatherName,
@@ -363,7 +377,6 @@ export async function GET(
           suffix,
         },
         missingQuestionsCount: missingQuestionsArray,
-        // Explicitly set rankings to null or omit them
         rankings: null,
         validationError: "Percentage mismatch detected",
       };
