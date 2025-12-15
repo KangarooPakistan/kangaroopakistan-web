@@ -51,6 +51,7 @@ const styles = StyleSheet.create({
     borderStyle: "solid",
     borderWidth: 1,
     borderLeftWidth: 1,
+    borderRightWidth: 0,
     fontSize: 8,
     borderTopWidth: 0,
     backgroundColor: "#f0f0f0",
@@ -62,6 +63,7 @@ const styles = StyleSheet.create({
     borderStyle: "solid",
     borderWidth: 1,
     borderLeftWidth: 1,
+    borderRightWidth: 0,
     borderTopWidth: 0,
     backgroundColor: "#f0f0f0",
     padding: 4, // Increased padding
@@ -73,6 +75,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderLeftWidth: 1,
     borderTopWidth: 0,
+    borderRightWidth: 0,
     backgroundColor: "#f0f0f0",
     padding: 4, // Increased padding
   },
@@ -81,7 +84,9 @@ const styles = StyleSheet.create({
     borderStyle: "solid",
     borderWidth: 1,
     fontSize: 8,
-    borderLeftWidth: 0,
+    borderLeftWidth: 1,
+    borderRightWidth: 0,
+
     borderTopWidth: 0,
     padding: 4, // Increased padding
   },
@@ -91,6 +96,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     fontSize: 8,
     borderLeftWidth: 1,
+    borderRightWidth: 0,
     borderTopWidth: 0,
     padding: 4, // Increased padding
   },
@@ -100,6 +106,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     fontSize: 8,
     borderLeftWidth: 1,
+    borderRightWidth: 0,
     borderTopWidth: 0,
     padding: 4, // Increased padding
   },
