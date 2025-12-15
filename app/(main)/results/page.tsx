@@ -244,11 +244,11 @@ const StudentResultsPage = () => {
               )}
 
               {/* Show validation error if present */}
-              {score.validationError && (
+              {/* {score.validationError && (
                 <div className="mt-2 p-2 bg-yellow-50 border border-yellow-400 text-yellow-700 rounded text-sm">
                   <strong>Note:</strong> {score.validationError}
                 </div>
-              )}
+              )} */}
 
               {/* Only show rankings if they exist and are not null */}
               {score.rankings && (
