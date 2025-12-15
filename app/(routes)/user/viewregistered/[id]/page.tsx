@@ -283,10 +283,14 @@ function ViewRegistered({ params, searchParams }: PageProps) {
     const checkHold = async () => {
       try {
         if (!schoolId || !params.id) return;
-        const resp = await axios.get(`/api/results/hold/${params.id}/${schoolId}`);
+        const resp = await axios.get(
+          `/api/results/hold/${params.id}/${schoolId}`
+        );
         setIsHeld(!!resp.data?.hold);
         if (resp.data?.hold) {
-          setStatusMessage("Results are currently on hold by the administrator. Please check back later.");
+          setStatusMessage(
+            "Results are currently on hold by the administrator. Please check back later."
+          );
         } else {
           setStatusMessage("");
         }
@@ -325,10 +329,14 @@ function ViewRegistered({ params, searchParams }: PageProps) {
     setIsLoading(true);
     try {
       // pre-check hold status to provide instant UX response
-      const holdResp = await axios.get(`/api/results/hold/${params.id}/${schoolId}`);
+      const holdResp = await axios.get(
+        `/api/results/hold/${params.id}/${schoolId}`
+      );
       if (holdResp.data?.hold) {
         setIsHeld(true);
-        setStatusMessage("Results are currently on hold by the administrator. Please check back later.");
+        setStatusMessage(
+          "Results are currently on hold by the administrator. Please check back later."
+        );
         toast.info("Results are currently on hold for your school.");
         return;
       }
@@ -362,10 +370,13 @@ function ViewRegistered({ params, searchParams }: PageProps) {
       // Robust UX on errors (including hold response from API)
       if (axios.isAxiosError(error)) {
         const status = error.response?.status;
-        const message = (error.response?.data as any)?.error || "Failed to download results.";
+        const message =
+          (error.response?.data as any)?.error || "Failed to download results.";
         if (status === 403) {
           setIsHeld(true);
-          setStatusMessage("Results are currently on hold by the administrator. Please check back later.");
+          setStatusMessage(
+            "Results are currently on hold by the administrator. Please check back later."
+          );
           toast.info(message);
         } else {
           toast.error(message);
@@ -583,13 +594,16 @@ function ViewRegistered({ params, searchParams }: PageProps) {
             <Button
               className="w-full"
               onClick={handleView}
-              disabled={isLoading || isHeld === true}
-            >
-              {isLoading ? "Preparing results..." : isHeld ? "Results on hold" : "Download Results"}
+              disabled={isLoading || isHeld === true}>
+              {isLoading
+                ? "Preparing results..."
+                : isHeld
+                ? "Results Not Found"
+                : "Download Results"}
             </Button>
             {isHeld ? (
               <p className="mt-2 text-sm text-red-600">
-                {statusMessage || "Results are currently on hold. Please try again later."}
+                {statusMessage || "Results not found. Please try again later."}
               </p>
             ) : null}
           </div>
