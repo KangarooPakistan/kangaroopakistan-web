@@ -63,6 +63,17 @@ const styles = StyleSheet.create({
     borderStyle: "solid",
     borderWidth: 1,
     borderLeftWidth: 1,
+    borderRightWidth: 0,
+    borderTopWidth: 0,
+    backgroundColor: "#f0f0f0",
+    padding: 4, // Increased padding
+  },
+  tableColHeaderLargeLast: {
+    width: "22%",
+    fontSize: 8,
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderLeftWidth: 1,
     borderRightWidth: 1,
     borderTopWidth: 0,
     backgroundColor: "#f0f0f0",
@@ -196,7 +207,7 @@ const AwardsPdf: React.FC<Props> = ({ data, winnerType }) => {
             <View style={styles.tableColHeader}>
               <Text style={styles.tableCellHeader}>CLASS</Text>
             </View>
-            <View style={styles.tableColHeaderLarge}>
+            <View style={styles.tableColHeaderLargeLast}>
               <Text style={styles.tableCellHeader}>INSTITUTION</Text>
             </View>
             {/* <View style={styles.tableColHeaderLarge}>
