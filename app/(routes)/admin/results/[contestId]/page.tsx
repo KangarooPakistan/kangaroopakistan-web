@@ -13,6 +13,11 @@ import { saveAs } from "file-saver";
 import { toast, ToastContainer, Id } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import * as XLSX from "xlsx";
+import {
+  eelcertificateData,
+  oaecertificateData,
+  dpccertificateData,
+} from "../[contestId]/Certificates/educationalAwards"; // Import the type
 
 import { ca } from "date-fns/locale";
 import QuestionStatsPdf from "../QuestionStats/QuestionStats";
@@ -31,6 +36,7 @@ import {
   coordinatorCustomList,
   principalCustomList,
 } from "./coordinatorCustomList";
+import CoordinatorExtraAwards from "./CoordinatorExtraAwards/CoordinatorExtraAwards";
 
 export type Contest = {
   contestDate: string;
@@ -165,6 +171,21 @@ const Results = () => {
   }, [params.contestId]);
 
   async function generatePdfBlob(data: Result[], winnerType: string) {
+    console.log(data);
+    console.log("--------------------------");
+    const doc = <AwardsPdf data={data} winnerType={winnerType} />;
+    console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@");
+
+    const asPdf = pdf(doc); // Create an empty PDF instance
+    console.log("----------!!!!!!!!!");
+    const blob = await asPdf.toBlob();
+    console.log("----------!!!!!!!!!");
+    return blob;
+  }
+  async function generatePdfBlobForExtraAwards(
+    data: Result[],
+    winnerType: string
+  ) {
     console.log(data);
     console.log("--------------------------");
     const doc = <AwardsPdf data={data} winnerType={winnerType} />;
@@ -404,6 +425,44 @@ const Results = () => {
       setIsLoading(false);
     } catch (error) {
       console.error("Error fetching school result:", error);
+    }
+  };
+  const handleCoordinatorExtras = async () => {
+    try {
+      setIsLoading(true);
+      const schoolResultGoldResp = await axios.get(
+        `/api/results/getschoolsdata/${params.contestId}/GOLD`
+      );
+      console.log("schoolResultGoldResp");
+      console.log(schoolResultGoldResp);
+
+      // Map over the data to convert values accordingly
+      const convertedData = schoolResultGoldResp.data.map((item: any) => ({
+        ...item,
+        scoreId: convertToBigIntOrNumber(item.scoreId),
+        percentage: parseFloat(item.percentage),
+      }));
+
+      // Create the coordinator awards PDF
+      const coordinatorDoc = (
+        <CoordinatorExtraAwards
+          contestName={convertedData[0].contest.name}
+          eelcertificateData={eelcertificateData}
+          oaecertificateData={oaecertificateData}
+          dpccertificateData={dpccertificateData}
+        />
+      );
+
+      const coordinatorPdf = pdf(coordinatorDoc);
+      const coordinatorBlob = await coordinatorPdf.toBlob();
+      const coordinatorPdfName = `CoordinatorAwards.pdf`;
+      saveAs(coordinatorBlob, coordinatorPdfName);
+
+      console.log(convertedData);
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error fetching school result:", error);
+      setIsLoading(false);
     }
   };
   const handleGoldExcel = async () => {
@@ -2128,6 +2187,15 @@ const Results = () => {
             onClick={downloadQuestionStats}>
             Download Question Stats
           </Button>
+          <Button
+            className=" font-medium text-[15px]  tracking-wide"
+            variant="default"
+            size="lg"
+            disabled={isLoading}
+            onClick={handleCoordinatorExtras}>
+            Download Extra Coordinator Awards
+          </Button>
+
           <Button
             className=" font-medium text-[15px]  tracking-wide"
             variant="default"
