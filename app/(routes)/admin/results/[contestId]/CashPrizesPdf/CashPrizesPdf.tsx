@@ -231,7 +231,7 @@ const CashPrizesPdf: React.FC<Props> = ({
     <Document>
       <Page size="A4" style={styles.page}>
         <Text style={styles.title}>{contestName}</Text>
-        <Text style={styles.subtitle}>Coordinator Excellence Awards</Text>
+        <Text style={styles.subtitle}>Coordinator Cash Awards</Text>
 
         {renderCertificateTable(bronzeImpact)}
         {renderCertificateTable(silverImpact)}
