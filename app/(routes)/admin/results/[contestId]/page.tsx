@@ -17,7 +17,7 @@ import {
   eelcertificateData,
   oaecertificateData,
   dpccertificateData,
-} from "../[contestId]/Certificates/educationalAwards"; // Import the type
+} from "./Certificates/CoordinatorCertificateData"; // Import the type
 
 import { ca } from "date-fns/locale";
 import QuestionStatsPdf from "../QuestionStats/QuestionStats";
@@ -37,6 +37,12 @@ import {
   principalCustomList,
 } from "./coordinatorCustomList";
 import CoordinatorExtraAwards from "./CoordinatorExtraAwards/CoordinatorExtraAwards";
+import {
+  dpcpcertificateData,
+  eelpcertificateData,
+  oaepcertificateData,
+} from "./Certificates/PrincipalCertificateData";
+import PrincipalExtraAwards from "./PrincipalExtraAwards/PrincipalExtraAwards";
 
 export type Contest = {
   contestDate: string;
@@ -455,7 +461,45 @@ const Results = () => {
 
       const coordinatorPdf = pdf(coordinatorDoc);
       const coordinatorBlob = await coordinatorPdf.toBlob();
-      const coordinatorPdfName = `CoordinatorAwards.pdf`;
+      const coordinatorPdfName = `CoordinatorAwardsList.pdf`;
+      saveAs(coordinatorBlob, coordinatorPdfName);
+
+      console.log(convertedData);
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error fetching school result:", error);
+      setIsLoading(false);
+    }
+  };
+  const handlePrincipalExtras = async () => {
+    try {
+      setIsLoading(true);
+      const schoolResultGoldResp = await axios.get(
+        `/api/results/getschoolsdata/${params.contestId}/GOLD`
+      );
+      console.log("schoolResultGoldResp");
+      console.log(schoolResultGoldResp);
+
+      // Map over the data to convert values accordingly
+      const convertedData = schoolResultGoldResp.data.map((item: any) => ({
+        ...item,
+        scoreId: convertToBigIntOrNumber(item.scoreId),
+        percentage: parseFloat(item.percentage),
+      }));
+
+      // Create the coordinator awards PDF
+      const coordinatorDoc = (
+        <PrincipalExtraAwards
+          contestName={convertedData[0].contest.name}
+          eelpcertificateData={eelpcertificateData}
+          oaepcertificateData={oaepcertificateData}
+          dpcpcertificateData={dpcpcertificateData}
+        />
+      );
+
+      const coordinatorPdf = pdf(coordinatorDoc);
+      const coordinatorBlob = await coordinatorPdf.toBlob();
+      const coordinatorPdfName = `PrincipalAwardsList.pdf`;
       saveAs(coordinatorBlob, coordinatorPdfName);
 
       console.log(convertedData);
@@ -2188,12 +2232,20 @@ const Results = () => {
             Download Question Stats
           </Button>
           <Button
-            className=" font-medium text-[15px]  tracking-wide"
+            className="bg-green-700 font-medium text-[15px]  tracking-wide"
             variant="default"
             size="lg"
             disabled={isLoading}
             onClick={handleCoordinatorExtras}>
-            Download Extra Coordinator Awards
+            Download Extra Principal Awards List
+          </Button>
+          <Button
+            className="bg-green-700 font-medium text-[15px]  tracking-wide"
+            variant="default"
+            size="lg"
+            disabled={isLoading}
+            onClick={handlePrincipalExtras}>
+            Download Extra Principal Awards List
           </Button>
 
           <Button

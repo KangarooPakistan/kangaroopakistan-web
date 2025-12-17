@@ -7,7 +7,7 @@ import {
   StyleSheet,
   Font,
 } from "@react-pdf/renderer";
-import { CoordinatorCertificateData } from "../Certificates/CoordinatorCertificateData"; // Import the type
+import { PrincipalCertificateData } from "../Certificates/PrincipalCertificateData"; // Import the type
 
 const styles = StyleSheet.create({
   page: {
@@ -141,16 +141,16 @@ const styles = StyleSheet.create({
 
 type Props = {
   contestName: string;
-  eelcertificateData: CoordinatorCertificateData;
-  oaecertificateData: CoordinatorCertificateData;
-  dpccertificateData: CoordinatorCertificateData;
+  eelpcertificateData: PrincipalCertificateData;
+  oaepcertificateData: PrincipalCertificateData;
+  dpcpcertificateData: PrincipalCertificateData;
 };
 
-const CoordinatorExtraAwards: React.FC<Props> = ({
+const PrincipalExtraAwards: React.FC<Props> = ({
   contestName,
-  eelcertificateData,
-  oaecertificateData,
-  dpccertificateData,
+  eelpcertificateData,
+  oaepcertificateData,
+  dpcpcertificateData,
 }) => {
   const [fontsLoaded, setFontsLoaded] = useState(false);
 
@@ -176,7 +176,7 @@ const CoordinatorExtraAwards: React.FC<Props> = ({
   );
 
   const renderCertificateTable = (
-    certificateData: CoordinatorCertificateData
+    certificateData: PrincipalCertificateData
   ) => (
     <>
       <Text style={styles.sectionTitle}>{certificateData.name}</Text>
@@ -205,7 +205,7 @@ const CoordinatorExtraAwards: React.FC<Props> = ({
                 <CellContent>{index + 1}</CellContent>
               </View>
               <View style={styles.tableColMedium}>
-                <CellContent>{item.c_Name}</CellContent>
+                <CellContent>{item.p_Name}</CellContent>
               </View>
               <View style={styles.tableColMedium}>
                 <CellContent>{item.schoolId}</CellContent>
@@ -224,14 +224,14 @@ const CoordinatorExtraAwards: React.FC<Props> = ({
     <Document>
       <Page size="A4" style={styles.page}>
         <Text style={styles.title}>{contestName}</Text>
-        <Text style={styles.subtitle}>Coordinator Excellence Awards</Text>
+        <Text style={styles.subtitle}>Principal Excellence Awards</Text>
 
-        {renderCertificateTable(eelcertificateData)}
-        {renderCertificateTable(oaecertificateData)}
-        {renderCertificateTable(dpccertificateData)}
+        {renderCertificateTable(eelpcertificateData)}
+        {renderCertificateTable(oaepcertificateData)}
+        {renderCertificateTable(dpcpcertificateData)}
       </Page>
     </Document>
   );
 };
 
-export default CoordinatorExtraAwards;
+export default PrincipalExtraAwards;
