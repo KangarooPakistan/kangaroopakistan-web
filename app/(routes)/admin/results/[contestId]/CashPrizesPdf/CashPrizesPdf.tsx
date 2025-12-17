@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   tableCol: {
-    width: "10%",
+    width: "15%",
     borderStyle: "solid",
     borderWidth: 1,
     fontSize: 8,
