@@ -2287,7 +2287,7 @@ const Results = () => {
             size="lg"
             disabled={isLoading}
             onClick={handleCoordinatorExtras}>
-            Download Extra Principal Awards List
+            Download Extra Coordinator Awards List
           </Button>
           <Button
             className="bg-green-700 font-medium text-[15px]  tracking-wide"
