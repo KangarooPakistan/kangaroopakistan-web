@@ -43,6 +43,15 @@ import {
   oaepcertificateData,
 } from "./Certificates/PrincipalCertificateData";
 import PrincipalExtraAwards from "./PrincipalExtraAwards/PrincipalExtraAwards";
+import CashPrizesPdf from "./CashPrizesPdf/CashPrizesPdf";
+import {
+  bronzeImpact,
+  diamondImpact,
+  goldImpact,
+  plataniumImpact,
+  silverImpact,
+  titaniumImpact,
+} from "./Certificates/CashPrizes";
 
 export type Contest = {
   contestDate: string;
@@ -462,6 +471,47 @@ const Results = () => {
       const coordinatorPdf = pdf(coordinatorDoc);
       const coordinatorBlob = await coordinatorPdf.toBlob();
       const coordinatorPdfName = `CoordinatorAwardsList.pdf`;
+      saveAs(coordinatorBlob, coordinatorPdfName);
+
+      console.log(convertedData);
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error fetching school result:", error);
+      setIsLoading(false);
+    }
+  };
+  const handleCashPrizesPdf = async () => {
+    try {
+      setIsLoading(true);
+      const schoolResultGoldResp = await axios.get(
+        `/api/results/getschoolsdata/${params.contestId}/GOLD`
+      );
+      console.log("schoolResultGoldResp");
+      console.log(schoolResultGoldResp);
+
+      // Map over the data to convert values accordingly
+      const convertedData = schoolResultGoldResp.data.map((item: any) => ({
+        ...item,
+        scoreId: convertToBigIntOrNumber(item.scoreId),
+        percentage: parseFloat(item.percentage),
+      }));
+
+      // Create the coordinator awards PDF
+      const coordinatorDoc = (
+        <CashPrizesPdf
+          contestName={convertedData[0].contest.name}
+          bronzeImpact={bronzeImpact}
+          silverImpact={silverImpact}
+          goldImpact={goldImpact}
+          plataniumImpact={plataniumImpact}
+          titaniumImpact={titaniumImpact}
+          diamondImpact={diamondImpact}
+        />
+      );
+
+      const coordinatorPdf = pdf(coordinatorDoc);
+      const coordinatorBlob = await coordinatorPdf.toBlob();
+      const coordinatorPdfName = `CashPrizeWinnersList.pdf`;
       saveAs(coordinatorBlob, coordinatorPdfName);
 
       console.log(convertedData);
@@ -2246,6 +2296,14 @@ const Results = () => {
             disabled={isLoading}
             onClick={handlePrincipalExtras}>
             Download Extra Principal Awards List
+          </Button>
+          <Button
+            className="bg-green-700 font-medium text-[15px]  tracking-wide"
+            variant="default"
+            size="lg"
+            disabled={isLoading}
+            onClick={handleCashPrizesPdf}>
+            Download Cash Prize Winners List
           </Button>
 
           <Button
