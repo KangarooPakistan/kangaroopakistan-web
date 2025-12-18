@@ -233,7 +233,7 @@ export const plataniumImpact: CashPrizesCertificateData = {
   ],
 };
 export const titaniumImpact: CashPrizesCertificateData = {
-  name: "Titanium Academic Impact Award - Cash Prize Rs. 10,000		",
+  name: "Titanium Academic Impact Award - Cash Prize Rs. 12,000		",
   abbreviation: "PAIA",
   data: [
     {
