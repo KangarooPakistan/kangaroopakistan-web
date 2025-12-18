@@ -292,26 +292,26 @@ const wrapTextToLines = (
 const getAwardTemplatePath = (
   awardLevel: string | null | undefined
 ): string => {
-  if (!awardLevel) return "templates/iksc/participation_award.pdf";
+  if (!awardLevel) return "templates/participation_award.pdf";
 
   const level = awardLevel.toUpperCase().replace(/\s+/g, "_");
   switch (level) {
     case "GOLD":
-      return "/templates/iksc/gold_award.pdf";
+      return "/templates/gold_award.pdf";
     case "SILVER":
-      return "/templates/iksc/silver_award.pdf";
+      return "/templates/silver_award.pdf";
     case "BRONZE":
-      return "/templates/iksc/bronze_award.pdf";
+      return "/templates/bronze_award.pdf";
     case "THREE_STAR":
-      return "/templates/iksc/three_star_award.pdf";
+      return "/templates/three_star_award.pdf";
     case "TWO_STAR":
-      return "/templates/iksc/two_star_award.pdf";
+      return "/templates/two_star_award.pdf";
     case "ONE_STAR":
-      return "/templates/iksc/one_star_award.pdf";
+      return "/templates/one_star_award.pdf";
     case "PARTICIPATION":
-      return "/templates/iksc/participation_award.pdf";
+      return "/templates/participation_award.pdf";
     default:
-      return "/templates/iksc/participation_award.pdf";
+      return "/templates/participation_award.pdf";
   }
 };
 
@@ -404,7 +404,7 @@ export async function generateStudentCertificate(
   // Determine if this is a participation certificate and set proper top position
   const isParticipationCertificate =
     getAwardTemplatePath(student.AwardLevel) ===
-    "/templates/iksc/participation_award.pdf";
+    "/templates/participation_award.pdf";
 
   // FIXED: Different top positions for participation vs other certificates
   const topPosition = isParticipationCertificate ? 290 : 280;
