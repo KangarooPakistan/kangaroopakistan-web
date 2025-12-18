@@ -35,11 +35,6 @@ export const bronzeImpact: CashPrizesCertificateData = {
       schoolName: "THE EDUCATORS SCHOOL PROFESSIONALS CAMPUS",
     },
     {
-      c_Name: "SIDRA HASSAN",
-      schoolId: 425,
-      schoolName: "THE EDUCATORS SCHOOL PROFESSIONALS CAMPUS",
-    },
-    {
       c_Name: "FARRUKH SHAHEEN",
       schoolId: 427,
       schoolName: "THE EDUCATORS POLICE PUBLIC SCHOOL D.G. KHAN",
@@ -91,11 +86,6 @@ export const goldImpact: CashPrizesCertificateData = {
   name: "Gold Academic Impact Award - Cash Prize Rs. 8,000",
   abbreviation: "GAIA",
   data: [
-    {
-      c_Name: "MARIA HANIF",
-      schoolId: 108,
-      schoolName: "NUST CREATIVE LEARNING SCHOOL AND COLLEGE ISLAMABAD",
-    },
     {
       c_Name: "TANZEELA HAMEED",
       schoolId: 108,
@@ -234,12 +224,7 @@ export const plataniumImpact: CashPrizesCertificateData = {
       schoolName:
         "QUAID-E-AZAM DIVISIONAL PUBLIC SCHOOL AND COLLEGE (JUNIOR SCHOOL 2ND SHIFT) GUJRANWALA",
     },
-    {
-      c_Name: "TEHREEM IJAZ",
-      schoolId: 324,
-      schoolName:
-        "QUAID-E-AZAM DIVISIONAL PUBLIC SCHOOL AND COLLEGE (JUNIOR SCHOOL 2ND SHIFT) GUJRANWALA",
-    },
+
     {
       c_Name: "SR. FOUZIA NAZIR FC",
       schoolId: 1218,
