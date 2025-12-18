@@ -231,14 +231,14 @@ const CashPrizesPdf: React.FC<Props> = ({
     <Document>
       <Page size="A4" style={styles.page}>
         <Text style={styles.title}>{contestName}</Text>
-        <Text style={styles.subtitle}>Coordinator Cash Awards</Text>
+        <Text style={styles.subtitle}>LIST OF CASH PRIZE WINNERS </Text>
 
-        {renderCertificateTable(bronzeImpact)}
-        {renderCertificateTable(silverImpact)}
-        {renderCertificateTable(goldImpact)}
-        {renderCertificateTable(plataniumImpact)}
-        {renderCertificateTable(titaniumImpact)}
         {renderCertificateTable(diamondImpact)}
+        {renderCertificateTable(titaniumImpact)}
+        {renderCertificateTable(plataniumImpact)}
+        {renderCertificateTable(goldImpact)}
+        {renderCertificateTable(silverImpact)}
+        {renderCertificateTable(bronzeImpact)}
       </Page>
     </Document>
   );
