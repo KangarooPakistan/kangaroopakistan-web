@@ -56,7 +56,7 @@ export const eelpcertificateData: PrincipalCertificateData = {
   ],
 };
 export const oaepcertificateData: PrincipalCertificateData = {
-  name: "Outstanding Academic Engagement Coordinator",
+  name: "Outstanding Academic Leadership",
   abbreviation: "OAEC",
   data: [
     {
@@ -316,7 +316,7 @@ export const oaepcertificateData: PrincipalCertificateData = {
 };
 
 export const dpcpcertificateData: PrincipalCertificateData = {
-  name: "Distinguished Participation Coordinator",
+  name: "Distinguished Institutional Leadership	",
   abbreviation: "DPC",
   data: [
     {
