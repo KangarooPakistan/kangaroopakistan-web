@@ -187,7 +187,7 @@ const PrincipalExtraAwards: React.FC<Props> = ({
             <Text style={styles.tableCellHeader}>SR. NO.</Text>
           </View>
           <View style={styles.tableColHeaderMedium}>
-            <Text style={styles.tableCellHeader}>COORDINATOR NAME</Text>
+            <Text style={styles.tableCellHeader}>PRINCIPAL NAME</Text>
           </View>
           <View style={styles.tableColHeaderMedium}>
             <Text style={styles.tableCellHeader}>SCHOOL ID</Text>
