@@ -224,12 +224,6 @@ export const plataniumImpact: CashPrizesCertificateData = {
       schoolName:
         "QUAID-E-AZAM DIVISIONAL PUBLIC SCHOOL AND COLLEGE (JUNIOR SCHOOL 2ND SHIFT) GUJRANWALA",
     },
-
-    {
-      c_Name: "SR. FOUZIA NAZIR FC",
-      schoolId: 1218,
-      schoolName: "ST. JOSEPH'S CONVENT SCHOOL PRIMARY SECTION",
-    },
   ],
 };
 export const titaniumImpact: CashPrizesCertificateData = {
