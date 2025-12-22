@@ -41,6 +41,22 @@ export async function GET(
   }
 ) {
   try {
+    // Fetch schools on hold for this contest
+    const schoolsOnHold = await db.resultHold.findMany({
+      where: {
+        contestId: params.contestId,
+        hold: true,
+      },
+      select: {
+        schoolId: true,
+      },
+    });
+
+    // Create a Set of school IDs that are on hold for faster lookup
+    const holdSchoolIds = new Set(
+      schoolsOnHold.map((record) => record.schoolId)
+    );
+
     // First fetch the student details
     const students = await db.student.findMany({
       select: {
@@ -97,11 +113,14 @@ export async function GET(
       schools.map((school) => [school.schoolId, school])
     );
 
-    // Then fetch results with basic details
+    // Fetch results with basic details, excluding schools on hold
     const resultsWithDetails = await db.result.findMany({
       where: {
         AwardLevel: params.award,
         contestId: params.contestId,
+        schoolId: {
+          notIn: Array.from(holdSchoolIds), // Exclude schools on hold
+        },
       },
       select: {
         id: true,
