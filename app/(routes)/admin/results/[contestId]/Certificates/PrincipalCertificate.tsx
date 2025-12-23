@@ -339,7 +339,7 @@ export async function generatePrincipalCertificate(
     ? fonts.almarai || fonts.avenir || fonts.ubuntu
     : fonts.avenir || nameFont;
 
-  const maxSchoolWidth = bandRight - bandLeft;
+  const maxSchoolWidth = bandRight - bandLeft -50;
   const schoolLines = wrapTextToLines(
     processedSchoolName,
     schoolNameFont,
