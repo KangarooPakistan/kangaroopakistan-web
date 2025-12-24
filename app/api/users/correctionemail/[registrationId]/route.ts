@@ -1,11 +1,29 @@
 import { db } from "@/app/lib/prisma";
 import { NextResponse } from "next/server";
-import transporter from "@/app/lib/emailTransporter";
-import nodemailer from "nodemailer";
-import { SendMailOptions } from "nodemailer";
-import emailManager from "@/app/lib/emailManager";
+import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
+
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
+
+const ses = new SESClient({
+  region: process.env.AWS_BUCKET_REGION!,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEYID!,
+    secretAccessKey: process.env.AWS_SECRET_KEYID!,
+  },
+});
+
+function validateAwsCredentials() {
+  if (!process.env.AWS_BUCKET_REGION) {
+    throw new Error("AWS_REGION is not configured");
+  }
+  if (!process.env.AWS_ACCESS_KEYID) {
+    throw new Error("AWS_ACCESS_KEY_ID is not configured");
+  }
+  if (!process.env.AWS_SECRET_KEYID) {
+    throw new Error("AWS_SECRET_ACCESS_KEY is not configured");
+  }
+}
 
 export async function GET(
   request: Request,
@@ -18,6 +36,7 @@ export async function GET(
         { status: 400 }
       );
     }
+    validateAwsCredentials();
 
     const registrations = await db.student.findMany({
       where: { registrationId: params.registrationId },
@@ -148,24 +167,15 @@ export async function GET(
     //   }
     // };
 
-    const mailOptions: SendMailOptions = {
-      from: process.env.AWS_SMTP_EMAIL,
-      to: [
-        schoolDetails?.email || "",
-        schoolDetails?.p_email || "",
-        schoolDetails?.c_email || "",
-        "valiantsina@kangaroopakistan.org",
-        // ebdullahEmail?.email || "",
-      ],
+    const subject = `${contestNameShort} ${year} - Review of Data & Certificate Corrections (Action Required)`;
 
-      subject: `${contestNameShort} ${year} - Review of Data & Certificate Corrections (Action Required)`,
-      html: `<p><b>Dear Principal / Coordinator,</b></p>
+    const htmlBody = `<p><b>Dear Principal / Coordinator,</b></p>
       <p>We hope this message finds you well.</p>
       
-      <p>Thank you for your school’s participation in IKSC 2025. Before we proceed with the printing and dispatch of certificates and awards, we kindly request you to review all participant data (names, spellings, class levels, etc.) to ensure accuracy. </p>
+      <p>Thank you for your school’s participation in IKLC 2025. Before we proceed with the printing and dispatch of certificates and awards, we kindly request you to review all participant data (names, spellings, class levels, etc.) to ensure accuracy.</p>
       <p>If there are any discrepancies or corrections needed, please send us a formal email within 5 days of receiving this message.</p>
       <p>Please note that after this period, the data will be considered final.</p>
-      <p><b>CORRECTIONS REQUESTED AFTER 5 DAYS WILL BE SUBJECT TO A REISSUANCE FEE OF RS. 1000/- PER CERTIFICATE..</b></p>
+      <p><b>CORRECTIONS REQUESTED AFTER 5 DAYS WILL BE SUBJECT TO A REISSUANCE FEE OF RS. 1000/- PER CERTIFICATE.</b></p>
       <p>We appreciate your cooperation in helping us maintain accuracy and efficiency.</p>
       <br/>
       <p> School ID: ${schoolDetails?.schoolId}</p>
@@ -189,17 +199,40 @@ export async function GET(
        <p>Best Regards</p>
       
       <p><b>Team ${contestNameShort}</b></p>
-      <p>Inventive Learning</p>
+      <p>Innovative Learning | Inventive Learning - KSF Pakistan</p>
       <p><b>Office: </b> 042-37180505 | 042-37180506</p>
       <p><b>Whatsapp: </b>0333-2111399 | 0321-8403033 | 0319-5080077</p>
       <p><b>Address: </b>1st Floor, Plaza 114, Main Boulevard, Phase 6, D.H.A Lahore</p>
       <a href="www.kangaroopakistan.org" target="#">www.kangaroopakistan.org</a>
-`,
+`;
+
+    const emailParams = {
+      Source: process.env.AWS_SMTP_EMAIL!,
+      Destination: {
+        ToAddresses: [
+          // schoolDetails?.email || "",
+          // schoolDetails?.p_email || "",
+          // schoolDetails?.c_email || "",
+          // "valiantsina@kangaroopakistan.org",
+          "kainatkiranrashid2@gmail.com",
+        ].filter(Boolean),
+      },
+      Message: {
+        Subject: {
+          Data: subject,
+          Charset: "UTF-8",
+        },
+        Body: {
+          Html: {
+            Data: htmlBody,
+            Charset: "UTF-8",
+          },
+        },
+      },
     };
 
     try {
-      // await emailManager.sendEmail(mailOptions);
-      await transporter.sendMail(mailOptions);
+      await ses.send(new SendEmailCommand(emailParams));
       return NextResponse.json("Email sent Successfully", { status: 200 });
     } catch (error) {
       console.error("Failed to send email:", error);
