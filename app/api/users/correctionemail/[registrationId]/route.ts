@@ -210,12 +210,10 @@ export async function GET(
       Source: `Kangaroo Pakistan <${process.env.AWS_SMTP_EMAIL!}>`,
       Destination: {
         ToAddresses: [
-          // schoolDetails?.email || "",
-          // schoolDetails?.p_email || "",
-          // schoolDetails?.c_email || "",
-          // "valiantsina@kangaroopakistan.org",
-          "kainatkiranrashid2@gmail.com",
-          "wajiha.farhat@gmail.com",
+          schoolDetails?.email || "",
+          schoolDetails?.p_email || "",
+          schoolDetails?.c_email || "",
+          "valiantsina@kangaroopakistan.org",
         ].filter(Boolean),
       },
       Message: {
