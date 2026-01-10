@@ -115,7 +115,7 @@ const Frontend = () => {
         </div>
       )}
       {mySession && role === "User" && (
-        <div className="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-4 mx-auto py-10">
+        <div className="flex flex-col md:flex-row justify-center items-start space-y-4 md:space-y-0 md:space-x-4 mx-auto py-10">
           <div className="bg-white rounded-2xl shadow-gray-800 shadow-md w-full m-2 flex flex-col h-full">
             <h1 className="text-white bg-gradient-to-r from-blue-600 to-blue-800 text-center font-extrabold text-xl md:text-2xl mb-4 p-4 rounded-t-2xl shadow-lg uppercase tracking-wide border-b-4 border-blue-900">For IKMC Please Transfer the money to following account</h1>
             <p className="text-purple-600 text-justify p-4 font-bold text-md md:text-xl flex-grow">
