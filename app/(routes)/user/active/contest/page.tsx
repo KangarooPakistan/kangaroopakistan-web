@@ -19,7 +19,14 @@ const ViewAllContests: React.FC = () => {
         console.log("resp");
         console.log(resp);
         console.log("resp");
-        const parsedContests = resp.data.map((contest) => {
+        // Sort contests by registration end date (newest first) before formatting
+        const sortedContests = resp.data.sort((a, b) => {
+          const endDateA = new Date(a.endDate);
+          const endDateB = new Date(b.endDate);
+          return endDateB.getTime() - endDateA.getTime();
+        });
+
+        const parsedContests = sortedContests.map((contest) => {
           const startDate = new Date(contest.startDate);
           const endDate = new Date(contest.endDate);
 
@@ -35,6 +42,7 @@ const ViewAllContests: React.FC = () => {
             endDate: formattedEndDate,
           };
         });
+
         setContests(parsedContests);
       } catch (error) {
         console.error("Error:", error);
