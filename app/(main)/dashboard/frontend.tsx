@@ -116,9 +116,9 @@ const Frontend = () => {
       )}
       {mySession && role === "User" && (
         <div className="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-4 mx-auto py-10">
-          <div className="bg-white  rounded-2xl shadow-gray-800 shadow-md w-full m-2">
+          <div className="bg-white rounded-2xl shadow-gray-800 shadow-md w-full m-2 flex flex-col h-full">
             <h1 className="text-white bg-gradient-to-r from-blue-600 to-blue-800 text-center font-extrabold text-xl md:text-2xl mb-4 p-4 rounded-t-2xl shadow-lg uppercase tracking-wide border-b-4 border-blue-900">For IKMC Please Transfer the money to following account</h1>
-            <p className="text-purple-600 text-justify p-4 font-bold text-md md:text-xl">
+            <p className="text-purple-600 text-justify p-4 font-bold text-md md:text-xl flex-grow">
               Participation fee can be paid through Bank Draft/Pay Order, drawn
               in favor of INNOVATIVE LEARNING. OR The fees can also be directly
               transferred to our bank account: <br /> BANK NAME: MCB ISLAMIC
@@ -141,9 +141,9 @@ const Frontend = () => {
           {/* <div></div> */}
 
           {/* INVENTIVE LEARNING - Right Side */}
-          <div className="bg-white rounded-2xl shadow-gray-800 shadow-md w-full m-2">
+          <div className="bg-white rounded-2xl shadow-gray-800 shadow-md w-full m-2 flex flex-col h-full">
             <h1 className="text-white bg-gradient-to-r from-emerald-600 to-emerald-800 text-center font-extrabold text-xl md:text-2xl mb-4 p-4 rounded-t-2xl shadow-lg uppercase tracking-wide border-b-4 border-emerald-900">For IKLC and IKSC Please Transfer the money to following account</h1>
-            <p className="text-purple-600 text-justify p-4 font-bold text-md md:text-xl">
+            <p className="text-purple-600 text-justify p-4 font-bold text-md md:text-xl flex-grow">
               Participation fee can be paid through Bank Draft/Pay Order, drawn
               in favor of INVENTIVE LEARNING. OR The fees can also be directly
               transferred to our bank account: <br />
