@@ -144,6 +144,56 @@ const processTextForCapitalization = (text: string): string => {
 
   return processedText;
 };
+
+// Special capitalization for names with dashes and periods
+const processNameWithSpecialCharacters = (text: string): string => {
+  if (!text) return text;
+
+  // Split by spaces to handle each word separately
+  const words = text.split(' ');
+  
+  const processedWords = words.map(word => {
+    // Check if word contains dash or period
+    if (word.includes('-') || word.includes('.')) {
+      // Split by dash or period while keeping the separators
+      const parts = word.split(/([.-])/);
+      
+      return parts.map((part, index) => {
+        // If it's a separator (dash or period), keep it as is
+        if (part === '-' || part === '.') {
+          return part;
+        }
+        
+        // If it's text, capitalize only the first letter
+        if (part.length > 0) {
+          // Special case: keep single letters or very short words (like 'e') lowercase after dash/period
+          // unless it's the first part of the word
+          const isFirstPart = index === 0;
+          const isShortWord = part.length <= 1;
+          
+          if (!isFirstPart && isShortWord) {
+            // Keep short words after dash/period lowercase (e.g., "e" in "Um-e-Halima")
+            return part.toLowerCase();
+          } else {
+            // Capitalize first letter for other parts
+            return part.charAt(0).toUpperCase() + part.slice(1).toLowerCase();
+          }
+        }
+        
+        return part;
+      }).join('');
+    } else {
+      // No special characters, apply normal title case
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    }
+  });
+
+  // Handle " Ii " to " II " replacement
+  let result = processedWords.join(' ');
+  result = result.replace(/\s+Ii\s+/g, " II ");
+  
+  return result;
+};
 const toTitleCase = (text: string): string => {
   return text
     .toLowerCase()
@@ -368,10 +418,12 @@ export async function generateStudentCertificate(
   const bandCenterX = (bandLeft + bandRight) / 2;
 
   // Prepare text values with safe defaults and proper processing
-  const studentName = processTextForCapitalization(
+  const studentName = processNameWithSpecialCharacters(
     student.studentName || "Student Name"
   );
-  const fatherName = student.fatherName || "Father Name"; // Keep original case for father name
+  const fatherName = processNameWithSpecialCharacters(
+    student.fatherName || "Father Name"
+  );
   const schoolName = student.schoolName || "School Name";
   const className = student.class || 0;
   const rollNumber = student.rollNumber || "N/A";
@@ -469,18 +521,10 @@ export async function generateStudentCertificate(
     tracking: bodyTracking,
   });
 
-  // 3. Draw father name - KEEP ORIGINAL CASE (lowercase as in React PDF SmartText2)
+  // 3. Draw father name - Already processed with special character handling
   const fatherNameY = soDoY - 33;
-  const toTitleCase = (text: string): string => {
-    return text
-      .toLowerCase()
-      .split(" ")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
-  };
-  const fatherNameLowercase = toTitleCase(fatherName); // Convert to lowercase as in original
 
-  drawCenteredTextWithTracking(firstPage, fatherNameLowercase, {
+  drawCenteredTextWithTracking(firstPage, fatherName, {
     centerX: studentNameCenterX,
     y: fatherNameY,
     font: fatherNameFont,
