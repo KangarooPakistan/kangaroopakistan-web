@@ -408,10 +408,22 @@ export async function generateStudentCertificate(
   const isParticipationCertificate =
     getAwardTemplatePath(student.AwardLevel) ===
     "/templates/participation_award.pdf";
+    
+  const schoolNameFont = fonts.avenir || fonts.malayalamBold || fonts.malayalam;
+  const maxSchoolWidth = bandRight - bandLeft; // constrain to the band width
+  const bodyTracking = 0.5; // adjust between 0.5–1.0 for more/less spacing
+    const schoolLines = wrapTextToLines(
+    processedSchoolName,
+    schoolNameFont,
+    schoolNameFontSize,
+    maxSchoolWidth,
+    bodyTracking,
+    2 // max 2 lines
+  );
 
   // FIXED: Different top positions for participation vs other certificates
   // const topPosition = isParticipationCertificate ? 290 : 280; //iksc
-  const topPosition = isParticipationCertificate ? 240 : 240;
+  const topPosition = schoolLines.length > 1 ? 240 : 250;
   const baseY = height - topPosition;
 
   // Select fonts (matching React PDF font selection)
@@ -422,7 +434,6 @@ export async function generateStudentCertificate(
   // Student name keeps using Snell; all other text uses Avenir (fallback to Malayalam)
   const fatherNameFont = fonts.avenir || fonts.malayalamBold || fonts.malayalam;
 
-  const schoolNameFont = fonts.avenir || fonts.malayalamBold || fonts.malayalam;
 
   // 1. Draw student name (processed with title case and "II" handling)
   const studentNameWidth = studentNameFont
@@ -443,7 +454,7 @@ export async function generateStudentCertificate(
   const studentNameCenterX = bandCenterX;
 
   // Tracking for non-student text (letter spacing)
-  const bodyTracking = 0.5; // adjust between 0.5–1.0 for more/less spacing
+  
 
   // 2. Draw "S/o, D/o" text - Reduced gap from student name
   const soDoY = baseY - (isStudentNameArabic ? 25 : 25);
@@ -506,16 +517,9 @@ export async function generateStudentCertificate(
 
   // 6. Draw school name (processed with special case handling)
   const schoolNameY = rollY - 25;
-  const maxSchoolWidth = bandRight - bandLeft; // constrain to the band width
+  
 
-  const schoolLines = wrapTextToLines(
-    processedSchoolName,
-    schoolNameFont,
-    schoolNameFontSize,
-    maxSchoolWidth,
-    bodyTracking,
-    2 // max 2 lines
-  );
+  
 
   const schoolLineHeight = schoolNameFontSize + 2;
 
