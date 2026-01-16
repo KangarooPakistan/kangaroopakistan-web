@@ -363,7 +363,7 @@ export async function generateStudentCertificate(
   // const bandLeft = 140;
   // const bandRight = 480;
   // const bandCenterX = (bandLeft + bandRight) / 2; // 290
-  const bandLeft = 350;
+  const bandLeft = 250;
   const bandRight = 600;
   const bandCenterX = (bandLeft + bandRight) / 2;
 
@@ -410,7 +410,8 @@ export async function generateStudentCertificate(
     "/templates/participation_award.pdf";
 
   // FIXED: Different top positions for participation vs other certificates
-  const topPosition = isParticipationCertificate ? 290 : 280;
+  // const topPosition = isParticipationCertificate ? 290 : 280; //iksc
+  const topPosition = isParticipationCertificate ? 270 : 280;
   const baseY = height - topPosition;
 
   // Select fonts (matching React PDF font selection)
