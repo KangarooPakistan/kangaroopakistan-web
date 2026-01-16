@@ -364,7 +364,7 @@ export async function generateStudentCertificate(
   // const bandRight = 480;
   // const bandCenterX = (bandLeft + bandRight) / 2; // 290
   const bandLeft = 350;
-  const bandRight = 1200;
+  const bandRight = 800;
   const bandCenterX = (bandLeft + bandRight) / 2;
 
   // Prepare text values with safe defaults and proper processing
