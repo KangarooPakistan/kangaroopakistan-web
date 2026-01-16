@@ -1425,7 +1425,7 @@ const Results = () => {
       await ensureFontsLoaded();
       await registerFonts();
 
-      for (let i = 0; i < 10; i += chunkSize) {
+      for (let i = 0; i < principalResults.length; i += chunkSize) {
         const chunk = principalResults.slice(i, i + chunkSize);
 
         try {
