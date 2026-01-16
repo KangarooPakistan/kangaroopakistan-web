@@ -492,7 +492,7 @@ export async function generateStudentCertificate(
   });
 
   // 5. Draw roll number
-  const rollY = classY - 15;
+  const rollY = classY - 25;
   const rollText = `Roll # ${rollNumber}`;
 
   drawCenteredTextWithTracking(firstPage, rollText, {
