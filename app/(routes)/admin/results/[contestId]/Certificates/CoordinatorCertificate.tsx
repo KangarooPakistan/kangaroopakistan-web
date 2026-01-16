@@ -265,7 +265,7 @@ let coordinatorTemplateBytesCache: Uint8Array | null = null;
 const loadCertificateTemplate = async (): Promise<Uint8Array> => {
   if (coordinatorTemplateBytesCache) return coordinatorTemplateBytesCache;
 
-  const response = await fetch("/templates/coordinator_certificates.pdf");
+  const response = await fetch("/templates/iklc/coordinator_certificates.pdf");
   if (!response.ok) {
     throw new Error("Failed to load certificate template");
   }
@@ -323,8 +323,11 @@ export async function generateCoordinatorCertificate(
   );
 
   // Layout settings to match Download Certificates - With Pdf Editing
-  const bandLeft = 140;
-  const bandRight = 600;
+  // const bandLeft = 140;
+  // const bandRight = 600;
+  // const bandCenterX = (bandLeft + bandRight) / 2;
+  const bandLeft = 350;
+  const bandRight = 1200;
   const bandCenterX = (bandLeft + bandRight) / 2;
 
   const bodyTracking = 0.5;

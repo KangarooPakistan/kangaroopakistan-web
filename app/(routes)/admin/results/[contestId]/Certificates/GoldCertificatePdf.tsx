@@ -292,26 +292,26 @@ const wrapTextToLines = (
 const getAwardTemplatePath = (
   awardLevel: string | null | undefined
 ): string => {
-  if (!awardLevel) return "templates/participation_award.pdf";
+  if (!awardLevel) return "templates/iklc/participation_award.pdf";
 
   const level = awardLevel.toUpperCase().replace(/\s+/g, "_");
   switch (level) {
     case "GOLD":
-      return "/templates/gold_award.pdf";
+      return "/templates/iklc/gold_award.pdf";
     case "SILVER":
-      return "/templates/silver_award.pdf";
+      return "/templates/iklc/silver_award.pdf";
     case "BRONZE":
-      return "/templates/bronze_award.pdf";
+      return "/templates/iklc/bronze_award.pdf";
     case "THREE_STAR":
-      return "/templates/three_star_award.pdf";
+      return "/templates/iklc/three_star_award.pdf";
     case "TWO_STAR":
-      return "/templates/two_star_award.pdf";
+      return "/templates/iklc/two_star_award.pdf";
     case "ONE_STAR":
-      return "/templates/one_star_award.pdf";
+      return "/templates/iklc/one_star_award.pdf";
     case "PARTICIPATION":
-      return "/templates/participation_award.pdf";
+      return "/templates/iklc/participation_award.pdf";
     default:
-      return "/templates/participation_award.pdf";
+      return "/templates/iklc/participation_award.pdf";
   }
 };
 
@@ -360,9 +360,12 @@ export async function generateStudentCertificate(
   const { width, height } = firstPage.getSize();
 
   // Horizontal text band: left 140, right 440 (all text centered within this band)
-  const bandLeft = 140;
-  const bandRight = 480;
-  const bandCenterX = (bandLeft + bandRight) / 2; // 290
+  // const bandLeft = 140;
+  // const bandRight = 480;
+  // const bandCenterX = (bandLeft + bandRight) / 2; // 290
+  const bandLeft = 350;
+  const bandRight = 1200;
+  const bandCenterX = (bandLeft + bandRight) / 2;
 
   // Prepare text values with safe defaults and proper processing
   const studentName = processTextForCapitalization(
