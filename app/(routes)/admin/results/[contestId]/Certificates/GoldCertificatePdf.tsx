@@ -411,7 +411,7 @@ export async function generateStudentCertificate(
 
   // FIXED: Different top positions for participation vs other certificates
   // const topPosition = isParticipationCertificate ? 290 : 280; //iksc
-  const topPosition = isParticipationCertificate ? 270 : 260;
+  const topPosition = isParticipationCertificate ? 260 : 250;
   const baseY = height - topPosition;
 
   // Select fonts (matching React PDF font selection)
