@@ -149,6 +149,9 @@ const processTextForCapitalization = (text: string): string => {
 const processNameWithSpecialCharacters = (text: string): string => {
   if (!text) return text;
 
+  // List of connecting words that should remain lowercase after dash/period
+  const lowercaseConnectors = ['e', 'ul', 'ud', 'un', 'us'];
+
   // Split by spaces to handle each word separately
   const words = text.split(' ');
   
@@ -166,14 +169,15 @@ const processNameWithSpecialCharacters = (text: string): string => {
         
         // If it's text, capitalize only the first letter
         if (part.length > 0) {
-          // Special case: keep single letters or very short words (like 'e') lowercase after dash/period
-          // unless it's the first part of the word
           const isFirstPart = index === 0;
-          const isShortWord = part.length <= 1;
+          const partLower = part.toLowerCase();
           
-          if (!isFirstPart && isShortWord) {
-            // Keep short words after dash/period lowercase (e.g., "e" in "Um-e-Halima")
-            return part.toLowerCase();
+          // Check if this part is a connecting word that should stay lowercase
+          const isConnector = lowercaseConnectors.includes(partLower);
+          
+          if (!isFirstPart && isConnector) {
+            // Keep connecting words lowercase (e.g., "e" in "Um-e-Halima", "ul" in "Um-ul-Qurra")
+            return partLower;
           } else {
             // Capitalize first letter for other parts
             return part.charAt(0).toUpperCase() + part.slice(1).toLowerCase();
