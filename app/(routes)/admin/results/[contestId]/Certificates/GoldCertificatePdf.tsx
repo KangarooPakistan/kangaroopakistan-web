@@ -150,7 +150,7 @@ const processNameWithSpecialCharacters = (text: string): string => {
   if (!text) return text;
 
   // List of connecting words that should remain lowercase after dash/period
-  const lowercaseConnectors = ['e', 'ul', 'ud', 'un', 'us'];
+  const lowercaseConnectors = ['e', 'ul', 'ud', 'un', 'us', 'al'];
 
   // Split by spaces to handle each word separately
   const words = text.split(' ');
@@ -167,7 +167,7 @@ const processNameWithSpecialCharacters = (text: string): string => {
           return part;
         }
         
-        // If it's text, capitalize only the first letter
+        // If it's text and not empty
         if (part.length > 0) {
           const isFirstPart = index === 0;
           const partLower = part.toLowerCase();
