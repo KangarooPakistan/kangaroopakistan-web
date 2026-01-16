@@ -327,7 +327,7 @@ export async function generatePrincipalCertificate(
   // const bandRight = 600;
   // const bandCenterX = (bandLeft + bandRight) / 2;
   const bandLeft = 250;
-  const bandRight = 800;
+  const bandRight = 700;
   const bandCenterX = (bandLeft + bandRight) / 2;
 
   const bodyTracking = 0.5;
@@ -353,7 +353,8 @@ export async function generatePrincipalCertificate(
   );
 
   // Dynamic top position based on whether school name wraps to two lines
-  const topPosition = schoolLines.length > 1 ? 305 : 305;
+  // const topPosition = schoolLines.length > 1 ? 305 : 305;
+  const topPosition = schoolLines.length > 1 ? 250 : 250;
   const baseY = height - topPosition;
 
   // Principal name processing (same capitalization behavior)
