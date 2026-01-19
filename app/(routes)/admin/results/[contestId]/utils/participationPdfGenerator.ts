@@ -112,7 +112,7 @@ export class ParticipationPdfGenerator {
     const titleX = (this.pageWidth - titleWidth) / 2;
     this.doc.text(titleText, titleX, this.margin + 5); // Minimal top spacing
 
-    // Add subtitle - compact spacing
+    // Add subtitle - reduced spacing between title and subtitle
     this.doc.setFontSize(12); // Smaller subtitle
     
     try {
@@ -124,7 +124,7 @@ export class ParticipationPdfGenerator {
     const subtitleText = 'PARTICIPATION MEDAL WINNERS';
     const subtitleWidth = this.doc.getTextWidth(subtitleText);
     const subtitleX = (this.pageWidth - subtitleWidth) / 2;
-    this.doc.text(subtitleText, subtitleX, this.margin + 18); // Tight spacing between title and subtitle
+    this.doc.text(subtitleText, subtitleX, this.margin + 15); // Reduced from 18 to 15 for tighter spacing
   }
 
   private prepareTableData(data: Result[]): any[][] {
@@ -142,20 +142,20 @@ export class ParticipationPdfGenerator {
     // Calculate exact column widths - ensure they add up to exactly 100%
     const tableWidth = this.pageWidth - (2 * 10); // Available width (using margin of 10)
     
-    // Adjusted column widths to total exactly 100%: 8%, 19%, 22%, 22%, 8%, 21%
+    // Adjusted column widths to total exactly 100%: 8%, 20%, 20%, 20%, 8%, 24%
     const columnWidths = {
       srNo: tableWidth * 0.08,        // 8% -> SR. NO.
-      rollNo: tableWidth * 0.19,      // 19% -> ROLL NO. (decreased by 5%)
-      studentName: tableWidth * 0.22, // 22% -> STUDENT NAME
-      fatherName: tableWidth * 0.22,  // 22% -> FATHER NAME  
+      rollNo: tableWidth * 0.20,      // 20% -> ROLL NO.
+      studentName: tableWidth * 0.20, // 20% -> STUDENT NAME
+      fatherName: tableWidth * 0.20,  // 20% -> FATHER NAME  
       class: tableWidth * 0.08,       // 8% -> CLASS
-      institution: tableWidth * 0.21  // 21% -> INSTITUTION (increased by 5%)
+      institution: tableWidth * 0.24  // 24% -> INSTITUTION
     };
 
     autoTable(this.doc, {
       head: [['SR. NO.', 'ROLL NO.', 'STUDENT NAME', 'FATHER NAME', 'CLASS', 'INSTITUTION']],
       body: tableData,
-      startY: this.margin + 28, // Start table closer to subtitle on first page
+      startY: this.margin + 20, // Adjusted to match reduced title/subtitle spacing
       theme: 'grid',
       tableWidth: tableWidth, // Explicitly set table width to prevent extra columns
       styles: {
