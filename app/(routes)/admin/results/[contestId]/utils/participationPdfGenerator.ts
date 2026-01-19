@@ -33,8 +33,51 @@ export class ParticipationPdfGenerator {
     this.pageHeight = this.doc.internal.pageSize.getHeight();
   }
 
+  private async loadRobotoFont(): Promise<void> {
+    try {
+      // Load Roboto font files and add them to jsPDF
+      const robotoRegularResponse = await fetch('/fonts/Roboto-Regular.ttf');
+      const robotoBoldResponse = await fetch('/fonts/Roboto-Bold.ttf');
+      
+      if (robotoRegularResponse.ok && robotoBoldResponse.ok) {
+        const robotoRegularBuffer = await robotoRegularResponse.arrayBuffer();
+        const robotoBoldBuffer = await robotoBoldResponse.arrayBuffer();
+        
+        // Convert to base64
+        const robotoRegularBase64 = this.arrayBufferToBase64(robotoRegularBuffer);
+        const robotoBoldBase64 = this.arrayBufferToBase64(robotoBoldBuffer);
+        
+        // Add fonts to jsPDF
+        this.doc.addFileToVFS('Roboto-Regular.ttf', robotoRegularBase64);
+        this.doc.addFileToVFS('Roboto-Bold.ttf', robotoBoldBase64);
+        
+        this.doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
+        this.doc.addFont('Roboto-Bold.ttf', 'Roboto', 'bold');
+        
+        console.log('Roboto fonts loaded successfully');
+      } else {
+        throw new Error('Could not fetch Roboto font files');
+      }
+    } catch (error) {
+      console.warn('Could not load Roboto font, using Helvetica fallback:', error);
+      // Fallback to helvetica if Roboto loading fails
+    }
+  }
+
+  private arrayBufferToBase64(buffer: ArrayBuffer): string {
+    const bytes = new Uint8Array(buffer);
+    let binary = '';
+    for (let i = 0; i < bytes.byteLength; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
+  }
+
   async generateParticipationPdf(options: ParticipationPdfOptions): Promise<Blob> {
     const { contestName, data, fileName = 'ParticipationWinners.pdf' } = options;
+
+    // Load Roboto font first
+    await this.loadRobotoFont();
 
     // Add title - matching React PDF exactly
     this.addTitle(contestName);
@@ -54,9 +97,14 @@ export class ParticipationPdfGenerator {
   }
 
   private addTitle(contestName: string): void {
-    // Compact title layout with reduced spacing
+    // Compact title layout with reduced spacing - using Roboto font to match React PDF
     this.doc.setFontSize(14); // Smaller title for more table space
-    this.doc.setFont('helvetica', 'bold');
+    
+    try {
+      this.doc.setFont('Roboto', 'bold'); // Try to use Roboto Bold
+    } catch (error) {
+      this.doc.setFont('helvetica', 'bold'); // Fallback to helvetica
+    }
     
     // Add main title - uppercase and centered
     const titleText = contestName.toUpperCase();
@@ -66,6 +114,13 @@ export class ParticipationPdfGenerator {
 
     // Add subtitle - compact spacing
     this.doc.setFontSize(12); // Smaller subtitle
+    
+    try {
+      this.doc.setFont('Roboto', 'bold'); // Try to use Roboto Bold
+    } catch (error) {
+      this.doc.setFont('helvetica', 'bold'); // Fallback to helvetica
+    }
+    
     const subtitleText = 'PARTICIPATION MEDAL WINNERS';
     const subtitleWidth = this.doc.getTextWidth(subtitleText);
     const subtitleX = (this.pageWidth - subtitleWidth) / 2;
@@ -79,7 +134,7 @@ export class ParticipationPdfGenerator {
       item.studentDetails?.studentName || '', // STUDENT NAME
       item.studentDetails?.fatherName || '', // FATHER NAME
       item.class || '', // CLASS
-      item.schoolName || '' // INSTITUTION
+      (item.schoolName || '').toUpperCase() // INSTITUTION - converted to uppercase
     ]);
   }
 
@@ -104,7 +159,7 @@ export class ParticipationPdfGenerator {
       theme: 'grid',
       tableWidth: tableWidth, // Explicitly set table width to prevent extra columns
       styles: {
-        fontSize: 8, // Readable font size
+        fontSize: 9, // Increased font size from 8 to 9
         cellPadding: 1, // Some breathing room but still compact
         overflow: 'linebreak',
         halign: 'center',
@@ -112,15 +167,19 @@ export class ParticipationPdfGenerator {
         minCellHeight: 8, // Compact but readable row height
         lineColor: [0, 0, 0], // Black borders
         lineWidth: 0.3, // Thin but visible borders
+        font: 'Roboto', // Use Roboto font to match React PDF
+        fontStyle: 'normal', // Regular weight to match Roboto-Regular
+        textColor: [0, 0, 0], // Black text color for cell content
       },
       headStyles: {
         fillColor: [240, 240, 240], // Match React PDF backgroundColor: "#f0f0f0"
-        textColor: [0, 0, 0],
-        fontStyle: 'bold',
-        fontSize: 8, // Readable header font
+        textColor: [0, 0, 0], // Black text color for headers
+        fontStyle: 'bold', // Bold headers to match React PDF
+        fontSize: 9, // Increased font size from 8 to 9
         halign: 'center',
         cellPadding: 1, // Some breathing room for headers
         minCellHeight: 8, // Compact but readable header height
+        font: 'Roboto', // Use Roboto font to match React PDF
       },
       columnStyles: {
         0: { cellWidth: columnWidths.srNo }, // SR. NO.
@@ -138,7 +197,6 @@ export class ParticipationPdfGenerator {
       tableLineWidth: 0.3, // Thin but visible table borders
     });
   }
-
 }
 
 // Utility function for easy use

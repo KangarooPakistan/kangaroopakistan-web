@@ -2736,6 +2736,7 @@ const Results = () => {
         </div>
       </div>
       <DataTable columns={columns} data={schoolData} />
+      <ToastContainer />
     </div>
   );
 };
