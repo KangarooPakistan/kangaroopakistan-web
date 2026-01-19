@@ -14,7 +14,8 @@ import { utils, writeFile } from "xlsx";
 
 import { pdf } from "@react-pdf/renderer";
 import { saveAs } from "file-saver";
-import { toast, Id } from "react-toastify";
+import { toast, ToastContainer, Id } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import * as XLSX from "xlsx";
 import {
   eelcertificateData,
@@ -168,7 +169,7 @@ const Results = () => {
         console.log("resp");
         console.log(resp);
 
-        showSuccess("🦄 Table data fetched successfully");
+        
       } catch (error: any) {
         console.error(error);
         toast.error(
