@@ -145,6 +145,12 @@ const Results = () => {
   const [result, setResult] = useState<Result[]>([]);
   const [questionStats, setQuestionStats] = useState<any>(null);
   const [contestName, setContestName] = useState("");
+  const [toastReady, setToastReady] = useState(false);
+
+  useEffect(() => {
+    // Ensure ToastContainer is ready before allowing toast calls
+    setToastReady(true);
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -2551,6 +2557,18 @@ const Results = () => {
 
   return (
     <div className="container mx-auto py-10">
+      <ToastContainer 
+        position="bottom-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
       <h1 className="text-3xl text-center my-3 font-bold text-purple-600">
         Schools Results
       </h1>
@@ -3061,7 +3079,6 @@ const Results = () => {
         </div>
       </div>
       <DataTable columns={columns} data={schoolData} />
-      <ToastContainer />
     </div>
   );
 };

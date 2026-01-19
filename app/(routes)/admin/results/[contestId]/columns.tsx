@@ -12,7 +12,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
