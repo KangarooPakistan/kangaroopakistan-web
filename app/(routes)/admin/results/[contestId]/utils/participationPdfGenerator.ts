@@ -192,6 +192,36 @@ export class ParticipationPdfGenerator {
       margin: 10, // Use simple uniform margin for all sides and all pages
       pageBreak: 'auto',
       showHead: 'everyPage',
+      // Prevent row splitting across pages for long content
+      willDrawCell: (data: any) => {
+        // Check if this is a data row (not header) and we're at the first cell of a row
+        if (data.section === 'body' && data.column.index === 0) {
+          // Get the raw row data
+          const rowData = data.row.raw;
+          const studentName = rowData[2] || '';
+          const fatherName = rowData[3] || '';
+          const institution = rowData[5] || '';
+          
+          // Check if any of these fields are long enough to potentially cause wrapping
+          const hasLongContent = 
+            studentName.length > 25 || 
+            fatherName.length > 25 || 
+            institution.length > 30;
+          
+          // If content is long and we're near the bottom of the page, force a page break
+          if (hasLongContent) {
+            const pageHeight = data.doc.internal.pageSize.getHeight();
+            const currentY = data.cursor.y;
+            const remainingSpace = pageHeight - currentY;
+            
+            // If less than 20mm remaining space, force page break before this row
+            if (remainingSpace < 20) {
+              data.doc.addPage();
+              data.cursor.y = 10; // Reset Y position to top margin
+            }
+          }
+        }
+      },
       // Match React PDF table border behavior
       tableLineColor: [0, 0, 0],
       tableLineWidth: 0.3, // Thin but visible table borders
