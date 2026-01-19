@@ -87,14 +87,14 @@ export class ParticipationPdfGenerator {
     // Calculate exact column widths - ensure they add up to exactly 100%
     const tableWidth = this.pageWidth - (2 * 10); // Available width (using margin of 10)
     
-    // Adjusted column widths to total exactly 100%: 8%, 24%, 22%, 22%, 8%, 16%
+    // Adjusted column widths to total exactly 100%: 8%, 19%, 22%, 22%, 8%, 21%
     const columnWidths = {
       srNo: tableWidth * 0.08,        // 8% -> SR. NO.
-      rollNo: tableWidth * 0.24,      // 24% -> ROLL NO.
+      rollNo: tableWidth * 0.19,      // 19% -> ROLL NO. (decreased by 5%)
       studentName: tableWidth * 0.22, // 22% -> STUDENT NAME
       fatherName: tableWidth * 0.22,  // 22% -> FATHER NAME  
       class: tableWidth * 0.08,       // 8% -> CLASS
-      institution: tableWidth * 0.16  // 16% -> INSTITUTION (last column)
+      institution: tableWidth * 0.21  // 21% -> INSTITUTION (increased by 5%)
     };
 
     autoTable(this.doc, {
