@@ -6,31 +6,21 @@ import { DataTable } from "./data-table";
 import { columns } from "./columns";
 import { Button } from "@/components/ui/button";
 import AwardsPdf from "./AwardsPdf/AwardsPdf";
-import AwardsMultiPagePdf from "./AwardsPdf/AwardsMultiPagePdf";
 import { generateParticipationPdfChunked } from "./utils/participationPdfGenerator";
 import { 
-  generateGoldPdfWithAutoTable,
-  generateSilverPdfWithAutoTable,
-  generateBronzePdfWithAutoTable,
-  generateThreeStarPdfWithAutoTable,
-  generateTwoStarPdfWithAutoTable,
-  generateOneStarPdfWithAutoTable,
   generateAwardsPdfChunked
 } from "./utils/awardsPdfGenerator";
 import { utils, writeFile } from "xlsx";
 
 import { pdf } from "@react-pdf/renderer";
 import { saveAs } from "file-saver";
-import { toast, ToastContainer, Id } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast, Id } from "react-toastify";
 import * as XLSX from "xlsx";
 import {
   eelcertificateData,
   oaecertificateData,
   dpccertificateData,
-} from "./Certificates/CoordinatorCertificateData"; // Import the type
-
-import { ca } from "date-fns/locale";
+} from "./Certificates/CoordinatorCertificateData";
 import QuestionStatsPdf from "../QuestionStats/QuestionStats";
 import JSZip from "jszip";
 import {
@@ -143,14 +133,20 @@ const Results = () => {
   const [loadData, setLoadData] = useState(true);
   const router = useRouter();
   const [result, setResult] = useState<Result[]>([]);
-  const [questionStats, setQuestionStats] = useState<any>(null);
   const [contestName, setContestName] = useState("");
-  const [toastReady, setToastReady] = useState(false);
 
-  useEffect(() => {
-    // Ensure ToastContainer is ready before allowing toast calls
-    setToastReady(true);
-  }, []);
+  // Simple toast notifications without complex state management
+  const showSuccess = (message: string) => {
+    setTimeout(() => toast.success(message), 100);
+  };
+
+  const showError = (message: string) => {
+    setTimeout(() => toast.error(message), 100);
+  };
+
+  const showInfo = (message: string) => {
+    setTimeout(() => toast.info(message), 100);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -172,16 +168,7 @@ const Results = () => {
         console.log("resp");
         console.log(resp);
 
-        toast.success("🦄 Table data fetched successfully", {
-          position: "bottom-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
+        showSuccess("🦄 Table data fetched successfully");
       } catch (error: any) {
         console.error(error);
         toast.error(
@@ -955,11 +942,9 @@ const Results = () => {
 
   // New optimized participation handler using jsPDF autoTable
   const handleParticipationAutoTable = async () => {
-    let toastId: any;
-    
     try {
       setIsLoading(true);
-      toastId = toast.loading("Fetching participation data...");
+      showInfo("Fetching participation data...");
 
       const schoolResultGoldResp = await axios.get(
         `/api/results/getschoolsdata/${params.contestId}/participation`
@@ -967,11 +952,7 @@ const Results = () => {
       
       console.log(`Fetched ${schoolResultGoldResp.data.length} participation records`);
       
-      toast.update(toastId, {
-        render: `Processing ${schoolResultGoldResp.data.length} records...`,
-        type: "info",
-        isLoading: true,
-      });
+      showInfo(`Processing ${schoolResultGoldResp.data.length} records...`);
 
       // Process data in chunks to prevent memory issues
       const convertedData = await processDataInChunks(schoolResultGoldResp.data, 1000);
@@ -981,23 +962,14 @@ const Results = () => {
         convertedData[0]?.contest?.name || contestName,
         convertedData,
         (progress, message) => {
-          toast.update(toastId, {
-            render: `${message} (${progress}%)`,
-            type: "info",
-            isLoading: true,
-          });
+          console.log(`${message} (${progress}%)`);
         }
       );
 
       const pdfName = `ParticipationWinners.pdf`;
       saveAs(pdfBlob, pdfName);
 
-      toast.update(toastId, {
-        render: "PDF generated successfully with autoTable!",
-        type: "success",
-        isLoading: false,
-        autoClose: 3000,
-      });
+      showSuccess("PDF generated successfully with autoTable!");
 
       console.log(`Successfully generated autoTable PDF for ${convertedData.length} records`);
     } catch (error: any) {
@@ -1012,14 +984,7 @@ const Results = () => {
         errorMessage = "jsPDF not available. Please install the required packages.";
       }
       
-      if (toastId) {
-        toast.update(toastId, {
-          render: errorMessage,
-          type: "error",
-          isLoading: false,
-          autoClose: 8000,
-        });
-      }
+      showError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -1027,11 +992,9 @@ const Results = () => {
 
   // Gold Winners AutoTable Handler
   const handleGoldAutoTable = async () => {
-    let toastId: any;
-    
     try {
       setIsLoading(true);
-      toastId = toast.loading("Fetching gold winners data...");
+      showInfo("Fetching gold winners data...");
 
       const schoolResultGoldResp = await axios.get(
         `/api/results/getschoolsdata/${params.contestId}/GOLD`
@@ -1046,36 +1009,15 @@ const Results = () => {
       const pdfBlob = await generateAwardsPdfChunked(
         convertedData[0]?.contest?.name || contestName,
         convertedData,
-        'GOLD',
-        (progress, message) => {
-          toast.update(toastId, {
-            render: `${message} (${progress}%)`,
-            type: "info",
-            isLoading: true,
-          });
-        }
+        'GOLD'
       );
 
       saveAs(pdfBlob, `GoldWinners_AutoTable.pdf`);
-
-      toast.update(toastId, {
-        render: "Gold winners PDF generated successfully!",
-        type: "success",
-        isLoading: false,
-        autoClose: 3000,
-      });
+      showSuccess("Gold winners PDF generated successfully!");
 
     } catch (error: any) {
       console.error("Error generating gold winners PDF:", error);
-      
-      if (toastId) {
-        toast.update(toastId, {
-          render: "Failed to generate gold winners PDF",
-          type: "error",
-          isLoading: false,
-          autoClose: 8000,
-        });
-      }
+      showError("Failed to generate gold winners PDF");
     } finally {
       setIsLoading(false);
     }
@@ -1083,11 +1025,9 @@ const Results = () => {
 
   // Silver Winners AutoTable Handler
   const handleSilverAutoTable = async () => {
-    let toastId: any;
-    
     try {
       setIsLoading(true);
-      toastId = toast.loading("Fetching silver winners data...");
+      showInfo("Fetching silver winners data...");
 
       const schoolResultSilverResp = await axios.get(
         `/api/results/getschoolsdata/${params.contestId}/SILVER`
@@ -1106,12 +1046,11 @@ const Results = () => {
       );
 
       saveAs(pdfBlob, `SilverWinners_AutoTable.pdf`);
-
-      toast.success("Silver winners PDF generated successfully!");
+      showSuccess("Silver winners PDF generated successfully!");
 
     } catch (error: any) {
       console.error("Error generating silver winners PDF:", error);
-      toast.error("Failed to generate silver winners PDF");
+      showError("Failed to generate silver winners PDF");
     } finally {
       setIsLoading(false);
     }
@@ -1119,11 +1058,9 @@ const Results = () => {
 
   // Bronze Winners AutoTable Handler
   const handleBronzeAutoTable = async () => {
-    let toastId: any;
-    
     try {
       setIsLoading(true);
-      toastId = toast.loading("Fetching bronze winners data...");
+      showInfo("Fetching bronze winners data...");
 
       const schoolResultBronzeResp = await axios.get(
         `/api/results/getschoolsdata/${params.contestId}/BRONZE`
@@ -1142,11 +1079,11 @@ const Results = () => {
       );
 
       saveAs(pdfBlob, `BronzeWinners_AutoTable.pdf`);
-      toast.success("Bronze winners PDF generated successfully!");
+      showSuccess("Bronze winners PDF generated successfully!");
 
     } catch (error: any) {
       console.error("Error generating bronze winners PDF:", error);
-      toast.error("Failed to generate bronze winners PDF");
+      showError("Failed to generate bronze winners PDF");
     } finally {
       setIsLoading(false);
     }
@@ -1156,6 +1093,8 @@ const Results = () => {
   const handleThreeStarAutoTable = async () => {
     try {
       setIsLoading(true);
+      showInfo("Fetching three star winners data...");
+      
       const schoolResultThreeStarResp = await axios.get(
         `/api/results/getschoolsdata/${params.contestId}/THREE STAR`
       );
@@ -1173,11 +1112,11 @@ const Results = () => {
       );
 
       saveAs(pdfBlob, `ThreeStarWinners_AutoTable.pdf`);
-      toast.success("Three star winners PDF generated successfully!");
+      showSuccess("Three star winners PDF generated successfully!");
 
     } catch (error: any) {
       console.error("Error generating three star winners PDF:", error);
-      toast.error("Failed to generate three star winners PDF");
+      showError("Failed to generate three star winners PDF");
     } finally {
       setIsLoading(false);
     }
@@ -1187,6 +1126,8 @@ const Results = () => {
   const handleTwoStarAutoTable = async () => {
     try {
       setIsLoading(true);
+      showInfo("Fetching two star winners data...");
+      
       const schoolResultTwoStarResp = await axios.get(
         `/api/results/getschoolsdata/${params.contestId}/TWO STAR`
       );
@@ -1204,11 +1145,11 @@ const Results = () => {
       );
 
       saveAs(pdfBlob, `TwoStarWinners_AutoTable.pdf`);
-      toast.success("Two star winners PDF generated successfully!");
+      showSuccess("Two star winners PDF generated successfully!");
 
     } catch (error: any) {
       console.error("Error generating two star winners PDF:", error);
-      toast.error("Failed to generate two star winners PDF");
+      showError("Failed to generate two star winners PDF");
     } finally {
       setIsLoading(false);
     }
@@ -1218,6 +1159,8 @@ const Results = () => {
   const handleOneStarAutoTable = async () => {
     try {
       setIsLoading(true);
+      showInfo("Fetching one star winners data...");
+      
       const schoolResultOneStarResp = await axios.get(
         `/api/results/getschoolsdata/${params.contestId}/ONE STAR`
       );
@@ -1235,11 +1178,11 @@ const Results = () => {
       );
 
       saveAs(pdfBlob, `OneStarWinners_AutoTable.pdf`);
-      toast.success("One star winners PDF generated successfully!");
+      showSuccess("One star winners PDF generated successfully!");
 
     } catch (error: any) {
       console.error("Error generating one star winners PDF:", error);
-      toast.error("Failed to generate one star winners PDF");
+      showError("Failed to generate one star winners PDF");
     } finally {
       setIsLoading(false);
     }
@@ -1323,7 +1266,6 @@ const Results = () => {
         `/api/question-stats/${params.contestId}`
       );
       console.log(response.data);
-      setQuestionStats(response.data); // Save the data to state
       setIsLoading(false);
       const blob = await pdf(
         <QuestionStatsPdf data={response.data} />
@@ -1332,29 +1274,11 @@ const Results = () => {
       // Download PDF
       saveAs(blob, `${response.data.contestName}_Question_Stats.pdf`);
 
-      toast.success("Question stats fetched successfully", {
-        position: "bottom-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      showSuccess("Question stats fetched successfully");
     } catch (e) {
       console.log(e);
       setIsLoading(false);
-      toast.error("Failed to fetch question stats", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      showError("Failed to fetch question stats");
     }
   };
 
@@ -2557,18 +2481,6 @@ const Results = () => {
 
   return (
     <div className="container mx-auto py-10">
-      <ToastContainer 
-        position="bottom-center"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
       <h1 className="text-3xl text-center my-3 font-bold text-purple-600">
         Schools Results
       </h1>

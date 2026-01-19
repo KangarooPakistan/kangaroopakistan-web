@@ -402,28 +402,10 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
             schoolId: schoolResult.schoolId,
             contestId: params.contestId,
           });
-          toast.success("🦄 Email sent successfully", {
-            position: "bottom-center",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-          });
+          toast.success("🦄 Email sent successfully");
         } catch (error) {
           console.log(error);
-          toast.error(" Error while sending email. Please contact developer", {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-          });
+          toast.error("Error while sending email. Please contact developer");
         }
       };
     } catch (error) {
@@ -517,10 +499,7 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
       );
 
       if (validStudents.length === 0) {
-        toast.warning("No valid student records found for individual reports", {
-          position: "top-right",
-          autoClose: 5000,
-        });
+        toast.warning("No valid student records found for individual reports");
         return;
       }
 
@@ -530,11 +509,7 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
           `Generating reports for ${validStudents.length} students. ` +
             `${
               studentResults.length - validStudents.length
-            } students skipped due to data inconsistencies.`,
-          {
-            position: "top-right",
-            autoClose: 6000,
-          }
+            } students skipped due to data inconsistencies.`
         );
       }
 
@@ -544,20 +519,12 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
       console.log(validStudents);
 
       toast.success(
-        `Individual reports generated successfully for ${validStudents.length} students!`,
-        {
-          position: "bottom-center",
-          autoClose: 4000,
-        }
+        `Individual reports generated successfully for ${validStudents.length} students!`
       );
     } catch (error) {
       console.error("Error generating individual reports:", error);
       toast.error(
-        "Failed to generate individual reports. Please contact developer",
-        {
-          position: "top-right",
-          autoClose: 5000,
-        }
+        "Failed to generate individual reports. Please contact developer"
       );
     } finally {
       setIsLoading(false);
@@ -570,7 +537,7 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
   const handleCertificatesWithPdfEditing = async () => {
     setIsLoading(true);
     try {
-      const loadingToast = toast.loading("Preparing certificates...");
+      toast.info("Preparing certificates...");
 
       const response = await axios.get<CertificateApiResponse[]>(
         `/api/results/certificates/${params.contestId}/${schoolResult.schoolId}`
@@ -580,11 +547,7 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
       const studentResults = transformResponseForCertificates(response.data);
       console.log("Transformed certificates data:", studentResults);
 
-      toast.update(loadingToast, {
-        render: `Generating ${studentResults.length} certificates...`,
-        type: "info",
-        isLoading: true,
-      });
+      toast.info(`Generating ${studentResults.length} certificates...`);
 
       const zip = new JSZip();
       const folder = zip.folder("certificates");
@@ -645,11 +608,7 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
         }
 
         processedCount += chunk.length;
-        toast.update(loadingToast, {
-          render: `Processed ${processedCount} of ${studentResults.length} certificates... (${successfullyAdded} successful)`,
-          type: "info",
-          isLoading: true,
-        });
+        console.log(`Processed ${processedCount} of ${studentResults.length} certificates... (${successfullyAdded} successful)`);
 
         // Delay between chunks
         await new Promise((resolve) => setTimeout(resolve, 200));
@@ -659,11 +618,7 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
         throw new Error("No certificates were successfully generated");
       }
 
-      toast.update(loadingToast, {
-        render: "Finalizing ZIP file...",
-        type: "info",
-        isLoading: true,
-      });
+      toast.info("Finalizing ZIP file...");
 
       const zipContent = await zip.generateAsync({
         type: "blob",
@@ -681,21 +636,17 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
         console.log("Failed students:", failedStudents);
       }
 
-      toast.update(loadingToast, {
-        render: message,
-        type: failedStudents.length > 0 ? "warning" : "success",
-        isLoading: false,
-        autoClose: 8000,
-      });
+      if (failedStudents.length > 0) {
+        toast.warning(message);
+      } else {
+        toast.success(message);
+      }
     } catch (error) {
       console.error("Certificate generation failed:", error);
       toast.error(
         `Failed to generate certificates: ${
           error instanceof Error ? error.message : "Unknown error"
-        }`,
-        {
-          autoClose: 5000,
-        }
+        }`
       );
     } finally {
       setIsLoading(false);

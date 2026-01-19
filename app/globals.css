@@ -126,3 +126,47 @@
   white-space: nowrap;
   animation: ticker 50s linear infinite;
 }
+
+/* Custom Toast Styles */
+.custom-toast {
+  /* Allow pointer events for auto-close to work */
+}
+
+.custom-toast-body {
+  padding: 12px 16px;
+}
+
+/* Hide close button but allow auto-close */
+.Toastify__close-button {
+  display: none !important;
+}
+
+/* Prevent manual clicking but allow auto-close */
+.Toastify__toast {
+  cursor: default !important;
+}
+
+/* Disable click events on toast content but not the container */
+.Toastify__toast-body {
+  pointer-events: none !important;
+}
+
+.Toastify__toast--success {
+  background-color: #10b981 !important;
+  color: white !important;
+}
+
+.Toastify__toast--error {
+  background-color: #ef4444 !important;
+  color: white !important;
+}
+
+.Toastify__toast--info {
+  background-color: #3b82f6 !important;
+  color: white !important;
+}
+
+.Toastify__toast--warning {
+  background-color: #f59e0b !important;
+  color: white !important;
+}
