@@ -6,6 +6,8 @@ import { DataTable } from "./data-table";
 import { columns } from "./columns";
 import { Button } from "@/components/ui/button";
 import AwardsPdf from "./AwardsPdf/AwardsPdf";
+import AwardsMultiPagePdf from "./AwardsPdf/AwardsMultiPagePdf";
+import { generateParticipationPdfChunked } from "./utils/participationPdfGenerator";
 import { utils, writeFile } from "xlsx";
 
 import { pdf } from "@react-pdf/renderer";
@@ -912,6 +914,102 @@ const Results = () => {
       console.error("Error fetching school result:", error);
     }
   };
+
+  // Helper function to process data in chunks to prevent memory issues
+  async function processDataInChunks(rawData: any[], chunkSize: number = 1000): Promise<Result[]> {
+    const result: Result[] = [];
+    
+    for (let i = 0; i < rawData.length; i += chunkSize) {
+      const chunk = rawData.slice(i, i + chunkSize);
+      
+      // Process chunk
+      const processedChunk = chunk.map((item: any) => ({
+        ...item,
+        scoreId: convertToBigIntOrNumber(item.scoreId),
+        percentage: parseFloat(item.percentage),
+      }));
+      
+      result.push(...processedChunk);
+      
+      // Allow browser to breathe between chunks
+      await new Promise(resolve => setTimeout(resolve, 10));
+    }
+    
+    return result;
+  }
+
+  // New optimized participation handler using jsPDF autoTable
+  const handleParticipationAutoTable = async () => {
+    let toastId: any;
+    
+    try {
+      setIsLoading(true);
+      toastId = toast.loading("Fetching participation data...");
+
+      const schoolResultGoldResp = await axios.get(
+        `/api/results/getschoolsdata/${params.contestId}/participation`
+      );
+      
+      console.log(`Fetched ${schoolResultGoldResp.data.length} participation records`);
+      
+      toast.update(toastId, {
+        render: `Processing ${schoolResultGoldResp.data.length} records...`,
+        type: "info",
+        isLoading: true,
+      });
+
+      // Process data in chunks to prevent memory issues
+      const convertedData = await processDataInChunks(schoolResultGoldResp.data, 1000);
+      
+      // Generate PDF using jsPDF autoTable
+      const pdfBlob = await generateParticipationPdfChunked(
+        convertedData[0]?.contest?.name || contestName,
+        convertedData,
+        (progress, message) => {
+          toast.update(toastId, {
+            render: `${message} (${progress}%)`,
+            type: "info",
+            isLoading: true,
+          });
+        }
+      );
+
+      const pdfName = `ParticipationWinners_AutoTable.pdf`;
+      saveAs(pdfBlob, pdfName);
+
+      toast.update(toastId, {
+        render: "PDF generated successfully with autoTable!",
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+      });
+
+      console.log(`Successfully generated autoTable PDF for ${convertedData.length} records`);
+    } catch (error: any) {
+      console.error("Error generating participation PDF with autoTable:", error);
+      
+      let errorMessage = "Failed to generate PDF with autoTable";
+      
+      // Check if it's a missing dependency error
+      if (error.message && error.message.includes('jsPDF packages not installed')) {
+        errorMessage = "jsPDF not installed. Please run: npm install jspdf jspdf-autotable";
+      } else if (error.message && error.message.includes('jsPDF not available')) {
+        errorMessage = "jsPDF not available. Please install the required packages.";
+      }
+      
+      if (toastId) {
+        toast.update(toastId, {
+          render: errorMessage,
+          type: "error",
+          isLoading: false,
+          autoClose: 8000,
+        });
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleExcelForKainat = async () => {
     try {
       setIsLoading(true);
@@ -2365,6 +2463,14 @@ const Results = () => {
           </Button>
           <Button
             className=" font-medium text-[15px]  tracking-wide"
+            variant="secondary"
+            size="lg"
+            disabled={isLoading}
+            onClick={handleParticipationAutoTable}>
+            Participation (AutoTable)
+          </Button>
+          <Button
+            className=" font-medium text-[15px]  tracking-wide"
             variant="default"
             size="lg"
             disabled={loadData}
@@ -2552,6 +2658,14 @@ const Results = () => {
             disabled={isLoading}
             onClick={handleParticipation}>
             Download Participation Winners
+          </Button>
+          <Button
+            className=" font-medium text-[11px]  tracking-wide"
+            variant="secondary"
+            size="sm"
+            disabled={isLoading}
+            onClick={handleParticipationAutoTable}>
+            Participation (AutoTable)
           </Button>
           <Button
             className=" font-medium text-[11px]  tracking-wide"
