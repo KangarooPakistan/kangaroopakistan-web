@@ -8,6 +8,15 @@ import { Button } from "@/components/ui/button";
 import AwardsPdf from "./AwardsPdf/AwardsPdf";
 import AwardsMultiPagePdf from "./AwardsPdf/AwardsMultiPagePdf";
 import { generateParticipationPdfChunked } from "./utils/participationPdfGenerator";
+import { 
+  generateGoldPdfWithAutoTable,
+  generateSilverPdfWithAutoTable,
+  generateBronzePdfWithAutoTable,
+  generateThreeStarPdfWithAutoTable,
+  generateTwoStarPdfWithAutoTable,
+  generateOneStarPdfWithAutoTable,
+  generateAwardsPdfChunked
+} from "./utils/awardsPdfGenerator";
 import { utils, writeFile } from "xlsx";
 
 import { pdf } from "@react-pdf/renderer";
@@ -974,7 +983,7 @@ const Results = () => {
         }
       );
 
-      const pdfName = `ParticipationWinners_AutoTable.pdf`;
+      const pdfName = `ParticipationWinners.pdf`;
       saveAs(pdfBlob, pdfName);
 
       toast.update(toastId, {
@@ -1005,6 +1014,226 @@ const Results = () => {
           autoClose: 8000,
         });
       }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Gold Winners AutoTable Handler
+  const handleGoldAutoTable = async () => {
+    let toastId: any;
+    
+    try {
+      setIsLoading(true);
+      toastId = toast.loading("Fetching gold winners data...");
+
+      const schoolResultGoldResp = await axios.get(
+        `/api/results/getschoolsdata/${params.contestId}/GOLD`
+      );
+      
+      const convertedData = schoolResultGoldResp.data.map((item: any) => ({
+        ...item,
+        scoreId: convertToBigIntOrNumber(item.scoreId),
+        percentage: parseFloat(item.percentage),
+      }));
+      
+      const pdfBlob = await generateAwardsPdfChunked(
+        convertedData[0]?.contest?.name || contestName,
+        convertedData,
+        'GOLD',
+        (progress, message) => {
+          toast.update(toastId, {
+            render: `${message} (${progress}%)`,
+            type: "info",
+            isLoading: true,
+          });
+        }
+      );
+
+      saveAs(pdfBlob, `GoldWinners_AutoTable.pdf`);
+
+      toast.update(toastId, {
+        render: "Gold winners PDF generated successfully!",
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+      });
+
+    } catch (error: any) {
+      console.error("Error generating gold winners PDF:", error);
+      
+      if (toastId) {
+        toast.update(toastId, {
+          render: "Failed to generate gold winners PDF",
+          type: "error",
+          isLoading: false,
+          autoClose: 8000,
+        });
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Silver Winners AutoTable Handler
+  const handleSilverAutoTable = async () => {
+    let toastId: any;
+    
+    try {
+      setIsLoading(true);
+      toastId = toast.loading("Fetching silver winners data...");
+
+      const schoolResultSilverResp = await axios.get(
+        `/api/results/getschoolsdata/${params.contestId}/SILVER`
+      );
+      
+      const convertedData = schoolResultSilverResp.data.map((item: any) => ({
+        ...item,
+        scoreId: convertToBigIntOrNumber(item.scoreId),
+        percentage: parseFloat(item.percentage),
+      }));
+      
+      const pdfBlob = await generateAwardsPdfChunked(
+        convertedData[0]?.contest?.name || contestName,
+        convertedData,
+        'SILVER'
+      );
+
+      saveAs(pdfBlob, `SilverWinners_AutoTable.pdf`);
+
+      toast.success("Silver winners PDF generated successfully!");
+
+    } catch (error: any) {
+      console.error("Error generating silver winners PDF:", error);
+      toast.error("Failed to generate silver winners PDF");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Bronze Winners AutoTable Handler
+  const handleBronzeAutoTable = async () => {
+    let toastId: any;
+    
+    try {
+      setIsLoading(true);
+      toastId = toast.loading("Fetching bronze winners data...");
+
+      const schoolResultBronzeResp = await axios.get(
+        `/api/results/getschoolsdata/${params.contestId}/BRONZE`
+      );
+      
+      const convertedData = schoolResultBronzeResp.data.map((item: any) => ({
+        ...item,
+        scoreId: convertToBigIntOrNumber(item.scoreId),
+        percentage: parseFloat(item.percentage),
+      }));
+      
+      const pdfBlob = await generateAwardsPdfChunked(
+        convertedData[0]?.contest?.name || contestName,
+        convertedData,
+        'BRONZE'
+      );
+
+      saveAs(pdfBlob, `BronzeWinners_AutoTable.pdf`);
+      toast.success("Bronze winners PDF generated successfully!");
+
+    } catch (error: any) {
+      console.error("Error generating bronze winners PDF:", error);
+      toast.error("Failed to generate bronze winners PDF");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Three Star Winners AutoTable Handler
+  const handleThreeStarAutoTable = async () => {
+    try {
+      setIsLoading(true);
+      const schoolResultThreeStarResp = await axios.get(
+        `/api/results/getschoolsdata/${params.contestId}/THREE STAR`
+      );
+      
+      const convertedData = schoolResultThreeStarResp.data.map((item: any) => ({
+        ...item,
+        scoreId: convertToBigIntOrNumber(item.scoreId),
+        percentage: parseFloat(item.percentage),
+      }));
+      
+      const pdfBlob = await generateAwardsPdfChunked(
+        convertedData[0]?.contest?.name || contestName,
+        convertedData,
+        'THREE STAR'
+      );
+
+      saveAs(pdfBlob, `ThreeStarWinners_AutoTable.pdf`);
+      toast.success("Three star winners PDF generated successfully!");
+
+    } catch (error: any) {
+      console.error("Error generating three star winners PDF:", error);
+      toast.error("Failed to generate three star winners PDF");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Two Star Winners AutoTable Handler
+  const handleTwoStarAutoTable = async () => {
+    try {
+      setIsLoading(true);
+      const schoolResultTwoStarResp = await axios.get(
+        `/api/results/getschoolsdata/${params.contestId}/TWO STAR`
+      );
+      
+      const convertedData = schoolResultTwoStarResp.data.map((item: any) => ({
+        ...item,
+        scoreId: convertToBigIntOrNumber(item.scoreId),
+        percentage: parseFloat(item.percentage),
+      }));
+      
+      const pdfBlob = await generateAwardsPdfChunked(
+        convertedData[0]?.contest?.name || contestName,
+        convertedData,
+        'TWO STAR'
+      );
+
+      saveAs(pdfBlob, `TwoStarWinners_AutoTable.pdf`);
+      toast.success("Two star winners PDF generated successfully!");
+
+    } catch (error: any) {
+      console.error("Error generating two star winners PDF:", error);
+      toast.error("Failed to generate two star winners PDF");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // One Star Winners AutoTable Handler
+  const handleOneStarAutoTable = async () => {
+    try {
+      setIsLoading(true);
+      const schoolResultOneStarResp = await axios.get(
+        `/api/results/getschoolsdata/${params.contestId}/ONE STAR`
+      );
+      
+      const convertedData = schoolResultOneStarResp.data.map((item: any) => ({
+        ...item,
+        scoreId: convertToBigIntOrNumber(item.scoreId),
+        percentage: parseFloat(item.percentage),
+      }));
+      
+      const pdfBlob = await generateAwardsPdfChunked(
+        convertedData[0]?.contest?.name || contestName,
+        convertedData,
+        'ONE STAR'
+      );
+
+      saveAs(pdfBlob, `OneStarWinners_AutoTable.pdf`);
+      toast.success("One star winners PDF generated successfully!");
+
+    } catch (error: any) {
+      console.error("Error generating one star winners PDF:", error);
+      toast.error("Failed to generate one star winners PDF");
     } finally {
       setIsLoading(false);
     }
@@ -2471,6 +2700,54 @@ const Results = () => {
           </Button>
           <Button
             className=" font-medium text-[15px]  tracking-wide"
+            variant="secondary"
+            size="lg"
+            disabled={isLoading}
+            onClick={handleGoldAutoTable}>
+            Gold (AutoTable)
+          </Button>
+          <Button
+            className=" font-medium text-[15px]  tracking-wide"
+            variant="secondary"
+            size="lg"
+            disabled={isLoading}
+            onClick={handleSilverAutoTable}>
+            Silver (AutoTable)
+          </Button>
+          <Button
+            className=" font-medium text-[15px]  tracking-wide"
+            variant="secondary"
+            size="lg"
+            disabled={isLoading}
+            onClick={handleBronzeAutoTable}>
+            Bronze (AutoTable)
+          </Button>
+          <Button
+            className=" font-medium text-[15px]  tracking-wide"
+            variant="secondary"
+            size="lg"
+            disabled={isLoading}
+            onClick={handleThreeStarAutoTable}>
+            Three Star (AutoTable)
+          </Button>
+          <Button
+            className=" font-medium text-[15px]  tracking-wide"
+            variant="secondary"
+            size="lg"
+            disabled={isLoading}
+            onClick={handleTwoStarAutoTable}>
+            Two Star (AutoTable)
+          </Button>
+          <Button
+            className=" font-medium text-[15px]  tracking-wide"
+            variant="secondary"
+            size="lg"
+            disabled={isLoading}
+            onClick={handleOneStarAutoTable}>
+            One Star (AutoTable)
+          </Button>
+          <Button
+            className=" font-medium text-[15px]  tracking-wide"
             variant="default"
             size="lg"
             disabled={loadData}
@@ -2666,6 +2943,54 @@ const Results = () => {
             disabled={isLoading}
             onClick={handleParticipationAutoTable}>
             Participation (AutoTable)
+          </Button>
+          <Button
+            className=" font-medium text-[11px]  tracking-wide"
+            variant="secondary"
+            size="sm"
+            disabled={isLoading}
+            onClick={handleGoldAutoTable}>
+            Gold (AutoTable)
+          </Button>
+          <Button
+            className=" font-medium text-[11px]  tracking-wide"
+            variant="secondary"
+            size="sm"
+            disabled={isLoading}
+            onClick={handleSilverAutoTable}>
+            Silver (AutoTable)
+          </Button>
+          <Button
+            className=" font-medium text-[11px]  tracking-wide"
+            variant="secondary"
+            size="sm"
+            disabled={isLoading}
+            onClick={handleBronzeAutoTable}>
+            Bronze (AutoTable)
+          </Button>
+          <Button
+            className=" font-medium text-[11px]  tracking-wide"
+            variant="secondary"
+            size="sm"
+            disabled={isLoading}
+            onClick={handleThreeStarAutoTable}>
+            Three Star (AutoTable)
+          </Button>
+          <Button
+            className=" font-medium text-[11px]  tracking-wide"
+            variant="secondary"
+            size="sm"
+            disabled={isLoading}
+            onClick={handleTwoStarAutoTable}>
+            Two Star (AutoTable)
+          </Button>
+          <Button
+            className=" font-medium text-[11px]  tracking-wide"
+            variant="secondary"
+            size="sm"
+            disabled={isLoading}
+            onClick={handleOneStarAutoTable}>
+            One Star (AutoTable)
           </Button>
           <Button
             className=" font-medium text-[11px]  tracking-wide"
