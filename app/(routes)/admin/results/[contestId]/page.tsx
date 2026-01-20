@@ -1013,7 +1013,7 @@ const Results = () => {
         'GOLD Medal'
       );
 
-      saveAs(pdfBlob, `GoldWinners_AutoTable.pdf`);
+      saveAs(pdfBlob, `GoldWinners.pdf`);
       showSuccess("Gold winners PDF generated successfully!");
 
     } catch (error: any) {
@@ -1046,7 +1046,7 @@ const Results = () => {
         'SILVER Medal'
       );
 
-      saveAs(pdfBlob, `SilverWinners_AutoTable.pdf`);
+      saveAs(pdfBlob, `SilverWinners.pdf`);
       showSuccess("Silver winners PDF generated successfully!");
 
     } catch (error: any) {
@@ -1079,7 +1079,7 @@ const Results = () => {
         'BRONZE Medal'
       );
 
-      saveAs(pdfBlob, `BronzeWinners_AutoTable.pdf`);
+      saveAs(pdfBlob, `BronzeWinners.pdf`);
       showSuccess("Bronze winners PDF generated successfully!");
 
     } catch (error: any) {
@@ -1112,7 +1112,7 @@ const Results = () => {
         'THREE STAR Badge'
       );
 
-      saveAs(pdfBlob, `ThreeStarWinners_AutoTable.pdf`);
+      saveAs(pdfBlob, `ThreeStarWinners.pdf`);
       showSuccess("Three star winners PDF generated successfully!");
 
     } catch (error: any) {
@@ -1145,7 +1145,7 @@ const Results = () => {
         'TWO STAR Badge'
       );
 
-      saveAs(pdfBlob, `TwoStarWinners_AutoTable.pdf`);
+      saveAs(pdfBlob, `TwoStarWinners.pdf`);
       showSuccess("Two star winners PDF generated successfully!");
 
     } catch (error: any) {
@@ -1178,7 +1178,7 @@ const Results = () => {
         'ONE STAR Badge'
       );
 
-      saveAs(pdfBlob, `OneStarWinners_AutoTable.pdf`);
+      saveAs(pdfBlob, `OneStarWinners.pdf`);
       showSuccess("One star winners PDF generated successfully!");
 
     } catch (error: any) {
