@@ -415,12 +415,11 @@ export async function generateStudentCertificate(
   const { width, height } = firstPage.getSize();
 
   // Horizontal text band: left 140, right 440 (all text centered within this band)
-  const bandLeft = 140;
-  const bandRight = 480;
-  const bandCenterX = (bandLeft + bandRight) / 2; // 290 iksc
-  // const bandLeft = 300;
-  // const bandRight = 600;
-  // const bandCenterX = (bandLeft + bandRight) / 2;
+  // const bandLeft = 140;
+  // const bandRight = 480; //  iksc
+  const bandLeft = 300; // iklc
+  const bandRight = 600;
+  const bandCenterX = (bandLeft + bandRight) / 2;
 
   // Prepare text values with safe defaults and proper processing
   const studentName = processNameWithSpecialCharacters(
@@ -478,9 +477,8 @@ export async function generateStudentCertificate(
   );
 
   // FIXED: Different top positions for participation vs other certificates
-  const topPosition = isParticipationCertificate ? 290 : 280;
- // iksc
-  // const topPosition = schoolLines.length > 1 ? 240 : 250;
+  // const topPosition = isParticipationCertificate ? 290 : 280; // iksc
+  const topPosition = schoolLines.length > 1 ? 240 : 250;
   const baseY = height - topPosition;
 
   // Select fonts (matching React PDF font selection)
@@ -559,8 +557,8 @@ export async function generateStudentCertificate(
   });
 
   // 5. Draw roll number
-  const rollY = classY - 25; //iksc
-  // const rollY = classY - 15; //iklc
+  // const rollY = classY - 25; //iksc
+  const rollY = classY - 15; //iklc
   const rollText = `Roll # ${rollNumber}`;
 
   drawCenteredTextWithTracking(firstPage, rollText, {

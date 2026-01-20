@@ -207,7 +207,7 @@ const transformResponse = (response: ApiResponse): StudentReport[] => {
   }));
 };
 export const transformResponseForCertificates = (
-  response: CertificateApiResponse[]
+  response: CertificateApiResponse[],
 ): StudentReportForCertificates[] => {
   console.log("Transforming certificates response:", response.length, "items");
 
@@ -220,14 +220,14 @@ export const transformResponseForCertificates = (
       if (!item.studentName || item.studentName.trim() === "") {
         console.warn(
           `Filtering out item with empty studentName at index ${index}:`,
-          item
+          item,
         );
         return false;
       }
       if (!item.rollNumber || item.rollNumber.trim() === "") {
         console.warn(
           `Filtering out item with empty rollNumber at index ${index}:`,
-          item
+          item,
         );
         return false;
       }
@@ -241,11 +241,11 @@ export const transformResponseForCertificates = (
         rollNumber: item.rollNumber ? item.rollNumber.trim() : null,
         fatherName: item.fatherName ? item.fatherName.trim() : null,
         schoolName: item.schoolName ? item.schoolName.trim() : null,
-      })
+      }),
     );
 
   console.log(
-    `Transformed ${transformed.length} valid certificates from ${response.length} total`
+    `Transformed ${transformed.length} valid certificates from ${response.length} total`,
   );
   return transformed;
 };
@@ -284,7 +284,7 @@ function countStudentsByAward(students: SchoolResultPdf[]): AwardCounts {
     // Convert award level to uppercase and remove spaces for consistency
     const awardLevel = student.AwardLevel.toUpperCase().replace(
       /\s+/g,
-      "_"
+      "_",
     ) as AwardLevel;
 
     // Increment the specific award count if it exists in our accumulator
@@ -368,7 +368,7 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
     setIsLoading(true);
     try {
       const schoolResultResp = await axios.get(
-        `/api/results/getbyschools/${schoolResult.schoolId}/${params.contestId}`
+        `/api/results/getbyschools/${schoolResult.schoolId}/${params.contestId}`,
       );
 
       if (!schoolResultResp.data) {
@@ -425,7 +425,7 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
     setIsLoading(true);
     try {
       const schoolResultResp = await axios.get(
-        `/api/results/getbyschools/${schoolResult.schoolId}/${params.contestId}/admin`
+        `/api/results/getbyschools/${schoolResult.schoolId}/${params.contestId}/admin`,
       );
 
       if (!schoolResultResp.data) {
@@ -464,7 +464,7 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
       setIsLoading(true);
 
       const response = await axios.get(
-        `/api/results/individualreports/${params.contestId}/${schoolResult.schoolId}`
+        `/api/results/individualreports/${params.contestId}/${schoolResult.schoolId}`,
       );
 
       console.log(response);
@@ -477,7 +477,7 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
 
         // Allow for small floating point differences (within 0.01%)
         const percentageDifference = Math.abs(
-          calculatedPercentage - storedPercentage
+          calculatedPercentage - storedPercentage,
         );
         const isValid = percentageDifference < 0.01;
 
@@ -485,9 +485,9 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
           console.warn(
             `Skipping student ${student.studentName} (${student.rollNumber}): ` +
               `Stored percentage (${storedPercentage.toFixed(
-                2
+                2,
               )}%) doesn't match ` +
-              `calculated percentage (${calculatedPercentage.toFixed(2)}%)`
+              `calculated percentage (${calculatedPercentage.toFixed(2)}%)`,
           );
         }
 
@@ -495,7 +495,7 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
       });
 
       console.log(
-        `Filtered ${validStudents.length} valid students from ${studentResults.length} total students`
+        `Filtered ${validStudents.length} valid students from ${studentResults.length} total students`,
       );
 
       if (validStudents.length === 0) {
@@ -509,7 +509,7 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
           `Generating reports for ${validStudents.length} students. ` +
             `${
               studentResults.length - validStudents.length
-            } students skipped due to data inconsistencies.`
+            } students skipped due to data inconsistencies.`,
         );
       }
 
@@ -519,12 +519,12 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
       console.log(validStudents);
 
       toast.success(
-        `Individual reports generated successfully for ${validStudents.length} students!`
+        `Individual reports generated successfully for ${validStudents.length} students!`,
       );
     } catch (error) {
       console.error("Error generating individual reports:", error);
       toast.error(
-        "Failed to generate individual reports. Please contact developer"
+        "Failed to generate individual reports. Please contact developer",
       );
     } finally {
       setIsLoading(false);
@@ -537,17 +537,21 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
   const handleCertificatesWithPdfEditing = async () => {
     setIsLoading(true);
     try {
-      toast.info("Preparing certificates...");
+      const loadingToast = toast.loading("Preparing certificates...");
 
       const response = await axios.get<CertificateApiResponse[]>(
-        `/api/results/certificates/${params.contestId}/${schoolResult.schoolId}`
+        `/api/results/certificates/${params.contestId}/${schoolResult.schoolId}`,
       );
 
       console.log("Raw certificates data:", response.data);
       const studentResults = transformResponseForCertificates(response.data);
       console.log("Transformed certificates data:", studentResults);
 
-      toast.info(`Generating ${studentResults.length} certificates...`);
+      toast.update(loadingToast, {
+        render: `Generating ${studentResults.length} certificates...`,
+        type: "info",
+        isLoading: true,
+      });
 
       const zip = new JSZip();
       const folder = zip.folder("certificates");
@@ -569,7 +573,7 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
             .filter(
               (student) =>
                 typeof student.rollNumber === "string" &&
-                student.rollNumber !== null
+                student.rollNumber !== null,
             )
             .map((student) => ({
               ...student,
@@ -580,11 +584,14 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
           // Add each PDF to the ZIP with better error handling
           for (const pdf of pdfBlobs) {
             if (pdf.blob && pdf.studentName && pdf.blob.size > 0) {
-              const fileName = `${pdf.rollNumber}.pdf`;
+              const fileName = `${pdf.studentName.replace(
+                /[^a-zA-Z0-9]/g,
+                "_",
+              )}_${pdf.rollNumber}.pdf`;
               folder?.file(fileName, pdf.blob);
               successfullyAdded++;
               console.log(
-                `✓ Added to ZIP: ${fileName} (${pdf.blob.size} bytes)`
+                `✓ Added to ZIP: ${fileName} (${pdf.blob.size} bytes)`,
               );
             } else {
               console.warn(`✗ Skipping invalid PDF:`, {
@@ -597,7 +604,7 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
         } catch (chunkError) {
           console.error(
             `Error processing chunk ${Math.floor(i / chunkSize) + 1}:`,
-            chunkError
+            chunkError,
           );
           // Add failed students from this chunk to the list
           chunk.forEach((student) => {
@@ -608,7 +615,11 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
         }
 
         processedCount += chunk.length;
-        console.log(`Processed ${processedCount} of ${studentResults.length} certificates... (${successfullyAdded} successful)`);
+        toast.update(loadingToast, {
+          render: `Processed ${processedCount} of ${studentResults.length} certificates... (${successfullyAdded} successful)`,
+          type: "info",
+          isLoading: true,
+        });
 
         // Delay between chunks
         await new Promise((resolve) => setTimeout(resolve, 200));
@@ -618,7 +629,11 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
         throw new Error("No certificates were successfully generated");
       }
 
-      toast.info("Finalizing ZIP file...");
+      toast.update(loadingToast, {
+        render: "Finalizing ZIP file...",
+        type: "info",
+        isLoading: true,
+      });
 
       const zipContent = await zip.generateAsync({
         type: "blob",
@@ -636,17 +651,21 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
         console.log("Failed students:", failedStudents);
       }
 
-      if (failedStudents.length > 0) {
-        toast.warning(message);
-      } else {
-        toast.success(message);
-      }
+      toast.update(loadingToast, {
+        render: message,
+        type: failedStudents.length > 0 ? "warning" : "success",
+        isLoading: false,
+        autoClose: 8000,
+      });
     } catch (error) {
       console.error("Certificate generation failed:", error);
       toast.error(
         `Failed to generate certificates: ${
           error instanceof Error ? error.message : "Unknown error"
-        }`
+        }`,
+        {
+          autoClose: 5000,
+        },
       );
     } finally {
       setIsLoading(false);
@@ -698,7 +717,7 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
                   setIsLoading(true);
                   await axios.post(
                     `/api/results/hold/${params.contestId}/${schoolResult.schoolId}`,
-                    { hold: true }
+                    { hold: true },
                   );
                   toast.success("Results held for this school.");
                 } catch (e) {
@@ -725,7 +744,7 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
                   setIsLoading(true);
                   await axios.post(
                     `/api/results/hold/${params.contestId}/${schoolResult.schoolId}`,
-                    { hold: false }
+                    { hold: false },
                   );
                   toast.success("Results unheld for this school.");
                 } catch (e) {
