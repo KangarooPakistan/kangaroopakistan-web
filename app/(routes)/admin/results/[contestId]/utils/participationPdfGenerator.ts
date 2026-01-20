@@ -121,7 +121,7 @@ export class ParticipationPdfGenerator {
       this.doc.setFont('helvetica', 'bold'); // Fallback to helvetica
     }
     
-    const subtitleText = 'PARTICIPATION MEDAL WINNERS';
+    const subtitleText = 'PARTICIPATION CERTIFICATES WINNERS';
     const subtitleWidth = this.doc.getTextWidth(subtitleText);
     const subtitleX = (this.pageWidth - subtitleWidth) / 2;
     this.doc.text(subtitleText, subtitleX, this.margin + 15); // Reduced from 18 to 15 for tighter spacing
