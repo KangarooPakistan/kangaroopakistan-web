@@ -122,7 +122,7 @@ export class AwardsPdfGenerator {
       this.doc.setFont('helvetica', 'bold'); // Fallback to helvetica
     }
     
-    const subtitleText = `${awardType.toUpperCase()} MEDAL WINNERS`;
+    const subtitleText = `${awardType.toUpperCase()}  WINNERS`;
     const subtitleWidth = this.doc.getTextWidth(subtitleText);
     const subtitleX = (this.pageWidth - subtitleWidth) / 2;
     this.doc.text(subtitleText, subtitleX, this.margin + 15); // Reduced spacing for tighter layout

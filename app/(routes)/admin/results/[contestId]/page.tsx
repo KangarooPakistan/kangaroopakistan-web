@@ -1010,7 +1010,7 @@ const Results = () => {
       const pdfBlob = await generateAwardsPdfChunked(
         convertedData[0]?.contest?.name || contestName,
         convertedData,
-        'GOLD'
+        'GOLD Medal'
       );
 
       saveAs(pdfBlob, `GoldWinners_AutoTable.pdf`);
@@ -1043,7 +1043,7 @@ const Results = () => {
       const pdfBlob = await generateAwardsPdfChunked(
         convertedData[0]?.contest?.name || contestName,
         convertedData,
-        'SILVER'
+        'SILVER Medal'
       );
 
       saveAs(pdfBlob, `SilverWinners_AutoTable.pdf`);
@@ -1076,7 +1076,7 @@ const Results = () => {
       const pdfBlob = await generateAwardsPdfChunked(
         convertedData[0]?.contest?.name || contestName,
         convertedData,
-        'BRONZE'
+        'BRONZE Medal'
       );
 
       saveAs(pdfBlob, `BronzeWinners_AutoTable.pdf`);
@@ -1109,7 +1109,7 @@ const Results = () => {
       const pdfBlob = await generateAwardsPdfChunked(
         convertedData[0]?.contest?.name || contestName,
         convertedData,
-        'THREE STAR'
+        'THREE STAR Badge'
       );
 
       saveAs(pdfBlob, `ThreeStarWinners_AutoTable.pdf`);
@@ -1142,7 +1142,7 @@ const Results = () => {
       const pdfBlob = await generateAwardsPdfChunked(
         convertedData[0]?.contest?.name || contestName,
         convertedData,
-        'TWO STAR'
+        'TWO STAR Badge'
       );
 
       saveAs(pdfBlob, `TwoStarWinners_AutoTable.pdf`);
@@ -1175,7 +1175,7 @@ const Results = () => {
       const pdfBlob = await generateAwardsPdfChunked(
         convertedData[0]?.contest?.name || contestName,
         convertedData,
-        'ONE STAR'
+        'ONE STAR Badge'
       );
 
       saveAs(pdfBlob, `OneStarWinners_AutoTable.pdf`);
