@@ -347,26 +347,26 @@ const wrapTextToLines = (
 const getAwardTemplatePath = (
   awardLevel: string | null | undefined,
 ): string => {
-  if (!awardLevel) return "templates/participation_award.pdf";
+  if (!awardLevel) return "/templates/iklc/participation_award.pdf";
 
   const level = awardLevel.toUpperCase().replace(/\s+/g, "_");
   switch (level) {
     case "GOLD":
-      return "/templates/gold_award.pdf";
+      return "/templates/iklc/gold_award.pdf";
     case "SILVER":
-      return "/templates/silver_award.pdf";
+      return "/templates/iklc/silver_award.pdf";
     case "BRONZE":
-      return "/templates/bronze_award.pdf";
+      return "/templates/iklc/bronze_award.pdf";
     case "THREE_STAR":
-      return "/templates/three_star_award.pdf";
+      return "/templates/iklc/three_star_award.pdf";
     case "TWO_STAR":
-      return "/templates/two_star_award.pdf";
+      return "/templates/iklc/two_star_award.pdf";
     case "ONE_STAR":
-      return "/templates/one_star_award.pdf";
+      return "/templates/iklc/one_star_award.pdf";
     case "PARTICIPATION":
-      return "/templates/participation_award.pdf";
+      return "/templates/iklc/participation_award.pdf";
     default:
-      return "/templates/participation_award.pdf";
+      return "/templates/iklc/participation_award.pdf";
   }
 };
 
