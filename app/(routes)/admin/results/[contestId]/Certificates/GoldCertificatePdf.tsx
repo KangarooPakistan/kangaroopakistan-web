@@ -361,7 +361,7 @@ const getAwardTemplatePath = (
     case "TWO_STAR":
       return "/templates/iklc/two_star_award.pdf";
     case "ONE_STAR":
-      return "/templates/iklc/one_star_award.pdf";
+      return "/templates/one_star_award.pdf";
     case "PARTICIPATION":
       return "/templates/iklc/participation_award.pdf";
     default:
@@ -414,11 +414,11 @@ export async function generateStudentCertificate(
   const { width, height } = firstPage.getSize();
 
   // Horizontal text band: left 140, right 440 (all text centered within this band)
-  // const bandLeft = 140;
-  // const bandRight = 480;
+  const bandLeft = 140;
+  const bandRight = 480;
   // const bandCenterX = (bandLeft + bandRight) / 2; // 290
-  const bandLeft = 300;
-  const bandRight = 600;
+  // const bandLeft = 300;
+  // const bandRight = 600;
   const bandCenterX = (bandLeft + bandRight) / 2;
 
   // Prepare text values with safe defaults and proper processing
@@ -478,8 +478,8 @@ export async function generateStudentCertificate(
   );
 
   // FIXED: Different top positions for participation vs other certificates
-  // const topPosition = isParticipationCertificate ? 290 : 280; //iksc
-  const topPosition = schoolLines.length > 1 ? 240 : 250;
+  const topPosition = isParticipationCertificate ? 290 : 280; //iksc
+  // const topPosition = schoolLines.length > 1 ? 240 : 250;
   const baseY = height - topPosition;
 
   // Select fonts (matching React PDF font selection)
