@@ -58,7 +58,7 @@ const loadFontBytesOnce = async (): Promise<FontBytes> => {
     } else {
       console.warn(
         "Failed to fetch Malayalam Bold font:",
-        malayalamBoldRes.status,
+        malayalamBoldRes.status
       );
     }
   } catch (error) {
@@ -122,7 +122,7 @@ const loadCustomFonts = async (pdfDoc: PDFDocument) => {
 // Utility functions (matching your React PDF logic)
 const isArabicText = (text: string): boolean => {
   return /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/.test(
-    text,
+    text
   );
 };
 
@@ -150,44 +150,42 @@ const processNameWithSpecialCharacters = (text: string): string => {
   if (!text) return text;
 
   // List of connecting words that should remain lowercase after dash/period
-  const lowercaseConnectors = ["e", "ul", "ud", "un", "us", "al"];
+  const lowercaseConnectors = ['e', 'ul', 'ud', 'un', 'us', 'al'];
 
   // Split by spaces to handle each word separately
-  const words = text.split(" ");
-
-  const processedWords = words.map((word) => {
+  const words = text.split(' ');
+  
+  const processedWords = words.map(word => {
     // Check if word contains dash or period
-    if (word.includes("-") || word.includes(".")) {
+    if (word.includes('-') || word.includes('.')) {
       // Split by dash or period while keeping the separators
       const parts = word.split(/([.-])/);
-
-      return parts
-        .map((part, index) => {
-          // If it's a separator (dash or period), keep it as is
-          if (part === "-" || part === ".") {
-            return part;
-          }
-
-          // If it's text and not empty
-          if (part.length > 0) {
-            const isFirstPart = index === 0;
-            const partLower = part.toLowerCase();
-
-            // Check if this part is a connecting word that should stay lowercase
-            const isConnector = lowercaseConnectors.includes(partLower);
-
-            if (!isFirstPart && isConnector) {
-              // Keep connecting words lowercase (e.g., "e" in "Um-e-Halima", "ul" in "Um-ul-Qurra")
-              return partLower;
-            } else {
-              // Capitalize first letter for other parts
-              return part.charAt(0).toUpperCase() + part.slice(1).toLowerCase();
-            }
-          }
-
+      
+      return parts.map((part, index) => {
+        // If it's a separator (dash or period), keep it as is
+        if (part === '-' || part === '.') {
           return part;
-        })
-        .join("");
+        }
+        
+        // If it's text and not empty
+        if (part.length > 0) {
+          const isFirstPart = index === 0;
+          const partLower = part.toLowerCase();
+          
+          // Check if this part is a connecting word that should stay lowercase
+          const isConnector = lowercaseConnectors.includes(partLower);
+          
+          if (!isFirstPart && isConnector) {
+            // Keep connecting words lowercase (e.g., "e" in "Um-e-Halima", "ul" in "Um-ul-Qurra")
+            return partLower;
+          } else {
+            // Capitalize first letter for other parts
+            return part.charAt(0).toUpperCase() + part.slice(1).toLowerCase();
+          }
+        }
+        
+        return part;
+      }).join('');
     } else {
       // No special characters, apply normal title case
       return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
@@ -195,9 +193,9 @@ const processNameWithSpecialCharacters = (text: string): string => {
   });
 
   // Handle " Ii " to " II " replacement
-  let result = processedWords.join(" ");
+  let result = processedWords.join(' ');
   result = result.replace(/\s+Ii\s+/g, " II ");
-
+  
   return result;
 };
 const toTitleCase = (text: string): string => {
@@ -223,7 +221,7 @@ const processSchoolNameText = (schoolName: string): string => {
 const getStudentNameFontSize = (
   text: string,
   isArabic: boolean,
-  studentNameLength?: number,
+  studentNameLength?: number
 ): number => {
   const nameLength = studentNameLength || text.length;
   if (nameLength > 30) {
@@ -236,7 +234,7 @@ const getStudentNameFontSize = (
 const getFatherNameFontSize = (
   text: string,
   isArabic: boolean,
-  studentNameLength?: number,
+  studentNameLength?: number
 ): number => {
   const nameLength = studentNameLength || text.length;
   if (nameLength > 30) {
@@ -249,7 +247,7 @@ const getFatherNameFontSize = (
 const getSchoolNameFontSize = (
   text: string,
   isArabic: boolean,
-  schoolNameLength?: number,
+  schoolNameLength?: number
 ): number => {
   const nameLength = schoolNameLength || text.length;
   if (nameLength > 30) {
@@ -264,7 +262,7 @@ const measureTextWidthWithTracking = (
   text: string,
   font: any,
   fontSize: number,
-  tracking: number,
+  tracking: number
 ) => {
   if (!font) {
     return text.length * (fontSize * 0.6 + tracking);
@@ -284,7 +282,7 @@ const drawCenteredTextWithTracking = (
     size: number;
     color: any;
     tracking: number;
-  },
+  }
 ) => {
   const { centerX, y, font, size, color, tracking } = options;
   const totalWidth = measureTextWidthWithTracking(text, font, size, tracking);
@@ -302,7 +300,7 @@ const wrapTextToLines = (
   fontSize: number,
   maxWidth: number,
   tracking: number,
-  maxLines: number,
+  maxLines: number
 ): string[] => {
   const words = text.split(/\s+/).filter(Boolean);
   const lines: string[] = [];
@@ -315,7 +313,7 @@ const wrapTextToLines = (
       candidate,
       font,
       fontSize,
-      tracking,
+      tracking
     );
 
     if (width <= maxWidth || !current) {
@@ -346,9 +344,9 @@ const wrapTextToLines = (
 };
 // Get award template path (matching React PDF logic)
 const getAwardTemplatePath = (
-  awardLevel: string | null | undefined,
+  awardLevel: string | null | undefined
 ): string => {
-  if (!awardLevel) return "templates/participation_award.pdf";
+  if (!awardLevel) return "templates/iklc/participation_award.pdf";
 
   const level = awardLevel.toUpperCase().replace(/\s+/g, "_");
   switch (level) {
@@ -367,7 +365,7 @@ const getAwardTemplatePath = (
     case "PARTICIPATION":
       return "/templates/iklc/participation_award.pdf";
     default:
-      return "/templates/participation_award.pdf";
+      return "/templates/iklc/participation_award.pdf";
   }
 };
 
@@ -376,7 +374,7 @@ const getAwardTemplatePath = (
 const templateCache: Record<string, Uint8Array> = {};
 
 const loadCertificateTemplate = async (
-  templatePath: string,
+  templatePath: string
 ): Promise<Uint8Array> => {
   if (templateCache[typeof templatePath === "string" ? templatePath : ""]) {
     return templateCache[templatePath];
@@ -395,7 +393,7 @@ const loadCertificateTemplate = async (
 // Generate individual certificate
 export async function generateStudentCertificate(
   student: StudentReportForCertificates,
-  templateBytes?: Uint8Array,
+  templateBytes?: Uint8Array
 ): Promise<Uint8Array> {
   let pdfDoc: PDFDocument;
 
@@ -416,19 +414,19 @@ export async function generateStudentCertificate(
   const { width, height } = firstPage.getSize();
 
   // Horizontal text band: left 140, right 440 (all text centered within this band)
-  const bandLeft = 140;
-  const bandRight = 480;
+  // const bandLeft = 140;
+  // const bandRight = 480;
   // const bandCenterX = (bandLeft + bandRight) / 2; // 290
-  // const bandLeft = 300;
-  // const bandRight = 600;
+  const bandLeft = 300;
+  const bandRight = 600;
   const bandCenterX = (bandLeft + bandRight) / 2;
 
   // Prepare text values with safe defaults and proper processing
   const studentName = processNameWithSpecialCharacters(
-    student.studentName || "Student Name",
+    student.studentName || "Student Name"
   );
   const fatherName = processNameWithSpecialCharacters(
-    student.fatherName || "Father Name",
+    student.fatherName || "Father Name"
   );
   const schoolName = student.schoolName || "School Name";
   const className = student.class || 0;
@@ -449,39 +447,39 @@ export async function generateStudentCertificate(
   const studentNameFontSize = getStudentNameFontSize(
     studentName,
     false,
-    studentNameLength,
+    studentNameLength
   );
   const fatherNameFontSize = getFatherNameFontSize(
     fatherName,
     false,
-    studentNameLength,
+    studentNameLength
   );
   const schoolNameFontSize = getSchoolNameFontSize(
     schoolName,
     false,
-    schoolNameLength,
+    schoolNameLength
   );
 
   // Determine if this is a participation certificate and set proper top position
   const isParticipationCertificate =
     getAwardTemplatePath(student.AwardLevel) ===
     "/templates/participation_award.pdf";
-
+    
   const schoolNameFont = fonts.avenir || fonts.malayalamBold || fonts.malayalam;
   const maxSchoolWidth = bandRight - bandLeft; // constrain to the band width
   const bodyTracking = 0.5; // adjust between 0.5–1.0 for more/less spacing
-  const schoolLines = wrapTextToLines(
+    const schoolLines = wrapTextToLines(
     processedSchoolName,
     schoolNameFont,
     schoolNameFontSize,
     maxSchoolWidth,
     bodyTracking,
-    2, // max 2 lines
+    2 // max 2 lines
   );
 
   // FIXED: Different top positions for participation vs other certificates
-  const topPosition = isParticipationCertificate ? 290 : 280; //iksc
-  // const topPosition = schoolLines.length > 1 ? 240 : 250;
+  // const topPosition = isParticipationCertificate ? 290 : 280; //iksc
+  const topPosition = schoolLines.length > 1 ? 240 : 250;
   const baseY = height - topPosition;
 
   // Select fonts (matching React PDF font selection)
@@ -491,6 +489,7 @@ export async function generateStudentCertificate(
 
   // Student name keeps using Snell; all other text uses Avenir (fallback to Malayalam)
   const fatherNameFont = fonts.avenir || fonts.malayalamBold || fonts.malayalam;
+
 
   // 1. Draw student name (processed with title case and "II" handling)
   const studentNameWidth = studentNameFont
@@ -511,6 +510,7 @@ export async function generateStudentCertificate(
   const studentNameCenterX = bandCenterX;
 
   // Tracking for non-student text (letter spacing)
+  
 
   // 2. Draw "S/o, D/o" text - Reduced gap from student name
   const soDoY = baseY - (isStudentNameArabic ? 25 : 25);
@@ -565,6 +565,9 @@ export async function generateStudentCertificate(
 
   // 6. Draw school name (processed with special case handling)
   const schoolNameY = rollY - 25;
+  
+
+  
 
   const schoolLineHeight = schoolNameFontSize + 2;
 
@@ -585,7 +588,7 @@ export async function generateStudentCertificate(
 
 // Batch generation function
 export async function generateStudentCertificates(
-  students: StudentReportForCertificates[],
+  students: StudentReportForCertificates[]
 ): Promise<
   {
     blob: Blob;
@@ -604,22 +607,19 @@ export async function generateStudentCertificates(
   }[] = [];
 
   // Group students by award level for efficiency
-  const studentsByAward = students.reduce(
-    (acc, student) => {
-      const awardLevel = student.AwardLevel || "PARTICIPATION";
-      if (!acc[awardLevel]) {
-        acc[awardLevel] = [];
-      }
-      acc[awardLevel].push(student);
-      return acc;
-    },
-    {} as Record<string, StudentReportForCertificates[]>,
-  );
+  const studentsByAward = students.reduce((acc, student) => {
+    const awardLevel = student.AwardLevel || "PARTICIPATION";
+    if (!acc[awardLevel]) {
+      acc[awardLevel] = [];
+    }
+    acc[awardLevel].push(student);
+    return acc;
+  }, {} as Record<string, StudentReportForCertificates[]>);
 
   // Process each award type
   for (const [awardLevel, awardStudents] of Object.entries(studentsByAward)) {
     console.log(
-      `Processing ${awardStudents.length} ${awardLevel} certificates...`,
+      `Processing ${awardStudents.length} ${awardLevel} certificates...`
     );
 
     // Load template once per award type for efficiency
@@ -642,7 +642,7 @@ export async function generateStudentCertificates(
       try {
         const pdfBytes = await generateStudentCertificate(
           student,
-          templateBytes,
+          templateBytes
         );
         const blob = new Blob([new Uint8Array(pdfBytes)], {
           type: "application/pdf",
@@ -660,7 +660,7 @@ export async function generateStudentCertificates(
       } catch (error) {
         console.error(
           `✗ Failed to generate certificate for ${student.studentName}:`,
-          error,
+          error
         );
       }
 
