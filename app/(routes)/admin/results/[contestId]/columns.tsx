@@ -584,10 +584,7 @@ const SchoolResultsActions: React.FC<SchoolResultsProp> = ({
           // Add each PDF to the ZIP with better error handling
           for (const pdf of pdfBlobs) {
             if (pdf.blob && pdf.studentName && pdf.blob.size > 0) {
-              const fileName = `${pdf.studentName.replace(
-                /[^a-zA-Z0-9]/g,
-                "_",
-              )}_${pdf.rollNumber}.pdf`;
+              const fileName = `${pdf.rollNumber}.pdf`;
               folder?.file(fileName, pdf.blob);
               successfullyAdded++;
               console.log(
