@@ -557,8 +557,8 @@ export async function generateStudentCertificate(
   });
 
   // 5. Draw roll number
-  // const rollY = classY - 25; //iksc
-  const rollY = classY - 15; //iklc
+  const rollY = classY - 25; //iklc
+  // const rollY = classY - 15; //iksc
   const rollText = `Roll # ${rollNumber}`;
 
   drawCenteredTextWithTracking(firstPage, rollText, {
