@@ -303,7 +303,7 @@ export async function generateCoordinatorCertificate(
   // Prepare text values with safe defaults
   const coordinatorName = coordinator.c_Name || "Coordinator Name";
   const schoolName = coordinator.schoolName || "School Name";
-  const schoolId = coordinator.schoolId || 0;
+  const schoolId = coordinator.schoolId;
 
   // Check if text is Arabic (matching react-pdf logic)
   const isCNameArabic = isArabicText(coordinatorName);
@@ -371,22 +371,24 @@ export async function generateCoordinatorCertificate(
     tracking: bodyTracking,
   });
 
-  // 2. School ID line
-  const schoolIdY = baseY - 35;
-  const schoolIdText = `School ID: ${schoolId}`;
-
-  drawCenteredTextWithTracking(firstPage, schoolIdText, {
-    centerX: bandCenterX,
-    y: schoolIdY,
-    // For English text, prefer Avenir instead of Ubuntu
-    font: fonts.avenir || nameFont,
-    size: 16,
-    color: rgb(0, 0, 0),
-    tracking: bodyTracking,
-  });
+  // 2. School ID line (only if schoolId is not null)
+  let currentY = baseY - 35;
+  if (schoolId !== null) {
+    const schoolIdText = `School ID: ${schoolId}`;
+    drawCenteredTextWithTracking(firstPage, schoolIdText, {
+      centerX: bandCenterX,
+      y: currentY,
+      // For English text, prefer Avenir instead of Ubuntu
+      font: fonts.avenir || nameFont,
+      size: 16,
+      color: rgb(0, 0, 0),
+      tracking: bodyTracking,
+    });
+    currentY -= 35;
+  }
 
   // 3. School name (wrapped, same band and spacing)
-  const schoolNameY = schoolIdY - 35;
+  const schoolNameY = currentY;
   const schoolLineHeight = schoolNameFontSize + 2;
 
   schoolLines.forEach((line, index) => {
