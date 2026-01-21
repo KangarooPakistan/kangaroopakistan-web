@@ -344,29 +344,56 @@ const wrapTextToLines = (
   return lines;
 };
 // Get award template path (matching React PDF logic)
+// const getAwardTemplatePath = ( //iklc
+//   awardLevel: string | null | undefined,
+// ): string => {
+//   if (!awardLevel) return "/templates/iklc/participation_award.pdf";
+
+//   const level = awardLevel.toUpperCase().replace(/\s+/g, "_");
+//   switch (level) {
+//     case "GOLD":
+//       return "/templates/iklc/gold_award.pdf";
+//     case "SILVER":
+//       return "/templates/iklc/silver_award.pdf";
+//     case "BRONZE":
+//       return "/templates/iklc/bronze_award.pdf";
+//     case "THREE_STAR":
+//       return "/templates/iklc/three_star_award.pdf";
+//     case "TWO_STAR":
+//       return "/templates/iklc/two_star_award.pdf";
+//     case "ONE_STAR":
+//       return "/templates/iklc/one_star_award.pdf";
+//     case "PARTICIPATION":
+//       return "/templates/iklc/participation_award.pdf";
+//     default:
+//       return "/templates/iklc/participation_award.pdf";
+//   }
+// };
+
 const getAwardTemplatePath = (
+  //iksc
   awardLevel: string | null | undefined,
 ): string => {
-  if (!awardLevel) return "/templates/iklc/participation_award.pdf";
+  if (!awardLevel) return "/templates/participation_award.pdf";
 
   const level = awardLevel.toUpperCase().replace(/\s+/g, "_");
   switch (level) {
     case "GOLD":
-      return "/templates/iklc/gold_award.pdf";
+      return "/templates/gold_award.pdf";
     case "SILVER":
-      return "/templates/iklc/silver_award.pdf";
+      return "/templates/silver_award.pdf";
     case "BRONZE":
-      return "/templates/iklc/bronze_award.pdf";
+      return "/templates/bronze_award.pdf";
     case "THREE_STAR":
-      return "/templates/iklc/three_star_award.pdf";
+      return "/templates/three_star_award.pdf";
     case "TWO_STAR":
-      return "/templates/iklc/two_star_award.pdf";
+      return "/templates/two_star_award.pdf";
     case "ONE_STAR":
-      return "/templates/iklc/one_star_award.pdf";
+      return "/templates/one_star_award.pdf";
     case "PARTICIPATION":
-      return "/templates/iklc/participation_award.pdf";
+      return "/templates/participation_award.pdf";
     default:
-      return "/templates/iklc/participation_award.pdf";
+      return "/templates/participation_award.pdf";
   }
 };
 
@@ -415,10 +442,10 @@ export async function generateStudentCertificate(
   const { width, height } = firstPage.getSize();
 
   // Horizontal text band: left 140, right 440 (all text centered within this band)
-  // const bandLeft = 140;
-  // const bandRight = 480; //  iksc
-  const bandLeft = 300; // iklc
-  const bandRight = 600;
+  const bandLeft = 140;
+  const bandRight = 480; //  iksc
+  // const bandLeft = 300; // iklc
+  // const bandRight = 600;
   const bandCenterX = (bandLeft + bandRight) / 2;
 
   // Prepare text values with safe defaults and proper processing
@@ -477,8 +504,8 @@ export async function generateStudentCertificate(
   );
 
   // FIXED: Different top positions for participation vs other certificates
-  // const topPosition = isParticipationCertificate ? 290 : 280; // iksc
-  const topPosition = schoolLines.length > 1 ? 240 : 250;
+  const topPosition = isParticipationCertificate ? 290 : 280; // iksc
+  // const topPosition = schoolLines.length > 1 ? 240 : 250;
   const baseY = height - topPosition;
 
   // Select fonts (matching React PDF font selection)
@@ -488,7 +515,6 @@ export async function generateStudentCertificate(
 
   // Student name keeps using Snell; all other text uses Avenir (fallback to Malayalam)
   const fatherNameFont = fonts.avenir || fonts.malayalamBold || fonts.malayalam;
-
 
   // 1. Draw student name (processed with title case and "II" handling)
   const studentNameWidth = studentNameFont
@@ -509,7 +535,7 @@ export async function generateStudentCertificate(
   const studentNameCenterX = bandCenterX;
 
   // Tracking for non-student text (letter spacing)
-  
+
   // 2. Draw "S/o, D/o" text - Reduced gap from student name
   const soDoY = baseY - (isStudentNameArabic ? 25 : 25);
   const soDoText = "S/o | D/o";
@@ -557,8 +583,8 @@ export async function generateStudentCertificate(
   });
 
   // 5. Draw roll number
-  const rollY = classY - 25; //iklc
-  // const rollY = classY - 15; //iksc
+  // const rollY = classY - 25; //iklc
+  const rollY = classY - 15; //iksc
   const rollText = `Roll # ${rollNumber}`;
 
   drawCenteredTextWithTracking(firstPage, rollText, {
