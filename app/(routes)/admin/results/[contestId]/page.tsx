@@ -7,9 +7,7 @@ import { columns } from "./columns";
 import { Button } from "@/components/ui/button";
 import AwardsPdf from "./AwardsPdf/AwardsPdf";
 import { generateParticipationPdfChunked } from "./utils/participationPdfGenerator";
-import { 
-  generateAwardsPdfChunked
-} from "./utils/awardsPdfGenerator";
+import { generateAwardsPdfChunked } from "./utils/awardsPdfGenerator";
 import { utils, writeFile } from "xlsx";
 
 import { pdf } from "@react-pdf/renderer";
@@ -61,7 +59,7 @@ export type Contest = {
 };
 
 type PrincipalDetails = {
-  schoolId: number;
+  schoolId: number | null;
   schoolName: string;
   p_Name: string;
 };
@@ -71,7 +69,7 @@ type PrincipalDetailsList = PrincipalDetails[];
 export type CoordinatorPdfBlob = {
   blob: Blob;
   coordinatorName: string;
-  schoolId: number;
+  schoolId: number | null;
 };
 export type Score = {
   rollNo: string;
@@ -125,7 +123,7 @@ export type SchoolData = {
 type PrincipalPdfBlob = {
   blob: Blob;
   principalName: string;
-  schoolId: number;
+  schoolId: number | null;
 };
 const Results = () => {
   const [schoolData, setSchoolData] = useState([]);
@@ -153,7 +151,7 @@ const Results = () => {
     const fetchData = async () => {
       try {
         const contestData = await axios.get(
-          `/api/users/contests/${params.contestId}`
+          `/api/users/contests/${params.contestId}`,
         );
         console.log(contestData);
         setContestName(contestData.data.name);
@@ -162,14 +160,12 @@ const Results = () => {
         // The full results list (which can be 18k+ rows) is fetched lazily
         // only when needed for Excel export, to keep initial page load fast.
         const resp = await axios.get(
-          `/api/results/getschoolsdata/${params.contestId}`
+          `/api/results/getschoolsdata/${params.contestId}`,
         );
         setSchoolData(resp.data);
         setLoadData(false);
         console.log("resp");
         console.log(resp);
-
-        
       } catch (error: any) {
         console.error(error);
         toast.error(
@@ -183,7 +179,7 @@ const Results = () => {
             draggable: true,
             progress: undefined,
             theme: "light",
-          }
+          },
         );
       }
     };
@@ -204,7 +200,7 @@ const Results = () => {
   }
   async function generatePdfBlobForExtraAwards(
     data: Result[],
-    winnerType: string
+    winnerType: string,
   ) {
     console.log(data);
     console.log("--------------------------");
@@ -237,7 +233,7 @@ const Results = () => {
   function processDataForExcel(schoolData: SchoolData[], resultData: Result[]) {
     const schoolAwardCounts = new Map<number, SchoolAwardCount>();
     const uniqueAwards = Array.from(
-      new Set(resultData.map((result) => result.AwardLevel))
+      new Set(resultData.map((result) => result.AwardLevel)),
     ).filter((award) => !!award); // Remove nulls
 
     // Initialize counts and create a map to track total students per school
@@ -246,10 +242,13 @@ const Results = () => {
     schoolData.forEach((school) => {
       schoolAwardCounts.set(school.schoolId, {
         schoolName: school.schoolName.toString(),
-        awards: uniqueAwards.reduce((acc, award) => {
-          acc[award] = 0;
-          return acc;
-        }, {} as Record<string, number>),
+        awards: uniqueAwards.reduce(
+          (acc, award) => {
+            acc[award] = 0;
+            return acc;
+          },
+          {} as Record<string, number>,
+        ),
       });
       schoolTotalStudents.set(school.schoolId, 0);
     });
@@ -262,7 +261,7 @@ const Results = () => {
         // Increment total students count
         schoolTotalStudents.set(
           result.schoolId,
-          (schoolTotalStudents.get(result.schoolId) || 0) + 1
+          (schoolTotalStudents.get(result.schoolId) || 0) + 1,
         );
       }
     });
@@ -276,12 +275,12 @@ const Results = () => {
         if (result.level === "JUNIOR") {
           juniorBronzeCounts.set(
             result.schoolId,
-            (juniorBronzeCounts.get(result.schoolId) || 0) + 1
+            (juniorBronzeCounts.get(result.schoolId) || 0) + 1,
           );
         } else if (result.level === "SENIOR") {
           seniorBronzeCounts.set(
             result.schoolId,
-            (seniorBronzeCounts.get(result.schoolId) || 0) + 1
+            (seniorBronzeCounts.get(result.schoolId) || 0) + 1,
           );
         }
       }
@@ -307,7 +306,7 @@ const Results = () => {
           juniorBronzeCounts.get(schoolId) || 0, // Add junior bronze count
           seniorBronzeCounts.get(schoolId) || 0, // Add senior bronze count
         ];
-      }
+      },
     );
 
     return {
@@ -336,7 +335,7 @@ const Results = () => {
       wch:
         Math.max(
           header.length,
-          ...rows.map((row) => String(row[index] || "").length)
+          ...rows.map((row) => String(row[index] || "").length),
         ) + 5, // Add some padding
     }));
 
@@ -357,7 +356,7 @@ const Results = () => {
       let resultsData: Result[] = result;
       if (!resultsData || resultsData.length === 0) {
         const data = await axios.get<Result[]>(
-          `/api/results/fetchresults/${params.contestId}`
+          `/api/results/fetchresults/${params.contestId}`,
         );
         resultsData = data.data;
         setResult(resultsData);
@@ -378,7 +377,7 @@ const Results = () => {
     try {
       setIsLoading(true);
       const countAwards = await axios.get(
-        `/api/results/fetchresults/${params.contestId}/count`
+        `/api/results/fetchresults/${params.contestId}/count`,
       );
       console.log(countAwards);
       const { awardCounts } = countAwards.data;
@@ -427,7 +426,7 @@ const Results = () => {
     try {
       setIsLoading(true);
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/${params.contestId}/GOLD`
+        `/api/results/getschoolsdata/${params.contestId}/GOLD`,
       );
       console.log("schoolResultGoldResp");
       console.log(schoolResultGoldResp);
@@ -451,7 +450,7 @@ const Results = () => {
     try {
       setIsLoading(true);
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/${params.contestId}/GOLD`
+        `/api/results/getschoolsdata/${params.contestId}/GOLD`,
       );
       console.log("schoolResultGoldResp");
       console.log(schoolResultGoldResp);
@@ -489,7 +488,7 @@ const Results = () => {
     try {
       setIsLoading(true);
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/${params.contestId}/GOLD`
+        `/api/results/getschoolsdata/${params.contestId}/GOLD`,
       );
       console.log("schoolResultGoldResp");
       console.log(schoolResultGoldResp);
@@ -530,7 +529,7 @@ const Results = () => {
     try {
       setIsLoading(true);
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/${params.contestId}/GOLD`
+        `/api/results/getschoolsdata/${params.contestId}/GOLD`,
       );
       console.log("schoolResultGoldResp");
       console.log(schoolResultGoldResp);
@@ -568,7 +567,7 @@ const Results = () => {
     try {
       setIsLoading(true);
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/${params.contestId}/GOLD`
+        `/api/results/getschoolsdata/${params.contestId}/GOLD`,
       );
       console.log("schoolResultGoldResp");
       console.log(schoolResultGoldResp);
@@ -599,7 +598,7 @@ const Results = () => {
       setIsLoading(true);
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/${params.contestId}/SILVER`
+        `/api/results/getschoolsdata/${params.contestId}/SILVER`,
       );
       console.log(schoolResultGoldResp);
 
@@ -624,7 +623,7 @@ const Results = () => {
       setIsLoading(true);
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/${params.contestId}/SILVER`
+        `/api/results/getschoolsdata/${params.contestId}/SILVER`,
       );
       console.log(schoolResultGoldResp);
       const studentDetails = schoolResultGoldResp.data.map((item: any) => ({
@@ -652,7 +651,7 @@ const Results = () => {
       setIsLoading(true);
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/${params.contestId}/BRONZE`
+        `/api/results/getschoolsdata/${params.contestId}/BRONZE`,
       );
       console.log(schoolResultGoldResp);
 
@@ -677,7 +676,7 @@ const Results = () => {
       setIsLoading(true);
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/${params.contestId}/BRONZE`
+        `/api/results/getschoolsdata/${params.contestId}/BRONZE`,
       );
       console.log(schoolResultGoldResp);
 
@@ -707,7 +706,7 @@ const Results = () => {
       setIsLoading(true);
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/${params.contestId}/THREE STAR`
+        `/api/results/getschoolsdata/${params.contestId}/THREE STAR`,
       );
       console.log(schoolResultGoldResp);
 
@@ -732,7 +731,7 @@ const Results = () => {
       setIsLoading(true);
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/${params.contestId}/THREE STAR`
+        `/api/results/getschoolsdata/${params.contestId}/THREE STAR`,
       );
       console.log(schoolResultGoldResp);
 
@@ -761,7 +760,7 @@ const Results = () => {
       setIsLoading(true);
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/${params.contestId}/TWO STAR`
+        `/api/results/getschoolsdata/${params.contestId}/TWO STAR`,
       );
       console.log(schoolResultGoldResp);
 
@@ -786,7 +785,7 @@ const Results = () => {
       setIsLoading(true);
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/${params.contestId}/TWO STAR`
+        `/api/results/getschoolsdata/${params.contestId}/TWO STAR`,
       );
       console.log(schoolResultGoldResp);
       const studentDetails = schoolResultGoldResp.data.map((item: any) => ({
@@ -814,7 +813,7 @@ const Results = () => {
       setIsLoading(true);
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/${params.contestId}/ONE STAR`
+        `/api/results/getschoolsdata/${params.contestId}/ONE STAR`,
       );
       console.log(schoolResultGoldResp);
 
@@ -839,7 +838,7 @@ const Results = () => {
       setIsLoading(true);
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/${params.contestId}/ONE STAR`
+        `/api/results/getschoolsdata/${params.contestId}/ONE STAR`,
       );
       console.log(schoolResultGoldResp);
 
@@ -868,7 +867,7 @@ const Results = () => {
       setIsLoading(true);
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/${params.contestId}/participation`
+        `/api/results/getschoolsdata/${params.contestId}/participation`,
       );
       console.log(schoolResultGoldResp);
 
@@ -893,7 +892,7 @@ const Results = () => {
       setIsLoading(true);
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/${params.contestId}/participation`
+        `/api/results/getschoolsdata/${params.contestId}/participation`,
       );
       console.log(schoolResultGoldResp);
 
@@ -919,25 +918,28 @@ const Results = () => {
   };
 
   // Helper function to process data in chunks to prevent memory issues
-  async function processDataInChunks(rawData: any[], chunkSize: number = 1000): Promise<Result[]> {
+  async function processDataInChunks(
+    rawData: any[],
+    chunkSize: number = 1000,
+  ): Promise<Result[]> {
     const result: Result[] = [];
-    
+
     for (let i = 0; i < rawData.length; i += chunkSize) {
       const chunk = rawData.slice(i, i + chunkSize);
-      
+
       // Process chunk
       const processedChunk = chunk.map((item: any) => ({
         ...item,
         scoreId: convertToBigIntOrNumber(item.scoreId),
         percentage: parseFloat(item.percentage),
       }));
-      
+
       result.push(...processedChunk);
-      
+
       // Allow browser to breathe between chunks
-      await new Promise(resolve => setTimeout(resolve, 10));
+      await new Promise((resolve) => setTimeout(resolve, 10));
     }
-    
+
     return result;
   }
 
@@ -948,23 +950,28 @@ const Results = () => {
       showInfo("Fetching participation data...");
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/${params.contestId}/participation`
+        `/api/results/getschoolsdata/${params.contestId}/participation`,
       );
-      
-      console.log(`Fetched ${schoolResultGoldResp.data.length} participation records`);
-      
+
+      console.log(
+        `Fetched ${schoolResultGoldResp.data.length} participation records`,
+      );
+
       showInfo(`Processing ${schoolResultGoldResp.data.length} records...`);
 
       // Process data in chunks to prevent memory issues
-      const convertedData = await processDataInChunks(schoolResultGoldResp.data, 1000);
-      
+      const convertedData = await processDataInChunks(
+        schoolResultGoldResp.data,
+        1000,
+      );
+
       // Generate PDF using jsPDF autoTable
       const pdfBlob = await generateParticipationPdfChunked(
         convertedData[0]?.contest?.name || contestName,
         convertedData,
         (progress, message) => {
           console.log(`${message} (${progress}%)`);
-        }
+        },
       );
 
       const pdfName = `ParticipationWinners.pdf`;
@@ -972,19 +979,32 @@ const Results = () => {
 
       showSuccess("PDF generated successfully with autoTable!");
 
-      console.log(`Successfully generated autoTable PDF for ${convertedData.length} records`);
+      console.log(
+        `Successfully generated autoTable PDF for ${convertedData.length} records`,
+      );
     } catch (error: any) {
-      console.error("Error generating participation PDF with autoTable:", error);
-      
+      console.error(
+        "Error generating participation PDF with autoTable:",
+        error,
+      );
+
       let errorMessage = "Failed to generate PDF with autoTable";
-      
+
       // Check if it's a missing dependency error
-      if (error.message && error.message.includes('jsPDF packages not installed')) {
-        errorMessage = "jsPDF not installed. Please run: npm install jspdf jspdf-autotable";
-      } else if (error.message && error.message.includes('jsPDF not available')) {
-        errorMessage = "jsPDF not available. Please install the required packages.";
+      if (
+        error.message &&
+        error.message.includes("jsPDF packages not installed")
+      ) {
+        errorMessage =
+          "jsPDF not installed. Please run: npm install jspdf jspdf-autotable";
+      } else if (
+        error.message &&
+        error.message.includes("jsPDF not available")
+      ) {
+        errorMessage =
+          "jsPDF not available. Please install the required packages.";
       }
-      
+
       showError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -998,24 +1018,23 @@ const Results = () => {
       showInfo("Fetching gold winners data...");
 
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getschoolsdata/${params.contestId}/GOLD`
+        `/api/results/getschoolsdata/${params.contestId}/GOLD`,
       );
-      
+
       const convertedData = schoolResultGoldResp.data.map((item: any) => ({
         ...item,
         scoreId: convertToBigIntOrNumber(item.scoreId),
         percentage: parseFloat(item.percentage),
       }));
-      
+
       const pdfBlob = await generateAwardsPdfChunked(
         convertedData[0]?.contest?.name || contestName,
         convertedData,
-        'GOLD Medal'
+        "GOLD Medal",
       );
 
       saveAs(pdfBlob, `GoldWinners.pdf`);
       showSuccess("Gold winners PDF generated successfully!");
-
     } catch (error: any) {
       console.error("Error generating gold winners PDF:", error);
       showError("Failed to generate gold winners PDF");
@@ -1031,24 +1050,23 @@ const Results = () => {
       showInfo("Fetching silver winners data...");
 
       const schoolResultSilverResp = await axios.get(
-        `/api/results/getschoolsdata/${params.contestId}/SILVER`
+        `/api/results/getschoolsdata/${params.contestId}/SILVER`,
       );
-      
+
       const convertedData = schoolResultSilverResp.data.map((item: any) => ({
         ...item,
         scoreId: convertToBigIntOrNumber(item.scoreId),
         percentage: parseFloat(item.percentage),
       }));
-      
+
       const pdfBlob = await generateAwardsPdfChunked(
         convertedData[0]?.contest?.name || contestName,
         convertedData,
-        'SILVER Medal'
+        "SILVER Medal",
       );
 
       saveAs(pdfBlob, `SilverWinners.pdf`);
       showSuccess("Silver winners PDF generated successfully!");
-
     } catch (error: any) {
       console.error("Error generating silver winners PDF:", error);
       showError("Failed to generate silver winners PDF");
@@ -1064,24 +1082,23 @@ const Results = () => {
       showInfo("Fetching bronze winners data...");
 
       const schoolResultBronzeResp = await axios.get(
-        `/api/results/getschoolsdata/${params.contestId}/BRONZE`
+        `/api/results/getschoolsdata/${params.contestId}/BRONZE`,
       );
-      
+
       const convertedData = schoolResultBronzeResp.data.map((item: any) => ({
         ...item,
         scoreId: convertToBigIntOrNumber(item.scoreId),
         percentage: parseFloat(item.percentage),
       }));
-      
+
       const pdfBlob = await generateAwardsPdfChunked(
         convertedData[0]?.contest?.name || contestName,
         convertedData,
-        'BRONZE Medal'
+        "BRONZE Medal",
       );
 
       saveAs(pdfBlob, `BronzeWinners.pdf`);
       showSuccess("Bronze winners PDF generated successfully!");
-
     } catch (error: any) {
       console.error("Error generating bronze winners PDF:", error);
       showError("Failed to generate bronze winners PDF");
@@ -1095,26 +1112,25 @@ const Results = () => {
     try {
       setIsLoading(true);
       showInfo("Fetching three star winners data...");
-      
+
       const schoolResultThreeStarResp = await axios.get(
-        `/api/results/getschoolsdata/${params.contestId}/THREE STAR`
+        `/api/results/getschoolsdata/${params.contestId}/THREE STAR`,
       );
-      
+
       const convertedData = schoolResultThreeStarResp.data.map((item: any) => ({
         ...item,
         scoreId: convertToBigIntOrNumber(item.scoreId),
         percentage: parseFloat(item.percentage),
       }));
-      
+
       const pdfBlob = await generateAwardsPdfChunked(
         convertedData[0]?.contest?.name || contestName,
         convertedData,
-        'THREE STAR Badge'
+        "THREE STAR Badge",
       );
 
       saveAs(pdfBlob, `ThreeStarWinners.pdf`);
       showSuccess("Three star winners PDF generated successfully!");
-
     } catch (error: any) {
       console.error("Error generating three star winners PDF:", error);
       showError("Failed to generate three star winners PDF");
@@ -1128,26 +1144,25 @@ const Results = () => {
     try {
       setIsLoading(true);
       showInfo("Fetching two star winners data...");
-      
+
       const schoolResultTwoStarResp = await axios.get(
-        `/api/results/getschoolsdata/${params.contestId}/TWO STAR`
+        `/api/results/getschoolsdata/${params.contestId}/TWO STAR`,
       );
-      
+
       const convertedData = schoolResultTwoStarResp.data.map((item: any) => ({
         ...item,
         scoreId: convertToBigIntOrNumber(item.scoreId),
         percentage: parseFloat(item.percentage),
       }));
-      
+
       const pdfBlob = await generateAwardsPdfChunked(
         convertedData[0]?.contest?.name || contestName,
         convertedData,
-        'TWO STAR Badge'
+        "TWO STAR Badge",
       );
 
       saveAs(pdfBlob, `TwoStarWinners.pdf`);
       showSuccess("Two star winners PDF generated successfully!");
-
     } catch (error: any) {
       console.error("Error generating two star winners PDF:", error);
       showError("Failed to generate two star winners PDF");
@@ -1161,26 +1176,25 @@ const Results = () => {
     try {
       setIsLoading(true);
       showInfo("Fetching one star winners data...");
-      
+
       const schoolResultOneStarResp = await axios.get(
-        `/api/results/getschoolsdata/${params.contestId}/ONE STAR`
+        `/api/results/getschoolsdata/${params.contestId}/ONE STAR`,
       );
-      
+
       const convertedData = schoolResultOneStarResp.data.map((item: any) => ({
         ...item,
         scoreId: convertToBigIntOrNumber(item.scoreId),
         percentage: parseFloat(item.percentage),
       }));
-      
+
       const pdfBlob = await generateAwardsPdfChunked(
         convertedData[0]?.contest?.name || contestName,
         convertedData,
-        'ONE STAR Badge'
+        "ONE STAR Badge",
       );
 
       saveAs(pdfBlob, `OneStarWinners.pdf`);
       showSuccess("One star winners PDF generated successfully!");
-
     } catch (error: any) {
       console.error("Error generating one star winners PDF:", error);
       showError("Failed to generate one star winners PDF");
@@ -1193,7 +1207,7 @@ const Results = () => {
     try {
       setIsLoading(true);
       const schoolResultGoldResp = await axios.get(
-        `/api/results/allresults/${params.contestId}`
+        `/api/results/allresults/${params.contestId}`,
       );
       console.log(schoolResultGoldResp);
       console.log("schoolResultGoldResp");
@@ -1223,7 +1237,7 @@ const Results = () => {
     try {
       setIsLoading(true);
       const schoolResultGoldResp = await axios.get(
-        `/api/results/getallscores/${params.contestId}`
+        `/api/results/getallscores/${params.contestId}`,
       );
       console.log(schoolResultGoldResp);
       console.log("schoolResultGoldResp");
@@ -1264,12 +1278,12 @@ const Results = () => {
     try {
       setIsLoading(true);
       const response = await axios.get(
-        `/api/question-stats/${params.contestId}`
+        `/api/question-stats/${params.contestId}`,
       );
       console.log(response.data);
       setIsLoading(false);
       const blob = await pdf(
-        <QuestionStatsPdf data={response.data} />
+        <QuestionStatsPdf data={response.data} />,
       ).toBlob();
 
       // Download PDF
@@ -1295,7 +1309,7 @@ const Results = () => {
 
       // Step 1: Fetch principal details
       const response = await axios.get<PrincipalDetailsList>(
-        `/api/users/getprincipalanddetails/${params.contestId}`
+        `/api/users/getprincipalanddetails/${params.contestId}`,
       );
 
       const principalResults: PrincipalDetailsList = response.data;
@@ -1308,7 +1322,7 @@ const Results = () => {
       // Enhanced Arabic-friendly filename sanitization
       const sanitizeFilename = (
         name: string | null | undefined,
-        fallback: string = "Unknown"
+        fallback: string = "Unknown",
       ): string => {
         if (!name || typeof name !== "string") {
           return fallback;
@@ -1334,7 +1348,7 @@ const Results = () => {
       const createSafeFilename = (
         principalName: string,
         schoolId: number,
-        index: number
+        index: number,
       ): string => {
         let safeName = sanitizeFilename(principalName, `Principal_${schoolId}`);
 
@@ -1356,9 +1370,9 @@ const Results = () => {
         console.log(
           `   Final filename: "${createSafeFilename(
             principal.p_Name,
-            principal.schoolId,
-            index
-          )}"`
+            principal?.schoolId || 0,
+            index,
+          )}"`,
         );
         console.log("---");
       });
@@ -1399,7 +1413,7 @@ const Results = () => {
             chunk.map((p: PrincipalDetails) => ({
               name: p.p_Name,
               schoolId: p.schoolId,
-            }))
+            })),
           );
 
           const pdfBlobs: PrincipalPdfBlob[] =
@@ -1408,7 +1422,7 @@ const Results = () => {
           console.log(
             `Generated ${pdfBlobs.length} PDFs for chunk ${
               Math.floor(i / chunkSize) + 1
-            }`
+            }`,
           );
 
           // Add each PDF to the ZIP with enhanced error handling
@@ -1430,8 +1444,8 @@ const Results = () => {
               // Create unique filename
               let fileName = createSafeFilename(
                 pdf.principalName,
-                pdf.schoolId,
-                originalIndex
+                pdf?.schoolId ?? 0,
+                originalIndex,
               );
               let counter = 1;
 
@@ -1448,11 +1462,11 @@ const Results = () => {
               processedPrincipals.push(pdf.principalName);
 
               console.log(
-                `✓ Added to ZIP: ${fileName} (${pdf.blob.size} bytes)`
+                `✓ Added to ZIP: ${fileName} (${pdf.blob.size} bytes)`,
               );
               console.log(`   Original name: "${pdf.principalName}"`);
               console.log(
-                `   School: "${originalPrincipal?.schoolName || "Unknown"}"`
+                `   School: "${originalPrincipal?.schoolName || "Unknown"}"`,
               );
             } else {
               const failureReason: string[] = [];
@@ -1483,7 +1497,7 @@ const Results = () => {
         } catch (chunkError) {
           console.error(
             `Error processing chunk ${Math.floor(i / chunkSize) + 1}:`,
-            chunkError
+            chunkError,
           );
 
           // Add all principals from failed chunk to failed list
@@ -1491,7 +1505,7 @@ const Results = () => {
             if (principal.p_Name) {
               failedPrincipals.push(principal.p_Name);
               console.error(
-                `Failed to process principal: "${principal.p_Name}" from school: "${principal.schoolName}"`
+                `Failed to process principal: "${principal.p_Name}" from school: "${principal.schoolName}"`,
               );
             }
           });
@@ -1515,7 +1529,7 @@ const Results = () => {
       console.log("Failed principals:", failedPrincipals.length);
       console.log(
         "Total accounted for:",
-        successfullyAdded + failedPrincipals.length
+        successfullyAdded + failedPrincipals.length,
       );
 
       if (failedPrincipals.length > 0) {
@@ -1533,7 +1547,7 @@ const Results = () => {
 
       if (successfullyAdded === 0) {
         throw new Error(
-          "No principal certificates were successfully generated"
+          "No principal certificates were successfully generated",
         );
       }
 
@@ -1580,7 +1594,7 @@ const Results = () => {
         }`,
         {
           autoClose: 8000,
-        }
+        },
       );
     } finally {
       setIsLoading(false);
@@ -1603,7 +1617,7 @@ const Results = () => {
       // Enhanced Arabic-friendly filename sanitization
       const sanitizeFilename = (
         name: string | null | undefined,
-        fallback: string = "Unknown"
+        fallback: string = "Unknown",
       ): string => {
         if (!name || typeof name !== "string") {
           return fallback;
@@ -1629,7 +1643,7 @@ const Results = () => {
       const createSafeFilename = (
         principalName: string,
         schoolId: number,
-        index: number
+        index: number,
       ): string => {
         let safeName = sanitizeFilename(principalName, `Principal_${schoolId}`);
 
@@ -1651,9 +1665,9 @@ const Results = () => {
         console.log(
           `   Final filename: "${createSafeFilename(
             principal.p_Name,
-            principal.schoolId,
-            index
-          )}"`
+            principal?.schoolId ?? 0,
+            index,
+          )}"`,
         );
         console.log("---");
       });
@@ -1694,7 +1708,7 @@ const Results = () => {
             chunk.map((p: PrincipalDetails) => ({
               name: p.p_Name,
               schoolId: p.schoolId,
-            }))
+            })),
           );
 
           const pdfBlobs: PrincipalPdfBlob[] =
@@ -1703,7 +1717,7 @@ const Results = () => {
           console.log(
             `Generated ${pdfBlobs.length} PDFs for chunk ${
               Math.floor(i / chunkSize) + 1
-            }`
+            }`,
           );
 
           // Add each PDF to the ZIP with enhanced error handling
@@ -1725,8 +1739,8 @@ const Results = () => {
               // Create unique filename
               let fileName = createSafeFilename(
                 pdf.principalName,
-                pdf.schoolId,
-                originalIndex
+                pdf?.schoolId ?? 0,
+                originalIndex,
               );
               let counter = 1;
 
@@ -1743,11 +1757,11 @@ const Results = () => {
               processedPrincipals.push(pdf.principalName);
 
               console.log(
-                `✓ Added to ZIP: ${fileName} (${pdf.blob.size} bytes)`
+                `✓ Added to ZIP: ${fileName} (${pdf.blob.size} bytes)`,
               );
               console.log(`   Original name: "${pdf.principalName}"`);
               console.log(
-                `   School: "${originalPrincipal?.schoolName || "Unknown"}"`
+                `   School: "${originalPrincipal?.schoolName || "Unknown"}"`,
               );
             } else {
               const failureReason: string[] = [];
@@ -1778,7 +1792,7 @@ const Results = () => {
         } catch (chunkError) {
           console.error(
             `Error processing chunk ${Math.floor(i / chunkSize) + 1}:`,
-            chunkError
+            chunkError,
           );
 
           // Add all principals from failed chunk to failed list
@@ -1786,7 +1800,7 @@ const Results = () => {
             if (principal.p_Name) {
               failedPrincipals.push(principal.p_Name);
               console.error(
-                `Failed to process principal: "${principal.p_Name}" from school: "${principal.schoolName}"`
+                `Failed to process principal: "${principal.p_Name}" from school: "${principal.schoolName}"`,
               );
             }
           });
@@ -1810,7 +1824,7 @@ const Results = () => {
       console.log("Failed principals:", failedPrincipals.length);
       console.log(
         "Total accounted for:",
-        successfullyAdded + failedPrincipals.length
+        successfullyAdded + failedPrincipals.length,
       );
 
       if (failedPrincipals.length > 0) {
@@ -1828,7 +1842,7 @@ const Results = () => {
 
       if (successfullyAdded === 0) {
         throw new Error(
-          "No principal certificates were successfully generated"
+          "No principal certificates were successfully generated",
         );
       }
 
@@ -1875,7 +1889,7 @@ const Results = () => {
         }`,
         {
           autoClose: 8000,
-        }
+        },
       );
     } finally {
       setIsLoading(false);
@@ -1890,7 +1904,7 @@ const Results = () => {
 
       // Step 1: Fetch coordinator details
       const response = await axios.get<CoordinatorDetailsList>(
-        `/api/users/getcoordinatordetails/${params.contestId}`
+        `/api/users/getcoordinatordetails/${params.contestId}`,
       );
 
       const coordinatorResults: CoordinatorDetailsList = response.data;
@@ -1903,7 +1917,7 @@ const Results = () => {
       // Enhanced Arabic-friendly filename sanitization
       const sanitizeFilename = (
         name: string | null | undefined,
-        fallback: string = "Unknown"
+        fallback: string = "Unknown",
       ): string => {
         if (!name || typeof name !== "string") {
           return fallback;
@@ -1927,14 +1941,13 @@ const Results = () => {
 
       // Create safe filename with uniqueness guarantee
       const createSafeFilename = (
-        coordinatorName: string,
+        coordinatorName: string | number | null,
         schoolId: number,
-        index: number
+        index: number,
       ): string => {
-        let safeName = sanitizeFilename(
-          coordinatorName,
-          `Coordinator_${schoolId}`
-        );
+        const nameStr =
+          coordinatorName?.toString() || `Coordinator_${schoolId}`;
+        let safeName = sanitizeFilename(nameStr, `Coordinator_${schoolId}`);
 
         // If sanitization results in very short or problematic name, use structured fallback
         if (safeName.length < 2 || /^_+$/.test(safeName)) {
@@ -1952,17 +1965,18 @@ const Results = () => {
           console.log(`   School: "${coordinator.schoolName}"`);
           console.log(`   SchoolId: ${coordinator.schoolId}`);
           console.log(
-            `   Sanitized: "${sanitizeFilename(coordinator.c_Name)}"`
+            `   Sanitized: "${sanitizeFilename(coordinator.c_Name?.toString())}"`,
           );
           console.log(
             `   Final filename: "${createSafeFilename(
-              coordinator.c_Name,
-              coordinator.schoolId,
-              index
-            )}"`
+              coordinator.c_Name?.toString() ||
+                `Coordinator_${coordinator.schoolId}`,
+              coordinator?.schoolId ?? 0,
+              index,
+            )}"`,
           );
           console.log("---");
-        }
+        },
       );
       console.log("=== END DEBUG ===");
 
@@ -1996,7 +2010,7 @@ const Results = () => {
             chunk.map((c: CoordinatorDetails) => ({
               name: c.c_Name,
               schoolId: c.schoolId,
-            }))
+            })),
           );
 
           const pdfBlobs: CoordinatorPdfBlob[] =
@@ -2005,7 +2019,7 @@ const Results = () => {
           console.log(
             `Generated ${pdfBlobs.length} PDFs for chunk ${
               Math.floor(i / chunkSize) + 1
-            }`
+            }`,
           );
 
           // Add each PDF to the ZIP with enhanced error handling
@@ -2027,8 +2041,8 @@ const Results = () => {
               // Create unique filename
               let fileName = createSafeFilename(
                 pdf.coordinatorName,
-                pdf.schoolId,
-                originalIndex
+                pdf?.schoolId ?? 0,
+                originalIndex,
               );
               let counter = 1;
 
@@ -2045,11 +2059,11 @@ const Results = () => {
               processedCoordinators.push(pdf.coordinatorName);
 
               console.log(
-                `✓ Added to ZIP: ${fileName} (${pdf.blob.size} bytes)`
+                `✓ Added to ZIP: ${fileName} (${pdf.blob.size} bytes)`,
               );
               console.log(`   Original name: "${pdf.coordinatorName}"`);
               console.log(
-                `   School: "${originalCoordinator?.schoolName || "Unknown"}"`
+                `   School: "${originalCoordinator?.schoolName || "Unknown"}"`,
               );
             } else {
               const failureReason: string[] = [];
@@ -2070,7 +2084,7 @@ const Results = () => {
 
               const failedName =
                 pdf.coordinatorName ||
-                originalCoordinator?.c_Name ||
+                originalCoordinator?.c_Name?.toString() ||
                 `Unknown-${pdf.schoolId}`;
               failedCoordinators.push(failedName);
             }
@@ -2081,13 +2095,13 @@ const Results = () => {
         } catch (chunkError) {
           console.error(
             `Error processing chunk ${Math.floor(i / chunkSize) + 1}:`,
-            chunkError
+            chunkError,
           );
           chunk.forEach((coordinator: CoordinatorDetails) => {
             if (coordinator.c_Name) {
-              failedCoordinators.push(coordinator.c_Name);
+              failedCoordinators.push(coordinator.c_Name.toString());
               console.error(
-                `Failed to process coordinator: "${coordinator.c_Name}" from school: "${coordinator.schoolName}"`
+                `Failed to process coordinator: "${coordinator.c_Name}" from school: "${coordinator.schoolName}"`,
               );
             }
           });
@@ -2111,7 +2125,7 @@ const Results = () => {
       console.log("Failed coordinators:", failedCoordinators.length);
       console.log(
         "Total accounted for:",
-        successfullyAdded + failedCoordinators.length
+        successfullyAdded + failedCoordinators.length,
       );
 
       if (failedCoordinators.length > 0) {
@@ -2129,7 +2143,7 @@ const Results = () => {
 
       if (successfullyAdded === 0) {
         throw new Error(
-          "No coordinator certificates were successfully generated"
+          "No coordinator certificates were successfully generated",
         );
       }
 
@@ -2176,7 +2190,7 @@ const Results = () => {
         }`,
         {
           autoClose: 8000,
-        }
+        },
       );
     } finally {
       setIsLoading(false);
@@ -2201,7 +2215,7 @@ const Results = () => {
       // Enhanced Arabic-friendly filename sanitization
       const sanitizeFilename = (
         name: string | null | undefined,
-        fallback: string = "Unknown"
+        fallback: string = "Unknown",
       ): string => {
         if (!name || typeof name !== "string") {
           return fallback;
@@ -2225,14 +2239,13 @@ const Results = () => {
 
       // Create safe filename with uniqueness guarantee
       const createSafeFilename = (
-        coordinatorName: string,
+        coordinatorName: string | number | null,
         schoolId: number,
-        index: number
+        index: number,
       ): string => {
-        let safeName = sanitizeFilename(
-          coordinatorName,
-          `Coordinator_${schoolId}`
-        );
+        const nameStr =
+          coordinatorName?.toString() || `Coordinator_${schoolId}`;
+        let safeName = sanitizeFilename(nameStr, `Coordinator_${schoolId}`);
 
         // If sanitization results in very short or problematic name, use structured fallback
         if (safeName.length < 2 || /^_+$/.test(safeName)) {
@@ -2250,17 +2263,18 @@ const Results = () => {
           console.log(`   School: "${coordinator.schoolName}"`);
           console.log(`   SchoolId: ${coordinator.schoolId}`);
           console.log(
-            `   Sanitized: "${sanitizeFilename(coordinator.c_Name)}"`
+            `   Sanitized: "${sanitizeFilename(coordinator.c_Name?.toString())}"`,
           );
           console.log(
             `   Final filename: "${createSafeFilename(
-              coordinator.c_Name,
-              coordinator.schoolId,
-              index
-            )}"`
+              coordinator.c_Name?.toString() ||
+                `Coordinator_${coordinator.schoolId}`,
+              coordinator?.schoolId ?? 0,
+              index,
+            )}"`,
           );
           console.log("---");
-        }
+        },
       );
       console.log("=== END DEBUG ===");
 
@@ -2294,7 +2308,7 @@ const Results = () => {
             chunk.map((c: CoordinatorDetails) => ({
               name: c.c_Name,
               schoolId: c.schoolId,
-            }))
+            })),
           );
 
           const pdfBlobs = await generateCoordinatorCertificates(chunk);
@@ -2302,7 +2316,7 @@ const Results = () => {
           console.log(
             `Generated ${pdfBlobs.length} PDFs for chunk ${
               Math.floor(i / chunkSize) + 1
-            }`
+            }`,
           );
 
           // Add each PDF to the ZIP with enhanced error handling
@@ -2324,8 +2338,8 @@ const Results = () => {
               // Create unique filename
               let fileName = createSafeFilename(
                 pdf.coordinatorName,
-                pdf.schoolId,
-                originalIndex
+                pdf.schoolId ?? 0,
+                originalIndex,
               );
               let counter = 1;
 
@@ -2342,11 +2356,11 @@ const Results = () => {
               processedCoordinators.push(pdf.coordinatorName);
 
               console.log(
-                `✓ Added to ZIP: ${fileName} (${pdf.blob.size} bytes)`
+                `✓ Added to ZIP: ${fileName} (${pdf.blob.size} bytes)`,
               );
               console.log(`   Original name: "${pdf.coordinatorName}"`);
               console.log(
-                `   School: "${originalCoordinator?.schoolName || "Unknown"}"`
+                `   School: "${originalCoordinator?.schoolName || "Unknown"}"`,
               );
             } else {
               const failureReason: string[] = [];
@@ -2367,7 +2381,7 @@ const Results = () => {
 
               const failedName =
                 pdf.coordinatorName ||
-                originalCoordinator?.c_Name ||
+                originalCoordinator?.c_Name?.toString() ||
                 `Unknown-${pdf.schoolId}`;
               failedCoordinators.push(failedName);
             }
@@ -2378,13 +2392,13 @@ const Results = () => {
         } catch (chunkError) {
           console.error(
             `Error processing chunk ${Math.floor(i / chunkSize) + 1}:`,
-            chunkError
+            chunkError,
           );
           chunk.forEach((coordinator: CoordinatorDetails) => {
             if (coordinator.c_Name) {
-              failedCoordinators.push(coordinator.c_Name);
+              failedCoordinators.push(coordinator.c_Name.toString());
               console.error(
-                `Failed to process coordinator: "${coordinator.c_Name}" from school: "${coordinator.schoolName}"`
+                `Failed to process coordinator: "${coordinator.c_Name}" from school: "${coordinator.schoolName}"`,
               );
             }
           });
@@ -2408,7 +2422,7 @@ const Results = () => {
       console.log("Failed coordinators:", failedCoordinators.length);
       console.log(
         "Total accounted for:",
-        successfullyAdded + failedCoordinators.length
+        successfullyAdded + failedCoordinators.length,
       );
 
       if (failedCoordinators.length > 0) {
@@ -2426,7 +2440,7 @@ const Results = () => {
 
       if (successfullyAdded === 0) {
         throw new Error(
-          "No coordinator certificates were successfully generated"
+          "No coordinator certificates were successfully generated",
         );
       }
 
@@ -2473,7 +2487,7 @@ const Results = () => {
         }`,
         {
           autoClose: 8000,
-        }
+        },
       );
     } finally {
       setIsLoading(false);

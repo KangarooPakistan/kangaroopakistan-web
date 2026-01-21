@@ -3,7 +3,7 @@ import fontkit from "@pdf-lib/fontkit";
 
 // Define the PrincipalDetails type
 export type PrincipalDetails = {
-  schoolId: number;
+  schoolId: number | null;
   schoolName: string;
   p_Name: string;
 };
@@ -420,14 +420,14 @@ export async function generatePrincipalCertificates(
   {
     blob: Blob;
     principalName: string;
-    schoolId: number;
+    schoolId: number | null;
     schoolName: string;
   }[]
 > {
   const results: {
     blob: Blob;
     principalName: string;
-    schoolId: number;
+    schoolId: number | null;
     schoolName: string;
   }[] = [];
 
@@ -436,14 +436,14 @@ export async function generatePrincipalCertificates(
 
   for (const principal of principals) {
     // Enhanced validation (matching react-pdf data filtering)
+    // Allow null schoolId but require other fields
     if (
       !principal ||
       typeof principal !== "object" ||
       !principal.p_Name ||
-      !principal.schoolId ||
       !principal.schoolName
     ) {
-      console.warn("Skipping invalid coordinator:", principal);
+      console.warn("Skipping invalid principal:", principal);
       continue;
     }
 

@@ -2,7 +2,7 @@ import { PDFDocument, PDFForm, rgb } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
 
 export type CoordinatorDetails = {
-  schoolId: number;
+  schoolId: number | null;
   schoolName: string;
   c_Name: string;
 };
@@ -419,14 +419,14 @@ export async function generateCoordinatorCertificates(
   {
     blob: Blob;
     coordinatorName: string;
-    schoolId: number;
+    schoolId: number | null;
     schoolName: string;
   }[]
 > {
   const results: {
     blob: Blob;
     coordinatorName: string;
-    schoolId: number;
+    schoolId: number | null;
     schoolName: string;
   }[] = [];
 
@@ -435,11 +435,11 @@ export async function generateCoordinatorCertificates(
 
   for (const coordinator of coordinators) {
     // Enhanced validation (matching react-pdf data filtering)
+    // Allow null schoolId but require other fields
     if (
       !coordinator ||
       typeof coordinator !== "object" ||
       !coordinator.c_Name ||
-      !coordinator.schoolId ||
       !coordinator.schoolName
     ) {
       console.warn("Skipping invalid coordinator:", coordinator);
