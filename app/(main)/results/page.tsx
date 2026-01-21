@@ -36,7 +36,16 @@ interface StudentScore {
     wrong: number;
     cRowTotal: number;
     totalMarks: number;
-    suffix: string;
+    // Suffix and other roll-number components come from parsedRollNumber
+    suffix?: string;
+    parsedRollNumber?: {
+      year: string;
+      district: string;
+      school: string;
+      class: string;
+      serialNum: string;
+      suffix: string;
+    };
     rankings?: {
       school: {
         rank: number;
@@ -50,11 +59,9 @@ interface StudentScore {
         rank: number;
         totalParticipants: number;
       };
-    } | null;
-    validationError?: string;
+    };
   }>;
 }
-
 interface ApiError {
   response?: {
     data?: {
@@ -84,7 +91,7 @@ const StudentResultsPage = () => {
       console.log(rollNumber);
 
       const response = await axios.get(
-        `/api/results/getbyrollnumber/${rollNumber}`
+        `/api/results/getbyrollnumber/${rollNumber}`,
       );
       setStudentData(response.data);
     } catch (err) {
@@ -106,30 +113,36 @@ const StudentResultsPage = () => {
       // Transform studentData into the format expected by IndividualReport
       const transformedData = studentData.scores.map((score) => ({
         schoolName: studentData.schoolName,
+        schoolId: studentData.schoolId || 0,
         city: studentData.city || "",
         schoolAddress: studentData.schoolAddress || "",
         rollNumber: studentData.student.rollNumber,
         studentName: studentData.student.name,
-        fatherName: studentData.student.fatherName, // Add if available in your data
+        fatherName: studentData.student.fatherName,
         class: studentData.student.class,
-        level: studentData.student.level, // Add if available in your data
+        level: studentData.student.level,
         totalMarks: score.totalMarks || 0,
         score: score.score || 0,
-        creditScore: score.creditScore, // Add if available
-        cRow1: score.cRow1, // Add if available
-        cRow2: score.cRow2, // Add if available
-        cRow3: score.cRow3, // Add if available
-        wrong: score.wrong, // Add if available
-        cTotal: score.cTotal, // Add if available
-        missing: score.missing, // Add if available
-        percentage: score.percentage || 0,
         missingQuestionsCount: score.missingQuestionsCount,
+
+        creditScore: score.creditScore,
+        cRow1: score.cRow1,
+        cRow2: score.cRow2,
+        cRow3: score.cRow3,
+        wrong: score.wrong,
+        cTotal: score.cTotal,
+        missing: score.missing,
+        percentage: score.percentage || 0,
         constestNo: score.contest.contestNo
           ? parseInt(score.contest.contestNo)
           : 0,
-        year: new Date().getFullYear(), // You might want to extract this from the contest date
+        // Prefer the parsed roll number year if available, otherwise fall back to current year
+        year: score.parsedRollNumber
+          ? parseInt(score.parsedRollNumber.year)
+          : new Date().getFullYear(),
         contestName: score.contest.name || "",
-        suffix: score.suffix, // Add if available
+        // Suffix is derived from the parsed roll number returned by the API
+        suffix: score.parsedRollNumber?.suffix ?? "",
         rankings: score.rankings || {
           school: { rank: 0, totalParticipants: 0 },
           district: { rank: 0, totalParticipants: 0 },
@@ -156,7 +169,7 @@ const StudentResultsPage = () => {
 
   // Check if any score has valid rankings
   const hasValidRankings = studentData?.scores.some(
-    (score) => score.rankings !== null && score.rankings !== undefined
+    (score) => score.rankings !== null && score.rankings !== undefined,
   );
 
   return (
