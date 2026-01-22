@@ -67,9 +67,12 @@ type PrincipalDetails = {
 type PrincipalDetailsList = PrincipalDetails[];
 
 export type CoordinatorPdfBlob = {
-  blob: Blob;
+  blob: Blob | null;
   coordinatorName: string;
   schoolId: number | null;
+  schoolName: string;
+  success: boolean;
+  error?: string;
 };
 export type Score = {
   rollNo: string;
@@ -121,9 +124,12 @@ export type SchoolData = {
 };
 
 type PrincipalPdfBlob = {
-  blob: Blob;
+  blob: Blob | null;
   principalName: string;
   schoolId: number | null;
+  schoolName: string;
+  success: boolean;
+  error?: string;
 };
 const Results = () => {
   const [schoolData, setSchoolData] = useState([]);

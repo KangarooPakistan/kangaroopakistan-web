@@ -419,17 +419,21 @@ export async function generateCoordinatorCertificates(
   coordinators: CoordinatorDetailsList
 ): Promise<
   {
-    blob: Blob;
+    blob: Blob | null;
     coordinatorName: string;
     schoolId: number | null;
     schoolName: string;
+    success: boolean;
+    error?: string;
   }[]
 > {
   const results: {
-    blob: Blob;
+    blob: Blob | null;
     coordinatorName: string;
     schoolId: number | null;
     schoolName: string;
+    success: boolean;
+    error?: string;
   }[] = [];
 
   // Load template once for efficiency
@@ -445,6 +449,14 @@ export async function generateCoordinatorCertificates(
       !coordinator.schoolName
     ) {
       console.warn("Skipping invalid coordinator:", coordinator);
+      results.push({
+        blob: null,
+        coordinatorName: coordinator?.c_Name || "Unknown",
+        schoolId: coordinator?.schoolId || null,
+        schoolName: coordinator?.schoolName || "Unknown",
+        success: false,
+        error: "Invalid coordinator data",
+      });
       continue;
     }
 
@@ -462,14 +474,25 @@ export async function generateCoordinatorCertificates(
         coordinatorName: coordinator.c_Name.trim(),
         schoolId: coordinator.schoolId,
         schoolName: coordinator.schoolName.trim(),
+        success: true,
       });
 
       console.log(`✓ Generated certificate for ${coordinator.c_Name}`);
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
       console.error(
         `✗ Failed to generate certificate for ${coordinator.c_Name}:`,
         error
       );
+      
+      results.push({
+        blob: null,
+        coordinatorName: coordinator.c_Name.trim(),
+        schoolId: coordinator.schoolId,
+        schoolName: coordinator.schoolName.trim(),
+        success: false,
+        error: errorMessage,
+      });
     }
 
     // Small delay to prevent overwhelming the system

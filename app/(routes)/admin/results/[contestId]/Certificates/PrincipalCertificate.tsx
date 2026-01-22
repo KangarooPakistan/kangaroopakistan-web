@@ -420,17 +420,21 @@ export async function generatePrincipalCertificates(
   principals: PrincipalDetailsList
 ): Promise<
   {
-    blob: Blob;
+    blob: Blob | null;
     principalName: string;
     schoolId: number | null;
     schoolName: string;
+    success: boolean;
+    error?: string;
   }[]
 > {
   const results: {
-    blob: Blob;
+    blob: Blob | null;
     principalName: string;
     schoolId: number | null;
     schoolName: string;
+    success: boolean;
+    error?: string;
   }[] = [];
 
   // Load template once for efficiency
@@ -446,6 +450,14 @@ export async function generatePrincipalCertificates(
       !principal.schoolName
     ) {
       console.warn("Skipping invalid principal:", principal);
+      results.push({
+        blob: null,
+        principalName: principal?.p_Name || "Unknown",
+        schoolId: principal?.schoolId || null,
+        schoolName: principal?.schoolName || "Unknown",
+        success: false,
+        error: "Invalid principal data",
+      });
       continue;
     }
 
@@ -463,14 +475,25 @@ export async function generatePrincipalCertificates(
         principalName: principal.p_Name.trim(),
         schoolId: principal.schoolId,
         schoolName: principal.schoolName.trim(),
+        success: true,
       });
 
       console.log(`✓ Generated certificate for ${principal.p_Name}`);
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
       console.error(
         `✗ Failed to generate certificate for ${principal.p_Name}:`,
         error
       );
+      
+      results.push({
+        blob: null,
+        principalName: principal.p_Name.trim(),
+        schoolId: principal.schoolId,
+        schoolName: principal.schoolName.trim(),
+        success: false,
+        error: errorMessage,
+      });
     }
 
     // Small delay to prevent overwhelming the system
