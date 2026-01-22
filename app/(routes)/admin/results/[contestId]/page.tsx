@@ -2573,7 +2573,7 @@ const Results = () => {
             Download Question Stats
           </Button>
           <Button
-            className="bg-green-700 font-medium text-[15px]  tracking-wide"
+            className="bg-green-700 bg-red-950 font-medium text-[15px]  tracking-wide"
             variant="default"
             size="lg"
             disabled={isLoading}
@@ -2581,7 +2581,7 @@ const Results = () => {
             Download Extra Coordinator Awards List
           </Button>
           <Button
-            className="bg-green-700 font-medium text-[15px]  tracking-wide"
+            className="bg-green-700 bg-red-950 font-medium text-[15px]  tracking-wide"
             variant="default"
             size="lg"
             disabled={isLoading}
@@ -2589,7 +2589,7 @@ const Results = () => {
             Download Extra Principal Awards List
           </Button>
           <Button
-            className="bg-green-700 font-medium text-[15px]  tracking-wide"
+            className="bg-green-700 bg-red-950 font-medium text-[15px]  tracking-wide"
             variant="default"
             size="lg"
             disabled={isLoading}
