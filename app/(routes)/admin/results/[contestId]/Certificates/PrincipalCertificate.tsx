@@ -349,19 +349,29 @@ export async function generatePrincipalCertificate(
   // Choose font for school name and pre-wrap to know how many lines we'll have
   // Arabic: Almarai, fallback to Avenir (then Ubuntu only as a last resort)
   // English: use Avenir instead of Ubuntu
-  const nameFont = isCNameArabic
-    ? fonts.almarai || fonts.ubuntu
-    : fonts.snell || fonts.ubuntu;
+  const hasPrincipalName = coordinatorName && coordinatorName.trim().length > 0;
   
-  if (!nameFont) {
-    throw new Error(`No suitable font available for principal name (Arabic: ${isCNameArabic}) for ${principal.p_Name}`);
+  // Only validate name font if we have a name to display
+  let nameFont;
+  if (hasPrincipalName) {
+    nameFont = isCNameArabic
+      ? fonts.almarai || fonts.ubuntu
+      : fonts.snell || fonts.ubuntu;
+    
+    if (!nameFont) {
+      throw new Error(`No suitable font available for principal name (Arabic: ${isCNameArabic}) for ${principal.p_Name}`);
+    }
+  } else {
+    // Use a default font for school name if no principal name
+    nameFont = fonts.avenir || fonts.ubuntu;
   }
+  
   const schoolNameFont = isSchoolNameArabicText
     ? fonts.almarai || fonts.avenir || fonts.ubuntu
     : fonts.avenir || nameFont;
   
   if (!schoolNameFont) {
-    throw new Error(`No suitable font available for school name (Arabic: ${isSchoolNameArabicText}) for ${principal.p_Name}`);
+    throw new Error(`No suitable font available for school name (Arabic: ${isSchoolNameArabicText}) for ${principal.p_Name || 'empty name'}`);
   }
 
   const maxSchoolWidth = bandRight - bandLeft -50;
@@ -375,43 +385,49 @@ export async function generatePrincipalCertificate(
   );
 
   // Dynamic top position based on whether school name wraps to two lines
-  // const topPosition = schoolLines.length > 1 ? 305 : 305;
-  const topPosition = schoolLines.length > 1 ? 290 : 290;
-  const baseY = height - topPosition;
+  // Adjust starting position if there's no principal name
+  const baseTopPosition = schoolLines.length > 1 ? 290 : 290;
+  // If no principal name, start higher up on the certificate
+  const topPosition = hasPrincipalName ? baseTopPosition : baseTopPosition - 35;
+  let baseY = height - topPosition;
 
   // Principal name processing (same capitalization behavior)
-  const displayCoordinatorName = isCNameArabic
-    ? coordinatorName
-    : processTextForCapitalization(coordinatorName);
+  // hasPrincipalName already declared above
+  
+  // 1. Principal name (only if not empty)
+  if (hasPrincipalName) {
+    const displayCoordinatorName = isCNameArabic
+      ? coordinatorName
+      : processTextForCapitalization(coordinatorName);
 
-  // 1. Principal name
-  drawCenteredTextWithTracking(firstPage, displayCoordinatorName, {
-    centerX: bandCenterX,
-    y: baseY,
-    font: nameFont,
-    size: nameFontSize,
-    color: rgb(0, 0, 0),
-    tracking: bodyTracking,
-  });
+    drawCenteredTextWithTracking(firstPage, displayCoordinatorName, {
+      centerX: bandCenterX,
+      y: baseY,
+      font: nameFont,
+      size: nameFontSize,
+      color: rgb(0, 0, 0),
+      tracking: bodyTracking,
+    });
+    baseY -= 35; // Move down for next element
+  }
 
   // 2. School ID line (only if schoolId is not null)
-  let currentY = baseY - 35;
   if (schoolId !== null) {
     const schoolIdText = `School ID: ${schoolId}`;
     drawCenteredTextWithTracking(firstPage, schoolIdText, {
       centerX: bandCenterX,
-      y: currentY,
+      y: baseY,
       // For English text, prefer Avenir instead of Ubuntu
       font: fonts.avenir || nameFont,
       size: 16,
       color: rgb(0, 0, 0),
       tracking: bodyTracking,
     });
-    currentY -= 35;
+    baseY -= 35; // Move down for next element
   }
 
   // 3. School name (wrapped, same band and spacing)
-  const schoolNameY = currentY;
+  const schoolNameY = baseY;
   const schoolLineHeight = schoolNameFontSize + 2;
 
   schoolLines.forEach((line, index) => {
@@ -464,21 +480,27 @@ export async function generatePrincipalCertificates(
 
   for (const principal of principals) {
     // Enhanced validation (matching react-pdf data filtering)
-    // Allow null schoolId but require other fields
+    // Only require schoolName - allow null/empty p_Name and null schoolId
     if (
       !principal ||
       typeof principal !== "object" ||
-      !principal.p_Name ||
       !principal.schoolName
     ) {
-      console.warn("Skipping invalid principal:", principal);
+      console.warn("Skipping invalid principal - validation failed:", {
+        hasPrincipal: !!principal,
+        isObject: typeof principal === "object",
+        p_Name: principal?.p_Name,
+        schoolName: principal?.schoolName,
+        schoolId: principal?.schoolId,
+        fullData: principal,
+      });
       results.push({
         blob: null,
         principalName: principal?.p_Name || "Unknown",
         schoolId: principal?.schoolId || null,
         schoolName: principal?.schoolName || "Unknown",
         success: false,
-        error: "Invalid principal data",
+        error: `Invalid principal data - schoolName is required but missing`,
       });
       continue;
     }

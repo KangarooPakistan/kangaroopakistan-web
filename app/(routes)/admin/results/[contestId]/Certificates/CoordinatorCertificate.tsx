@@ -349,19 +349,29 @@ export async function generateCoordinatorCertificate(
   // Choose font for school name and pre-wrap to know how many lines we'll have
   // Arabic: Almarai, fallback to Avenir (then Ubuntu only as a last resort)
   // English: use Avenir instead of Ubuntu
-  const nameFont = isCNameArabic
-    ? fonts.almarai || fonts.ubuntu
-    : fonts.snell || fonts.ubuntu;
+  const hasCoordinatorName = coordinatorName && coordinatorName.trim().length > 0;
   
-  if (!nameFont) {
-    throw new Error(`No suitable font available for coordinator name (Arabic: ${isCNameArabic}) for ${coordinator.c_Name}`);
+  // Only validate name font if we have a name to display
+  let nameFont;
+  if (hasCoordinatorName) {
+    nameFont = isCNameArabic
+      ? fonts.almarai || fonts.ubuntu
+      : fonts.snell || fonts.ubuntu;
+    
+    if (!nameFont) {
+      throw new Error(`No suitable font available for coordinator name (Arabic: ${isCNameArabic}) for ${coordinator.c_Name}`);
+    }
+  } else {
+    // Use a default font for school name if no coordinator name
+    nameFont = fonts.avenir || fonts.ubuntu;
   }
+  
   const schoolNameFont = isSchoolNameArabicText
     ? fonts.almarai || fonts.avenir || fonts.ubuntu
     : fonts.avenir || nameFont;
   
   if (!schoolNameFont) {
-    throw new Error(`No suitable font available for school name (Arabic: ${isSchoolNameArabicText}) for ${coordinator.c_Name}`);
+    throw new Error(`No suitable font available for school name (Arabic: ${isSchoolNameArabicText}) for ${coordinator.c_Name || 'empty name'}`);
   }
 
   const maxSchoolWidth = bandRight - bandLeft;
@@ -375,42 +385,49 @@ export async function generateCoordinatorCertificate(
   );
 
   // Dynamic top position based on whether school name wraps to two lines
-  const topPosition = schoolLines.length > 1 ? 305 : 305;
-  const baseY = height - topPosition;
+  // Adjust starting position if there's no coordinator name
+  const baseTopPosition = schoolLines.length > 1 ? 305 : 305;
+  // If no coordinator name, start higher up on the certificate
+  const topPosition = hasCoordinatorName ? baseTopPosition : baseTopPosition - 35;
+  let baseY = height - topPosition;
 
   // Coordinator name processing (same capitalization behavior)
-  const displayCoordinatorName = isCNameArabic
-    ? coordinatorName
-    : processTextForCapitalization(coordinatorName);
+  // hasCoordinatorName already declared above
+  
+  // 1. Coordinator name (only if not empty)
+  if (hasCoordinatorName) {
+    const displayCoordinatorName = isCNameArabic
+      ? coordinatorName
+      : processTextForCapitalization(coordinatorName);
 
-  // 1. Coordinator name
-  drawCenteredTextWithTracking(firstPage, displayCoordinatorName, {
-    centerX: bandCenterX,
-    y: baseY,
-    font: nameFont,
-    size: nameFontSize,
-    color: rgb(0, 0, 0),
-    tracking: bodyTracking,
-  });
+    drawCenteredTextWithTracking(firstPage, displayCoordinatorName, {
+      centerX: bandCenterX,
+      y: baseY,
+      font: nameFont,
+      size: nameFontSize,
+      color: rgb(0, 0, 0),
+      tracking: bodyTracking,
+    });
+    baseY -= 35; // Move down for next element
+  }
 
   // 2. School ID line (only if schoolId is not null)
-  let currentY = baseY - 35;
   if (schoolId !== null) {
     const schoolIdText = `School ID: ${schoolId}`;
     drawCenteredTextWithTracking(firstPage, schoolIdText, {
       centerX: bandCenterX,
-      y: currentY,
+      y: baseY,
       // For English text, prefer Avenir instead of Ubuntu
       font: fonts.avenir || nameFont,
       size: 16,
       color: rgb(0, 0, 0),
       tracking: bodyTracking,
     });
-    currentY -= 35;
+    baseY -= 35; // Move down for next element
   }
 
   // 3. School name (wrapped, same band and spacing)
-  const schoolNameY = currentY;
+  const schoolNameY = baseY;
   const schoolLineHeight = schoolNameFontSize + 2;
 
   schoolLines.forEach((line, index) => {
@@ -463,21 +480,27 @@ export async function generateCoordinatorCertificates(
 
   for (const coordinator of coordinators) {
     // Enhanced validation (matching react-pdf data filtering)
-    // Allow null schoolId but require other fields
+    // Only require schoolName - allow null/empty c_Name and null schoolId
     if (
       !coordinator ||
       typeof coordinator !== "object" ||
-      !coordinator.c_Name ||
       !coordinator.schoolName
     ) {
-      console.warn("Skipping invalid coordinator:", coordinator);
+      console.warn("Skipping invalid coordinator - validation failed:", {
+        hasCoordinator: !!coordinator,
+        isObject: typeof coordinator === "object",
+        c_Name: coordinator?.c_Name,
+        schoolName: coordinator?.schoolName,
+        schoolId: coordinator?.schoolId,
+        fullData: coordinator,
+      });
       results.push({
         blob: null,
         coordinatorName: coordinator?.c_Name || "Unknown",
         schoolId: coordinator?.schoolId || null,
         schoolName: coordinator?.schoolName || "Unknown",
         success: false,
-        error: "Invalid coordinator data",
+        error: `Invalid coordinator data - schoolName is required but missing`,
       });
       continue;
     }
