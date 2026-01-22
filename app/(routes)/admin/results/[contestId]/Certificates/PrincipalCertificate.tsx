@@ -315,8 +315,8 @@ export async function generatePrincipalCertificate(
   console.log(`Page dimensions: ${width} x ${height}`);
 
   // Prepare text values with safe defaults
-  const coordinatorName = principal.p_Name || "Principal Name";
-  const schoolName = principal.schoolName || "School Name";
+  const coordinatorName = principal.p_Name;
+  const schoolName = principal.schoolName;
   const schoolId = principal.schoolId;
 
   // Check if text is Arabic (matching react-pdf logic)
