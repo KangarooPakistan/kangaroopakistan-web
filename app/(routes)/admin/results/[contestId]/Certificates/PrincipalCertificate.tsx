@@ -385,7 +385,7 @@ export async function generatePrincipalCertificate(
   );
 
   // Dynamic top position based on whether school name wraps to two lines
-  const baseTopPosition = schoolLines.length > 1 ? 300 : 300;
+  const baseTopPosition = schoolLines.length > 1 ? 305 : 305;
   // Always use the same starting position since we always reserve space
   const topPosition = baseTopPosition;
   let baseY = height - topPosition;
