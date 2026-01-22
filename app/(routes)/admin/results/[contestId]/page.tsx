@@ -1280,6 +1280,58 @@ const Results = () => {
       console.error("Error fetching school result:", error);
     }
   };
+
+  const handleSchoolsOnHoldExcel = async () => {
+    try {
+      setIsLoading(true);
+      showInfo("Fetching schools on hold...");
+
+      const response = await axios.get(
+        `/api/results/schools-on-hold/${params.contestId}`
+      );
+      
+      const schoolsOnHold = response.data;
+      console.log("Schools on hold:", schoolsOnHold);
+
+      if (!schoolsOnHold || schoolsOnHold.length === 0) {
+        showInfo("No schools are currently on hold for this contest.");
+        return;
+      }
+
+      // Create Excel workbook
+      const workbook = XLSX.utils.book_new();
+      const worksheet = XLSX.utils.json_to_sheet(schoolsOnHold);
+
+      // Set column widths for better readability
+      const colWidths = [
+        { wch: 10 }, // School ID
+        { wch: 30 }, // School Name
+        { wch: 20 }, // District
+        { wch: 40 }, // School Address
+        { wch: 15 }, // Contact Number
+        { wch: 25 }, // Email
+        { wch: 12 }, // Hold Status
+        { wch: 20 }, // Hold Updated At
+      ];
+      worksheet["!cols"] = colWidths;
+
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Schools On Hold");
+      
+      const timestamp = new Date().toISOString().split("T")[0];
+      const fileName = `Schools_On_Hold_Contest_${params.contestId}_${timestamp}.xlsx`;
+      
+      XLSX.writeFile(workbook, fileName);
+      
+      showSuccess(`Downloaded ${schoolsOnHold.length} schools on hold to Excel file!`);
+    } catch (error: any) {
+      console.error("Error downloading schools on hold:", error);
+      showError(
+        error.response?.data?.error || "Failed to download schools on hold"
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
   const downloadQuestionStats = async () => {
     try {
       setIsLoading(true);
@@ -2796,6 +2848,14 @@ const Results = () => {
             onClick={handleExcelForKainatPart2}>
             Only For Kainat&apos; Use part 2
           </Button>
+          <Button
+            className="bg-red-600 font-medium text-[15px] tracking-wide"
+            variant="default"
+            size="lg"
+            disabled={isLoading}
+            onClick={handleSchoolsOnHoldExcel}>
+            Download Schools On Hold
+          </Button>
         </div>
       </div>
       <div className="block md:hidden">
@@ -3016,6 +3076,14 @@ const Results = () => {
             disabled={isLoading}
             onClick={handleParticipation}>
             Participation Winners Excel
+          </Button>
+          <Button
+            className="bg-red-600 font-medium text-[11px] tracking-wide"
+            variant="default"
+            size="sm"
+            disabled={isLoading}
+            onClick={handleSchoolsOnHoldExcel}>
+            Schools On Hold Excel
           </Button>
         </div>
       </div>
