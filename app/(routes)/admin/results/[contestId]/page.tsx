@@ -2254,24 +2254,19 @@ const Results = () => {
 
       // Create safe filename with uniqueness guarantee
       const createSafeFilename = (
-        coordinatorName: string | number | null,
-        schoolId: number | null,
+        coordinatorName: string,
+        schoolId: number,
         index: number,
-        ): string => {
-        // Use schoolId as primary filename, fallback to schoolName if schoolId is null
-        const baseFileName = schoolId !== null 
-          ? schoolId.toString() 
-          : (coordinatorName?.toString() || `Coordinator_${index + 1}`);
-
-        let safeName = sanitizeFilename(baseFileName, `Coordinator_${index + 1}`);
+      ): string => {
+        let safeName = sanitizeFilename(coordinatorName, `Coordinator_${schoolId}`);
 
         // If sanitization results in very short or problematic name, use structured fallback
         if (safeName.length < 2 || /^_+$/.test(safeName)) {
-          safeName = `Coordinator_${index + 1}`;
+          safeName = `Coordinator_${schoolId}_${index + 1}`;
         }
 
-        return `${safeName}.pdf`;
-        };
+        return `${safeName}_Coordinator_School_${schoolId}.pdf`;
+      };
 
       // Debug logging for Arabic names
       console.log("=== COORDINATOR NAMES DEBUG ===");
