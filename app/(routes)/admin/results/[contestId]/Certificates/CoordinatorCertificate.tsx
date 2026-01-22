@@ -411,7 +411,8 @@ export async function generateCoordinatorCertificate(
     baseY -= 35; // Move down for next element
   }
 
-  // 2. School ID line (only if schoolId is not null)
+  // 2. School ID line - ALWAYS reserve space, even if schoolId is null
+  // This leaves space for manual writing if schoolId is null
   if (schoolId !== null) {
     const schoolIdText = `School ID: ${schoolId}`;
     drawCenteredTextWithTracking(firstPage, schoolIdText, {
@@ -423,8 +424,9 @@ export async function generateCoordinatorCertificate(
       color: rgb(0, 0, 0),
       tracking: bodyTracking,
     });
-    baseY -= 35; // Move down for next element
   }
+  // Always move down to reserve space for School ID (whether written or not)
+  baseY -= 35;
 
   // 3. School name (wrapped, same band and spacing)
   const schoolNameY = baseY;
