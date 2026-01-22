@@ -315,7 +315,7 @@ export async function generateCoordinatorCertificate(
   console.log(`Page dimensions: ${width} x ${height}`);
 
   // Prepare text values with safe defaults
-  const coordinatorName = coordinator.c_Name || "Coordinator Name";
+  const coordinatorName = coordinator.c_Name;
   const schoolName = coordinator.schoolName || "School Name";
   const schoolId = coordinator.schoolId;
 
