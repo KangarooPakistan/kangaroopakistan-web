@@ -1452,10 +1452,11 @@ const Results = () => {
               hasPrincipalName: !!pdf.principalName,
             });
 
-            if (pdf.blob && pdf.principalName && pdf.blob.size > 0) {
+            if (pdf.success && pdf.blob && pdf.blob.size > 0) {
               // Create unique filename
+              const fileNameBase = pdf.principalName || pdf.schoolName || `School_${pdf.schoolId}`;
               let fileName = createSafeFilename(
-                pdf.principalName,
+                fileNameBase,
                 pdf?.schoolId ?? 0,
                 originalIndex,
               );
@@ -1471,7 +1472,7 @@ const Results = () => {
               usedFilenames.add(fileName);
               folder?.file(fileName, pdf.blob);
               successfullyAdded++;
-              processedPrincipals.push(pdf.principalName);
+              processedPrincipals.push(pdf.principalName || pdf.schoolName);
 
               console.log(
                 `✓ Added to ZIP: ${fileName} (${pdf.blob.size} bytes)`,
@@ -1747,10 +1748,11 @@ const Results = () => {
               hasPrincipalName: !!pdf.principalName,
             });
 
-            if (pdf.blob && pdf.principalName && pdf.blob.size > 0) {
+            if (pdf.success && pdf.blob && pdf.blob.size > 0) {
               // Create unique filename
+              const fileNameBase = pdf.principalName || pdf.schoolName || `School_${pdf.schoolId}`;
               let fileName = createSafeFilename(
-                pdf.principalName,
+                fileNameBase,
                 pdf?.schoolId ?? 0,
                 originalIndex,
               );
@@ -1766,7 +1768,7 @@ const Results = () => {
               usedFilenames.add(fileName);
               folder?.file(fileName, pdf.blob);
               successfullyAdded++;
-              processedPrincipals.push(pdf.principalName);
+              processedPrincipals.push(pdf.principalName || pdf.schoolName);
 
               console.log(
                 `✓ Added to ZIP: ${fileName} (${pdf.blob.size} bytes)`,
@@ -2049,10 +2051,11 @@ const Results = () => {
               hasCoordinatorName: !!pdf.coordinatorName,
             });
 
-            if (pdf.blob && pdf.coordinatorName && pdf.blob.size > 0) {
+            if (pdf.success && pdf.blob && pdf.blob.size > 0) {
               // Create unique filename
+              const fileNameBase = pdf.coordinatorName || pdf.schoolName || `School_${pdf.schoolId}`;
               let fileName = createSafeFilename(
-                pdf.coordinatorName,
+                fileNameBase,
                 pdf?.schoolId ?? 0,
                 originalIndex,
               );
@@ -2068,7 +2071,7 @@ const Results = () => {
               usedFilenames.add(fileName);
               folder?.file(fileName, pdf.blob);
               successfullyAdded++;
-              processedCoordinators.push(pdf.coordinatorName);
+              processedCoordinators.push(pdf.coordinatorName || pdf.schoolName);
 
               console.log(
                 `✓ Added to ZIP: ${fileName} (${pdf.blob.size} bytes)`,
@@ -2349,11 +2352,12 @@ const Results = () => {
               hasCoordinatorName: !!pdf.coordinatorName,
             });
 
-            if (pdf.blob && pdf.coordinatorName && pdf.blob.size > 0) {
+            if (pdf.success && pdf.blob && pdf.blob.size > 0) {
               // Create unique filename
+              const fileNameBase = pdf.coordinatorName || pdf.schoolName || `School_${pdf.schoolId}`;
               let fileName = createSafeFilename(
-                pdf.coordinatorName,
-                pdf.schoolId ?? 0,
+                fileNameBase,
+                pdf?.schoolId ?? 0,
                 originalIndex,
               );
               let counter = 1;
@@ -2368,7 +2372,7 @@ const Results = () => {
               usedFilenames.add(fileName);
               folder?.file(fileName, pdf.blob);
               successfullyAdded++;
-              processedCoordinators.push(pdf.coordinatorName);
+              processedCoordinators.push(pdf.coordinatorName || pdf.schoolName);
 
               console.log(
                 `✓ Added to ZIP: ${fileName} (${pdf.blob.size} bytes)`,
