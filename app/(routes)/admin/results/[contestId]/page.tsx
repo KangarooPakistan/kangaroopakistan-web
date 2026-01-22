@@ -2531,13 +2531,13 @@ const Results = () => {
             onClick={handleBack}>
             Back
           </Button>
-          <Button
+          {/* <Button
             className="bg-blue-800 text-white font-medium text-[15px]  tracking-wide"
             variant="default"
             size="lg"
             disabled={isLoading}
             onClick={handleCoordinatorDetails}>
-            Download Coordinator Certificates
+            Download Coordinator Certificates API
           </Button>
           <Button
             className="bg-blue-800 text-white font-medium text-[15px]  tracking-wide"
@@ -2545,15 +2545,15 @@ const Results = () => {
             size="lg"
             disabled={isLoading}
             onClick={handlePrincipalDetails}>
-            Download Principal Certificates
-          </Button>
+            Download Principal Certificates API
+          </Button> */}
           <Button
             className="bg-green-700 font-medium text-[15px]  tracking-wide"
             variant="default"
             size="lg"
             disabled={isLoading}
             onClick={handlePrincipalDetailsCustom}>
-            Principal Certificates ExcelFile
+            Download Principal Cert From ExcelFile
           </Button>
           <Button
             className=" bg-green-700 font-medium text-[15px]  tracking-wide"
@@ -2561,7 +2561,7 @@ const Results = () => {
             size="lg"
             disabled={isLoading}
             onClick={handleCoordinatorDetailsCustom}>
-            Coordinator Certificates ExcelFile
+            Download Coordinator Cert From ExcelFile
           </Button>
 
           <Button
@@ -2597,40 +2597,40 @@ const Results = () => {
             Download Cash Prize Winners List
           </Button>
 
-          <Button
+          {/* <Button
             className=" font-medium text-[15px]  tracking-wide"
             variant="default"
             size="lg"
             disabled={isLoading}
             onClick={handleGold}>
             Download Gold Winners
-          </Button>
+          </Button> */}
 
-          <Button
+          {/* <Button
             className=" font-medium text-[15px]  tracking-wide"
             variant="default"
             size="lg"
             disabled={isLoading}
             onClick={handleSilver}>
             Download Silver Winners
-          </Button>
-          <Button
+          </Button> */}
+          {/* <Button
             className=" font-medium text-[15px]  tracking-wide"
             variant="default"
             size="lg"
             disabled={isLoading}
             onClick={handleBronze}>
             Download Bronze Winners
-          </Button>
-          <Button
+          </Button> */}
+          {/* <Button
             className=" font-medium text-[15px]  tracking-wide"
             variant="default"
             size="lg"
             disabled={isLoading}
             onClick={handleThreeStar}>
             Download Three Star Winners
-          </Button>
-          <Button
+          </Button> */}
+          {/* <Button
             className=" font-medium text-[15px]  tracking-wide"
             variant="default"
             size="lg"
@@ -2653,81 +2653,81 @@ const Results = () => {
             disabled={isLoading}
             onClick={handleParticipation}>
             Download Participation
-          </Button>
+          </Button> */}
           <Button
-            className=" font-medium text-[15px]  tracking-wide"
-            variant="secondary"
+            className=" font-medium text-[15px] bg-amber-800   tracking-wide"
+            variant="default"
             size="lg"
             disabled={isLoading}
             onClick={handleParticipationAutoTable}>
-            Participation (AutoTable)
+            Download Participation Awards List 
           </Button>
           <Button
-            className=" font-medium text-[15px]  tracking-wide"
-            variant="secondary"
+            className=" font-medium text-[15px] bg-amber-800  tracking-wide"
+            variant="default"
             size="lg"
             disabled={isLoading}
             onClick={handleGoldAutoTable}>
-            Gold (AutoTable)
+            Download Gold Awards List
           </Button>
           <Button
-            className=" font-medium text-[15px]  tracking-wide"
-            variant="secondary"
+            className=" font-medium text-[15px] bg-amber-800  tracking-wide"
+            variant="default"
             size="lg"
             disabled={isLoading}
             onClick={handleSilverAutoTable}>
-            Silver (AutoTable)
+            Download Silver Awards List
           </Button>
           <Button
-            className=" font-medium text-[15px]  tracking-wide"
-            variant="secondary"
+            className=" font-medium text-[15px] bg-amber-800  tracking-wide"
+            variant="default"
             size="lg"
             disabled={isLoading}
             onClick={handleBronzeAutoTable}>
-            Bronze (AutoTable)
+            Download Bronze Awards List
           </Button>
           <Button
-            className=" font-medium text-[15px]  tracking-wide"
+            className=" font-medium text-[15px] bg-amber-800  tracking-wide"
             variant="secondary"
             size="lg"
             disabled={isLoading}
             onClick={handleThreeStarAutoTable}>
-            Three Star (AutoTable)
+           Download Three Star List
           </Button>
           <Button
-            className=" font-medium text-[15px]  tracking-wide"
+            className=" font-medium text-[15px] bg-amber-800 tracking-wide"
             variant="secondary"
             size="lg"
             disabled={isLoading}
             onClick={handleTwoStarAutoTable}>
-            Two Star (AutoTable)
+            Download Two Star Awards List
           </Button>
           <Button
-            className=" font-medium text-[15px]  tracking-wide"
+            className=" font-medium text-[15px] bg-amber-800 tracking-wide"
             variant="secondary"
             size="lg"
             disabled={isLoading}
             onClick={handleOneStarAutoTable}>
-            One Star (AutoTable)
+            Download One Star Awards List
           </Button>
           <Button
-            className=" font-medium text-[15px]  tracking-wide"
+            className=" font-medium text-[15px]  bg-black tracking-wide"
             variant="default"
             size="lg"
             disabled={loadData}
             onClick={handleExcel}>
-            Download Excel Sheet
+            Download Awards Wise Report 
           </Button>
           <Button
-            className=" font-medium text-[15px]  tracking-wide"
+            className=" font-medium text-[15px] bg-black tracking-wide"
             variant="default"
             size="lg"
             disabled={loadData}
             onClick={handleCount}>
-            Download Total Count
+            Download Total Count Of Awards
           </Button>
         </div>
-        <div className="py-2 md:py-4 flex flex-wrap justify-between gap-2  items-center border-gray-300">
+        <div className="py-2 md:py-4 flex flex-wrap justify-between my-10 gap-2  items-center border-gray-300">
           <Button
             className=" font-medium text-[15px]  tracking-wide"
             variant="default"
