@@ -385,16 +385,16 @@ export async function generateCoordinatorCertificate(
   );
 
   // Dynamic top position based on whether school name wraps to two lines
-  // Adjust starting position if there's no coordinator name
   const baseTopPosition = schoolLines.length > 1 ? 305 : 305;
-  // If no coordinator name, start higher up on the certificate
-  const topPosition = hasCoordinatorName ? baseTopPosition : baseTopPosition - 35;
+  // Always use the same starting position since we always reserve space
+  const topPosition = baseTopPosition;
   let baseY = height - topPosition;
 
   // Coordinator name processing (same capitalization behavior)
   // hasCoordinatorName already declared above
   
-  // 1. Coordinator name (only if not empty)
+  // 1. Coordinator name - ALWAYS reserve space, even if name is empty
+  // This leaves space for manual writing if name is empty
   if (hasCoordinatorName) {
     const displayCoordinatorName = isCNameArabic
       ? coordinatorName
@@ -408,8 +408,9 @@ export async function generateCoordinatorCertificate(
       color: rgb(0, 0, 0),
       tracking: bodyTracking,
     });
-    baseY -= 35; // Move down for next element
   }
+  // Always move down to reserve space for Coordinator name (whether written or not)
+  baseY -= 35;
 
   // 2. School ID line - ALWAYS reserve space, even if schoolId is null
   // This leaves space for manual writing if schoolId is null

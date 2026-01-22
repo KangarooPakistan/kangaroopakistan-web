@@ -385,16 +385,16 @@ export async function generatePrincipalCertificate(
   );
 
   // Dynamic top position based on whether school name wraps to two lines
-  // Adjust starting position if there's no principal name
   const baseTopPosition = schoolLines.length > 1 ? 290 : 290;
-  // If no principal name, start higher up on the certificate
-  const topPosition = hasPrincipalName ? baseTopPosition : baseTopPosition - 35;
+  // Always use the same starting position since we always reserve space
+  const topPosition = baseTopPosition;
   let baseY = height - topPosition;
 
   // Principal name processing (same capitalization behavior)
   // hasPrincipalName already declared above
   
-  // 1. Principal name (only if not empty)
+  // 1. Principal name - ALWAYS reserve space, even if name is empty
+  // This leaves space for manual writing if name is empty
   if (hasPrincipalName) {
     const displayCoordinatorName = isCNameArabic
       ? coordinatorName
@@ -408,8 +408,9 @@ export async function generatePrincipalCertificate(
       color: rgb(0, 0, 0),
       tracking: bodyTracking,
     });
-    baseY -= 35; // Move down for next element
   }
+  // Always move down to reserve space for Principal name (whether written or not)
+  baseY -= 35;
 
   // 2. School ID line - ALWAYS reserve space, even if schoolId is null
   // This leaves space for manual writing if schoolId is null
