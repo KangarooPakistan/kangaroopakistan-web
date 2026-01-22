@@ -282,18 +282,32 @@ export async function generatePrincipalCertificate(
 ): Promise<Uint8Array> {
   let pdfDoc: PDFDocument;
 
-  if (templateBytes) {
-    pdfDoc = await PDFDocument.load(templateBytes);
-  } else {
-    const template = await loadCertificateTemplate();
-    pdfDoc = await PDFDocument.load(template);
+  try {
+    if (templateBytes) {
+      pdfDoc = await PDFDocument.load(templateBytes);
+    } else {
+      const template = await loadCertificateTemplate();
+      pdfDoc = await PDFDocument.load(template);
+    }
+  } catch (error) {
+    console.error(`Failed to load PDF template for ${principal.p_Name}:`, error);
+    throw new Error(`PDF template loading failed: ${error instanceof Error ? error.message : String(error)}`);
   }
 
   // Load custom fonts
-  const fonts = await loadCustomFonts(pdfDoc);
+  let fonts;
+  try {
+    fonts = await loadCustomFonts(pdfDoc);
+  } catch (error) {
+    console.error(`Failed to load fonts for ${principal.p_Name}:`, error);
+    throw new Error(`Font loading failed: ${error instanceof Error ? error.message : String(error)}`);
+  }
 
   // Get the first page (assuming single page certificate)
   const pages = pdfDoc.getPages();
+  if (!pages || pages.length === 0) {
+    throw new Error(`No pages found in PDF template for ${principal.p_Name}`);
+  }
   const firstPage = pages[0];
 
   // Get page dimensions
@@ -338,9 +352,17 @@ export async function generatePrincipalCertificate(
   const nameFont = isCNameArabic
     ? fonts.almarai || fonts.ubuntu
     : fonts.snell || fonts.ubuntu;
+  
+  if (!nameFont) {
+    throw new Error(`No suitable font available for principal name (Arabic: ${isCNameArabic}) for ${principal.p_Name}`);
+  }
   const schoolNameFont = isSchoolNameArabicText
     ? fonts.almarai || fonts.avenir || fonts.ubuntu
     : fonts.avenir || nameFont;
+  
+  if (!schoolNameFont) {
+    throw new Error(`No suitable font available for school name (Arabic: ${isSchoolNameArabicText}) for ${principal.p_Name}`);
+  }
 
   const maxSchoolWidth = bandRight - bandLeft -50;
   const schoolLines = wrapTextToLines(
