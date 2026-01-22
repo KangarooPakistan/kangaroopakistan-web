@@ -2688,7 +2688,7 @@ const Results = () => {
           </Button>
           <Button
             className=" font-medium text-[15px] bg-amber-800  tracking-wide"
-            variant="secondary"
+            variant="default"
             size="lg"
             disabled={isLoading}
             onClick={handleThreeStarAutoTable}>
@@ -2696,7 +2696,7 @@ const Results = () => {
           </Button>
           <Button
             className=" font-medium text-[15px] bg-amber-800 tracking-wide"
-            variant="secondary"
+            variant="default"
             size="lg"
             disabled={isLoading}
             onClick={handleTwoStarAutoTable}>
@@ -2704,7 +2704,7 @@ const Results = () => {
           </Button>
           <Button
             className=" font-medium text-[15px] bg-amber-800 tracking-wide"
-            variant="secondary"
+            variant="default"
             size="lg"
             disabled={isLoading}
             onClick={handleOneStarAutoTable}>
