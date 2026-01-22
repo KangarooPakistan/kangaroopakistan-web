@@ -1346,19 +1346,25 @@ const Results = () => {
 
       // Create safe filename with uniqueness guarantee
       const createSafeFilename = (
-        principalName: string,
-        schoolId: number,
-        index: number,
-      ): string => {
-        let safeName = sanitizeFilename(principalName, `Principal_${schoolId}`);
+          principalName: string,
+          schoolId: number | null,
+          index: number,
+        ): string => {
+          // Use schoolId as primary filename, fallback to principalName if schoolId is null
+          const baseFileName = schoolId !== null 
+            ? schoolId.toString() 
+            : principalName;
+          
+          let safeName = sanitizeFilename(baseFileName, `Principal_${index + 1}`);
 
-        // If sanitization results in very short or problematic name, use structured fallback
-        if (safeName.length < 2 || /^_+$/.test(safeName)) {
-          safeName = `Principal_${schoolId}_${index + 1}`;
-        }
+          // If sanitization results in very short or problematic name, use structured fallback
+          if (safeName.length < 2 || /^_+$/.test(safeName)) {
+            safeName = `Principal_${index + 1}`;
+          }
 
-        return `${safeName}_Principal_School_${schoolId}.pdf`;
-      };
+          return `${safeName}.pdf`;
+        };
+
 
       // Debug logging for Arabic names
       console.log("=== PRINCIPAL NAMES DEBUG ===");
@@ -2240,20 +2246,23 @@ const Results = () => {
       // Create safe filename with uniqueness guarantee
       const createSafeFilename = (
         coordinatorName: string | number | null,
-        schoolId: number,
+        schoolId: number | null,
         index: number,
-      ): string => {
-        const nameStr =
-          coordinatorName?.toString() || `Coordinator_${schoolId}`;
-        let safeName = sanitizeFilename(nameStr, `Coordinator_${schoolId}`);
+        ): string => {
+        // Use schoolId as primary filename, fallback to schoolName if schoolId is null
+        const baseFileName = schoolId !== null 
+          ? schoolId.toString() 
+          : (coordinatorName?.toString() || `Coordinator_${index + 1}`);
+
+        let safeName = sanitizeFilename(baseFileName, `Coordinator_${index + 1}`);
 
         // If sanitization results in very short or problematic name, use structured fallback
         if (safeName.length < 2 || /^_+$/.test(safeName)) {
-          safeName = `Coordinator_${schoolId}_${index + 1}`;
+          safeName = `Coordinator_${index + 1}`;
         }
 
-        return `${safeName}_School_${schoolId}.pdf`;
-      };
+        return `${safeName}.pdf`;
+        };
 
       // Debug logging for Arabic names
       console.log("=== COORDINATOR NAMES DEBUG ===");
