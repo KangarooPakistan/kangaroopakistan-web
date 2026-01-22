@@ -17,7 +17,7 @@ export async function GET(
     // Get school details from UserNew table
     const schoolIds = schoolsOnHold.map(record => record.schoolId);
     
-    const schoolDetails = await db.userNew.findMany({
+    const schoolDetails = await db.user.findMany({
       where: {
         schoolId: {
           in: schoolIds,
