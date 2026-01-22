@@ -119,7 +119,7 @@ const loadCustomFonts = async (pdfDoc: PDFDocument) => {
 // Utility function to detect Arabic text (matching react-pdf)
 const isArabicText = (text: string): boolean => {
   return /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/.test(
-    text
+    text,
   );
 };
 
@@ -142,7 +142,7 @@ const processSchoolNameText = (schoolName: string): string => {
 // Calculate font size for coordinator name (matching react-pdf SmartText logic)
 const getCoordinatorNameFontSize = (
   text: string,
-  isArabic: boolean
+  isArabic: boolean,
 ): number => {
   const textLength = text.length;
   if (textLength > 30) {
@@ -176,7 +176,7 @@ const measureTextWidthWithTracking = (
   text: string,
   font: any,
   fontSize: number,
-  tracking: number
+  tracking: number,
 ) => {
   if (!font) {
     return text.length * (fontSize * 0.6 + tracking);
@@ -196,7 +196,7 @@ const drawCenteredTextWithTracking = (
     size: number;
     color: any;
     tracking: number;
-  }
+  },
 ) => {
   const { centerX, y, font, size, color, tracking } = options;
   const totalWidth = measureTextWidthWithTracking(text, font, size, tracking);
@@ -215,7 +215,7 @@ const wrapTextToLines = (
   fontSize: number,
   maxWidth: number,
   tracking: number,
-  maxLines: number
+  maxLines: number,
 ): string[] => {
   const words = text.split(/\s+/).filter(Boolean);
   const lines: string[] = [];
@@ -228,7 +228,7 @@ const wrapTextToLines = (
       candidate,
       font,
       fontSize,
-      tracking
+      tracking,
     );
 
     if (width <= maxWidth || !current) {
@@ -278,7 +278,7 @@ const loadCertificateTemplate = async (): Promise<Uint8Array> => {
 // Generate certificate using your existing PDF template
 export async function generatePrincipalCertificate(
   principal: PrincipalDetails,
-  templateBytes?: Uint8Array
+  templateBytes?: Uint8Array,
 ): Promise<Uint8Array> {
   let pdfDoc: PDFDocument;
 
@@ -290,8 +290,13 @@ export async function generatePrincipalCertificate(
       pdfDoc = await PDFDocument.load(template);
     }
   } catch (error) {
-    console.error(`Failed to load PDF template for ${principal.p_Name}:`, error);
-    throw new Error(`PDF template loading failed: ${error instanceof Error ? error.message : String(error)}`);
+    console.error(
+      `Failed to load PDF template for ${principal.p_Name}:`,
+      error,
+    );
+    throw new Error(
+      `PDF template loading failed: ${error instanceof Error ? error.message : String(error)}`,
+    );
   }
 
   // Load custom fonts
@@ -300,7 +305,9 @@ export async function generatePrincipalCertificate(
     fonts = await loadCustomFonts(pdfDoc);
   } catch (error) {
     console.error(`Failed to load fonts for ${principal.p_Name}:`, error);
-    throw new Error(`Font loading failed: ${error instanceof Error ? error.message : String(error)}`);
+    throw new Error(
+      `Font loading failed: ${error instanceof Error ? error.message : String(error)}`,
+    );
   }
 
   // Get the first page (assuming single page certificate)
@@ -329,11 +336,11 @@ export async function generatePrincipalCertificate(
   // Calculate font sizes (matching react-pdf logic)
   const nameFontSize = getCoordinatorNameFontSize(
     coordinatorName,
-    isCNameArabic
+    isCNameArabic,
   );
   const schoolNameFontSize = getSchoolNameFontSize(
     schoolName,
-    isSchoolNameArabicText
+    isSchoolNameArabicText,
   );
 
   // Layout settings to match Download Certificates - With Pdf Editing
@@ -341,7 +348,7 @@ export async function generatePrincipalCertificate(
   // const bandRight = 600;
   // const bandCenterX = (bandLeft + bandRight) / 2;
   const bandLeft = 250;
-  const bandRight = 750;
+  const bandRight = 670;
   const bandCenterX = (bandLeft + bandRight) / 2;
 
   const bodyTracking = 0.5;
@@ -350,38 +357,42 @@ export async function generatePrincipalCertificate(
   // Arabic: Almarai, fallback to Avenir (then Ubuntu only as a last resort)
   // English: use Avenir instead of Ubuntu
   const hasPrincipalName = coordinatorName && coordinatorName.trim().length > 0;
-  
+
   // Only validate name font if we have a name to display
   let nameFont;
   if (hasPrincipalName) {
     nameFont = isCNameArabic
       ? fonts.almarai || fonts.ubuntu
       : fonts.snell || fonts.ubuntu;
-    
+
     if (!nameFont) {
-      throw new Error(`No suitable font available for principal name (Arabic: ${isCNameArabic}) for ${principal.p_Name}`);
+      throw new Error(
+        `No suitable font available for principal name (Arabic: ${isCNameArabic}) for ${principal.p_Name}`,
+      );
     }
   } else {
     // Use a default font for school name if no principal name
     nameFont = fonts.avenir || fonts.ubuntu;
   }
-  
+
   const schoolNameFont = isSchoolNameArabicText
     ? fonts.almarai || fonts.avenir || fonts.ubuntu
     : fonts.avenir || nameFont;
-  
+
   if (!schoolNameFont) {
-    throw new Error(`No suitable font available for school name (Arabic: ${isSchoolNameArabicText}) for ${principal.p_Name || 'empty name'}`);
+    throw new Error(
+      `No suitable font available for school name (Arabic: ${isSchoolNameArabicText}) for ${principal.p_Name || "empty name"}`,
+    );
   }
 
-  const maxSchoolWidth = bandRight - bandLeft -50;
+  const maxSchoolWidth = bandRight - bandLeft - 50;
   const schoolLines = wrapTextToLines(
     processedSchoolName,
     schoolNameFont,
     schoolNameFontSize,
     maxSchoolWidth,
     bodyTracking,
-    2
+    2,
   );
 
   // Dynamic top position based on whether school name wraps to two lines
@@ -392,18 +403,18 @@ export async function generatePrincipalCertificate(
 
   // Principal name processing (same capitalization behavior)
   // hasPrincipalName already declared above
-  
+
   // Define schoolLineHeight for use in both layouts
   const schoolLineHeight = schoolNameFontSize + 2;
-  
+
   // Check if we should use compact layout (no principal name AND no schoolId)
   const useCompactLayout = !hasPrincipalName && schoolId === null;
-  
+
   if (useCompactLayout) {
     // Special case: No principal name and no schoolId
     // Place school name directly at 340 from top
     const schoolNameY = height - 340;
-    
+
     schoolLines.forEach((line, index) => {
       const lineY = schoolNameY - index * schoolLineHeight;
       drawCenteredTextWithTracking(firstPage, line, {
@@ -417,7 +428,7 @@ export async function generatePrincipalCertificate(
     });
   } else {
     // Normal layout: Reserve spaces for manual writing
-    
+
     // 1. Principal name - ALWAYS reserve space, even if name is empty
     // This leaves space for manual writing if name is empty
     if (hasPrincipalName) {
@@ -483,7 +494,7 @@ const toTitleCase = (text: string): string => {
 
 // Batch generation function (keeping existing logic)
 export async function generatePrincipalCertificates(
-  principals: PrincipalDetailsList
+  principals: PrincipalDetailsList,
 ): Promise<
   {
     blob: Blob | null;
@@ -509,11 +520,7 @@ export async function generatePrincipalCertificates(
   for (const principal of principals) {
     // Enhanced validation (matching react-pdf data filtering)
     // Only require schoolName - allow null/empty p_Name and null schoolId
-    if (
-      !principal ||
-      typeof principal !== "object" ||
-      !principal.schoolName
-    ) {
+    if (!principal || typeof principal !== "object" || !principal.schoolName) {
       console.warn("Skipping invalid principal - validation failed:", {
         hasPrincipal: !!principal,
         isObject: typeof principal === "object",
@@ -536,7 +543,7 @@ export async function generatePrincipalCertificates(
     try {
       const pdfBytes = await generatePrincipalCertificate(
         principal,
-        templateBytes
+        templateBytes,
       );
       const blob = new Blob([new Uint8Array(pdfBytes)], {
         type: "application/pdf",
@@ -552,12 +559,13 @@ export async function generatePrincipalCertificates(
 
       console.log(`✓ Generated certificate for ${principal.p_Name}`);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       console.error(
         `✗ Failed to generate certificate for ${principal.p_Name}:`,
-        error
+        error,
       );
-      
+
       results.push({
         blob: null,
         principalName: principal.p_Name.trim(),

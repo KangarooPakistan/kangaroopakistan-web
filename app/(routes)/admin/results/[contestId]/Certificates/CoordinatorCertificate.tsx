@@ -341,7 +341,7 @@ export async function generateCoordinatorCertificate(
   // const bandRight = 600;
   // const bandCenterX = (bandLeft + bandRight) / 2;
   const bandLeft = 250;
-  const bandRight = 750;
+  const bandRight = 670;
   const bandCenterX = (bandLeft + bandRight) / 2;
 
   const bodyTracking = 0.5;
