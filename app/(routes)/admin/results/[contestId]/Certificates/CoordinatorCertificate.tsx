@@ -392,58 +392,82 @@ export async function generateCoordinatorCertificate(
 
   // Coordinator name processing (same capitalization behavior)
   // hasCoordinatorName already declared above
-  
-  // 1. Coordinator name - ALWAYS reserve space, even if name is empty
-  // This leaves space for manual writing if name is empty
-  if (hasCoordinatorName) {
-    const displayCoordinatorName = isCNameArabic
-      ? coordinatorName
-      : processTextForCapitalization(coordinatorName);
-
-    drawCenteredTextWithTracking(firstPage, displayCoordinatorName, {
-      centerX: bandCenterX,
-      y: baseY,
-      font: nameFont,
-      size: nameFontSize,
-      color: rgb(0, 0, 0),
-      tracking: bodyTracking,
-    });
-  }
-  // Always move down to reserve space for Coordinator name (whether written or not)
-  baseY -= 35;
-
-  // 2. School ID line - ALWAYS reserve space, even if schoolId is null
-  // This leaves space for manual writing if schoolId is null
-  if (schoolId !== null) {
-    const schoolIdText = `School ID: ${schoolId}`;
-    drawCenteredTextWithTracking(firstPage, schoolIdText, {
-      centerX: bandCenterX,
-      y: baseY,
-      // For English text, prefer Avenir instead of Ubuntu
-      font: fonts.avenir || nameFont,
-      size: 16,
-      color: rgb(0, 0, 0),
-      tracking: bodyTracking,
-    });
-  }
-  // Always move down to reserve space for School ID (whether written or not)
-  baseY -= 35;
-
-  // 3. School name (wrapped, same band and spacing)
-  const schoolNameY = baseY;
+  // Define schoolLineHeight for use in both layouts
   const schoolLineHeight = schoolNameFontSize + 2;
-
-  schoolLines.forEach((line, index) => {
-    const lineY = schoolNameY - index * schoolLineHeight;
-    drawCenteredTextWithTracking(firstPage, line, {
-      centerX: bandCenterX,
-      y: lineY,
-      font: schoolNameFont,
-      size: schoolNameFontSize,
-      color: rgb(0, 0, 0),
-      tracking: bodyTracking,
+  
+  // Check if we should use compact layout (no coordinator name AND no schoolId)
+  const useCompactLayout = !hasCoordinatorName && schoolId === null;
+  
+  if (useCompactLayout) {
+    // Special case: No coordinator name and no schoolId
+    // Place school name directly at 340 from top
+    const schoolNameY = height - 340;
+    
+    schoolLines.forEach((line, index) => {
+      const lineY = schoolNameY - index * schoolLineHeight;
+      drawCenteredTextWithTracking(firstPage, line, {
+        centerX: bandCenterX,
+        y: lineY,
+        font: schoolNameFont,
+        size: schoolNameFontSize,
+        color: rgb(0, 0, 0),
+        tracking: bodyTracking,
+      });
     });
-  });
+  } else {
+    // Normal layout: Reserve spaces for manual writing
+    
+    // 1. Coordinator name - ALWAYS reserve space, even if name is empty
+    // This leaves space for manual writing if name is empty
+    if (hasCoordinatorName) {
+      const displayCoordinatorName = isCNameArabic
+        ? coordinatorName
+        : processTextForCapitalization(coordinatorName);
+
+      drawCenteredTextWithTracking(firstPage, displayCoordinatorName, {
+        centerX: bandCenterX,
+        y: baseY,
+        font: nameFont,
+        size: nameFontSize,
+        color: rgb(0, 0, 0),
+        tracking: bodyTracking,
+      });
+    }
+    // Always move down to reserve space for Coordinator name (whether written or not)
+    baseY -= 35;
+
+    // 2. School ID line - ALWAYS reserve space, even if schoolId is null
+    // This leaves space for manual writing if schoolId is null
+    if (schoolId !== null) {
+      const schoolIdText = `School ID: ${schoolId}`;
+      drawCenteredTextWithTracking(firstPage, schoolIdText, {
+        centerX: bandCenterX,
+        y: baseY,
+        // For English text, prefer Avenir instead of Ubuntu
+        font: fonts.avenir || nameFont,
+        size: 16,
+        color: rgb(0, 0, 0),
+        tracking: bodyTracking,
+      });
+    }
+    // Always move down to reserve space for School ID (whether written or not)
+    baseY -= 35;
+
+    // 3. School name (wrapped, same band and spacing)
+    const schoolNameY = baseY;
+
+    schoolLines.forEach((line, index) => {
+      const lineY = schoolNameY - index * schoolLineHeight;
+      drawCenteredTextWithTracking(firstPage, line, {
+        centerX: bandCenterX,
+        y: lineY,
+        font: schoolNameFont,
+        size: schoolNameFontSize,
+        color: rgb(0, 0, 0),
+        tracking: bodyTracking,
+      });
+    });
+  }
 
   return await pdfDoc.save();
 }

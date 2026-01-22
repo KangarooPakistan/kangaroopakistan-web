@@ -4454,6 +4454,5 @@ export const principalCustomList: PrincipalDetailsList = [
   schoolId: null,
   "schoolName": "ROOTS IVY INTERNATIONAL SCHOOLS",
   p_Name: ""
-
  }
 ]
