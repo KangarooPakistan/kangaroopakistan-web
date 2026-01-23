@@ -239,6 +239,13 @@ const getPageCenterX = (pageWidth: number): number => {
   return pageWidth / 2;
 };
 
+// Helper function to get name position (1cm left of center)
+const getNameCenterX = (pageWidth: number): number => {
+  const center = pageWidth / 2;
+  const oneCmInPoints = 28.35; // 1cm = 28.35 points
+  return center - oneCmInPoints;
+};
+
 // Helper function to draw text with better centering
 const drawPerfectlyCenteredText = (
   page: any,
@@ -250,16 +257,17 @@ const drawPerfectlyCenteredText = (
     size: number;
     color: any;
     tracking?: number;
+    customCenterX?: number; // Optional custom center position
   },
 ) => {
-  const { pageWidth, y, font, size, color, tracking = 0 } = options;
+  const { pageWidth, y, font, size, color, tracking = 0, customCenterX } = options;
   
   if (!text || !font) {
     console.warn("Missing text or font for drawing");
     return;
   }
 
-  const centerX = getPageCenterX(pageWidth);
+  const centerX = customCenterX !== undefined ? customCenterX : getPageCenterX(pageWidth);
   
   try {
     if (tracking > 0) {
