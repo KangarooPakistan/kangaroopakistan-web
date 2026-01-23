@@ -237,7 +237,7 @@ const getPageCenterX = (pageWidth: number): number => {
 const getNameCenterX = (pageWidth: number): number => {
   const center = pageWidth / 2;
   const oneCmInPoints = 28.35; // 1cm = 28.35 points
-  return center - oneCmInPoints;
+  return center;
 };
 
 // Helper function to draw text with better centering
