@@ -531,6 +531,7 @@ export async function generatePrincipalCertificate(
         size: nameFontSize,
         color: rgb(0, 0, 0),
         tracking: bodyTracking,
+        customCenterX: getNameCenterX(width), // 1cm left of center
       });
     }
     // Always move down to reserve space for Principal name (whether written or not)

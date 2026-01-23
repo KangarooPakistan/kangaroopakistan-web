@@ -1,4 +1,4 @@
-import { PDFDocument, PDFForm, rgb } from "pdf-lib";
+import { PDFDocument, rgb } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
 
 export type CoordinatorDetails = {
@@ -163,7 +163,7 @@ const processTextForCapitalization = (text: string): string => {
 
   // First apply title case to the entire text
   let processedText = text.replace(/\w\S*/g, (txt) => {
-    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    return txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase();
   });
 
   // Then replace " Ii " with " II " (after title case conversion)
@@ -199,13 +199,98 @@ const drawCenteredTextWithTracking = (
   }
 ) => {
   const { centerX, y, font, size, color, tracking } = options;
-  const totalWidth = measureTextWidthWithTracking(text, font, size, tracking);
-  let x = centerX - totalWidth / 2;
+  
+  if (!text || !font) {
+    console.warn("Missing text or font for drawing");
+    return;
+  }
 
-  for (const ch of text) {
-    const w = font ? font.widthOfTextAtSize(ch, size) : size * 0.6;
-    page.drawText(ch, { x, y, size, font, color });
-    x += w + tracking;
+  try {
+    const totalWidth = measureTextWidthWithTracking(text, font, size, tracking);
+    let x = centerX - totalWidth / 2;
+
+    // Draw each character with tracking
+    for (const ch of text) {
+      const charWidth = font.widthOfTextAtSize(ch, size);
+      page.drawText(ch, { x, y, size, font, color });
+      x += charWidth + tracking;
+    }
+  } catch (error) {
+    console.warn("Error drawing centered text:", error);
+    // Fallback to simple centered text without tracking
+    page.drawText(text, {
+      x: centerX - (text.length * size * 0.3), // Rough center estimation
+      y,
+      size,
+      font,
+      color,
+    });
+  }
+};
+
+// Helper function to ensure consistent centering
+const getPageCenterX = (pageWidth: number): number => {
+  return pageWidth / 2;
+};
+
+// Helper function to get name position (1cm left of center)
+const getNameCenterX = (pageWidth: number): number => {
+  const center = pageWidth / 2;
+  const oneCmInPoints = 28.35; // 1cm = 28.35 points
+  return center - oneCmInPoints;
+};
+
+// Helper function to draw text with better centering
+const drawPerfectlyCenteredText = (
+  page: any,
+  text: string,
+  options: {
+    pageWidth: number;
+    y: number;
+    font: any;
+    size: number;
+    color: any;
+    tracking?: number;
+    customCenterX?: number; // Optional custom center position
+  },
+) => {
+  const { pageWidth, y, font, size, color, tracking = 0, customCenterX } = options;
+  
+  if (!text || !font) {
+    console.warn("Missing text or font for drawing");
+    return;
+  }
+
+  const centerX = customCenterX !== undefined ? customCenterX : getPageCenterX(pageWidth);
+  
+  try {
+    if (tracking > 0) {
+      // Use tracking version for spaced text
+      drawCenteredTextWithTracking(page, text, {
+        centerX,
+        y,
+        font,
+        size,
+        color,
+        tracking,
+      });
+    } else {
+      // Use simple centered text for better accuracy
+      const textWidth = font.widthOfTextAtSize(text, size);
+      const x = centerX - textWidth / 2;
+      page.drawText(text, { x, y, size, font, color });
+    }
+  } catch (error) {
+    console.warn("Error drawing perfectly centered text:", error);
+    // Ultimate fallback
+    const estimatedX = centerX - (text.length * size * 0.3);
+    page.drawText(text, {
+      x: estimatedX,
+      y,
+      size,
+      font,
+      color,
+    });
   }
 };
 
@@ -405,8 +490,8 @@ export async function generateCoordinatorCertificate(
     
     schoolLines.forEach((line, index) => {
       const lineY = schoolNameY - index * schoolLineHeight;
-      drawCenteredTextWithTracking(firstPage, line, {
-        centerX: bandCenterX,
+      drawPerfectlyCenteredText(firstPage, line, {
+        pageWidth: width,
         y: lineY,
         font: schoolNameFont,
         size: schoolNameFontSize,
@@ -424,13 +509,14 @@ export async function generateCoordinatorCertificate(
         ? coordinatorName
         : processTextForCapitalization(coordinatorName);
 
-      drawCenteredTextWithTracking(firstPage, displayCoordinatorName, {
-        centerX: bandCenterX,
+      drawPerfectlyCenteredText(firstPage, displayCoordinatorName, {
+        pageWidth: width,
         y: baseY,
         font: nameFont,
         size: nameFontSize,
         color: rgb(0, 0, 0),
         tracking: bodyTracking,
+        customCenterX: getNameCenterX(width), // 1cm left of center
       });
     }
     // Always move down to reserve space for Coordinator name (whether written or not)
@@ -440,10 +526,9 @@ export async function generateCoordinatorCertificate(
     // This leaves space for manual writing if schoolId is null
     if (schoolId !== null) {
       const schoolIdText = `School ID: ${schoolId}`;
-      drawCenteredTextWithTracking(firstPage, schoolIdText, {
-        centerX: bandCenterX,
+      drawPerfectlyCenteredText(firstPage, schoolIdText, {
+        pageWidth: width,
         y: baseY,
-        // For English text, prefer Avenir instead of Ubuntu
         font: fonts.avenir || nameFont,
         size: 16,
         color: rgb(0, 0, 0),
@@ -458,8 +543,8 @@ export async function generateCoordinatorCertificate(
 
     schoolLines.forEach((line, index) => {
       const lineY = schoolNameY - index * schoolLineHeight;
-      drawCenteredTextWithTracking(firstPage, line, {
-        centerX: bandCenterX,
+      drawPerfectlyCenteredText(firstPage, line, {
+        pageWidth: width,
         y: lineY,
         font: schoolNameFont,
         size: schoolNameFontSize,
