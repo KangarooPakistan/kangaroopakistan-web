@@ -349,7 +349,7 @@ export async function generatePrincipalCertificate(
   // const bandCenterX = (bandLeft + bandRight) / 2;
   const bandLeft = 220;
   const bandRight = 670;
-  const bandCenterX = (bandLeft + bandRight) / 2;
+  const bandCenterX = width / 2;
 
   const bodyTracking = 0.5;
 
