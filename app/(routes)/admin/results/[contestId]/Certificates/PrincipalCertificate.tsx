@@ -1,4 +1,4 @@
-import { PDFDocument, PDFForm, rgb } from "pdf-lib";
+import { PDFDocument, rgb } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
 
 // Define the PrincipalDetails type
@@ -163,7 +163,7 @@ const processTextForCapitalization = (text: string): string => {
 
   // First apply title case to the entire text
   let processedText = text.replace(/\w\S*/g, (txt) => {
-    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    return txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase();
   });
 
   // Then replace " Ii " with " II " (after title case conversion)
@@ -178,12 +178,18 @@ const measureTextWidthWithTracking = (
   fontSize: number,
   tracking: number,
 ) => {
-  if (!font) {
+  if (!font || !text) {
     return text.length * (fontSize * 0.6 + tracking);
   }
-  const baseWidth = font.widthOfTextAtSize(text, fontSize);
-  const extra = Math.max(0, text.length - 1) * tracking;
-  return baseWidth + extra;
+  
+  try {
+    const baseWidth = font.widthOfTextAtSize(text, fontSize);
+    const trackingExtra = Math.max(0, text.length - 1) * tracking;
+    return baseWidth + trackingExtra;
+  } catch (error) {
+    console.warn("Error measuring text width:", error);
+    return text.length * (fontSize * 0.6 + tracking);
+  }
 };
 
 const drawCenteredTextWithTracking = (
@@ -199,13 +205,90 @@ const drawCenteredTextWithTracking = (
   },
 ) => {
   const { centerX, y, font, size, color, tracking } = options;
-  const totalWidth = measureTextWidthWithTracking(text, font, size, tracking);
-  let x = centerX - totalWidth / 2;
+  
+  if (!text || !font) {
+    console.warn("Missing text or font for drawing");
+    return;
+  }
 
-  for (const ch of text) {
-    const w = font ? font.widthOfTextAtSize(ch, size) : size * 0.6;
-    page.drawText(ch, { x, y, size, font, color });
-    x += w + tracking;
+  try {
+    const totalWidth = measureTextWidthWithTracking(text, font, size, tracking);
+    let x = centerX - totalWidth / 2;
+
+    // Draw each character with tracking
+    for (const ch of text) {
+      const charWidth = font.widthOfTextAtSize(ch, size);
+      page.drawText(ch, { x, y, size, font, color });
+      x += charWidth + tracking;
+    }
+  } catch (error) {
+    console.warn("Error drawing centered text:", error);
+    // Fallback to simple centered text without tracking
+    page.drawText(text, {
+      x: centerX - (text.length * size * 0.3), // Rough center estimation
+      y,
+      size,
+      font,
+      color,
+    });
+  }
+};
+
+// Helper function to ensure consistent centering
+const getPageCenterX = (pageWidth: number): number => {
+  return pageWidth / 2;
+};
+
+// Helper function to draw text with better centering
+const drawPerfectlyCenteredText = (
+  page: any,
+  text: string,
+  options: {
+    pageWidth: number;
+    y: number;
+    font: any;
+    size: number;
+    color: any;
+    tracking?: number;
+  },
+) => {
+  const { pageWidth, y, font, size, color, tracking = 0 } = options;
+  
+  if (!text || !font) {
+    console.warn("Missing text or font for drawing");
+    return;
+  }
+
+  const centerX = getPageCenterX(pageWidth);
+  
+  try {
+    if (tracking > 0) {
+      // Use tracking version for spaced text
+      drawCenteredTextWithTracking(page, text, {
+        centerX,
+        y,
+        font,
+        size,
+        color,
+        tracking,
+      });
+    } else {
+      // Use simple centered text for better accuracy
+      const textWidth = font.widthOfTextAtSize(text, size);
+      const x = centerX - textWidth / 2;
+      page.drawText(text, { x, y, size, font, color });
+    }
+  } catch (error) {
+    console.warn("Error drawing perfectly centered text:", error);
+    // Ultimate fallback
+    const estimatedX = centerX - (text.length * size * 0.3);
+    page.drawText(text, {
+      x: estimatedX,
+      y,
+      size,
+      font,
+      color,
+    });
   }
 };
 
@@ -344,12 +427,9 @@ export async function generatePrincipalCertificate(
   );
 
   // Layout settings to match Download Certificates - With Pdf Editing
-  // const bandLeft = 140;
-  // const bandRight = 600;
-  // const bandCenterX = (bandLeft + bandRight) / 2;
   const bandLeft = 220;
   const bandRight = 670;
-  const bandCenterX = width / 2;
+  const bandCenterX = width / 2; // Use true center of page for better alignment
 
   const bodyTracking = 0.5;
 
@@ -417,8 +497,8 @@ export async function generatePrincipalCertificate(
 
     schoolLines.forEach((line, index) => {
       const lineY = schoolNameY - index * schoolLineHeight;
-      drawCenteredTextWithTracking(firstPage, line, {
-        centerX: bandCenterX,
+      drawPerfectlyCenteredText(firstPage, line, {
+        pageWidth: width,
         y: lineY,
         font: schoolNameFont,
         size: schoolNameFontSize,
@@ -436,8 +516,8 @@ export async function generatePrincipalCertificate(
         ? coordinatorName
         : processTextForCapitalization(coordinatorName);
 
-      drawCenteredTextWithTracking(firstPage, displayCoordinatorName, {
-        centerX: bandCenterX,
+      drawPerfectlyCenteredText(firstPage, displayCoordinatorName, {
+        pageWidth: width,
         y: baseY,
         font: nameFont,
         size: nameFontSize,
@@ -452,10 +532,9 @@ export async function generatePrincipalCertificate(
     // This leaves space for manual writing if schoolId is null
     if (schoolId !== null) {
       const schoolIdText = `School ID: ${schoolId}`;
-      drawCenteredTextWithTracking(firstPage, schoolIdText, {
-        centerX: bandCenterX,
+      drawPerfectlyCenteredText(firstPage, schoolIdText, {
+        pageWidth: width,
         y: baseY,
-        // For English text, prefer Avenir instead of Ubuntu
         font: fonts.avenir || nameFont,
         size: 16,
         color: rgb(0, 0, 0),
@@ -470,8 +549,8 @@ export async function generatePrincipalCertificate(
 
     schoolLines.forEach((line, index) => {
       const lineY = schoolNameY - index * schoolLineHeight;
-      drawCenteredTextWithTracking(firstPage, line, {
-        centerX: bandCenterX,
+      drawPerfectlyCenteredText(firstPage, line, {
+        pageWidth: width,
         y: lineY,
         font: schoolNameFont,
         size: schoolNameFontSize,
