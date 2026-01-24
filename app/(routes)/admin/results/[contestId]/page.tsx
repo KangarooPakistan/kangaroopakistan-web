@@ -1704,20 +1704,34 @@ const Results = () => {
         return cleaned;
       };
 
-      // Create safe filename with uniqueness guarantee
+      // Create safe filename with priority: schoolId > schoolName > principalName
       const createSafeFilename = (
         principalName: string,
-        schoolId: number,
+        schoolName: string | null | undefined,
+        schoolId: number | null | undefined,
         index: number,
       ): string => {
-        let safeName = sanitizeFilename(principalName, `Principal_${schoolId}`);
-
-        // If sanitization results in very short or problematic name, use structured fallback
-        if (safeName.length < 2 || /^_+$/.test(safeName)) {
-          safeName = `Principal_${schoolId}_${index + 1}`;
+        let baseName: string;
+        
+        // Priority 1: Use schoolId if not null
+        if (schoolId !== null && schoolId !== undefined) {
+          baseName = `School_${schoolId}`;
+        }
+        // Priority 2: Use schoolName if schoolId is null but schoolName exists
+        else if (schoolName && schoolName.trim() !== "") {
+          baseName = sanitizeFilename(schoolName, `School_Unknown_${index + 1}`);
+        }
+        // Priority 3: Use principalName if both schoolId and schoolName are null
+        else {
+          baseName = sanitizeFilename(principalName, `Principal_${index + 1}`);
         }
 
-        return `${safeName}_Principal_School_${schoolId}.pdf`;
+        // If sanitization results in very short or problematic name, use structured fallback
+        if (baseName.length < 2 || /^_+$/.test(baseName)) {
+          baseName = `Certificate_${index + 1}`;
+        }
+
+        return `${baseName}_Principal_Certificate.pdf`;
       };
 
       // Debug logging for Arabic names
@@ -1730,7 +1744,8 @@ const Results = () => {
         console.log(
           `   Final filename: "${createSafeFilename(
             principal.p_Name,
-            principal?.schoolId ?? 0,
+            principal.schoolName,
+            principal?.schoolId,
             index,
           )}"`,
         );
@@ -1773,6 +1788,7 @@ const Results = () => {
             chunk.map((p: PrincipalDetails) => ({
               name: p.p_Name,
               schoolId: p.schoolId,
+              schoolName: p.schoolName,
             })),
           );
 
@@ -1795,17 +1811,20 @@ const Results = () => {
             console.log(`Processing PDF ${j + 1}:`, {
               principalName: pdf.principalName,
               schoolId: pdf.schoolId,
+              schoolName: pdf.schoolName,
               blobExists: !!pdf.blob,
               blobSize: pdf.blob?.size || 0,
               hasPrincipalName: !!pdf.principalName,
             });
 
             if (pdf.success && pdf.blob && pdf.blob.size > 0) {
-              // Create unique filename
-              const fileNameBase = pdf.principalName || pdf.schoolName || `School_${pdf.schoolId}`;
+              // Create unique filename using new priority logic
+              const principalNameBase = pdf.principalName || originalPrincipal?.p_Name || `Principal_${originalIndex + 1}`;
+              
               let fileName = createSafeFilename(
-                fileNameBase,
-                pdf?.schoolId ?? 0,
+                principalNameBase,
+                pdf.schoolName || originalPrincipal?.schoolName,
+                pdf.schoolId ?? originalPrincipal?.schoolId,
                 originalIndex,
               );
               let counter = 1;
@@ -1820,7 +1839,7 @@ const Results = () => {
               usedFilenames.add(fileName);
               folder?.file(fileName, pdf.blob);
               successfullyAdded++;
-              processedPrincipals.push(pdf.principalName || pdf.schoolName);
+              processedPrincipals.push(pdf.principalName || pdf.schoolName || `School_${pdf.schoolId}`);
 
               console.log(
                 `✓ Added to ZIP: ${fileName} (${pdf.blob.size} bytes)`,
@@ -1828,6 +1847,9 @@ const Results = () => {
               console.log(`   Original name: "${pdf.principalName}"`);
               console.log(
                 `   School: "${originalPrincipal?.schoolName || "Unknown"}"`,
+              );
+              console.log(
+                `   School ID: "${originalPrincipal?.schoolId ?? "null"}"`,
               );
             } else {
               const failureReason: string[] = [];
@@ -1839,6 +1861,7 @@ const Results = () => {
               console.warn(`✗ Skipping invalid PDF:`, {
                 originalName: pdf.principalName,
                 schoolId: pdf.schoolId,
+                schoolName: pdf.schoolName,
                 blobSize: pdf.blob?.size || 0,
                 hasBlob: !!pdf.blob,
                 hasName: !!pdf.principalName,
