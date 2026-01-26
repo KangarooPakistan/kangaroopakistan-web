@@ -11,7 +11,7 @@ export interface Data {
 }
 
 export const bronzeImpact: CashPrizesCertificateData = {
-  name: "Bronze Academic Impact Award - Cash Prize Rs. 4,000		",
+  name: "Bronze Academic Impact Award - Cash Award Rs. 4,000",
   abbreviation: "BAIA",
   data: [
     {
@@ -57,7 +57,7 @@ export const bronzeImpact: CashPrizesCertificateData = {
   ],
 };
 export const silverImpact: CashPrizesCertificateData = {
-  name: "Silver Academic Impact Award - Cash Prize Rs. 5,000",
+  name: "Silver Academic Impact Award - Cash Award Rs. 5,000",
   abbreviation: "SAIA",
   data: [
   {
@@ -83,7 +83,7 @@ export const silverImpact: CashPrizesCertificateData = {
   ],
 };
 export const goldImpact: CashPrizesCertificateData = {
-  name: "Gold Academic Impact Award - Cash Prize Rs. 8,000",
+  name: "Gold Academic Impact Award - Cash Award Rs. 8,000",
   abbreviation: "GAIA",
   data: [
     {
@@ -259,7 +259,7 @@ export const goldImpact: CashPrizesCertificateData = {
   ],
 };
 export const plataniumImpact: CashPrizesCertificateData = {
-  name: "Platinum Academic Impact Award - Cash Prize Rs. 10,000		",
+  name: "Platinum Academic Impact Award - Cash Award Rs. 10,000",
   abbreviation: "PAIA",
   data: [
     {
@@ -320,7 +320,7 @@ export const plataniumImpact: CashPrizesCertificateData = {
   ],
 };
 export const titaniumImpact: CashPrizesCertificateData = {
-  name: "Titanium Academic Impact Award - Cash Prize Rs. 12,000		",
+  name: "Titanium Academic Impact Award - Cash Award Rs. 12,000",
   abbreviation: "TAIA",
   data: [
   {
@@ -350,7 +350,7 @@ export const titaniumImpact: CashPrizesCertificateData = {
   }]
 };
 export const titaniumPlusImpact: CashPrizesCertificateData = {
-  name: "Titanium Academic Impact Award - Cash Prize Rs. 14,000		",
+  name: "Titanium Plus Academic Impact Award - Cash Award Rs. 14,000",
   abbreviation: "TAIA",
   data: [{
      c_Name: "NASHMIA RIAZ",
@@ -359,7 +359,7 @@ export const titaniumPlusImpact: CashPrizesCertificateData = {
   }]
 };
 export const diamondImpact: CashPrizesCertificateData = {
-  name: "Diamond Academic Impact Award - Cash Prize Rs. 16,000",
+  name: "Diamond Academic Impact Award - Cash Award Rs. 16,000",
   abbreviation: "DAIA",
   data: [
     {
@@ -370,7 +370,7 @@ export const diamondImpact: CashPrizesCertificateData = {
   ],
 };
 export const diamondPlusImpact: CashPrizesCertificateData = {
-  name: "Diamond Plus Academic Impact Award - Cash Prize Rs. 20,000",
+  name: "Diamond Plus Academic Impact Award - Cash Award Rs. 20,000		",
   abbreviation: "DAIA",
   data: [
     {
