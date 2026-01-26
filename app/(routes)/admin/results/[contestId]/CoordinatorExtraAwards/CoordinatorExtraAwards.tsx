@@ -142,6 +142,7 @@ const styles = StyleSheet.create({
 type Props = {
   contestName: string;
   eelcertificateData: CoordinatorCertificateData;
+  celccertificateData: CoordinatorCertificateData;
   oaecertificateData: CoordinatorCertificateData;
   dpccertificateData: CoordinatorCertificateData;
 };
@@ -149,6 +150,7 @@ type Props = {
 const CoordinatorExtraAwards: React.FC<Props> = ({
   contestName,
   eelcertificateData,
+  celccertificateData,
   oaecertificateData,
   dpccertificateData,
 }) => {
@@ -208,7 +210,7 @@ const CoordinatorExtraAwards: React.FC<Props> = ({
                 <CellContent>{item.c_Name}</CellContent>
               </View>
               <View style={styles.tableColMedium}>
-                <CellContent>{item.schoolId}</CellContent>
+                <CellContent>{item.schoolId ?? ""}</CellContent>
               </View>
               <View style={styles.tableColLarge}>
                 <CellContent>{item.schoolName}</CellContent>
@@ -227,6 +229,7 @@ const CoordinatorExtraAwards: React.FC<Props> = ({
         <Text style={styles.subtitle}>Coordinator Excellence Awards</Text>
 
         {renderCertificateTable(eelcertificateData)}
+        {renderCertificateTable(celccertificateData)}
         {renderCertificateTable(oaecertificateData)}
         {renderCertificateTable(dpccertificateData)}
       </Page>

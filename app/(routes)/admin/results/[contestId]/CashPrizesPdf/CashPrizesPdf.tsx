@@ -147,7 +147,9 @@ type Props = {
   goldImpact: CashPrizesCertificateData;
   plataniumImpact: CashPrizesCertificateData;
   titaniumImpact: CashPrizesCertificateData;
+  titaniumPlusImpact: CashPrizesCertificateData;
   diamondImpact: CashPrizesCertificateData;
+  diamondPlusImpact: CashPrizesCertificateData;
 };
 
 const CashPrizesPdf: React.FC<Props> = ({
@@ -157,7 +159,9 @@ const CashPrizesPdf: React.FC<Props> = ({
   goldImpact,
   plataniumImpact,
   titaniumImpact,
+  titaniumPlusImpact,
   diamondImpact,
+  diamondPlusImpact,
 }) => {
   const [fontsLoaded, setFontsLoaded] = useState(false);
 
@@ -215,7 +219,8 @@ const CashPrizesPdf: React.FC<Props> = ({
                 <CellContent>{item.c_Name}</CellContent>
               </View>
               <View style={styles.tableColMedium}>
-                <CellContent>{item.schoolId}</CellContent>
+              <CellContent>{item.schoolId ?? ""}</CellContent>
+
               </View>
               <View style={styles.tableColLarge}>
                 <CellContent>{item.schoolName}</CellContent>
@@ -233,7 +238,9 @@ const CashPrizesPdf: React.FC<Props> = ({
         <Text style={styles.title}>{contestName}</Text>
         <Text style={styles.subtitle}>LIST OF CASH PRIZE WINNERS </Text>
 
+        {renderCertificateTable(diamondPlusImpact)}
         {renderCertificateTable(diamondImpact)}
+        {renderCertificateTable(titaniumPlusImpact)}
         {renderCertificateTable(titaniumImpact)}
         {renderCertificateTable(plataniumImpact)}
         {renderCertificateTable(goldImpact)}

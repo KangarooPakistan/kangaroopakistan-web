@@ -19,6 +19,7 @@ import {
   eelcertificateData,
   oaecertificateData,
   dpccertificateData,
+  celccertificateData,
 } from "./Certificates/CoordinatorCertificateData";
 import QuestionStatsPdf from "../QuestionStats/QuestionStats";
 import JSZip from "jszip";
@@ -38,6 +39,7 @@ import {
 } from "./coordinatorCustomList";
 import CoordinatorExtraAwards from "./CoordinatorExtraAwards/CoordinatorExtraAwards";
 import {
+  celcertificateData,
   dpcpcertificateData,
   eelpcertificateData,
   oaepcertificateData,
@@ -47,10 +49,12 @@ import CashPrizesPdf from "./CashPrizesPdf/CashPrizesPdf";
 import {
   bronzeImpact,
   diamondImpact,
+  diamondPlusImpact,
   goldImpact,
   plataniumImpact,
   silverImpact,
   titaniumImpact,
+  titaniumPlusImpact,
 } from "./Certificates/CashPrizes";
 
 export type Contest = {
@@ -473,6 +477,7 @@ const Results = () => {
         <CoordinatorExtraAwards
           contestName={convertedData[0].contest.name}
           eelcertificateData={eelcertificateData}
+          celccertificateData={celccertificateData}
           oaecertificateData={oaecertificateData}
           dpccertificateData={dpccertificateData}
         />
@@ -515,7 +520,9 @@ const Results = () => {
           goldImpact={goldImpact}
           plataniumImpact={plataniumImpact}
           titaniumImpact={titaniumImpact}
+          titaniumPlusImpact={titaniumPlusImpact}
           diamondImpact={diamondImpact}
+          diamondPlusImpact={diamondPlusImpact}
         />
       );
 
@@ -552,6 +559,7 @@ const Results = () => {
         <PrincipalExtraAwards
           contestName={convertedData[0].contest.name}
           eelpcertificateData={eelpcertificateData}
+          celcertificateData={celcertificateData}
           oaepcertificateData={oaepcertificateData}
           dpcpcertificateData={dpcpcertificateData}
         />
