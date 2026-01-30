@@ -16,9 +16,13 @@
 # production
 /build
 
-# misgc
+# misc
 .DS_Store
 *.pem
+
+# Visual Studio
+.vs/
+.vscode/
 
 # debug
 npm-debug.log*
