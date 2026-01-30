@@ -1,8 +1,8 @@
 import { NextResponse, NextRequest } from "next/server";
 import { db } from "@/app/lib/prisma";
-
 import transporter from "@/app/lib/emailTransporter";
 import { SendMailOptions } from "nodemailer";
+import { getEmailSignature } from "@/app/lib/emailTemplates";
 export async function POST(request: Request) {
   try {
     const reqBody = await request.json();
@@ -137,14 +137,7 @@ export async function POST(request: Request) {
       <p> Total Number of students Registered: ${totalStudents.length}</p>
       ${tableHtml}
 
-       <p>Best Regards</p>
-      
-      <p><b>Team ${contestNameShort}</b></p>
-      <p>Inventive Learning - KSF Pakistan</p>
-      <p><b>Office: </b> 042-37180505 | 042-37180506</p>
-      <p><b>Whatsapp: </b>0333-2111399 | 0321-8403033 | 0319-5080077</p>
-      <p><b>Address: </b>1st Floor, Plaza 114, Main Boulevard, Phase 6, D.H.A Lahore</p>
-      <a href="www.kangaroopakistan.org" target="#">www.kangaroopakistan.org</a>
+      ${getEmailSignature(contestNameShort)}
       `,
     };
 

@@ -1,6 +1,7 @@
 import { db } from "@/app/lib/prisma";
 import { NextResponse } from "next/server";
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
+import { getEmailSignature } from "@/app/lib/emailTemplates";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -196,14 +197,7 @@ export async function GET(
       <p> Total Number of students Registered: ${totalStudents.length}</p>
       ${tableHtml}
 
-       <p>Best Regards</p>
-      
-      <p><b>Team ${contestNameShort}</b></p>
-      <p>Innovative Learning | Inventive Learning - KSF Pakistan</p>
-      <p><b>Office: </b> 042-37180505 | 042-37180506</p>
-      <p><b>Whatsapp: </b>0333-2111399 | 0321-8403033 | 0319-5080077</p>
-      <p><b>Address: </b>1st Floor, Plaza 114, Main Boulevard, Phase 6, D.H.A Lahore</p>
-      <a href="www.kangaroopakistan.org" target="#">www.kangaroopakistan.org</a>
+      ${getEmailSignature(contestNameShort)}
 `;
 
     const emailParams = {
