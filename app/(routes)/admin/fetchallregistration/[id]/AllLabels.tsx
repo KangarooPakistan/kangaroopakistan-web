@@ -21,10 +21,18 @@ export interface SchoolDetails {
 
 interface AllLabelsProps {
   schoolDetails: SchoolDetails[];
+  contestName?: string;
 }
 
-const AllLabels: React.FC<AllLabelsProps> = ({ schoolDetails }) => {
+const AllLabels: React.FC<AllLabelsProps> = ({ schoolDetails, contestName }) => {
   const [fontsLoaded, setFontsLoaded] = useState(false);
+
+  // Determine organization name based on contest name
+  const getOrganizationName = (contestName?: string): string => {
+    return contestName?.toLowerCase().includes("mathematics") 
+      ? "INNOVATIVE LEARNING" 
+      : "INVENTIVE LEARNING";
+  };
 
   useEffect(() => {
     const loadFonts = async () => {
@@ -142,7 +150,7 @@ const AllLabels: React.FC<AllLabelsProps> = ({ schoolDetails }) => {
 
           <View style={styles.fromBlock}>
             <Text style={[styles.text, styles.bold]}>From</Text>
-            <Text style={[styles.text, styles.bold]}>INVENTIVE LEARNING </Text>
+            <Text style={[styles.text, styles.bold]}>{getOrganizationName(contestName)}</Text>
             <Text style={styles.subText}>
               1st FLOOR, PLAZA 114, MAIN BOULEVARD, PHASE 6 DHA, LAHORE{" "}
             </Text>

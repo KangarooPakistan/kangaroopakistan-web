@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { SESClient, SendRawEmailCommand } from "@aws-sdk/client-ses";
 import { db } from "@/app/lib/prisma";
-import { getOrganizationName } from "@/app/lib/emailTemplates";
 
 const ses = new SESClient({
   region: process.env.AWS_BUCKET_REGION!,
@@ -131,7 +130,7 @@ Thank you for your continued  participation in ${contestNameShort} ${year}. We l
 
 <b>Best regards,</b><br/>
 Team ${contestNameShort}<br/>
-<i>${getOrganizationName(contestNameShort)} - KSF Pakistan</i><br/><br/>
+<i>Innovative Learning | Inventive Learning - KSF Pakistan</i><br/><br/>
 
 
 <b>Office</b>: 042-37180505 | 042-37180506<br/>

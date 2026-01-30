@@ -79,9 +79,18 @@ interface CheckListProps {
   name: string;
   contestHeader: string;
   year: string;
+  contestName?: string;
 }
 
-const CheckList: React.FC<CheckListProps> = ({ name, year, contestHeader }) => (
+const CheckList: React.FC<CheckListProps> = ({ name, year, contestHeader, contestName }) => {
+  // Determine organization name based on contest name
+  const getOrganizationName = (contestName?: string): string => {
+    return contestName?.toLowerCase().includes("mathematics") 
+      ? "Innovative Learning" 
+      : "Inventive Learning";
+  };
+
+  return (
   <Document>
     <Page size="A4" style={styles.page}>
       <View style={styles.section}>
@@ -90,7 +99,7 @@ const CheckList: React.FC<CheckListProps> = ({ name, year, contestHeader }) => (
         </Text>
         <Text style={styles.text}>Dear Principal,</Text>
         <Text style={styles.text}>
-          We hope this letter finds you well. On behalf of Innovative Learning -
+          We hope this letter finds you well. On behalf of {getOrganizationName(contestName)} -
           KSF Pakistan, we are pleased to enclose the {name} results for your
           esteemed institution.
         </Text>
@@ -154,11 +163,12 @@ const CheckList: React.FC<CheckListProps> = ({ name, year, contestHeader }) => (
         </Text>
         <Text style={styles.signature}>Yours sincerely,</Text>
         <Text style={styles.signature}>
-          Innovative | Inventive Learning - KSF Pakistan
+          {getOrganizationName(contestName)} - KSF Pakistan
         </Text>
       </View>
     </Page>
   </Document>
 );
+};
 
 export default CheckList;
