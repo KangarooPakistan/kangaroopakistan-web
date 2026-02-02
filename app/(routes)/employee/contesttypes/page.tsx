@@ -1,14 +1,13 @@
 "use client";
 
-import Image from "next/image";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useModal } from "@/hooks/use-modal-store";
 import Skeleton from "@/app/components/Skeleton";
-import { useSession, signIn, signOut } from "next-auth/react";
-
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 interface ContestType {
   id: string;
@@ -30,7 +29,39 @@ const ContestTypesPage = () => {
     async function fetchContestTypes() {
       try {
         const response = await axios.get("/api/users/contesttype"); // Replace with your actual API route URL
-        setContestTypes(response.data);
+        
+        // Sort contest types: IKMC/Mathematics first, then IKSC/Science, then IKLC/Linguistic
+        const sortedContestTypes = response.data.sort((a: ContestType, b: ContestType) => {
+          const aName = a.contestName.toLowerCase();
+          const bName = b.contestName.toLowerCase();
+          
+          // Check for IKMC or Mathematics
+          const aIsMath = aName.includes('ikmc') || aName.includes('mathematics');
+          const bIsMath = bName.includes('ikmc') || bName.includes('mathematics');
+          
+          // Check for IKSC or Science
+          const aIsScience = aName.includes('iksc') || aName.includes('science');
+          const bIsScience = bName.includes('iksc') || bName.includes('science');
+          
+          // Check for IKLC or Linguistic
+          const aIsLinguistic = aName.includes('iklc') || aName.includes('linguistic');
+          const bIsLinguistic = bName.includes('iklc') || bName.includes('linguistic');
+          
+          // Priority order: Math (1), Science (2), Linguistic (3), Others (4)
+          const getPriority = (isMath: boolean, isScience: boolean, isLinguistic: boolean) => {
+            if (isMath) return 1;
+            if (isScience) return 2;
+            if (isLinguistic) return 3;
+            return 4;
+          };
+          
+          const aPriority = getPriority(aIsMath, aIsScience, aIsLinguistic);
+          const bPriority = getPriority(bIsMath, bIsScience, bIsLinguistic);
+          
+          return aPriority - bPriority;
+        });
+        
+        setContestTypes(sortedContestTypes);
         setIsLoading(false);
       } catch (error) {
         console.error("Error:", error);
@@ -66,9 +97,11 @@ const ContestTypesPage = () => {
             <div
               className="w-64 bg-white shadow-xl rounded-xl duration-500 hover:scale-105 hover:shadow-2xl"
               key={contestType.id}>
-              <img
+              <Image
                 src={contestType.imageUrl}
                 alt="contest image"
+                width={256}
+                height={256}
                 className="h-64 w-64 object-cover rounded-t-xl"
               />
               <div className="px-2 py-3 w-64">
