@@ -97,11 +97,9 @@ const ContestTypesPage = () => {
             <div
               className="w-64 bg-white shadow-xl rounded-xl duration-500 hover:scale-105 hover:shadow-2xl"
               key={contestType.id}>
-              <Image
+             <img
                 src={contestType.imageUrl}
                 alt="contest image"
-                width={256}
-                height={256}
                 className="h-64 w-64 object-cover rounded-t-xl"
               />
               <div className="px-2 py-3 w-64">
