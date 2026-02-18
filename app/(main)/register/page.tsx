@@ -38,10 +38,14 @@ const formSchema = z.object({
   schoolName: z.string().refine((data) => data.trim() !== "", {
     message: "School Name cannot be empty",
   }),
-  contactNumber: z.string().regex(
-    /^(\+92\d{3}-\d{7}|\d{11})$/,
-    "Phone number must be in format +92333-1234567 or 03331234567"
-  ),
+  contactNumber: z
+    .string()
+    .refine((data) => data.trim() !== "", {
+      message: "Phone number cannot be empty",
+    })
+    .refine((data) => /^\d{3}-\d{7}$/.test(data), {
+      message: "Phone number must be in the format 051-1234567",
+    }),
 
   district: z.string().refine((data) => data.trim() !== "", {
     message: "District cannot be empty",
@@ -61,14 +65,22 @@ const formSchema = z.object({
   // p_lName: z.string().refine((data) => data.trim() !== "", {
   //   message: "Principal's last name cannot be empty",
   // }),
-  p_contact: z.string().regex(
-    /^(\+92\d{3}-\d{7}|\d{11})$/,
-    "Phone number must be in format +92333-1234567 or 03331234567"
-  ),
-  p_phone: z.string().regex(
-    /^(\+92\d{3}-\d{7}|\d{11})$/,
-    "Phone number must be in format +92333-1234567 or 03331234567"
-  ),
+  p_contact: z
+    .string()
+    .refine((data) => data.trim() !== "", {
+      message: "Phone number cannot be empty",
+    })
+    .refine((data) => /^\d{4}-\d{7}$/.test(data), {
+      message: "Phone number must be in the format 0333-1234567",
+    }),
+  p_phone: z
+    .string()
+    .refine((data) => data.trim() !== "", {
+      message: "Phone number cannot be empty",
+    })
+    .refine((data) => /^\d{3}-\d{7}$/.test(data), {
+      message: "Phone number must be in the format 051-1234567",
+    }),
 
   p_email: z.string().refine((data) => data.trim() !== "", {
     message: "Principal's email cannot be empty",
@@ -77,10 +89,14 @@ const formSchema = z.object({
     message: "Coordinator's firstname cannot be empty",
   }),
 
-  c_contact: z.string().regex(
-    /^(\+92\d{3}-\d{7}|\d{11})$/,
-    "Phone number must be in format +92333-1234567 or 03331234567"
-  ),
+  c_contact: z
+    .string()
+    .refine((data) => data.trim() !== "", {
+      message: "Phone number cannot be empty",
+    })
+    .refine((data) => /^\d{4}-\d{7}$/.test(data), {
+      message: "Phone number must be in the format 0333-1234567",
+    }),
   c_email: z
     .string()
     .email()
@@ -725,7 +741,7 @@ const UserRegister = () => {
                         <FormControl>
                           <Input
                             type="text"
-                            placeholder="+92333-1234567 or 03331234567"
+                            placeholder="051-1234567"
                             disabled={isLoading}
                             className="input"
                             {...field}
@@ -995,7 +1011,7 @@ const UserRegister = () => {
                         <FormControl>
                           <Input
                             type="text"
-                            placeholder="+92333-1234567 or 03331234567"
+                            placeholder="0333-1234567"
                             disabled={isLoading}
                             className="input"
                             {...field}
@@ -1015,7 +1031,7 @@ const UserRegister = () => {
                         </FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="+92333-1234567 or 03331234567"
+                            placeholder="051-1234567"
                             type="text"
                             disabled={isLoading}
                             className="input"
@@ -1077,7 +1093,7 @@ const UserRegister = () => {
                         <FormControl>
                           <Input
                             type="text"
-                            placeholder="+92333-1234567 or 03331234567"
+                            placeholder="0333-1234567"
                             disabled={isLoading}
                             className="input"
                             {...field}
@@ -1148,7 +1164,6 @@ const UserRegister = () => {
                 <li>Password must contain at least one lowercase letter.</li>
                 <li>Password must contain at least one number.</li>
                 <li>Password must contain at least one special character.</li>
-                <li>Phone numbers must be in format: +92333-1234567 or 03331234567</li>
               </ul>
             </div>
           </div>
