@@ -43,8 +43,8 @@ const formSchema = z.object({
     .refine((data) => data.trim() !== "", {
       message: "Phone number cannot be empty",
     })
-    .refine((data) => /^\d{3}-\d{7}$/.test(data), {
-      message: "Phone number must be in the format 051-1234567",
+    .refine((data) => /^\d{3,4}-\d{7}$/.test(data), {
+      message: "Phone number must be in the format 0333-1234567 or 051-1234567",
     }),
 
   district: z.string().refine((data) => data.trim() !== "", {
@@ -78,8 +78,8 @@ const formSchema = z.object({
     .refine((data) => data.trim() !== "", {
       message: "Phone number cannot be empty",
     })
-    .refine((data) => /^\d{3}-\d{7}$/.test(data), {
-      message: "Phone number must be in the format 051-1234567",
+    .refine((data) => /^\d{3,4}-\d{7}$/.test(data), {
+      message: "Phone number must be in the format 0333-1234567 or 051-1234567",
     }),
 
   p_email: z.string().refine((data) => data.trim() !== "", {
@@ -741,7 +741,7 @@ const UserRegister = () => {
                         <FormControl>
                           <Input
                             type="text"
-                            placeholder="051-1234567"
+                            placeholder="0333-1234567 or 051-1234567"
                             disabled={isLoading}
                             className="input"
                             {...field}
@@ -1031,7 +1031,7 @@ const UserRegister = () => {
                         </FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="051-1234567"
+                            placeholder="0333-1234567 or 051-1234567"
                             type="text"
                             disabled={isLoading}
                             className="input"
