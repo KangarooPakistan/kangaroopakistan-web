@@ -109,6 +109,8 @@ const formSchema = z.object({
   schoolAddress: z.string().refine((data) => data.trim() !== "", {
     message: "School Adress cannot be empty",
   }),
+  // Honeypot field - should always be empty for legitimate users
+  website: z.string().max(0, "Invalid submission"),
   // At least one special character
 });
 
@@ -137,17 +139,39 @@ const UserRegister = () => {
 
       c_email: "",
       c_accountDetails: "",
+      website: "", // Honeypot field
     },
   });
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log(values);
+    
+    // Honeypot check - if website field is filled, it's a bot
+    if (values.website) {
+      console.log("Bot detected - honeypot field was filled");
+      toast.error("Invalid submission detected", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
+    
     try {
+      // Remove honeypot field before sending to API
+      const { website, ...payloadWithoutHoneypot } = values;
+      
       const payload = {
-        ...values, // Spread the form values
+        ...payloadWithoutHoneypot,
         role: "User", // Add the additional string
       };
+      
       console.log(payload);
       await axios.post("/api/users/signup", payload);
       form.reset();
@@ -1140,6 +1164,25 @@ const UserRegister = () => {
                           />
                         </FormControl>
                         <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  {/* Honeypot field - hidden from real users, bots will fill it */}
+                  <FormField
+                    control={form.control}
+                    name="website"
+                    render={({ field }) => (
+                      <FormItem className="absolute left-[-9999px]" aria-hidden="true">
+                        <FormLabel>Website</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="text"
+                            tabIndex={-1}
+                            autoComplete="off"
+                            {...field}
+                          />
+                        </FormControl>
                       </FormItem>
                     )}
                   />
