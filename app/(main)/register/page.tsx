@@ -40,7 +40,7 @@ const formSchema = z.object({
   }),
   contactNumber: z.string().regex(
     /^(\+92\d{3}-\d{7}|\d{11})$/,
-    "Phone number must be in format +92333-5194964 or 03335194964"
+    "Phone number must be in format +92333-1234567 or 03331234567"
   ),
 
   district: z.string().refine((data) => data.trim() !== "", {
@@ -63,11 +63,11 @@ const formSchema = z.object({
   // }),
   p_contact: z.string().regex(
     /^(\+92\d{3}-\d{7}|\d{11})$/,
-    "Phone number must be in format +92333-5194964 or 03335194964"
+    "Phone number must be in format +92333-1234567 or 03331234567"
   ),
   p_phone: z.string().regex(
     /^(\+92\d{3}-\d{7}|\d{11})$/,
-    "Phone number must be in format +92333-5194964 or 03335194964"
+    "Phone number must be in format +92333-1234567 or 03331234567"
   ),
 
   p_email: z.string().refine((data) => data.trim() !== "", {
@@ -79,7 +79,7 @@ const formSchema = z.object({
 
   c_contact: z.string().regex(
     /^(\+92\d{3}-\d{7}|\d{11})$/,
-    "Phone number must be in format +92333-5194964 or 03335194964"
+    "Phone number must be in format +92333-1234567 or 03331234567"
   ),
   c_email: z
     .string()
@@ -725,7 +725,7 @@ const UserRegister = () => {
                         <FormControl>
                           <Input
                             type="text"
-                            placeholder="+92333-5194964 or 03335194964"
+                            placeholder="+92333-1234567 or 03331234567"
                             disabled={isLoading}
                             className="input"
                             {...field}
@@ -995,7 +995,7 @@ const UserRegister = () => {
                         <FormControl>
                           <Input
                             type="text"
-                            placeholder="+92333-5194964 or 03335194964"
+                            placeholder="+92333-1234567 or 03331234567"
                             disabled={isLoading}
                             className="input"
                             {...field}
@@ -1015,7 +1015,7 @@ const UserRegister = () => {
                         </FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="+92333-5194964 or 03335194964"
+                            placeholder="+92333-1234567 or 03331234567"
                             type="text"
                             disabled={isLoading}
                             className="input"
@@ -1077,7 +1077,7 @@ const UserRegister = () => {
                         <FormControl>
                           <Input
                             type="text"
-                            placeholder="+92333-5194964 or 03335194964"
+                            placeholder="+92333-1234567 or 03331234567"
                             disabled={isLoading}
                             className="input"
                             {...field}
@@ -1148,7 +1148,7 @@ const UserRegister = () => {
                 <li>Password must contain at least one lowercase letter.</li>
                 <li>Password must contain at least one number.</li>
                 <li>Password must contain at least one special character.</li>
-                <li>Phone numbers must be in format: +92333-5194964 or 03335194964</li>
+                <li>Phone numbers must be in format: +92333-1234567 or 03331234567</li>
               </ul>
             </div>
           </div>

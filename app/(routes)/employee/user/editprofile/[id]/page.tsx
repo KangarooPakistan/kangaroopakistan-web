@@ -50,7 +50,7 @@ const formSchema = z.object({
   contactNumber: z.string().refine((data) => data.trim() !== "", {
     message: "Phone number cannot be empty",
   }),
-  // .regex(/^\d{3}-\d{7}$/, "Phone number must be in the format 051-5194964"),
+  // .regex(/^\d{3}-\d{7}$/, "Phone number must be in the format 051-1234567"),
 
   district: z.string().refine((data) => data.trim() !== "", {
     message: "District cannot be empty",
@@ -67,12 +67,12 @@ const formSchema = z.object({
   p_contact: z.string().refine((data) => data.trim() !== "", {
     message: "Phone number cannot be empty",
   }),
-  // .regex(/^\d{4}-\d{7}$/, "Phone number must be in the format 0333-5194964"),
+  // .regex(/^\d{4}-\d{7}$/, "Phone number must be in the format 0333-1234567"),
   p_phone: z.string().refine((data) => data.trim() !== "", {
     message: "Phone number cannot be empty",
   }),
 
-  // .regex(/^\d{3}-\d{7}$/, "Phone number must be in the format 051-5194964"),
+  // .regex(/^\d{3}-\d{7}$/, "Phone number must be in the format 051-1234567"),
 
   p_email: z.string().refine((data) => data.trim() !== "", {
     message: "Principal's email cannot be empty",
@@ -84,11 +84,11 @@ const formSchema = z.object({
   c_contact: z.string().refine((data) => data.trim() !== "", {
     message: "Phone number cannot be empty",
   }),
-  // .regex(/^\d{4}-\d{7}$/, "Phone number must be in the format 0333-5194964"),
+  // .regex(/^\d{4}-\d{7}$/, "Phone number must be in the format 0333-1234567"),
   c_phone: z.string().refine((data) => data.trim() !== "", {
     message: "Phone number cannot be empty",
   }),
-  // .regex(/^\d{3}-\d{7}$/, "Phone number must be in the format 051-5194964"),
+  // .regex(/^\d{3}-\d{7}$/, "Phone number must be in the format 051-1234567"),
   c_email: z
     .string()
     .email()
