@@ -344,58 +344,58 @@ const wrapTextToLines = (
   return lines;
 };
 // Get award template path (matching React PDF logic)
-// const getAwardTemplatePath = ( //iklc
-//   awardLevel: string | null | undefined,
-// ): string => {
-//   if (!awardLevel) return "/templates/iklc/participation_award.pdf";
-
-//   const level = awardLevel.toUpperCase().replace(/\s+/g, "_");
-//   switch (level) {
-//     case "GOLD":
-//       return "/templates/iklc/gold_award.pdf";
-//     case "SILVER":
-//       return "/templates/iklc/silver_award.pdf";
-//     case "BRONZE":
-//       return "/templates/iklc/bronze_award.pdf";
-//     case "THREE_STAR":
-//       return "/templates/iklc/three_star_award.pdf";
-//     case "TWO_STAR":
-//       return "/templates/iklc/two_star_award.pdf";
-//     case "ONE_STAR":
-//       return "/templates/iklc/one_star_award.pdf";
-//     case "PARTICIPATION":
-//       return "/templates/iklc/participation_award.pdf";
-//     default:
-//       return "/templates/iklc/participation_award.pdf";
-//   }
-// };
-
-const getAwardTemplatePath = (
-  //iksc
+const getAwardTemplatePath = ( //iklc
   awardLevel: string | null | undefined,
 ): string => {
-  if (!awardLevel) return "/templates/participation_award.pdf";
+  if (!awardLevel) return "/templates/iklc/participation_award.pdf";
 
   const level = awardLevel.toUpperCase().replace(/\s+/g, "_");
   switch (level) {
     case "GOLD":
-      return "/templates/gold_award.pdf";
+      return "/templates/iklc/gold_award.pdf";
     case "SILVER":
-      return "/templates/silver_award.pdf";
+      return "/templates/iklc/silver_award.pdf";
     case "BRONZE":
-      return "/templates/bronze_award.pdf";
+      return "/templates/iklc/bronze_award.pdf";
     case "THREE_STAR":
-      return "/templates/three_star_award.pdf";
+      return "/templates/iklc/three_star_award.pdf";
     case "TWO_STAR":
-      return "/templates/two_star_award.pdf";
+      return "/templates/iklc/two_star_award.pdf";
     case "ONE_STAR":
-      return "/templates/one_star_award.pdf";
+      return "/templates/iklc/one_star_award.pdf";
     case "PARTICIPATION":
-      return "/templates/participation_award.pdf";
+      return "/templates/iklc/participation_award.pdf";
     default:
-      return "/templates/participation_award.pdf";
+      return "/templates/iklc/participation_award.pdf";
   }
 };
+
+// const getAwardTemplatePath = (
+//   //iksc
+//   awardLevel: string | null | undefined,
+// ): string => {
+//   if (!awardLevel) return "/templates/participation_award.pdf";
+
+//   const level = awardLevel.toUpperCase().replace(/\s+/g, "_");
+//   switch (level) {
+//     case "GOLD":
+//       return "/templates/gold_award.pdf";
+//     case "SILVER":
+//       return "/templates/silver_award.pdf";
+//     case "BRONZE":
+//       return "/templates/bronze_award.pdf";
+//     case "THREE_STAR":
+//       return "/templates/three_star_award.pdf";
+//     case "TWO_STAR":
+//       return "/templates/two_star_award.pdf";
+//     case "ONE_STAR":
+//       return "/templates/one_star_award.pdf";
+//     case "PARTICIPATION":
+//       return "/templates/participation_award.pdf";
+//     default:
+//       return "/templates/participation_award.pdf";
+//   }
+// };
 
 // Cache certificate template bytes per template path so we don't re-download
 // the same PDF for every student or repeated "Download Certificates" clicks.
@@ -442,10 +442,10 @@ export async function generateStudentCertificate(
   const { width, height } = firstPage.getSize();
 
   // Horizontal text band: left 140, right 440 (all text centered within this band)
-  const bandLeft = 140;
-  const bandRight = 480; //  iksc
-  // const bandLeft = 300; // iklc
-  // const bandRight = 600;
+  // const bandLeft = 140;
+  // const bandRight = 480; //  iksc
+  const bandLeft = 300; // iklc
+  const bandRight = 600;
   const bandCenterX = (bandLeft + bandRight) / 2;
 
   // Prepare text values with safe defaults and proper processing
@@ -504,8 +504,8 @@ export async function generateStudentCertificate(
   );
 
   // FIXED: Different top positions for participation vs other certificates
-  const topPosition = isParticipationCertificate ? 290 : 280; // iksc
-  // const topPosition = schoolLines.length > 1 ? 240 : 250; //iklc
+  // const topPosition = isParticipationCertificate ? 290 : 280; // iksc
+  const topPosition = schoolLines.length > 1 ? 240 : 250; //iklc
   const baseY = height - topPosition;
 
   // Select fonts (matching React PDF font selection)

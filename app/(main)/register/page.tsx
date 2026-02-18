@@ -38,10 +38,10 @@ const formSchema = z.object({
   schoolName: z.string().refine((data) => data.trim() !== "", {
     message: "School Name cannot be empty",
   }),
-  contactNumber: z.string().refine((data) => data.trim() !== "", {
-    message: "Phone number cannot be empty",
-  }),
-  // .regex(/^\d{3}-\d{7}$/, "Phone number must be in the format 051-5194964"),
+  contactNumber: z.string().regex(
+    /^(\+92\d{3}-\d{7}|\d{11})$/,
+    "Phone number must be in format +92333-5194964 or 03335194964"
+  ),
 
   district: z.string().refine((data) => data.trim() !== "", {
     message: "District cannot be empty",
@@ -61,15 +61,14 @@ const formSchema = z.object({
   // p_lName: z.string().refine((data) => data.trim() !== "", {
   //   message: "Principal's last name cannot be empty",
   // }),
-  p_contact: z.string().refine((data) => data.trim() !== "", {
-    message: "Phone number cannot be empty",
-  }),
-  // .regex(/^\d{4}-\d{7}$/, "Phone number must be in the format 0333-5194964"),
-  p_phone: z.string().refine((data) => data.trim() !== "", {
-    message: "Phone number cannot be empty",
-  }),
-
-  // .regex(/^\d{3}-\d{7}$/, "Phone number must be in the format 051-5194964"),
+  p_contact: z.string().regex(
+    /^(\+92\d{3}-\d{7}|\d{11})$/,
+    "Phone number must be in format +92333-5194964 or 03335194964"
+  ),
+  p_phone: z.string().regex(
+    /^(\+92\d{3}-\d{7}|\d{11})$/,
+    "Phone number must be in format +92333-5194964 or 03335194964"
+  ),
 
   p_email: z.string().refine((data) => data.trim() !== "", {
     message: "Principal's email cannot be empty",
@@ -78,11 +77,10 @@ const formSchema = z.object({
     message: "Coordinator's firstname cannot be empty",
   }),
 
-  c_contact: z.string().refine((data) => data.trim() !== "", {
-    message: "Phone number cannot be empty",
-  }),
-  // .regex(/^\d{4}-\d{7}$/, "Phone number must be in the format 0333-5194964"),
-  // .regex(/^\d{3}-\d{7}$/, "Phone number must be in the format 051-5194964"),
+  c_contact: z.string().regex(
+    /^(\+92\d{3}-\d{7}|\d{11})$/,
+    "Phone number must be in format +92333-5194964 or 03335194964"
+  ),
   c_email: z
     .string()
     .email()
@@ -727,7 +725,7 @@ const UserRegister = () => {
                         <FormControl>
                           <Input
                             type="text"
-                            placeholder="051-1234567"
+                            placeholder="+92333-5194964 or 03335194964"
                             disabled={isLoading}
                             className="input"
                             {...field}
@@ -997,7 +995,7 @@ const UserRegister = () => {
                         <FormControl>
                           <Input
                             type="text"
-                            placeholder="0333-1234567"
+                            placeholder="+92333-5194964 or 03335194964"
                             disabled={isLoading}
                             className="input"
                             {...field}
@@ -1017,7 +1015,7 @@ const UserRegister = () => {
                         </FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="051-1234567"
+                            placeholder="+92333-5194964 or 03335194964"
                             type="text"
                             disabled={isLoading}
                             className="input"
@@ -1079,7 +1077,7 @@ const UserRegister = () => {
                         <FormControl>
                           <Input
                             type="text"
-                            placeholder="0333-1234567"
+                            placeholder="+92333-5194964 or 03335194964"
                             disabled={isLoading}
                             className="input"
                             {...field}
@@ -1150,6 +1148,7 @@ const UserRegister = () => {
                 <li>Password must contain at least one lowercase letter.</li>
                 <li>Password must contain at least one number.</li>
                 <li>Password must contain at least one special character.</li>
+                <li>Phone numbers must be in format: +92333-5194964 or 03335194964</li>
               </ul>
             </div>
           </div>
