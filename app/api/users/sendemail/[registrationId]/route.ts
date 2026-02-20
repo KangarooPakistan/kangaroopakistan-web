@@ -110,11 +110,11 @@ export async function GET(
 
     // Prepare recipient emails
     const toEmails = [
-      // schoolDetails?.email,
-      // schoolDetails?.p_email,
-      // schoolDetails?.c_email,
-      // "valiantsina@kangaroopakistan.org",
-      "kainatkiranrashid2@gmail.com"
+      schoolDetails?.email,
+      schoolDetails?.p_email,
+      schoolDetails?.c_email,
+      "valiantsina@kangaroopakistan.org",
+      
     ].filter((email): email is string => !!email);
 
     const subject = `Registration Confirmation - ${contestNameShort} ${year}`;
@@ -146,7 +146,7 @@ export async function GET(
     // Create raw email message
     const boundary = `----=_Part_${Date.now()}`;
     const rawMessage = [
-      `From: Kangaroo Pakistan <${fromEmail}>`,
+      `From: Kangaroo Pakistan Info <${fromEmail}>`,
       `To: ${toEmails.join(", ")}`,
       `Subject: ${subject}`,
       "MIME-Version: 1.0",
