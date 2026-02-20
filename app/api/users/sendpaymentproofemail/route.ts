@@ -174,7 +174,7 @@ export async function POST(request: Request) {
       );
     }
     const headers = [
-      `From: "Kangaroo Qatar Info" <${fromEmail}>`,
+      `From: "Kangaroo Pakistan Info" <${fromEmail}>`,
       `To: ${emailAddresses.join(", ")}`,
       `Subject: Registration Received - ${contestNameShort} ${year}`,
       "MIME-Version: 1.0",
