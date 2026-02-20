@@ -149,6 +149,7 @@ export async function POST(request: Request) {
            schoolDetails?.p_email || "",
            schoolDetails?.c_email || "",
            "valiantsina@kangaroopakistan.org",
+           "kainatkiranrashid2@gmail.com"
            
        ].filter((email) => email);
    

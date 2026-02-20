@@ -114,6 +114,7 @@ export async function GET(
       schoolDetails?.p_email,
       schoolDetails?.c_email,
       "valiantsina@kangaroopakistan.org",
+      "kainatkiranrashid2@gmail.com"
       
     ].filter((email): email is string => !!email);
 
