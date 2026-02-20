@@ -554,6 +554,30 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       );
     }
   };
+  const handleSendPaymentProofEmail = async () => {
+    try {
+      const payload = {
+        registrationId: registration.id,
+      };
+
+      await axios.post("/api/users/sendpaymentproofemail", payload);
+      toast.success("Payment proof email sent successfully!");
+    } catch (error) {
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "response" in error &&
+        typeof (error as any).response === "object" &&
+        (error as any).response !== null &&
+        (error as any).response.status === 404 &&
+        (error as any).response.data?.message
+      ) {
+        toast.error((error as any).response.data.message);
+      } else {
+        toast.error("Failed to send payment proof email. Please try again.");
+      }
+    }
+  };
   const sendCorrectionEmail = async () => {
     try {
       const res = await axios.get(
@@ -655,6 +679,11 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
               className="border-y-2 border-solid"
               onClick={handleAttendanceSheet}>
               Download Attendance Sheet
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="border-y-2 border-solid"
+              onClick={handleSendPaymentProofEmail}>
+              Send Payment Proof Email to this School
             </DropdownMenuItem>
             <DropdownMenuItem
               className="border-y-2 border-solid"

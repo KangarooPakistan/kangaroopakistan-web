@@ -5,6 +5,7 @@ import nodemailer from "nodemailer";
 import { SendMailOptions } from "nodemailer";
 import emailManager from "@/app/lib/emailManager";
 import { getEmailSignature } from "@/app/lib/emailTemplates";
+import { validateAwsCredentials } from "@/app/lib/awsValidation";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
@@ -13,6 +14,9 @@ export async function GET(
   { params }: { params: { registrationId: string } }
 ) {
   try {
+    // Validate AWS credentials including SMTP email
+    validateAwsCredentials();
+    
     if (!params.registrationId) {
       return NextResponse.json(
         { message: "Missing registrationId in query parameters" },
