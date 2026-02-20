@@ -157,12 +157,10 @@ export async function POST(request: Request) {
 
     // Prepare email recipients
     const emailAddresses = [
-        // schoolDetails?.email || "",
-        // schoolDetails?.p_email || "",
-        // schoolDetails?.c_email || "",
-        // "valiantsina@kangaroopakistan.org",
-        "kainatkiranrashid2@gmail.com"
-        
+        schoolDetails?.email || "",
+        schoolDetails?.p_email || "",
+        schoolDetails?.c_email || "",
+        "valiantsina@kangaroopakistan.org",
     ].filter((email) => email);
 
     if (emailAddresses.length === 0) {
