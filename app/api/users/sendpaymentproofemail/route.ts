@@ -117,7 +117,7 @@ export async function POST(request: Request) {
 
     tableHtml += `</tbody></table>`;
 
-    const startDateString = contestDate?.startDate;
+    const startDateString = contestDate?.endDate;
     let year = startDateString ? new Date(startDateString).getFullYear() : 0;
 
     const fromEmail = process.env.AWS_SMTP_EMAIL;
