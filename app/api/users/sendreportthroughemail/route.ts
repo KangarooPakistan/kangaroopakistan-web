@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { SESClient, SendRawEmailCommand } from "@aws-sdk/client-ses";
 import { db } from "@/app/lib/prisma";
+import { validateAwsCredentials } from "@/app/lib/awsValidation";
 
 const ses = new SESClient({
   region: process.env.AWS_BUCKET_REGION!,
@@ -10,23 +11,14 @@ const ses = new SESClient({
   },
 });
 
-function validateAwsCredentials() {
-  if (!process.env.AWS_BUCKET_REGION) {
-    throw new Error("AWS_REGION is not configured");
-  }
-  if (!process.env.AWS_ACCESS_KEYID) {
-    throw new Error("AWS_ACCESS_KEY_ID is not configured");
-  }
-  if (!process.env.AWS_SECRET_KEYID) {
-    throw new Error("AWS_SECRET_ACCESS_KEY is not configured");
-  }
-}
-
 export async function POST(request: Request) {
   let schoolDetails: any = null;
   let aminaEmail: any = null;
 
   try {
+    // Validate AWS credentials including SMTP email
+    validateAwsCredentials();
+    
     const { pdfData, schoolId, contestId } = await request.json();
     validateAwsCredentials();
 

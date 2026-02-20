@@ -2,6 +2,7 @@ import { db } from "@/app/lib/prisma";
 import { NextResponse } from "next/server";
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
 import { getEmailSignature } from "@/app/lib/emailTemplates";
+import { validateAwsCredentials } from "@/app/lib/awsValidation";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -14,23 +15,14 @@ const ses = new SESClient({
   },
 });
 
-function validateAwsCredentials() {
-  if (!process.env.AWS_BUCKET_REGION) {
-    throw new Error("AWS_REGION is not configured");
-  }
-  if (!process.env.AWS_ACCESS_KEYID) {
-    throw new Error("AWS_ACCESS_KEY_ID is not configured");
-  }
-  if (!process.env.AWS_SECRET_KEYID) {
-    throw new Error("AWS_SECRET_ACCESS_KEY is not configured");
-  }
-}
-
 export async function GET(
   request: Request,
   { params }: { params: { registrationId: string } }
 ) {
   try {
+    // Validate AWS credentials including SMTP email
+    validateAwsCredentials();
+    
     if (!params.registrationId) {
       return NextResponse.json(
         { message: "Missing registrationId in query parameters" },

@@ -1,13 +1,19 @@
 import { db } from "@/app/lib/prisma";
 import { NextResponse } from "next/server";
-import transporter from "@/app/lib/emailTransporter";
-import nodemailer from "nodemailer";
-import { SendMailOptions } from "nodemailer";
-import emailManager from "@/app/lib/emailManager";
+import { SESClient, SendRawEmailCommand } from "@aws-sdk/client-ses";
 import { getEmailSignature } from "@/app/lib/emailTemplates";
 import { validateAwsCredentials } from "@/app/lib/awsValidation";
+
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
+
+const ses = new SESClient({
+  region: process.env.AWS_BUCKET_REGION!,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEYID!,
+    secretAccessKey: process.env.AWS_SECRET_KEYID!,
+  },
+});
 
 export async function GET(
   request: Request,
@@ -33,24 +39,7 @@ export async function GET(
     const schoolDetails = await db.user.findFirst({
       where: { schoolId: registrationData?.schoolId },
     });
-    const aminaEmail = await db.user.findFirst({
-      where: {
-        schoolId: 814,
-      },
-      select: {
-        email: true,
-      },
-    });
-    const ebdullahEmail = await db.user.findFirst({
-      where: {
-        schoolId: 292,
-      },
-      select: {
-        email: true,
-      },
-    });
-    // console.log(aminaEmail?.email);
-    // console.log(ebdullahEmail?.email);
+    
     const totalStudents = await db.student.findMany({
       where: { registrationId: params.registrationId },
     });
@@ -111,62 +100,26 @@ export async function GET(
     const startDateString = contestDate?.endDate;
     let year = startDateString ? new Date(startDateString).getFullYear() : 0;
 
-    // const mailOptions: nodemailer.SendMailOptions = {
-    //   from: "info@kangaroopakistan.org",
-    //   to: schoolDetails?.email,
-    //   subject: `Verification of Registration Details for ${contestNameShort} ${year}`,
-    //   html: `<p><b>Dear Principal,</b></p>
-    //   <p>Congratulations on registering for the ${contestName} ${year}</p>
-    //   <p>The contest will be held on ${contestDate?.contestDate} in your institute under your supervision.</p>
-    //   <p>Below are the details of your institute. Please verify, as these details will be mentioned in all official documents:</p>
-    //   <p> School ID: ${schoolDetails?.schoolId}</p>
-    //   <p> School Name: ${schoolDetails?.schoolName}</p>
-    //   <p> School Address: ${schoolDetails?.schoolAddress}</p>
-    //   <p> Official Login Email Address: ${schoolDetails?.email}</p>
-    //   <p> Principal Name: ${schoolDetails?.p_Name}</p>
-    //   <p> Principal Email: ${schoolDetails?.p_email}</p>
-    //   <p> Principal Phone: ${schoolDetails?.p_phone}</p>
-    //   <p> Principal Cell: ${schoolDetails?.p_contact}</p>
-    //   <p> Coordinator Name: ${schoolDetails?.c_Name}</p>
-    //   <p> Coordinator Email: ${schoolDetails?.c_email}</p>
-    //   <p> Coordinator Phone: ${schoolDetails?.c_phone}</p>
-    //   <p> Coordinator Cell: ${schoolDetails?.c_contact}</p>
-    //   <p> Coordinator Account Details: ${schoolDetails?.c_accountDetails}</p>
-    //   <p> Total Number of students Registered: ${totalStudents.length}</p>
-    //   ${tableHtml}`,
-    // };
+    const fromEmail = process.env.AWS_SMTP_EMAIL;
+    if (!fromEmail) {
+      return NextResponse.json(
+        { message: "Email service is not configured" },
+        { status: 500 }
+      );
+    }
 
-    // const sendEmailWithRetry = async (
-    //   mailOptions: nodemailer.SendMailOptions,
-    //   retries = 1
-    // ): Promise<{ success: boolean }> => {
-    //   try {
-    //     await transporter.sendMail(mailOptions);
-    //     return { success: true };
-    //   } catch (error) {
-    //     if (retries > 0) {
-    //       console.log(`Retrying to send email... Attempts left: ${retries}`);
-    //       return sendEmailWithRetry(mailOptions, retries - 1);
-    //     } else {
-    //       throw error;
-    //     }
-    //   }
-    // };
+    // Prepare recipient emails
+    const toEmails = [
+      // schoolDetails?.email,
+      // schoolDetails?.p_email,
+      // schoolDetails?.c_email,
+      // "valiantsina@kangaroopakistan.org",
+      "kainatkiranrashid2@gmail.com"
+    ].filter((email): email is string => !!email);
 
-    const mailOptions: SendMailOptions = {
-      from: process.env.AWS_SMTP_EMAIL,
-      to: [
-        schoolDetails?.email || "",
-        schoolDetails?.p_email || "",
-        schoolDetails?.c_email || "",
-
-        "valiantsina@kangaroopakistan.org",
-        // aminaEmail?.email || "",
-        // ebdullahEmail?.email || "",
-      ],
-
-      subject: `Registration Confirmation - ${contestNameShort} ${year}`,
-      html: `<p><b>Dear Sir / Madam,</b></p>
+    const subject = `Registration Confirmation - ${contestNameShort} ${year}`;
+    
+    const htmlBody = `<p><b>Dear Sir / Madam,</b></p>
       <p>We are pleased to confirm that your registration for the ${contestName} ${year} is complete, and your payment has been successfully verified. Thank you for your participation! </p>
       
       <p>Below are the details of your institution. Kindly verify, as these details will be used in all official documents: </p>
@@ -184,18 +137,38 @@ export async function GET(
       <p> Coordinator Phone: ${schoolDetails?.c_phone}</p>
       <p> Coordinator Cell: ${schoolDetails?.c_contact}</p>
       <p> School Account Details: ${schoolDetails?.bankTitle}</p>
-
       <p> Coordinator Account Details: ${schoolDetails?.c_accountDetails}</p>
       <p> Total Number of students Registered: ${totalStudents.length}</p>
       ${tableHtml}
 
-      ${getEmailSignature(contestNameShort)}
-`,
-    };
+      ${getEmailSignature(contestNameShort)}`;
+
+    // Create raw email message
+    const boundary = `----=_Part_${Date.now()}`;
+    const rawMessage = [
+      `From: Kangaroo Pakistan <${fromEmail}>`,
+      `To: ${toEmails.join(", ")}`,
+      `Subject: ${subject}`,
+      "MIME-Version: 1.0",
+      `Content-Type: multipart/mixed; boundary="${boundary}"`,
+      "",
+      `--${boundary}`,
+      "Content-Type: text/html; charset=UTF-8",
+      "Content-Transfer-Encoding: 7bit",
+      "",
+      htmlBody,
+      "",
+      `--${boundary}--`,
+    ].join("\r\n");
+
+    const sendRawEmailCommand = new SendRawEmailCommand({
+      RawMessage: {
+        Data: new Uint8Array(Buffer.from(rawMessage)),
+      },
+    });
 
     try {
-      // await emailManager.sendEmail(mailOptions);
-      await transporter.sendMail(mailOptions);
+      await ses.send(sendRawEmailCommand);
       return NextResponse.json("Email sent Successfully", { status: 200 });
     } catch (error) {
       console.error("Failed to send email:", error);
