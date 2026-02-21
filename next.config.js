@@ -1,10 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Production optimizations
-  compiler: {
-    // Remove console logs in production
-    removeConsole: process.env.NODE_ENV === 'production',
-  },
+  // Production optimizations (only applied in production, not with Turbopack)
+  ...(process.env.NODE_ENV === 'production' && {
+    compiler: {
+      removeConsole: true,
+    },
+  }),
 
   // Experimental features for Next.js 14.x
   experimental: {
@@ -20,7 +21,32 @@ const nextConfig = {
   // Reduce bundle size
   transpilePackages: ["@react-pdf/renderer", "@tanstack/react-table"],
 
-  webpack: (config, { isServer }) => {
+  // Speed up development
+  swcMinify: true,
+
+  // Fix chunk loading issues and improve performance
+  onDemandEntries: {
+    // period (in ms) where the server will keep pages in the buffer
+    maxInactiveAge: 60 * 1000,
+    // number of pages that should be kept simultaneously without being disposed
+    pagesBufferLength: 2, // Reduced from 5 to 2 for faster compilation
+  },
+
+  webpack: (config, { dev, isServer }) => {
+    // Development optimizations
+    if (dev) {
+      // Faster source maps in development
+      config.devtool = 'cheap-module-source-map';
+      
+      // Reduce the number of modules to compile
+      config.optimization = {
+        ...config.optimization,
+        removeAvailableModules: false,
+        removeEmptyChunks: false,
+        splitChunks: false,
+      };
+    }
+
     // Font handling
     config.module.rules.push({
       test: /\.(woff|woff2|eot|ttf|otf)$/,
@@ -53,14 +79,27 @@ const nextConfig = {
       };
     }
 
+    // Increase chunk size limit to prevent timeout issues
+    config.performance = {
+      ...config.performance,
+      maxAssetSize: 1000000, // 1MB
+      maxEntrypointSize: 1000000, // 1MB
+    };
+
+    // Cache configuration for faster rebuilds
+    config.cache = {
+      type: 'filesystem',
+      buildDependencies: {
+        config: [__filename],
+      },
+    };
+
     return config;
   },
 
-  api: {
-    bodyParser: {
-      sizeLimit: "50mb",
-    },
-  },
+  // Note: api.bodyParser is not supported with Turbopack
+  // If you need large request bodies, handle it in the API route itself
+  // using: export const config = { api: { bodyParser: { sizeLimit: '50mb' } } }
 
   async headers() {
     return [
