@@ -45,7 +45,7 @@ const UserNavbar = () => {
   }, [session]);
 
   const logOut = () => {
-    signOut();
+    signOut({ callbackUrl: '/' });
     toggleProfile();
   };
 
