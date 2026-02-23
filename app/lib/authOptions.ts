@@ -1,13 +1,17 @@
 
 import { db } from '@/app/lib/prisma'
 import { compare } from 'bcryptjs'
-import NextAuth, { type NextAuthOptions } from 'next-auth'
+import { type NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 
 
 export const authOptions: NextAuthOptions = {
   session: {
     strategy: 'jwt'
+  },
+  pages: {
+    signIn: '/',
+    error: '/', // Redirect errors back to homepage/login instead of /api/auth/error
   },
   providers: [
     CredentialsProvider({
@@ -25,37 +29,38 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
       
-        const user = await db.user.findUnique({
-          where: {
-            email: credentials.email,
-          },
-        });
-      
-        if (!user) {
-          throw new Error('Email not found ')
+        try {
+          const user = await db.user.findUnique({
+            where: {
+              email: credentials.email,
+            },
+          });
+        
+          if (!user) {
+            throw new Error('Email not found')
+          }
+          
+          const isPasswordValid = await compare(credentials.password, user.password);
+        
+          if (!isPasswordValid) {
+            throw new Error('Invalid password')
+          }
+        
+          // Modify the return object to match the extended User type
+          return {
+            id: user.id.toString(),
+            email: user.email,
+            role: user.role,
+            contactNumber: user.contactNumber,
+            schoolName: user.schoolName,
+            district: user.district,
+            schoolId: user.schoolId || null,
+          };
+        } catch (error) {
+          console.error('Auth error:', error);
+          return null;
         }
-        // if(user?.password != credentials.password ) {
-        //     throw new Error('Invalid password ')
-        // }
-        const isPasswordValid = await compare(credentials.password, user.password);
-      
-        if (!isPasswordValid) {
-          throw new Error('Invalid password ')
-        }
-      
-        // Modify the return object to match the extended User type
-        return {
-          id: user.id.toString(),
-          email: user.email,
-          role: user.role,
-          contactNumber: user.contactNumber,
-          schoolName: user.schoolName,
-          district: user.district,
-          schoolId: user.schoolId || null,
-        };
       }
-      
-
     })
   ],
   callbacks: {
@@ -86,6 +91,3 @@ export const authOptions: NextAuthOptions = {
     }
   }
 }
-
-const handler = NextAuth(authOptions)
-export { handler as GET, handler as POST }

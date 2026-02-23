@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { EyeOff, Eye } from "lucide-react";
+import { EyeOff, Eye, Loader2 } from "lucide-react";
 
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -23,6 +23,7 @@ const Login = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isSigningIn, setIsSigningIn] = useState(false);
   const router = useRouter();
   const { data: session, status } = useSession();
   const formSchema = z.object({
@@ -38,26 +39,33 @@ const Login = () => {
       password: "",
     },
   });
-  const isLoading = form.formState.isSubmitting;
+  const isLoading = form.formState.isSubmitting || isSigningIn;
+  
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    signIn("credentials", {
-      ...values,
-      redirect: false,
-    })
-      .then((result) => {
-        if (result?.error) {
-          setError(result?.error);
-        } else {
-          setError("");
-          router.refresh();
-          router.push("/dashboard");
-          router.refresh();
-        }
-      })
-      .catch((error) => {
-        // Handle any errors that occur during the signIn process
-        console.error("Sign in error:", error);
+    setIsSigningIn(true);
+    setError("");
+    
+    try {
+      const result = await signIn("credentials", {
+        ...values,
+        redirect: false,
       });
+      
+      if (result?.error) {
+        setError(result.error);
+      } else {
+        setError("");
+        setSuccess("Sign in successful! Redirecting...");
+        router.refresh();
+        router.push("/dashboard");
+        router.refresh();
+      }
+    } catch (error) {
+      console.error("Sign in error:", error);
+      setError("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsSigningIn(false);
+    }
   };
   useEffect(() => {
     if (session) {
@@ -83,6 +91,11 @@ const Login = () => {
             {error && (
               <span className="flex justify-center text-sm text-red-700">
                 {error}
+              </span>
+            )}
+            {success && (
+              <span className="flex justify-center text-sm text-green-700">
+                {success}
               </span>
             )}
             <Form {...form}>
@@ -146,8 +159,15 @@ const Login = () => {
                     type="submit"
                     disabled={isLoading}
                     variant="default"
-                    className="px-4">
-                    Sign In
+                    className="px-4 min-w-[100px]">
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Signing In...
+                      </>
+                    ) : (
+                      "Sign In"
+                    )}
                   </Button>
                   <Button
                     type="button"
