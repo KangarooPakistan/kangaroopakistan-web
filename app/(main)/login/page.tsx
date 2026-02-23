@@ -16,7 +16,7 @@ import {
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { signIn, useSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
 
 const Login = () => {
@@ -25,7 +25,6 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isSigningIn, setIsSigningIn] = useState(false);
   const router = useRouter();
-  const { data: session, status } = useSession();
   const formSchema = z.object({
     email: z.string().email({
       message: "Email is required",
