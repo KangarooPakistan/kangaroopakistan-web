@@ -67,13 +67,6 @@ const Login = () => {
       setIsSigningIn(false);
     }
   };
-  useEffect(() => {
-    if (session) {
-      console.log("Authenticated user data:", session.user);
-      console.log("User's role:", session.user.role);
-    }
-  }, [session]);
-
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
