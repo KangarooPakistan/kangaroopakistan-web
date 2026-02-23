@@ -12,8 +12,15 @@ export const LoginButton = () => {
 };
 
 export const LogoutButton = () => {
+  const handleLogout = () => {
+    signOut({ 
+      callbackUrl: '/',
+      redirect: true 
+    });
+  };
+
   return (
-    <Button variant="default" onClick={() => signOut({ callbackUrl: '/' })}>
+    <Button variant="default" onClick={handleLogout}>
       Sign Out
     </Button>
   );

@@ -33,7 +33,10 @@ const AdminNavbar = () => {
   };
 
   const logOut = () => {
-    signOut({ callbackUrl: '/' });
+    signOut({ 
+      callbackUrl: '/',
+      redirect: true 
+    });
     toggleProfile();
   };
   const toggleMobileMenu = () => {
