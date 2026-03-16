@@ -878,7 +878,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
         <Text style={styles.paragraph}>Dear Principal,</Text>
 
         <Text style={styles.paragraph}>
-          We are pleased to inform you that your school is participating in the
+          We are pleased to inform you that your school is participating in the 
           {profileData?.contestName}. Attached with this letter are the contest
           question booklets and answer sheets for the participating students.
         </Text>
@@ -1232,7 +1232,7 @@ const AttendanceSheet: React.FC<AttendanceSheetProps> = ({
         <Text style={styles.paragraph}>Best regards,</Text>
         <Text style={styles.paragraph}>Khalid Rasul Awan</Text>
         <Text style={styles.paragraph}>
-          COO Innventive Learning - KSF Pakistan
+          COO Innovative Learning | Inventive Learning - KSF Pakistan
         </Text>
       </Page>
       <Page
