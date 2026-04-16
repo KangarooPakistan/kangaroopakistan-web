@@ -109,14 +109,16 @@ export async function GET(
     }
 
     // Prepare recipient emails
-    const toEmails = [
-      schoolDetails?.email,
-      schoolDetails?.p_email,
-      schoolDetails?.c_email,
-      "valiantsina@kangaroopakistan.org",
-      "kainatkiranrashid2@gmail.com"
-      
-    ].filter((email): email is string => !!email);
+    const isDev = process.env.IS_DEV === "thisisdev/local";
+    const toEmails = isDev
+      ? ["kainatkiranrashid2@gmail.com"].filter((email): email is string => !!email)
+      : [
+          schoolDetails?.email,
+          schoolDetails?.p_email,
+          schoolDetails?.c_email,
+          "valiantsina@kangaroopakistan.org",
+          "kainatkiranrashid2@gmail.com"
+        ].filter((email): email is string => !!email);
 
     const subject = `Registration Confirmation - ${contestNameShort} ${year}`;
     

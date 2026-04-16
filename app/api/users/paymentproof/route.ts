@@ -144,14 +144,16 @@ export async function POST(request: Request) {
          `;
    
        // Prepare email recipients
-       const emailAddresses = [
-           schoolDetails?.email || "",
-           schoolDetails?.p_email || "",
-           schoolDetails?.c_email || "",
-           "valiantsina@kangaroopakistan.org",
-           "kainatkiranrashid2@gmail.com"
-           
-       ].filter((email) => email);
+       const isDev = process.env.IS_DEV === "thisisdev/local";
+       const emailAddresses = isDev
+         ? ["kainatkiranrashid2@gmail.com"].filter((email) => email)
+         : [
+             schoolDetails?.email || "",
+             schoolDetails?.p_email || "",
+             schoolDetails?.c_email || "",
+             "valiantsina@kangaroopakistan.org",
+             "kainatkiranrashid2@gmail.com"
+           ].filter((email) => email);
    
        if (emailAddresses.length === 0) {
          return NextResponse.json(

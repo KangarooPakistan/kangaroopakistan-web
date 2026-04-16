@@ -130,14 +130,17 @@ Team ${contestNameShort}<br/>
 <b>Address</b>: 1st Floor, Plaza 114, Main Boulevard, Phase 6, D.H.A Lahore <br/>
 www.kangaroopakistan.org`;
 
-    const emailAddresses = [
-      // "wajiha.farhat@gmail.com",
-      schoolDetails.email,
-      schoolDetails.p_email,
-      schoolDetails.c_email,
-      "valiantsina@kangaroopakistan.org",
-      "kainatkiranrashid2@gmail.com",
-    ].filter((email) => email);
+    const isDev = process.env.IS_DEV === "thisisdev/local";
+    const emailAddresses = isDev
+      ? ["kainatkiranrashid2@gmail.com"].filter((email) => email)
+      : [
+          // "wajiha.farhat@gmail.com",
+          schoolDetails.email,
+          schoolDetails.p_email,
+          schoolDetails.c_email,
+          "valiantsina@kangaroopakistan.org",
+          "kainatkiranrashid2@gmail.com",
+        ].filter((email) => email);
 
     if (emailAddresses.length === 0) {
       return NextResponse.json(
