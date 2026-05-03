@@ -1094,7 +1094,7 @@ interface MyDocumentProps {
   profileData: profileData;
 }
 
-const MyDocument: React.FC<MyDocumentProps> = ({ students, profileData }) => (
+const MyDocument: React.FC<MyDocumentProps> = React.memo(({ students, profileData }) => (
   <Document>
     {students.map((student, index) => (
       <Page size="A4" style={styles.page} key={index}>
@@ -1289,7 +1289,9 @@ const MyDocument: React.FC<MyDocumentProps> = ({ students, profileData }) => (
       </Page>
     ))}
   </Document>
-);
+));
+
+MyDocument.displayName = 'MyDocument';
 
 // Export MyDocument for use in bulk download
 export { MyDocument };
@@ -1309,14 +1311,19 @@ const generateVerticalNumbers = (totalNumbers: number, numColumns: number) => {
   return grid;
 };
 
-// Precompute grids and options once
+// Precompute grids and options once - OPTIMIZATION
 const GRID_24 = generateVerticalNumbers(24, 3);
 const GRID_30 = generateVerticalNumbers(30, 3);
-const OPTIONS = ["A", "B", "C", "D", "E"];
+const OPTIONS = "ABCDE".split(""); // Use string split for better performance
 
-// Render the numbers inside your PDF document
-const VerticalNumberGrid = ({ totalNumbers = 30 }) => {
-  const grid = totalNumbers === 24 ? GRID_24 : GRID_30;
+// Render the numbers inside your PDF document - OPTIMIZED with React.memo
+const VerticalNumberGrid = React.memo(({ totalNumbers = 30 }: { totalNumbers?: number }) => {
+  // Use pre-calculated grids for common sizes - OPTIMIZATION
+  const grid = React.useMemo(() => {
+    if (totalNumbers === 24) return GRID_24;
+    if (totalNumbers === 30) return GRID_30;
+    return generateVerticalNumbers(totalNumbers, 3);
+  }, [totalNumbers]);
 
   return (
     <View style={styles.answerGrid}>
@@ -1346,4 +1353,6 @@ const VerticalNumberGrid = ({ totalNumbers = 30 }) => {
       ))}
     </View>
   );
-};
+});
+
+VerticalNumberGrid.displayName = 'VerticalNumberGrid';
