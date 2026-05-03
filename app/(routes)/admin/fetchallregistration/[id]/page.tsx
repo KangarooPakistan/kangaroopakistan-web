@@ -19,6 +19,8 @@ import AllLabelsShort from "./AllLabelsShort";
 import Link from "next/link";
 import { useModal } from "@/hooks/use-modal-store";
 import { ReceiptsDownloadModal } from "./ReceiptsDownloadModal";
+import JSZip from "jszip";
+import AttendanceSheet from "./AttendanceSheet";
 
 export const dynamic = "force-dynamic"; // Ensures this page is always rendered server-side
 
@@ -64,8 +66,8 @@ interface Student {
   rollNumber: string;
   studentName: string;
   fatherName: string;
-  studentLevel: string;  // Changed from 'level' to match columns.tsx
-  studentClass: string;  // Changed from 'class' to match columns.tsx
+  level: string;
+  class: string; // Changed from `class` to `studentClass`
   schoolName: string;
   address: string | null;
   districtCode: string | null;
@@ -75,8 +77,19 @@ interface StudentData {
   rollNumber: string;
   studentName: string;
   fatherName: string;
+  level: string;
+  class: string;
+}
+interface AnswerSheetStudent {
+  rollNumber: string;
+  studentName: string;
+  fatherName: string;
   studentLevel: string;
   studentClass: string;
+  schoolId: number;
+  schoolName: string;
+  address: string;
+  districtCode: string | null;
 }
 interface profileData {
   p_Name: string;
@@ -132,6 +145,10 @@ const FetchAllRegistrations = () => {
   const [isBulkDownloadingAnswerSheets, setIsBulkDownloadingAnswerSheets] = useState(false);
   const [downloadProgressAnswerSheets, setDownloadProgressAnswerSheets] = useState({ current: 0, total: 0 });
   const [downloadedSchoolIds, setDownloadedSchoolIds] = useState<Set<string>>(new Set());
+  
+  // Bulk download state for attendance sheets
+  const [isBulkDownloadingAttendanceSheets, setIsBulkDownloadingAttendanceSheets] = useState(false);
+  const [downloadProgressAttendanceSheets, setDownloadProgressAttendanceSheets] = useState({ current: 0, total: 0 });
 
   const abortActiveRequest = () => {
     if (activeRequestController.current) {
@@ -176,8 +193,8 @@ const FetchAllRegistrations = () => {
 
           const levelCounts = flattenedStudents.reduce(
             (acc: LevelCounts, student: Student) => {
-              const { studentLevel } = student;
-              acc[studentLevel] = (acc[studentLevel] || 0) + 1;
+              const { level } = student;
+              acc[level] = (acc[level] || 0) + 1;
               return acc;
             },
             {}
@@ -749,17 +766,17 @@ const FetchAllRegistrations = () => {
           }
 
           // Map and clean student data - adapting to Pakistan structure
-          let students: Student[] = response.data
+          let students: AnswerSheetStudent[] = response.data
             .filter((student: any) => student && student.rollNumber)
             .map((student: any) => ({
               rollNumber: String(student.rollNumber || ''),
               studentName: String(student.studentName || ''),
               fatherName: String(student.fatherName || ''),
-              studentClass: String(student.class || ''),  // Map 'class' to 'studentClass'
-              studentLevel: String(student.level || ''),  // Map 'level' to 'studentLevel'
+              studentClass: String(student.class || student.studentClass || ''),
+              studentLevel: String(student.level || student.studentLevel || ''),
               schoolId: Number(student.schoolId || registration.schoolId),
               schoolName: String(student.schoolName || registration.schoolName || ''),
-              address: student.address || null,
+              address: student.address || '',
               districtCode: student.districtCode || null,
             }));
 
@@ -864,6 +881,480 @@ const FetchAllRegistrations = () => {
       position: "top-right",
       autoClose: 3000,
     });
+  };
+
+  // Bulk download ONLY attendance sheets (flat files in ZIP)
+  const handleBulkDownloadAttendanceSheets = async () => {
+    if (regData.length === 0) {
+      toast.error("No schools available to download", {
+        position: "top-right",
+        autoClose: 5000,
+      });
+      return;
+    }
+
+    // Prevent multiple simultaneous downloads
+    if (isBulkDownloadingAttendanceSheets) {
+      toast.warning("Download already in progress", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+      return;
+    }
+
+    const userConfirmed = window.confirm(
+      `This will download attendance sheets for ${regData.length} schools as a ZIP file. Continue?`
+    );
+    
+    if (!userConfirmed) return;
+
+    try {
+      setIsBulkDownloadingAttendanceSheets(true);
+      
+      // Create a deep copy of regData to prevent state mutation issues
+      const registrationsCopy = JSON.parse(JSON.stringify(regData));
+      setDownloadProgressAttendanceSheets({ current: 0, total: registrationsCopy.length });
+
+      const zip = new JSZip();
+      let successCount = 0;
+      let failedSchools: string[] = [];
+
+      toast.info(`Starting bulk download for ${registrationsCopy.length} attendance sheets...`, {
+        position: "top-right",
+        autoClose: 3000,
+      });
+
+      // Process each school
+      for (let i = 0; i < registrationsCopy.length; i++) {
+        const registration = registrationsCopy[i];
+        setDownloadProgressAttendanceSheets({ current: i + 1, total: registrationsCopy.length });
+
+        // Show progress every 10 schools
+        if (i > 0 && i % 10 === 0) {
+          console.log(`Progress: ${i}/${registrationsCopy.length} attendance sheets processed...`);
+        }
+
+        // Small delay to prevent browser from freezing
+        await new Promise(resolve => setTimeout(resolve, 50));
+
+        try {
+          // Validate registration data
+          if (!registration || !registration.id || !registration.schoolId) {
+            console.error(`Invalid registration data at index ${i}:`, registration);
+            failedSchools.push(`${registration?.schoolId || 'Unknown'} - ${registration?.schoolName || 'Unknown'} (Invalid registration data)`);
+            continue;
+          }
+
+          let response;
+          try {
+            // Fetch student data for this school with increased timeout
+            response = await axios.get(
+              `/api/users/pdfdownload/${registration.id}`,
+              { timeout: 60000 }
+            );
+          } catch (apiError: any) {
+            console.error(`API error fetching students for ${registration.schoolId}:`, apiError.message);
+            failedSchools.push(`${registration.schoolId} - ${registration.schoolName} (API error: ${apiError.message})`);
+            continue;
+          }
+
+          if (!response || !response.data || response.data.length === 0) {
+            console.error(`No student data found for school ${registration.schoolId}`);
+            failedSchools.push(`${registration.schoolId} - ${registration.schoolName} (No students)`);
+            continue;
+          }
+
+          // Use students data directly from API (same as individual download)
+          const students = response.data;
+
+          // Fetch school profile data
+          let res;
+          try {
+            res = await axios.get(
+              `/api/users/allusers/getschoolbyregid/${registration.id}`,
+              { timeout: 60000 }
+            );
+          } catch (apiError: any) {
+            console.error(`API error fetching school data for ${registration.schoolId}:`, apiError.message);
+            failedSchools.push(`${registration.schoolId} - ${registration.schoolName} (School API error: ${apiError.message})`);
+            continue;
+          }
+
+          if (!res || !res.data || !res.data.user) {
+            console.error(`No user data found for school ${registration.schoolId}`);
+            failedSchools.push(`${registration.schoolId} - ${registration.schoolName} (No user data)`);
+            continue;
+          }
+
+          // Validate contestId exists
+          if (!res.data.contestId) {
+            console.error(`No contestId found for school ${registration.schoolId}, using fallback`);
+            const fallbackContestId = registration.contestId || contestId;
+            if (!fallbackContestId) {
+              failedSchools.push(`${registration.schoolId} - ${registration.schoolName} (No contest ID)`);
+              continue;
+            }
+            res.data.contestId = fallbackContestId;
+          }
+
+          let contestData;
+          try {
+            contestData = await axios.get(
+              `/api/users/contests/${res.data.contestId}`,
+              { timeout: 60000 }
+            );
+          } catch (apiError: any) {
+            console.error(`API error fetching contest data for ${registration.schoolId}:`, apiError.message);
+            failedSchools.push(`${registration.schoolId} - ${registration.schoolName} (Contest API error: ${apiError.message})`);
+            continue;
+          }
+
+          if (!contestData || !contestData.data) {
+            console.error(`No contest data found for school ${registration.schoolId}`);
+            failedSchools.push(`${registration.schoolId} - ${registration.schoolName} (No contest data)`);
+            continue;
+          }
+
+          const profileData: profileData = {
+            p_Name: res.data.user.p_Name || '',
+            c_Name: res.data.user.c_Name || '',
+            p_contact: res.data.user.p_contact || '',
+            email: res.data.user.email || '',
+            contactNumber: res.data.user.contactNumber || '',
+            contestName: contestData.data.name || '',
+            contestCh: contestData.data.contestCh || '',
+            contestNo: contestData.data.contestNo || '',
+          };
+
+          // Generate Attendance Sheet PDF
+          try {
+            console.log(`Generating attendance PDF for school ${registration.schoolId}, students count: ${students.length}`);
+            
+            const attendanceDoc = <AttendanceSheet schoolData={students} profileData={profileData} />;
+            const attendancePdf = pdf(attendanceDoc);
+            const attendanceBlob = await attendancePdf.toBlob();
+
+            // Verify blob was created
+            if (!attendanceBlob || attendanceBlob.size === 0) {
+              console.error(`Empty attendance PDF generated for school ${registration.schoolId}`);
+              failedSchools.push(`${registration.schoolId} - ${registration.schoolName} (Empty PDF)`);
+              continue;
+            }
+
+            // Add to ZIP with school ID
+            const fileName = `${registration.schoolId}_attendance_sheet.pdf`;
+            zip.file(fileName, attendanceBlob);
+
+            successCount++;
+          } catch (pdfError: any) {
+            console.error(`PDF generation error for school ${registration.schoolId}:`, pdfError);
+            failedSchools.push(`${registration.schoolId} - ${registration.schoolName} (PDF error: ${pdfError.message})`);
+          }
+        } catch (error: any) {
+          const errorMessage = error.message || 'Unknown error';
+          console.error(`Error generating attendance PDF for school ${registration?.schoolId || 'Unknown'}:`, errorMessage, error);
+          failedSchools.push(`${registration?.schoolId || 'Unknown'} - ${registration?.schoolName || 'Unknown'} (${errorMessage})`);
+        }
+      }
+
+      // Generate and download ZIP file
+      if (successCount > 0) {
+        toast.info("Generating ZIP file... This may take a minute for large files.", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+
+        const zipBlob = await zip.generateAsync({ 
+          type: "blob",
+          compression: "DEFLATE",
+          compressionOptions: {
+            level: 6
+          }
+        });
+        const zipFileName = `attendance_sheets_${contestName.replace(/[^a-z0-9]/gi, '_')}_${new Date().toISOString().split('T')[0]}.zip`;
+        saveAs(zipBlob, zipFileName);
+
+        toast.success(
+          `✅ Successfully downloaded ${successCount} attendance sheets!${failedSchools.length > 0 ? ` (${failedSchools.length} failed)` : ''}`,
+          {
+            position: "top-right",
+            autoClose: 5000,
+          }
+        );
+
+        if (failedSchools.length > 0) {
+          console.error("Failed schools:", failedSchools);
+          toast.warning(
+            `Failed schools: ${failedSchools.slice(0, 3).join(', ')}${failedSchools.length > 3 ? ` and ${failedSchools.length - 3} more...` : ''}`,
+            { position: "top-right", autoClose: 10000 }
+          );
+        }
+      } else {
+        toast.error("Failed to generate any attendance sheets", {
+          position: "top-right",
+          autoClose: 5000,
+        });
+      }
+    } catch (error) {
+      console.error("Error during bulk download:", error);
+      toast.error("An error occurred during bulk download. Please try again.", {
+        position: "top-right",
+        autoClose: 5000,
+      });
+    } finally {
+      setIsBulkDownloadingAttendanceSheets(false);
+      setDownloadProgressAttendanceSheets({ current: 0, total: 0 });
+    }
+  };
+
+  // Bulk download answer sheets as ZIP
+  const handleBulkDownloadAnswerSheetsZip = async () => {
+    if (regData.length === 0) {
+      toast.error("No schools available to download", {
+        position: "top-right",
+        autoClose: 5000,
+      });
+      return;
+    }
+
+    // Prevent multiple simultaneous downloads
+    if (isBulkDownloadingAnswerSheets) {
+      toast.warning("Download already in progress", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+      return;
+    }
+
+    const userConfirmed = window.confirm(
+      `This will download answer sheets for ${regData.length} schools as a ZIP file. Continue?`
+    );
+    
+    if (!userConfirmed) return;
+
+    try {
+      setIsBulkDownloadingAnswerSheets(true);
+      
+      // Create a deep copy of regData to prevent state mutation issues
+      const registrationsCopy = JSON.parse(JSON.stringify(regData));
+      setDownloadProgressAnswerSheets({ current: 0, total: registrationsCopy.length });
+
+      const zip = new JSZip();
+      let successCount = 0;
+      let failedSchools: string[] = [];
+
+      toast.info(`Starting bulk download for ${registrationsCopy.length} answer sheets...`, {
+        position: "top-right",
+        autoClose: 3000,
+      });
+
+      // Process each school
+      for (let i = 0; i < registrationsCopy.length; i++) {
+        const registration = registrationsCopy[i];
+        setDownloadProgressAnswerSheets({ current: i + 1, total: registrationsCopy.length });
+
+        // Show progress every 10 schools
+        if (i > 0 && i % 10 === 0) {
+          console.log(`Progress: ${i}/${registrationsCopy.length} answer sheets processed...`);
+        }
+
+        // Small delay to prevent browser from freezing
+        await new Promise(resolve => setTimeout(resolve, 50));
+
+        try {
+          // Validate registration data
+          if (!registration || !registration.id || !registration.schoolId) {
+            console.error(`Invalid registration data at index ${i}:`, registration);
+            failedSchools.push(`${registration?.schoolId || 'Unknown'} - ${registration?.schoolName || 'Unknown'} (Invalid registration data)`);
+            continue;
+          }
+
+          let response;
+          try {
+            // Fetch student data for this school with increased timeout
+            response = await axios.get(
+              `/api/users/pdfdownload/${registration.id}`,
+              { timeout: 60000 }
+            );
+          } catch (apiError: any) {
+            console.error(`API error fetching students for ${registration.schoolId}:`, apiError.message);
+            failedSchools.push(`${registration.schoolId} - ${registration.schoolName} (API error: ${apiError.message})`);
+            continue;
+          }
+
+          if (!response || !response.data || response.data.length === 0) {
+            console.error(`No student data found for school ${registration.schoolId}`);
+            failedSchools.push(`${registration.schoolId} - ${registration.schoolName} (No students)`);
+            continue;
+          }
+
+          // Use students data directly from API and map to match MyDocument expectations
+          let students: AnswerSheetStudent[] = response.data
+            .filter((student: any) => student && student.rollNumber)
+            .map((student: any) => ({
+              rollNumber: String(student.rollNumber || ''),
+              studentName: String(student.studentName || ''),
+              fatherName: String(student.fatherName || ''),
+              studentClass: String(student.class || student.studentClass || ''),
+              studentLevel: String(student.level || student.studentLevel || ''),
+              schoolId: Number(student.schoolId || registration.schoolId),
+              schoolName: String(student.schoolName || registration.schoolName || ''),
+              address: student.address || '',
+              districtCode: student.districtCode || null,
+            }));
+
+          if (students.length === 0) {
+            console.error(`No valid students found for school ${registration.schoolId}`);
+            failedSchools.push(`${registration.schoolId} - ${registration.schoolName} (No valid students)`);
+            continue;
+          }
+
+          // Limit to 200 students per PDF (matching the CHUNK_SIZE in columns.tsx)
+          if (students.length > 200) {
+            students = students.slice(0, 200);
+          }
+
+          // Fetch school profile data
+          let res;
+          try {
+            res = await axios.get(
+              `/api/users/allusers/getschoolbyregid/${registration.id}`,
+              { timeout: 60000 }
+            );
+          } catch (apiError: any) {
+            console.error(`API error fetching school data for ${registration.schoolId}:`, apiError.message);
+            failedSchools.push(`${registration.schoolId} - ${registration.schoolName} (School API error: ${apiError.message})`);
+            continue;
+          }
+
+          if (!res || !res.data || !res.data.user) {
+            console.error(`No user data found for school ${registration.schoolId}`);
+            failedSchools.push(`${registration.schoolId} - ${registration.schoolName} (No user data)`);
+            continue;
+          }
+
+          // Validate contestId exists
+          if (!res.data.contestId) {
+            console.error(`No contestId found for school ${registration.schoolId}, using fallback`);
+            const fallbackContestId = registration.contestId || contestId;
+            if (!fallbackContestId) {
+              failedSchools.push(`${registration.schoolId} - ${registration.schoolName} (No contest ID)`);
+              continue;
+            }
+            res.data.contestId = fallbackContestId;
+          }
+
+          let contestData;
+          try {
+            contestData = await axios.get(
+              `/api/users/contests/${res.data.contestId}`,
+              { timeout: 60000 }
+            );
+          } catch (apiError: any) {
+            console.error(`API error fetching contest data for ${registration.schoolId}:`, apiError.message);
+            failedSchools.push(`${registration.schoolId} - ${registration.schoolName} (Contest API error: ${apiError.message})`);
+            continue;
+          }
+
+          if (!contestData || !contestData.data) {
+            console.error(`No contest data found for school ${registration.schoolId}`);
+            failedSchools.push(`${registration.schoolId} - ${registration.schoolName} (No contest data)`);
+            continue;
+          }
+
+          const profileData: profileData = {
+            p_Name: String(res.data.user.p_Name || ''),
+            c_Name: String(res.data.user.c_Name || ''),
+            p_contact: String(res.data.user.p_contact || ''),
+            email: String(res.data.user.email || ''),
+            contactNumber: String(res.data.user.contactNumber || ''),
+            contestName: String(contestData.data.name || ''),
+            contestCh: String(contestData.data.contestCh || ''),
+            contestNo: String(contestData.data.contestNo || ''),
+          };
+
+          // Generate Answer Sheet PDF
+          try {
+            console.log(`Generating answer sheet PDF for school ${registration.schoolId}, students count: ${students.length}`);
+            
+            // Import MyDocument from columns.tsx
+            const { MyDocument } = await import('./columns');
+            
+            const answerDoc = <MyDocument students={students} profileData={profileData} />;
+            const answerPdf = pdf(answerDoc);
+            const answerBlob = await answerPdf.toBlob();
+
+            // Verify blob was created
+            if (!answerBlob || answerBlob.size === 0) {
+              console.error(`Empty answer sheet PDF generated for school ${registration.schoolId}`);
+              failedSchools.push(`${registration.schoolId} - ${registration.schoolName} (Empty PDF)`);
+              continue;
+            }
+
+            // Add to ZIP with school ID
+            const fileName = `${registration.schoolId}_answer_sheet.pdf`;
+            zip.file(fileName, answerBlob);
+
+            successCount++;
+          } catch (pdfError: any) {
+            console.error(`PDF generation error for school ${registration.schoolId}:`, pdfError);
+            failedSchools.push(`${registration.schoolId} - ${registration.schoolName} (PDF error: ${pdfError.message})`);
+          }
+        } catch (error: any) {
+          const errorMessage = error.message || 'Unknown error';
+          console.error(`Error generating answer sheet PDF for school ${registration?.schoolId || 'Unknown'}:`, errorMessage, error);
+          failedSchools.push(`${registration?.schoolId || 'Unknown'} - ${registration?.schoolName || 'Unknown'} (${errorMessage})`);
+        }
+      }
+
+      // Generate and download ZIP file
+      if (successCount > 0) {
+        toast.info("Generating ZIP file... This may take a minute for large files.", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+
+        const zipBlob = await zip.generateAsync({ 
+          type: "blob",
+          compression: "DEFLATE",
+          compressionOptions: {
+            level: 6
+          }
+        });
+        const zipFileName = `answer_sheets_${contestName.replace(/[^a-z0-9]/gi, '_')}_${new Date().toISOString().split('T')[0]}.zip`;
+        saveAs(zipBlob, zipFileName);
+
+        toast.success(
+          `✅ Successfully downloaded ${successCount} answer sheets!${failedSchools.length > 0 ? ` (${failedSchools.length} failed)` : ''}`,
+          {
+            position: "top-right",
+            autoClose: 5000,
+          }
+        );
+
+        if (failedSchools.length > 0) {
+          console.error("Failed schools:", failedSchools);
+          toast.warning(
+            `Failed schools: ${failedSchools.slice(0, 3).join(', ')}${failedSchools.length > 3 ? ` and ${failedSchools.length - 3} more...` : ''}`,
+            { position: "top-right", autoClose: 10000 }
+          );
+        }
+      } else {
+        toast.error("Failed to generate any answer sheets", {
+          position: "top-right",
+          autoClose: 5000,
+        });
+      }
+    } catch (error) {
+      console.error("Error during bulk download:", error);
+      toast.error("An error occurred during bulk download. Please try again.", {
+        position: "top-right",
+        autoClose: 5000,
+      });
+    } finally {
+      setIsBulkDownloadingAnswerSheets(false);
+      setDownloadProgressAnswerSheets({ current: 0, total: 0 });
+    }
   };
 
   return (
@@ -1034,6 +1525,26 @@ const FetchAllRegistrations = () => {
               Reset Download Tracking
             </Button>
           )}
+          <Button
+            variant="default"
+            size="lg"
+            className=" font-medium text-[15px]  tracking-wide"
+            disabled={isBulkDownloadingAttendanceSheets || regData.length === 0}
+            onClick={handleBulkDownloadAttendanceSheets}>
+            {isBulkDownloadingAttendanceSheets 
+              ? `Downloading... (${downloadProgressAttendanceSheets.current}/${downloadProgressAttendanceSheets.total})` 
+              : 'Download All Attendance Sheets (ZIP)'}
+          </Button>
+          <Button
+            variant="default"
+            size="lg"
+            className=" font-medium text-[15px]  tracking-wide"
+            disabled={isBulkDownloadingAnswerSheets || regData.length === 0}
+            onClick={handleBulkDownloadAnswerSheetsZip}>
+            {isBulkDownloadingAnswerSheets 
+              ? `Downloading... (${downloadProgressAnswerSheets.current}/${downloadProgressAnswerSheets.total})` 
+              : 'Download All Answer Sheets (ZIP)'}
+          </Button>
         </div>
       </div>
       <div className="block md:hidden">
@@ -1145,6 +1656,26 @@ const FetchAllRegistrations = () => {
               Reset Tracking
             </Button>
           )}
+          <Button
+            className=" font-medium text-[11px]  tracking-wide"
+            variant="default"
+            size="sm"
+            disabled={isBulkDownloadingAttendanceSheets || regData.length === 0}
+            onClick={handleBulkDownloadAttendanceSheets}>
+            {isBulkDownloadingAttendanceSheets 
+              ? `Downloading... (${downloadProgressAttendanceSheets.current}/${downloadProgressAttendanceSheets.total})` 
+              : 'Download Attendance Sheets (ZIP)'}
+          </Button>
+          <Button
+            className=" font-medium text-[11px]  tracking-wide"
+            variant="default"
+            size="sm"
+            disabled={isBulkDownloadingAnswerSheets || regData.length === 0}
+            onClick={handleBulkDownloadAnswerSheetsZip}>
+            {isBulkDownloadingAnswerSheets 
+              ? `Downloading... (${downloadProgressAnswerSheets.current}/${downloadProgressAnswerSheets.total})` 
+              : 'Download Answer Sheets (ZIP)'}
+          </Button>
         </div>
       </div>
       <div className="mt-6 border rounded-md p-4 bg-white shadow-sm">
