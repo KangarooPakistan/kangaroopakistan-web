@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import SchoolReportDocument from "./SchoolReportDocument";
 import { getSession } from "next-auth/react";
 import CheckList from "./CheckList";
