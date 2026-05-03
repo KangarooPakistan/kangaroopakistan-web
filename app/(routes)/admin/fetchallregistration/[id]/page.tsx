@@ -64,8 +64,8 @@ interface Student {
   rollNumber: string;
   studentName: string;
   fatherName: string;
-  level: string;
-  class: string; // Changed from `class` to `studentClass`
+  studentLevel: string;  // Changed from 'level' to match columns.tsx
+  studentClass: string;  // Changed from 'class' to match columns.tsx
   schoolName: string;
   address: string | null;
   districtCode: string | null;
@@ -75,8 +75,18 @@ interface StudentData {
   rollNumber: string;
   studentName: string;
   fatherName: string;
-  level: string;
-  class: string;
+  studentLevel: string;
+  studentClass: string;
+}
+interface profileData {
+  p_Name: string;
+  c_Name: string;
+  p_contact: string;
+  email: string;
+  contactNumber: string;
+  contestName: string;
+  contestCh: string;
+  contestNo: string;
 }
 type LevelCounts = Record<string, number>;
 
@@ -117,6 +127,11 @@ const FetchAllRegistrations = () => {
   const [importInsertedCount, setImportInsertedCount] = useState<number | null>(
     null
   );
+  
+  // Bulk download state for answer sheets one by one
+  const [isBulkDownloadingAnswerSheets, setIsBulkDownloadingAnswerSheets] = useState(false);
+  const [downloadProgressAnswerSheets, setDownloadProgressAnswerSheets] = useState({ current: 0, total: 0 });
+  const [downloadedSchoolIds, setDownloadedSchoolIds] = useState<Set<string>>(new Set());
 
   const abortActiveRequest = () => {
     if (activeRequestController.current) {
@@ -161,8 +176,8 @@ const FetchAllRegistrations = () => {
 
           const levelCounts = flattenedStudents.reduce(
             (acc: LevelCounts, student: Student) => {
-              const { level } = student;
-              acc[level] = (acc[level] || 0) + 1;
+              const { studentLevel } = student;
+              acc[studentLevel] = (acc[studentLevel] || 0) + 1;
               return acc;
             },
             {}
@@ -661,6 +676,196 @@ const FetchAllRegistrations = () => {
     }
   };
 
+  // Download all answer sheets ONE BY ONE - with resume capability
+  const handleDownloadAllAnswerSheetsOneByOne = async (resumeMode = false) => {
+    if (regData.length === 0) {
+      toast.error("No schools available to download", {
+        position: "top-right",
+        autoClose: 5000,
+      });
+      return;
+    }
+
+    // Prevent multiple simultaneous downloads
+    if (isBulkDownloadingAnswerSheets) {
+      toast.warning("Download already in progress", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+      return;
+    }
+
+    // Filter out already downloaded schools if resuming
+    const schoolsToDownload = resumeMode 
+      ? regData.filter(reg => !downloadedSchoolIds.has(reg.id))
+      : regData;
+
+    if (schoolsToDownload.length === 0) {
+      toast.info("All schools have already been downloaded!", {
+        position: "top-right",
+        autoClose: 5000,
+      });
+      return;
+    }
+
+    const userConfirmed = window.confirm(
+      resumeMode
+        ? `Resume download: ${schoolsToDownload.length} schools remaining. Continue?`
+        : `This will download ${regData.length} PDF files one by one. This will take approximately ${Math.ceil(regData.length * 2 / 60)} minutes. Continue?`
+    );
+    
+    if (!userConfirmed) return;
+
+    try {
+      setIsBulkDownloadingAnswerSheets(true);
+      setDownloadProgressAnswerSheets({ current: 0, total: schoolsToDownload.length });
+
+      let successCount = 0;
+      let failedSchools: string[] = [];
+      const newDownloadedIds = new Set(downloadedSchoolIds);
+
+      // Use console.log instead of toast for progress to avoid toast corruption
+      console.log(`Starting download for ${schoolsToDownload.length} schools...`);
+
+      for (let i = 0; i < schoolsToDownload.length; i++) {
+        const registration = schoolsToDownload[i];
+        setDownloadProgressAnswerSheets({ current: i + 1, total: schoolsToDownload.length });
+
+        // Log progress to console instead of toast
+        if (i > 0 && i % 10 === 0) {
+          console.log(`Progress: ${i}/${schoolsToDownload.length} downloaded...`);
+        }
+
+        // LONGER delay between downloads
+        if (i > 0) {
+          await new Promise(resolve => setTimeout(resolve, 2000)); // 2 seconds
+        }
+
+        try {
+          const response = await axios.get(`/api/users/pdfdownload/${registration.id}`);
+          
+          if (!response || !response.data || response.data.length === 0) {
+            throw new Error('No student data received');
+          }
+
+          // Map and clean student data - adapting to Pakistan structure
+          let students: Student[] = response.data
+            .filter((student: any) => student && student.rollNumber)
+            .map((student: any) => ({
+              rollNumber: String(student.rollNumber || ''),
+              studentName: String(student.studentName || ''),
+              fatherName: String(student.fatherName || ''),
+              studentClass: String(student.class || ''),  // Map 'class' to 'studentClass'
+              studentLevel: String(student.level || ''),  // Map 'level' to 'studentLevel'
+              schoolId: Number(student.schoolId || registration.schoolId),
+              schoolName: String(student.schoolName || registration.schoolName || ''),
+              address: student.address || null,
+              districtCode: student.districtCode || null,
+            }));
+
+          if (students.length === 0) {
+            throw new Error('No valid students found');
+          }
+
+          // Limit to 200 students per PDF (matching the CHUNK_SIZE in columns.tsx)
+          if (students.length > 200) {
+            students = students.slice(0, 200);
+          }
+
+          const res = await axios.get(`/api/users/allusers/getschoolbyregid/${registration.id}`);
+          const contestData = await axios.get(`/api/users/contests/${res.data.contestId}`);
+
+          const profileData: profileData = {
+            p_Name: String(res.data.user.p_Name || ''),
+            c_Name: String(res.data.user.c_Name || ''),
+            p_contact: String(res.data.user.p_contact || ''),
+            email: String(res.data.user.email || ''),
+            contactNumber: String(res.data.user.contactNumber || ''),
+            contestName: String(contestData.data.name || ''),
+            contestCh: String(contestData.data.contestCh || ''),
+            contestNo: String(contestData.data.contestNo || ''),
+          };
+
+          // Import MyDocument from columns.tsx
+          const { MyDocument } = await import('./columns');
+          
+          // Use the pattern from columns.tsx - pass doc directly to pdf()
+          const doc = <MyDocument students={students} profileData={profileData} />;
+          const asPdf = pdf(doc);
+          const blob = await asPdf.toBlob();
+
+          const pdfName = `${students[0].schoolId}_answer_sheet.pdf`;
+          saveAs(blob, pdfName);
+          
+          // Longer delay to allow garbage collection and prevent font corruption
+          await new Promise(resolve => setTimeout(resolve, 200));
+          
+          // Mark as downloaded
+          newDownloadedIds.add(registration.id);
+          setDownloadedSchoolIds(new Set(newDownloadedIds));
+          
+          successCount++;
+          console.log(`✓ Successfully downloaded school ${registration.schoolId} (${successCount}/${schoolsToDownload.length})`);
+          
+        } catch (error: any) {
+          const errorMsg = error?.message || 'Unknown error';
+          console.error(`✗ Failed for school ${registration.schoolId}:`, errorMsg);
+          failedSchools.push(`${registration.schoolId} - ${registration.schoolName}`);
+        }
+      }
+
+      const totalDownloaded = newDownloadedIds.size;
+      const remaining = regData.length - totalDownloaded;
+
+      // Show final result with toast
+      try {
+        toast.success(
+          `✅ Downloaded ${successCount}/${schoolsToDownload.length} schools! Total: ${totalDownloaded}/${regData.length}${remaining > 0 ? ` (${remaining} remaining)` : ''}`,
+          { position: "top-right", autoClose: 8000 }
+        );
+
+        if (failedSchools.length > 0) {
+          console.error("Failed schools:", failedSchools);
+          toast.warning(
+            `Failed schools: ${failedSchools.slice(0, 3).join(', ')}${failedSchools.length > 3 ? ` and ${failedSchools.length - 3} more...` : ''}`,
+            { position: "top-right", autoClose: 10000 }
+          );
+        }
+
+        if (remaining > 0) {
+          toast.info(
+            `${remaining} schools remaining. Click "Resume Download" to continue.`,
+            { position: "top-right", autoClose: 10000 }
+          );
+        }
+      } catch (toastError) {
+        // If toast fails, just log to console
+        console.log("Download complete but toast notification failed");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      
+      try {
+        toast.error("An error occurred during download", { position: "top-right", autoClose: 5000 });
+      } catch (toastError) {
+        console.error("Toast error:", toastError);
+      }
+    } finally {
+      // Always reset download state, even if there's an error
+      setIsBulkDownloadingAnswerSheets(false);
+      setDownloadProgressAnswerSheets({ current: 0, total: 0 });
+    }
+  };
+
+  // Reset downloaded tracking
+  const handleResetDownloadTracking = () => {
+    setDownloadedSchoolIds(new Set());
+    toast.info("Download tracking reset. You can start fresh.", {
+      position: "top-right",
+      autoClose: 3000,
+    });
+  };
+
   return (
     <div className="container mx-auto py-10">
       <h1 className="text-3xl text-center my-3 font-bold text-purple-600">
@@ -799,6 +1004,36 @@ const FetchAllRegistrations = () => {
             onClick={handleDownloadReceipts}>
             Download Receipts
           </Button>
+          <Button
+            variant="default"
+            size="lg"
+            className=" font-medium text-[15px]  tracking-wide"
+            disabled={isBulkDownloadingAnswerSheets || regData.length === 0}
+            onClick={() => handleDownloadAllAnswerSheetsOneByOne(false)}>
+            {isBulkDownloadingAnswerSheets 
+              ? `Downloading... (${downloadProgressAnswerSheets.current}/${downloadProgressAnswerSheets.total})` 
+              : 'Download All Answer Sheets (One by One)'}
+          </Button>
+          {downloadedSchoolIds.size > 0 && (
+            <Button
+              variant="default"
+              size="lg"
+              className=" font-medium text-[15px]  tracking-wide"
+              disabled={isBulkDownloadingAnswerSheets}
+              onClick={() => handleDownloadAllAnswerSheetsOneByOne(true)}>
+              Resume Download ({regData.length - downloadedSchoolIds.size} remaining)
+            </Button>
+          )}
+          {downloadedSchoolIds.size > 0 && (
+            <Button
+              variant="outline"
+              size="lg"
+              className=" font-medium text-[15px]  tracking-wide"
+              disabled={isBulkDownloadingAnswerSheets}
+              onClick={handleResetDownloadTracking}>
+              Reset Download Tracking
+            </Button>
+          )}
         </div>
       </div>
       <div className="block md:hidden">
@@ -880,6 +1115,36 @@ const FetchAllRegistrations = () => {
             onClick={handleDownloadReceipts}>
             Download Receipts
           </Button>
+          <Button
+            className=" font-medium text-[11px]  tracking-wide"
+            variant="default"
+            size="sm"
+            disabled={isBulkDownloadingAnswerSheets || regData.length === 0}
+            onClick={() => handleDownloadAllAnswerSheetsOneByOne(false)}>
+            {isBulkDownloadingAnswerSheets 
+              ? `Downloading... (${downloadProgressAnswerSheets.current}/${downloadProgressAnswerSheets.total})` 
+              : 'Download All Answer Sheets'}
+          </Button>
+          {downloadedSchoolIds.size > 0 && (
+            <Button
+              className=" font-medium text-[11px]  tracking-wide"
+              variant="default"
+              size="sm"
+              disabled={isBulkDownloadingAnswerSheets}
+              onClick={() => handleDownloadAllAnswerSheetsOneByOne(true)}>
+              Resume ({regData.length - downloadedSchoolIds.size} left)
+            </Button>
+          )}
+          {downloadedSchoolIds.size > 0 && (
+            <Button
+              className=" font-medium text-[11px]  tracking-wide"
+              variant="outline"
+              size="sm"
+              disabled={isBulkDownloadingAnswerSheets}
+              onClick={handleResetDownloadTracking}>
+              Reset Tracking
+            </Button>
+          )}
         </div>
       </div>
       <div className="mt-6 border rounded-md p-4 bg-white shadow-sm">

@@ -1291,6 +1291,9 @@ const MyDocument: React.FC<MyDocumentProps> = ({ students, profileData }) => (
   </Document>
 );
 
+// Export MyDocument for use in bulk download
+export { MyDocument };
+
 const generateVerticalNumbers = (totalNumbers: number, numColumns: number) => {
   const numRows = Math.ceil(totalNumbers / numColumns);
   const grid = Array.from({ length: numRows }, () =>
