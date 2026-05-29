@@ -286,6 +286,23 @@ export async function GET(
       );
     }
 
+    // Block results for schools that are on hold for this contest
+    const holdRecord = await db.resultHold.findUnique({
+      where: {
+        contestId_schoolId: {
+          contestId: latestScore.contestId,
+          schoolId: schoolIntId,
+        },
+      },
+    });
+
+    if (holdRecord?.hold) {
+      return NextResponse.json(
+        { message: "Result not found for this rollNumber" },
+        { status: 404 }
+      );
+    }
+
     // Fetch all scores for this contest
     const allContestScores = await db.score.findMany({
       where: {
