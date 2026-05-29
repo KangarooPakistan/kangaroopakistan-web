@@ -387,56 +387,157 @@ export async function GET(
 
     // 3a. School name search — find ALL schools matching the query
     const matchedSchools = await db.user.findMany({
-      where: {
-        schoolName: { contains: query },
-      },
+      where: { schoolName: { contains: query } },
       select: { schoolId: true, schoolName: true, schoolAddress: true, city: true },
     });
 
     if (matchedSchools.length > 0) {
-      // Fetch all contest scores once for ranking
-      const allContestScores = (
-        await db.score.findMany({
+      const matchedSchoolIds = matchedSchools.map((s) => s.schoolId);
+
+      // Batch: hold checks, registrations, all contest scores — in parallel
+      const [holdRecords, registrations, allContestScores] = await Promise.all([
+        db.resultHold.findMany({
+          where: {
+            contestId: activeContestId,
+            schoolId: { in: matchedSchoolIds },
+          },
+          select: { schoolId: true, hold: true },
+        }),
+        db.registration.findMany({
+          where: {
+            contestId: activeContestId,
+            schoolId: { in: matchedSchoolIds },
+          },
+          select: { id: true, schoolId: true },
+        }),
+        db.score.findMany({
           where: { contestId: activeContestId },
-          include: {
-            results: true,
+          select: {
+            id: true, rollNo: true, contestId: true,
+            score: true, totalMarks: true, percentage: true,
+            cRow1: true, cRow2: true, cRow3: true, cTotal: true,
+            creditScore: true, description: true, missing: true,
+            wrong: true, updatedAt: true,
+            results: { select: { id: true, scoreId: true, percentage: true, contestId: true, schoolId: true, district: true, class: true, level: true, AwardLevel: true, rollNumber: true, createdAt: true, updatedAt: true } },
             contest: { select: { name: true, contestDate: true, contestNo: true } },
           },
-        })
-      ).map(processRawScore);
+        }),
+      ]);
 
+      const holdSet = new Set(
+        holdRecords.filter((h) => h.hold).map((h) => h.schoolId)
+      );
+      const regMap = new Map(registrations.map((r) => [r.schoolId, r.id]));
+
+      // Batch: all students for all eligible registrations
+      const eligibleRegIds = registrations
+        .filter((r) => !holdSet.has(r.schoolId))
+        .map((r) => r.id);
+
+      const allStudents = await db.student.findMany({
+        where: { registrationId: { in: eligibleRegIds } },
+        select: {
+          rollNumber: true, studentName: true,
+          fatherName: true, class: true, level: true, registrationId: true,
+        },
+      });
+
+      // Build lookup maps
+      const processedScores = allContestScores.map(processRawScore);
+      const scoreByRollNo = new Map(processedScores.map((s) => [s.rollNo, s]));
+      const studentsByRegId = new Map<string, typeof allStudents>();
+      for (const s of allStudents) {
+        const arr = studentsByRegId.get(s.registrationId) ?? [];
+        arr.push(s);
+        studentsByRegId.set(s.registrationId, arr);
+      }
+
+      // Build school groups in memory — no more per-student DB queries
       const schoolGroups: any[] = [];
 
       for (const school of matchedSchools) {
-        // Hold check
-        const holdRecord = await db.resultHold.findUnique({
-          where: {
-            contestId_schoolId: {
-              contestId: activeContestId,
-              schoolId: school.schoolId,
-            },
-          },
-        });
-        if (holdRecord?.hold) continue;
+        if (holdSet.has(school.schoolId)) continue;
+        const regId = regMap.get(school.schoolId);
+        if (!regId) continue;
 
-        const registration = await db.registration.findFirst({
-          where: { schoolId: school.schoolId, contestId: activeContestId },
-          select: { id: true },
-        });
-        if (!registration) continue;
+        const students = studentsByRegId.get(regId) ?? [];
+        const validResults: any[] = [];
 
-        const students = await db.student.findMany({
-          where: { registrationId: registration.id },
-          select: { rollNumber: true },
-        });
+        for (const studentInfo of students) {
+          const rollNumber = studentInfo.rollNumber;
+          const [year, districtCode, schoolId, classNum, serialNum, suffix] = rollNumber.split("-");
+          const schoolIntId = parseInt(schoolId, 10);
+          const paddedSchoolId = schoolIntId.toString().padStart(5, "0");
 
-        const results = await Promise.all(
-          students.map((s) =>
-            buildResultForRollNumber(s.rollNumber, activeContestId, allContestScores)
-          )
-        );
+          const studentScore = scoreByRollNo.get(rollNumber);
+          if (!studentScore) continue;
 
-        const validResults = results.filter(Boolean);
+          const classScores = processedScores.filter((s) =>
+            s.rollNo?.includes(`-${classNum}-`)
+          );
+
+          const scoreVal = Number(studentScore.score) || 0;
+          const totalMarks = Number(studentScore.totalMarks) || 0;
+          const storedPct = Number(studentScore.percentage) || 0;
+          const calcPct = totalMarks > 0 ? (scoreVal / totalMarks) * 100 : 0;
+          const isValid = Math.abs(calcPct - storedPct) < 0.01;
+
+          const missingQuestionsArray = getMissingQuestions(studentScore.description, studentInfo.class);
+
+          if (!isValid) {
+            validResults.push({
+              schoolId: schoolIntId,
+              schoolName: school.schoolName,
+              city: school.city,
+              schoolAddress: school.schoolAddress,
+              student: { rollNumber, name: studentInfo.studentName, class: studentInfo.class, level: studentInfo.level, fatherName: studentInfo.fatherName },
+              totalScores: 1,
+              scores: [{
+                ...convertBigIntToNumber(studentScore),
+                cRow1: null, cRow2: null, cRow3: null, cTotal: null,
+                creditScore: null, description: null, missing: null,
+                percentage: null, score: null, totalMarks: null, wrong: null,
+                parsedRollNumber: { year, district: districtCode, school: schoolId, class: classNum, serialNum, suffix },
+                missingQuestionsCount: missingQuestionsArray,
+                rankings: null,
+                validationError: "Percentage mismatch detected",
+              }],
+            });
+            continue;
+          }
+
+          const schoolScores = classScores.filter((s) => s.rollNo?.includes(`-${paddedSchoolId}-`));
+          const districtScores = classScores.filter((s) => s.rollNo?.includes(`${districtCode}-`));
+
+          const schoolRankings = calculateClassBasedRankings(schoolScores, classNum);
+          const districtRankings = calculateClassBasedRankings(districtScores, classNum);
+          const overallRankings = calculateClassBasedRankings(classScores, classNum);
+
+          const schoolRank = schoolRankings.find((s) => s.rollNo === rollNumber);
+          const districtRank = districtRankings.find((s) => s.rollNo === rollNumber);
+          const overallRank = overallRankings.find((s) => s.rollNo === rollNumber);
+
+          validResults.push({
+            schoolId: schoolIntId,
+            schoolName: school.schoolName,
+            city: school.city,
+            schoolAddress: school.schoolAddress,
+            student: { rollNumber, name: studentInfo.studentName, class: studentInfo.class, level: studentInfo.level, fatherName: studentInfo.fatherName },
+            totalScores: 1,
+            scores: [convertBigIntToNumber({
+              ...studentScore,
+              student: { studentName: studentInfo.studentName, fatherName: studentInfo.fatherName, class: studentInfo.class, level: studentInfo.level },
+              rankings: {
+                school: { rank: schoolRank?.rank || 0, totalParticipants: schoolRankings.length },
+                district: { rank: districtRank?.rank || 0, totalParticipants: districtRankings.length },
+                overall: { rank: overallRank?.rank || 0, totalParticipants: overallRankings.length },
+              },
+              parsedRollNumber: { year, district: districtCode, school: schoolId, class: classNum, serialNum, suffix },
+              missingQuestionsCount: missingQuestionsArray,
+            })],
+          });
+        }
+
         if (validResults.length === 0) continue;
 
         schoolGroups.push({
@@ -457,12 +558,7 @@ export async function GET(
       }
 
       return NextResponse.json(
-        {
-          searchType: "school",
-          query,
-          totalSchools: schoolGroups.length,
-          schools: schoolGroups,
-        },
+        { searchType: "school", query, totalSchools: schoolGroups.length, schools: schoolGroups },
         { status: 200 }
       );
     }
