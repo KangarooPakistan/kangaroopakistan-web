@@ -5,7 +5,42 @@ import IndividualReport from "@/app/(routes)/admin/results/[contestId]/Individua
 import { pdf } from "@react-pdf/renderer";
 import { saveAs } from "file-saver";
 
-interface StudentScore {
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+interface ScoreEntry {
+  contest: {
+    name: string;
+    contestDate: string | null;
+    contestNo: string | null;
+  };
+  percentage: number | null;
+  score: number;
+  missingQuestionsCount: number[];
+  creditScore: number;
+  cRow1: number;
+  cRow2: number;
+  cRow3: number;
+  missing: number;
+  cTotal: number;
+  wrong: number;
+  cRowTotal: number;
+  totalMarks: number;
+  parsedRollNumber?: {
+    year: string;
+    district: string;
+    school: string;
+    class: string;
+    serialNum: string;
+    suffix: string;
+  };
+  rankings?: {
+    school: { rank: number; totalParticipants: number };
+    district: { rank: number; totalParticipants: number };
+    overall: { rank: number; totalParticipants: number };
+  } | null;
+}
+
+interface SingleStudentResult {
   schoolName: string;
   city: string;
   schoolAddress: string;
@@ -17,281 +52,526 @@ interface StudentScore {
     level: string;
     class: string;
   };
-  scores: Array<{
-    contest: {
-      name: string;
-      contestDate: string | null;
-      contestNo: string | null;
-    };
-    percentage: number | null;
-    score: number;
-    missingQuestionsCount: number[];
+  scores: ScoreEntry[];
+}
 
-    creditScore: number;
-    cRow1: number;
-    cRow2: number;
-    cRow3: number;
-    missing: number;
-    cTotal: number;
-    wrong: number;
-    cRowTotal: number;
-    totalMarks: number;
-    // Suffix and other roll-number components come from parsedRollNumber
-    suffix?: string;
-    parsedRollNumber?: {
-      year: string;
-      district: string;
-      school: string;
-      class: string;
-      serialNum: string;
-      suffix: string;
-    };
-    rankings?: {
-      school: {
-        rank: number;
-        totalParticipants: number;
-      };
-      district: {
-        rank: number;
-        totalParticipants: number;
-      };
-      overall: {
-        rank: number;
-        totalParticipants: number;
-      };
-    };
-  }>;
+interface MultiStudentResponse {
+  searchType: "studentName" | "school";
+  schoolId?: number;
+  schoolName?: string;
+  city?: string;
+  schoolAddress?: string;
+  totalStudents: number;
+  students: SingleStudentResult[];
 }
-interface ApiError {
-  response?: {
-    data?: {
-      message?: string;
-    };
+
+type ApiResponse = SingleStudentResult | MultiStudentResponse;
+
+function isMultiResult(data: ApiResponse): data is MultiStudentResponse {
+  return "searchType" in data;
+}
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function buildTransformedData(studentData: SingleStudentResult) {
+  return studentData.scores.map((score) => ({
+    schoolName: studentData.schoolName,
+    schoolId: studentData.schoolId || 0,
+    city: studentData.city || "",
+    schoolAddress: studentData.schoolAddress || "",
+    rollNumber: studentData.student.rollNumber,
+    studentName: studentData.student.name,
+    fatherName: studentData.student.fatherName,
+    class: studentData.student.class,
+    level: studentData.student.level,
+    totalMarks: score.totalMarks || 0,
+    score: score.score || 0,
+    missingQuestionsCount: score.missingQuestionsCount,
+    creditScore: score.creditScore,
+    cRow1: score.cRow1,
+    cRow2: score.cRow2,
+    cRow3: score.cRow3,
+    wrong: score.wrong,
+    cTotal: score.cTotal,
+    missing: score.missing,
+    percentage: score.percentage || 0,
+    constestNo: score.contest.contestNo ? parseInt(score.contest.contestNo) : 0,
+    year: score.parsedRollNumber
+      ? parseInt(score.parsedRollNumber.year)
+      : new Date().getFullYear(),
+    contestName: score.contest.name || "",
+    suffix: score.parsedRollNumber?.suffix ?? "",
+    rankings: score.rankings || {
+      school: { rank: 0, totalParticipants: 0 },
+      district: { rank: 0, totalParticipants: 0 },
+      overall: { rank: 0, totalParticipants: 0 },
+    },
+  }));
+}
+
+// ─── RankBadge ────────────────────────────────────────────────────────────────
+
+function RankBadge({ label, rank, total }: { label: string; rank: number; total: number }) {
+  return (
+    <div className="flex flex-col items-center bg-indigo-50 border border-indigo-100 rounded-lg px-3 py-2 min-w-[80px]">
+      <span className="text-xs text-indigo-500 font-medium mb-0.5">{label}</span>
+      <span className="text-lg font-bold text-indigo-700">{rank}</span>
+      <span className="text-xs text-gray-400">of {total}</span>
+    </div>
+  );
+}
+
+// ─── ScoreDetail ──────────────────────────────────────────────────────────────
+
+function ScoreDetail({ score }: { score: ScoreEntry }) {
+  return (
+    <div className="mt-4 pt-4 border-t border-gray-100 space-y-3">
+      {/* Contest name + date */}
+      <div className="text-sm">
+        <span className="font-medium text-gray-900">{score.contest.name}</span>
+        {score.contest.contestDate && (
+          <span className="ml-2 text-gray-400">{score.contest.contestDate}</span>
+        )}
+      </div>
+
+      {score.rankings ? (
+        <>
+          {/* Score + percentage */}
+          <div className="grid grid-cols-2 gap-x-6 gap-y-1.5 text-sm">
+            <div>
+              <span className="text-gray-600 font-medium">Score: </span>
+              <span className="text-gray-900">{score.score} / {score.totalMarks}</span>
+            </div>
+            <div>
+              <span className="text-gray-600 font-medium">Percentage: </span>
+              <span className="text-gray-900">{score.percentage?.toFixed(1)}%</span>
+            </div>
+          </div>
+
+          {/* Rankings */}
+          <div>
+            <p className="text-xs text-gray-500 uppercase tracking-wide font-medium mb-2">Rankings</p>
+            <div className="flex gap-2">
+              <RankBadge
+                label="School"
+                rank={score.rankings.school.rank}
+                total={score.rankings.school.totalParticipants}
+              />
+              <RankBadge
+                label="District"
+                rank={score.rankings.district.rank}
+                total={score.rankings.district.totalParticipants}
+              />
+              <RankBadge
+                label="Overall"
+                rank={score.rankings.overall.rank}
+                total={score.rankings.overall.totalParticipants}
+              />
+            </div>
+          </div>
+        </>
+      ) : (
+        <p className="text-sm text-gray-400 italic">Rankings not available for this result</p>
+      )}
+    </div>
+  );
+}
+
+// ─── StudentCard ──────────────────────────────────────────────────────────────
+
+function StudentCard({
+  studentData,
+  defaultOpen = false,
+  showSchool = true,
+}: {
+  studentData: SingleStudentResult;
+  defaultOpen?: boolean;
+  showSchool?: boolean;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
+  const [downloadLoading, setDownloadLoading] = useState(false);
+
+  const hasValidRankings = studentData.scores.some(
+    (s) => s.rankings !== null && s.rankings !== undefined
+  );
+
+  const handleDownload = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setDownloadLoading(true);
+    try {
+      const transformedData = buildTransformedData(studentData);
+      const doc = <IndividualReport data={transformedData} />;
+      const blob = await pdf(doc).toBlob();
+      saveAs(blob, `Individual_Report_${studentData.student.rollNumber}.pdf`);
+    } catch (err) {
+      console.error("Error generating report:", err);
+    } finally {
+      setDownloadLoading(false);
+    }
   };
+
+  return (
+    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-3">
+      {/* ── Header — identical to single result header ── */}
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="w-full px-4 py-3 flex justify-between items-center border-b border-indigo-100 bg-indigo-50 hover:bg-indigo-100 transition-colors cursor-pointer text-left"
+        aria-expanded={open}
+      >
+        <div className="min-w-0">
+          <p className="text-base font-semibold text-gray-900 truncate">
+            {studentData.student.name}
+          </p>
+          <p className="text-xs text-gray-400 font-mono truncate">
+            {studentData.student.rollNumber}
+          </p>
+        </div>
+        <div className="flex items-center gap-2 flex-shrink-0 ml-2">
+          {!open && (
+            <span className="hidden sm:inline text-xs text-white font-medium bg-indigo-500 px-2 py-0.5 rounded-full">
+              View details
+            </span>
+          )}
+          <svg
+            className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+            fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
+      </button>
+
+      {/* ── Body — identical to single result body + download button ── */}
+      {open && (
+        <div className="px-4 py-3">
+          <div className="grid grid-cols-2 gap-x-6 gap-y-1.5 text-sm mb-1">
+            <div>
+              <span className="text-gray-600 font-medium">Class: </span>
+              <span className="text-gray-900">{studentData.student.class}</span>
+            </div>
+            <div>
+              <span className="text-gray-600 font-medium">Level: </span>
+              <span className="text-gray-900">{studentData.student.level}</span>
+            </div>
+            <div>
+              <span className="text-gray-600 font-medium">Father: </span>
+              <span className="text-gray-900">{studentData.student.fatherName}</span>
+            </div>
+            {showSchool && (
+              <div>
+                <span className="text-gray-600 font-medium">School: </span>
+                <span className="text-gray-900">
+                  {studentData.schoolName}
+                  {studentData.city ? `, ${studentData.city}` : ""}
+                </span>
+              </div>
+            )}
+          </div>
+
+          {studentData.scores.map((score, i) => (
+            <ScoreDetail key={i} score={score} />
+          ))}
+
+          {/* Download button */}
+          <div className="mt-4 flex justify-end">
+            {hasValidRankings ? (
+              <button
+                onClick={handleDownload}
+                disabled={downloadLoading}
+                className="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white font-medium text-xs py-1.5 px-3 rounded-lg transition-colors"
+              >
+                {downloadLoading ? (
+                  <>
+                    <svg className="animate-spin w-3 h-3" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                    </svg>
+                    Generating…
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3" />
+                    </svg>
+                    Download
+                  </>
+                )}
+              </button>
+            ) : (
+              <span className="text-xs text-gray-400 italic">No report available</span>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
+
+// ─── Main page ────────────────────────────────────────────────────────────────
 
 const StudentResultsPage = () => {
-  const [rollNumber, setRollNumber] = useState<string>("");
-  const [studentData, setStudentData] = useState<StudentScore | null>(null);
+  const [query, setQuery] = useState<string>("");
+  const [result, setResult] = useState<ApiResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [downloadLoading, setDownloadLoading] = useState<boolean>(false);
 
   const handleFetchResults = async () => {
-    if (!rollNumber) {
-      setError("Please enter a roll number");
+    if (!query.trim()) {
+      setError("Please enter a roll number, student name, or school name");
       return;
     }
-
     setLoading(true);
     setError(null);
-    setStudentData(null);
-
+    setResult(null);
     try {
-      console.log(rollNumber);
-
-      const response = await axios.get(
-        `/api/results/getbyrollnumber/${rollNumber}`,
-      );
-      setStudentData(response.data);
-    } catch (err) {
-      console.log(err);
-      const apiError = err as ApiError;
-      setError(apiError.response?.data?.message || "An error occurred");
-
-      // setError(err ? err.response.data.message : "An error occurred");
+      // Only encode if it's not a roll number — roll numbers contain dashes
+      // that must stay unencoded for routing and detection to work correctly
+      const trimmed = query.trim();
+      const encoded = trimmed.includes("-") ? trimmed : encodeURIComponent(trimmed);
+      const response = await axios.get(`/api/results/getbyrollnumber/${encoded}`);
+      setResult(response.data);
+    } catch (err: any) {
+      setError(err?.response?.data?.message || "An error occurred");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleIndividualReportDownload = async () => {
-    if (!studentData) return;
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") handleFetchResults();
+  };
 
+  const handleSingleDownload = async () => {
+    if (!result || isMultiResult(result)) return;
     setDownloadLoading(true);
     try {
-      // Transform studentData into the format expected by IndividualReport
-      const transformedData = studentData.scores.map((score) => ({
-        schoolName: studentData.schoolName,
-        schoolId: studentData.schoolId || 0,
-        city: studentData.city || "",
-        schoolAddress: studentData.schoolAddress || "",
-        rollNumber: studentData.student.rollNumber,
-        studentName: studentData.student.name,
-        fatherName: studentData.student.fatherName,
-        class: studentData.student.class,
-        level: studentData.student.level,
-        totalMarks: score.totalMarks || 0,
-        score: score.score || 0,
-        missingQuestionsCount: score.missingQuestionsCount,
-
-        creditScore: score.creditScore,
-        cRow1: score.cRow1,
-        cRow2: score.cRow2,
-        cRow3: score.cRow3,
-        wrong: score.wrong,
-        cTotal: score.cTotal,
-        missing: score.missing,
-        percentage: score.percentage || 0,
-        constestNo: score.contest.contestNo
-          ? parseInt(score.contest.contestNo)
-          : 0,
-        // Prefer the parsed roll number year if available, otherwise fall back to current year
-        year: score.parsedRollNumber
-          ? parseInt(score.parsedRollNumber.year)
-          : new Date().getFullYear(),
-        contestName: score.contest.name || "",
-        // Suffix is derived from the parsed roll number returned by the API
-        suffix: score.parsedRollNumber?.suffix ?? "",
-        rankings: score.rankings || {
-          school: { rank: 0, totalParticipants: 0 },
-          district: { rank: 0, totalParticipants: 0 },
-          overall: { rank: 0, totalParticipants: 0 },
-        },
-      }));
-      console.log("kainat");
-      console.log(transformedData);
-
-      // Generate PDF
+      const transformedData = buildTransformedData(result);
       const doc = <IndividualReport data={transformedData} />;
-      const asPdf = pdf(doc);
-      const blob = await asPdf.toBlob();
-
-      // Save the PDF
-      saveAs(blob, `Individual_Report_${studentData.student.rollNumber}.pdf`);
-    } catch (error) {
-      console.error("Error generating individual report PDF:", error);
+      const blob = await pdf(doc).toBlob();
+      saveAs(blob, `Individual_Report_${result.student.rollNumber}.pdf`);
+    } catch (err) {
+      console.error("Error generating report:", err);
       setError("Failed to download individual report");
     } finally {
       setDownloadLoading(false);
     }
   };
 
-  // Check if any score has valid rankings
-  const hasValidRankings = studentData?.scores.some(
-    (score) => score.rankings !== null && score.rankings !== undefined,
+  const singleResult =
+    result && !isMultiResult(result) ? (result as SingleStudentResult) : null;
+  const multiResult =
+    result && isMultiResult(result) ? (result as MultiStudentResponse) : null;
+
+  const hasValidRankings = singleResult?.scores.some(
+    (s) => s.rankings !== null && s.rankings !== undefined
   );
 
   return (
-    <div className="max-w-lg  mx-auto p-6 m-10 bg-white shadow-md rounded-lg">
-      <div className="mb-4">
-        <label
-          htmlFor="rollNumber"
-          className="block text-sm font-medium text-gray-700">
-          Enter Roll Number
-        </label>
-        <input
-          type="text"
-          id="rollNumber"
-          value={rollNumber}
-          onChange={(e) => setRollNumber(e.target.value)}
-          placeholder="24-231-00004-08-001-S"
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-        />
-      </div>
+    <div className="min-h-screen bg-gray-50 py-10 px-4">
+      <div className="max-w-2xl mx-auto">
 
-      <button
-        onClick={handleFetchResults}
-        disabled={loading}
-        className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-        {loading ? "Fetching Results..." : "Get Results"}
-      </button>
+        {/* ── Search card ── */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
+          <h1 className="text-2xl font-bold text-gray-900 mb-1">
+            Find Your Results
+          </h1>
+          <p className="text-sm text-gray-500 mb-5">
+            Search by roll number, student name, or school name
+          </p>
 
-      {error && (
-        <div className="mt-4 p-4 bg-red-50 border border-red-400 text-red-700 rounded">
-          {error}
-        </div>
-      )}
-
-      {studentData && (
-        <div className="mt-6 bg-gray-50 p-4 rounded-md">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-bold">Student Results</h2>
-            {hasValidRankings ? (
-              <button
-                onClick={handleIndividualReportDownload}
-                disabled={downloadLoading}
-                className="bg-green-600 text-white py-1 px-3 rounded-md hover:bg-green-700 focus:outline-none">
-                {downloadLoading ? "Downloading..." : "Download Report"}
-              </button>
-            ) : (
-              <div className="text-sm text-red-600 font-medium">
-                No individual report found
-              </div>
-            )}
-          </div>
-
-          <div className="mb-2">
-            <strong>Name:</strong> {studentData.student.name}
-          </div>
-          <div className="mb-2">
-            <strong>Roll Number:</strong> {studentData.student.rollNumber}
-          </div>
-          <div className="mb-2">
-            <strong>Class:</strong> {studentData.student.class}
-          </div>
-          <div className="mb-2">
-            <strong>School:</strong> {studentData.schoolName}
-          </div>
-
-          <h3 className="text-lg font-semibold mt-4 mb-2">Contest Results</h3>
-          {studentData.scores.map((score, index) => (
-            <div key={index} className="border-b pb-2 mb-2">
-              <div>
-                <strong>Contest:</strong> {score.contest.name}
-              </div>
-              <div>
-                <strong>Date:</strong> {score.contest.contestDate || "N/A"}
-              </div>
-
-              {/* Only show score and percentage if rankings are available */}
-              {score.rankings && (
+          <div className="flex gap-2">
+            <div className="relative flex-1">
+              {/* Search icon */}
+              <svg
+                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"
+                />
+              </svg>
+              <input
+                type="text"
+                id="query"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Roll number, student name, or school name…"
+                className="w-full pl-9 pr-3 py-2.5 border border-gray-300 rounded-xl shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400"
+              />
+            </div>
+            <button
+              onClick={handleFetchResults}
+              disabled={loading}
+              className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white font-medium text-sm py-2.5 px-5 rounded-xl transition-colors"
+            >
+              {loading ? (
                 <>
-                  <div>
-                    <strong>Score:</strong> {score.score} / {score.totalMarks}
-                  </div>
-                  <div>
-                    <strong>Percentage:</strong> {score.percentage?.toFixed(2)}%
-                  </div>
+                  <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                  </svg>
+                  Searching…
                 </>
+              ) : (
+                "Search"
               )}
+            </button>
+          </div>
 
-              {/* Show validation error if present */}
-              {/* {score.validationError && (
-                <div className="mt-2 p-2 bg-yellow-50 border border-yellow-400 text-yellow-700 rounded text-sm">
-                  <strong>Note:</strong> {score.validationError}
-                </div>
-              )} */}
+          {/* Search type hints */}
+          <div className="flex flex-wrap gap-2 mt-3">
+            {[
+              { label: "Roll number", example: "24-231-00004-08-001-S" },
+              { label: "Student name", example: "Ali Ahmed" },
+              { label: "School name", example: "Beacon House" },
+            ].map(({ label, example }) => (
+              <button
+                key={label}
+                onClick={() => setQuery(example)}
+                className="text-xs text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 border border-gray-200 hover:border-indigo-200 rounded-full px-2.5 py-0.5 transition-colors"
+                title={`Try: ${example}`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
 
-              {/* Only show rankings if they exist and are not null */}
-              {score.rankings && (
-                <div className="mt-2">
-                  <strong>Rankings:</strong>
-                  <div>
-                    School Rank: {score.rankings.school.rank} /{" "}
-                    {score.rankings.school.totalParticipants}
-                  </div>
-                  <div>
-                    District Rank: {score.rankings.district.rank} /{" "}
-                    {score.rankings.district.totalParticipants}
-                  </div>
-                  <div>
-                    Overall Rank: {score.rankings.overall.rank} /{" "}
-                    {score.rankings.overall.totalParticipants}
-                  </div>
-                </div>
-              )}
+        {/* ── Error ── */}
+        {error && (
+          <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl mb-4">
+            <svg className="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+            </svg>
+            <span className="text-sm">{error}</span>
+          </div>
+        )}
 
-              {/* Show message if rankings are missing */}
-              {!score.rankings && (
-                <div className="mt-2 p-2 bg-gray-100 border border-gray-300 text-gray-600 rounded text-sm">
-                  Rankings not available for this result
-                </div>
+        {/* ── Single student result ── */}
+        {singleResult && (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            {/* Top banner — compact */}
+            <div className="px-4 py-3 flex justify-between items-center border-b border-indigo-100 bg-indigo-50">
+              <div className="min-w-0">
+                <h2 className="text-base font-semibold text-gray-900 truncate">
+                  {singleResult.student.name}
+                </h2>
+                <p className="text-xs text-gray-400 font-mono">
+                  {singleResult.student.rollNumber}
+                </p>
+              </div>
+              {hasValidRankings ? (
+                <button
+                  onClick={handleSingleDownload}
+                  disabled={downloadLoading}
+                  className="flex-shrink-0 ml-3 flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white font-medium text-xs py-1.5 px-3 rounded-lg transition-colors"
+                >
+                  {downloadLoading ? (
+                    <>
+                      <svg className="animate-spin w-3 h-3" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                      </svg>
+                      Generating…
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3" />
+                      </svg>
+                      Download
+                    </>
+                  )}
+                </button>
+              ) : (
+                <span className="flex-shrink-0 ml-3 text-xs text-gray-400 italic">No report</span>
               )}
             </div>
-          ))}
-        </div>
-      )}
+
+            {/* Details */}
+            <div className="px-4 py-3">
+              <div className="grid grid-cols-2 gap-x-6 gap-y-1.5 text-sm mb-4">
+                <div>
+                  <span className="text-gray-600 font-medium">Class: </span>
+                  <span className="text-gray-900">{singleResult.student.class}</span>
+                </div>
+                <div>
+                  <span className="text-gray-600 font-medium">Level: </span>
+                  <span className="text-gray-900">{singleResult.student.level}</span>
+                </div>
+                <div>
+                  <span className="text-gray-600 font-medium">Father: </span>
+                  <span className="text-gray-900">{singleResult.student.fatherName}</span>
+                </div>
+                <div>
+                  <span className="text-gray-600 font-medium">School: </span>
+                  <span className="text-gray-900">{singleResult.schoolName}</span>
+                </div>
+              </div>
+
+              {singleResult.scores.map((score, i) => (
+                <ScoreDetail key={i} score={score} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── Multi-student result ── */}
+        {multiResult && (
+          <div>
+            {/* Section header */}
+            <div className="flex justify-between items-end mb-3">
+              <div>
+                {multiResult.searchType === "school" ? (
+                  <>
+                    <p className="text-xs text-gray-400 uppercase tracking-wide font-medium">School</p>
+                    <h2 className="text-xl font-bold text-gray-900">{multiResult.schoolName}</h2>
+                    {multiResult.city && (
+                      <p className="text-sm text-gray-500">{multiResult.city}</p>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <p className="text-xs text-gray-400 uppercase tracking-wide font-medium">Search results</p>
+                    <h2 className="text-xl font-bold text-gray-900">
+                      &ldquo;{query}&rdquo;
+                    </h2>
+                  </>
+                )}
+              </div>
+              <span className="text-sm font-medium text-indigo-600 bg-indigo-50 border border-indigo-100 px-3 py-1 rounded-full">
+                {multiResult.totalStudents} student{multiResult.totalStudents !== 1 ? "s" : ""}
+              </span>
+            </div>
+
+            {/* Hint */}
+            {multiResult.totalStudents > 1 && (
+              <p className="text-xs text-gray-400 mb-3 flex items-center gap-1">
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20A10 10 0 0012 2z" />
+                </svg>
+                Click a student card to view their result and download the report
+              </p>
+            )}
+
+            {multiResult.students.map((student, i) => (
+              <StudentCard
+                key={student.student.rollNumber || i}
+                studentData={student}
+                defaultOpen={multiResult.totalStudents === 1}
+                showSchool={multiResult.searchType === "studentName"}
+              />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
