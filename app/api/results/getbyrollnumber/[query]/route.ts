@@ -385,17 +385,21 @@ export async function GET(
 
     // ── 3. Text search: check school name first, then student name ────────────
 
-    // 3a. School name search — find ALL schools matching the query
-    const matchedSchools = await db.user.findMany({
+    // 3a. School name search — word-boundary match so "national" doesn't match "international"
+    const schoolNameCandidates = await db.user.findMany({
       where: { schoolName: { contains: query } },
       select: { schoolId: true, schoolName: true, schoolAddress: true, city: true },
     });
+    const wordBoundaryRegex = new RegExp(`(?<![a-zA-Z])${query}(?![a-zA-Z])`, "i");
+    const matchedSchools = schoolNameCandidates.filter(
+      (s) => s.schoolName && wordBoundaryRegex.test(s.schoolName)
+    );
 
     if (matchedSchools.length > 0) {
       const matchedSchoolIds = matchedSchools.map((s) => s.schoolId);
 
-      // Batch: hold checks, registrations, all contest scores — in parallel
-      const [holdRecords, registrations, rawContestScores] = await Promise.all([
+      // Batch: hold checks, registrations, lightweight ranking scores — in parallel
+      const [holdRecords, registrations, allRankingScores] = await Promise.all([
         db.resultHold.findMany({
           where: { contestId: activeContestId, schoolId: { in: matchedSchoolIds } },
           select: { schoolId: true, hold: true },
@@ -404,17 +408,10 @@ export async function GET(
           where: { contestId: activeContestId, schoolId: { in: matchedSchoolIds } },
           select: { id: true, schoolId: true },
         }),
+        // Minimal fields for ranking — no results relation, no contest relation
         db.score.findMany({
           where: { contestId: activeContestId },
-          select: {
-            id: true, rollNo: true, contestId: true,
-            score: true, totalMarks: true, percentage: true,
-            cRow1: true, cRow2: true, cRow3: true, cTotal: true,
-            creditScore: true, description: true, missing: true,
-            wrong: true, updatedAt: true,
-            results: { select: { id: true, scoreId: true, percentage: true, contestId: true, schoolId: true, district: true, class: true, level: true, AwardLevel: true, rollNumber: true, createdAt: true, updatedAt: true } },
-            contest: { select: { name: true, contestDate: true, contestNo: true } },
-          },
+          select: { rollNo: true, percentage: true },
         }),
       ]);
 
@@ -430,74 +427,79 @@ export async function GET(
         select: { rollNumber: true, studentName: true, fatherName: true, class: true, level: true, registrationId: true },
       });
 
-      const processedScores = rawContestScores.map(processRawScore);
+      const studentRollNumbers = allStudents.map((s) => s.rollNumber);
+
+      // Full score details only for matched students
+      const rawStudentScores = await db.score.findMany({
+        where: { contestId: activeContestId, rollNo: { in: studentRollNumbers } },
+        select: {
+          id: true, rollNo: true, contestId: true,
+          score: true, totalMarks: true, percentage: true,
+          cRow1: true, cRow2: true, cRow3: true, cTotal: true,
+          creditScore: true, description: true, missing: true,
+          wrong: true, updatedAt: true,
+          results: { select: { id: true, scoreId: true, percentage: true, contestId: true, schoolId: true, district: true, class: true, level: true, AwardLevel: true, rollNumber: true, createdAt: true, updatedAt: true } },
+          contest: { select: { name: true, contestDate: true, contestNo: true } },
+        },
+      });
+
+      const processedScores = rawStudentScores.map(processRawScore);
       const scoreByRollNo = new Map(processedScores.map((s) => [s.rollNo, s]));
 
       // ── Pre-compute rankings per class, per school, per district ──────────
       // Group scores by class segment in roll number
-      const scoresByClass = new Map<string, ProcessedScore[]>();
-      for (const s of processedScores) {
-        const parts = s.rollNo?.split("-") || [];
-        const cls = parts[3];
+      const scoresByClass = new Map<string, { rollNo: string; pct: number }[]>();
+      for (const s of allRankingScores) {
+        if (!s.rollNo) continue;
+        const cls = s.rollNo.split("-")[3];
         if (!cls) continue;
         const arr = scoresByClass.get(cls) ?? [];
-        arr.push(s);
+        arr.push({ rollNo: s.rollNo, pct: Number(s.percentage) || 0 });
         scoresByClass.set(cls, arr);
       }
 
-      // For each class, sort once and assign ranks
-      // rankMap: rollNo -> { schoolRank, districtRank, overallRank, schoolTotal, districtTotal, overallTotal }
       const rankMap = new Map<string, { school: { rank: number; totalParticipants: number }; district: { rank: number; totalParticipants: number }; overall: { rank: number; totalParticipants: number } }>();
 
-      for (const [cls, classScores] of Array.from(scoresByClass.entries())) {
+      for (const [, classScores] of Array.from(scoresByClass.entries())) {
         // Overall ranking for this class
-        const overallSorted = [...classScores].sort((a, b) => (Number(b.percentage) || 0) - (Number(a.percentage) || 0));
+        const overallSorted = [...classScores].sort((a, b) => b.pct - a.pct);
         const overallRankByRoll = new Map<string, number>();
         let rank = 1;
         let prevPct: number | null = null;
         overallSorted.forEach((s, i) => {
-          const pct = Number(s.percentage) || 0;
-          if (prevPct !== null && pct !== prevPct) rank = i + 1;
-          prevPct = pct;
-          if (s.rollNo) overallRankByRoll.set(s.rollNo, rank);
+          if (prevPct !== null && s.pct !== prevPct) rank = i + 1;
+          prevPct = s.pct;
+          overallRankByRoll.set(s.rollNo, rank);
         });
 
-        // Group by school (paddedSchoolId = parts[2])
-        const bySchool = new Map<string, ProcessedScore[]>();
-        const byDistrict = new Map<string, ProcessedScore[]>();
+        const bySchool = new Map<string, { rollNo: string; pct: number }[]>();
+        const byDistrict = new Map<string, { rollNo: string; pct: number }[]>();
         for (const s of classScores) {
-          const parts = s.rollNo?.split("-") || [];
-          const schoolSeg = parts[2];
-          const districtSeg = parts[1];
+          const parts = s.rollNo.split("-");
+          const schoolSeg = parts[2]; const districtSeg = parts[1];
           if (schoolSeg) { const a = bySchool.get(schoolSeg) ?? []; a.push(s); bySchool.set(schoolSeg, a); }
           if (districtSeg) { const a = byDistrict.get(districtSeg) ?? []; a.push(s); byDistrict.set(districtSeg, a); }
         }
 
-        const computeRanks = (group: ProcessedScore[]) => {
-          const sorted = [...group].sort((a, b) => (Number(b.percentage) || 0) - (Number(a.percentage) || 0));
+        const assignRanks = (group: { rollNo: string; pct: number }[]) => {
+          const sorted = [...group].sort((a, b) => b.pct - a.pct);
           const map = new Map<string, number>();
           let r = 1; let prev: number | null = null;
           sorted.forEach((s, i) => {
-            const pct = Number(s.percentage) || 0;
-            if (prev !== null && pct !== prev) r = i + 1;
-            prev = pct;
-            if (s.rollNo) map.set(s.rollNo, r);
+            if (prev !== null && s.pct !== prev) r = i + 1;
+            prev = s.pct;
+            map.set(s.rollNo, r);
           });
           return { map, total: group.length };
         };
 
         for (const s of classScores) {
-          if (!s.rollNo) continue;
           const parts = s.rollNo.split("-");
-          const schoolSeg = parts[2];
-          const districtSeg = parts[1];
-          const schoolGroup = bySchool.get(schoolSeg) ?? [];
-          const districtGroup = byDistrict.get(districtSeg) ?? [];
-          const { map: schoolRankMap, total: schoolTotal } = computeRanks(schoolGroup);
-          const { map: districtRankMap, total: districtTotal } = computeRanks(districtGroup);
+          const { map: schoolMap, total: schoolTotal } = assignRanks(bySchool.get(parts[2]) ?? []);
+          const { map: districtMap, total: districtTotal } = assignRanks(byDistrict.get(parts[1]) ?? []);
           rankMap.set(s.rollNo, {
-            school: { rank: schoolRankMap.get(s.rollNo) ?? 0, totalParticipants: schoolTotal },
-            district: { rank: districtRankMap.get(s.rollNo) ?? 0, totalParticipants: districtTotal },
+            school: { rank: schoolMap.get(s.rollNo) ?? 0, totalParticipants: schoolTotal },
+            district: { rank: districtMap.get(s.rollNo) ?? 0, totalParticipants: districtTotal },
             overall: { rank: overallRankByRoll.get(s.rollNo) ?? 0, totalParticipants: classScores.length },
           });
         }
