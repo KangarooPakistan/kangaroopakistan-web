@@ -251,7 +251,20 @@ function SchoolSection({ school }: { school: SchoolGroup }) {
       {open && (
         <div className="p-3 space-y-2">
           {fetchError && <p className="text-sm text-red-500 px-2">{fetchError}</p>}
-          {loading && <p className="text-sm text-gray-400 px-2 py-4 text-center">Loading students…</p>}
+          {loading && (
+            <div className="py-6 flex flex-col items-center gap-3">
+              {/* Skeleton cards */}
+              {[1, 2, 3].map((n) => (
+                <div key={n} className="w-full rounded-xl border border-gray-100 overflow-hidden animate-pulse">
+                  <div className="px-4 py-3 bg-slate-50 flex items-center gap-3">
+                    <div className="h-4 bg-gray-200 rounded w-1/3" />
+                    <div className="h-3 bg-gray-100 rounded w-1/4 ml-auto" />
+                  </div>
+                </div>
+              ))}
+              <p className="text-xs text-gray-400 mt-1">Loading students…</p>
+            </div>
+          )}
           {students && students.map((student, i) => (
             <StudentCard
               key={student.student.rollNumber || i}
