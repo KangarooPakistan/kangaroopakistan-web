@@ -43,6 +43,26 @@ export async function POST(request: Request) {
       );
     }
 
+    // Skip schools that are on hold for this contest
+    const holdRecord = await db.resultHold.findUnique({
+      where: {
+        contestId_schoolId: {
+          contestId: contestId,
+          schoolId: parseInt(schoolId),
+        },
+      },
+    });
+
+    if (holdRecord?.hold) {
+      return NextResponse.json(
+        {
+          message: "School is on hold — email skipped",
+          skipped: true,
+        },
+        { status: 200 }
+      );
+    }
+
     aminaEmail = await db.user.findFirst({
       where: {
         schoolId: 814,
