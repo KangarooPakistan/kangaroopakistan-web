@@ -71,8 +71,7 @@ interface SchoolGroup {
   schoolName: string;
   city?: string;
   schoolAddress?: string;
-  totalStudents: number;
-  students: SingleStudentResult[];
+  // students not included in initial response — loaded on demand
 }
 
 type ApiResponse = SingleStudentResult | MultiStudentResponse;
@@ -190,41 +189,80 @@ function ScoreDetail({ score }: { score: ScoreEntry }) {
 // ─── SchoolSection ────────────────────────────────────────────────────────────
 
 function SchoolSection({ school }: { school: SchoolGroup }) {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [students, setStudents] = useState<SingleStudentResult[] | null>(null);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+
+  const handleToggle = async () => {
+    if (open) { setOpen(false); return; }
+    setOpen(true);
+    if (students !== null) return; // already loaded
+
+    setLoading(true);
+    setFetchError(null);
+    try {
+      const res = await axios.get(`/api/results/getbyschool/${school.schoolId}`);
+      setStudents(res.data.students ?? []);
+    } catch (err: any) {
+      setFetchError(err?.response?.data?.message || "Failed to load students");
+      setOpen(false);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
       {/* School header */}
       <button
-        onClick={() => setOpen((v) => !v)}
+        onClick={handleToggle}
         className="w-full px-4 py-3 flex justify-between items-center border-b border-purple-700 bg-purple-600 hover:bg-purple-700 transition-colors cursor-pointer text-left"
       >
         <div className="min-w-0">
           <p className="text-base font-semibold text-white truncate">{school.schoolName}</p>
-          <p className="text-sm text-purple-200 ">
-            {school.city ? `${school.city} · ` : ""}
-            {school.totalStudents} student{school.totalStudents !== 1 ? "s" : ""}
+          <p className="text-sm text-purple-200">
+            {school.city ?? ""}
           </p>
         </div>
-        <svg
-          className={`w-4 h-4 text-purple-200 flex-shrink-0 ml-2 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
-          fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-        </svg>
+        <div className="flex items-center gap-2 flex-shrink-0 ml-2">
+          {!open && (
+            <span className="hidden sm:inline text-xs text-white font-medium bg-purple-500 px-2 py-0.5 rounded-full">
+              View students
+            </span>
+          )}
+          {loading ? (
+            <svg className="animate-spin w-4 h-4 text-purple-200" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+            </svg>
+          ) : (
+            <svg
+              className={`w-4 h-4 text-purple-200 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+              fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          )}
+        </div>
       </button>
 
-      {/* Students */}
+      {/* Students — loaded on demand */}
       {open && (
         <div className="p-3 space-y-2">
-          {school.students.map((student, i) => (
+          {fetchError && <p className="text-sm text-red-500 px-2">{fetchError}</p>}
+          {loading && <p className="text-sm text-gray-400 px-2 py-4 text-center">Loading students…</p>}
+          {students && students.map((student, i) => (
             <StudentCard
               key={student.student.rollNumber || i}
               studentData={student}
-              defaultOpen={school.totalStudents === 1}
+              defaultOpen={students.length === 1}
               showSchool={false}
             />
           ))}
+          {students && students.length === 0 && (
+            <p className="text-sm text-gray-400 px-2">No results found for this school.</p>
+          )}
         </div>
       )}
     </div>

@@ -385,7 +385,7 @@ export async function GET(
 
     // ── 3. Text search: check school name first, then student name ────────────
 
-    // 3a. School name search — word-boundary match so "national" doesn't match "international"
+    // 3a. School name search — return school list only (fast), students loaded on demand
     const schoolNameCandidates = await db.user.findMany({
       where: { schoolName: { contains: query } },
       select: { schoolId: true, schoolName: true, schoolAddress: true, city: true },
@@ -398,175 +398,41 @@ export async function GET(
     if (matchedSchools.length > 0) {
       const matchedSchoolIds = matchedSchools.map((s) => s.schoolId);
 
-      // Batch: hold checks, registrations, lightweight ranking scores — in parallel
-      const [holdRecords, registrations, allRankingScores] = await Promise.all([
+      // Only need hold checks and registration existence — no scores needed
+      const [holdRecords, registrations] = await Promise.all([
         db.resultHold.findMany({
           where: { contestId: activeContestId, schoolId: { in: matchedSchoolIds } },
           select: { schoolId: true, hold: true },
         }),
         db.registration.findMany({
           where: { contestId: activeContestId, schoolId: { in: matchedSchoolIds } },
-          select: { id: true, schoolId: true },
-        }),
-        // Minimal fields for ranking — no results relation, no contest relation
-        db.score.findMany({
-          where: { contestId: activeContestId },
-          select: { rollNo: true, percentage: true },
+          select: { schoolId: true },
         }),
       ]);
 
       const holdSet = new Set(holdRecords.filter((h) => h.hold).map((h) => h.schoolId));
-      const regMap = new Map(registrations.map((r) => [r.schoolId, r.id]));
+      const registeredSet = new Set(registrations.map((r) => r.schoolId));
 
-      const eligibleRegIds = registrations
-        .filter((r) => !holdSet.has(r.schoolId))
-        .map((r) => r.id);
+      const schoolList = matchedSchools
+        .filter((s) => !holdSet.has(s.schoolId) && registeredSet.has(s.schoolId))
+        .map((s) => ({
+          schoolId: s.schoolId,
+          schoolName: s.schoolName,
+          city: s.city,
+          schoolAddress: s.schoolAddress,
+        }));
 
-      const allStudents = await db.student.findMany({
-        where: { registrationId: { in: eligibleRegIds } },
-        select: { rollNumber: true, studentName: true, fatherName: true, class: true, level: true, registrationId: true },
-      });
-
-      const studentRollNumbers = allStudents.map((s) => s.rollNumber);
-
-      // Full score details only for matched students
-      const rawStudentScores = await db.score.findMany({
-        where: { contestId: activeContestId, rollNo: { in: studentRollNumbers } },
-        select: {
-          id: true, rollNo: true, contestId: true,
-          score: true, totalMarks: true, percentage: true,
-          cRow1: true, cRow2: true, cRow3: true, cTotal: true,
-          creditScore: true, description: true, missing: true,
-          wrong: true, updatedAt: true,
-          results: { select: { id: true, scoreId: true, percentage: true, contestId: true, schoolId: true, district: true, class: true, level: true, AwardLevel: true, rollNumber: true, createdAt: true, updatedAt: true } },
-          contest: { select: { name: true, contestDate: true, contestNo: true } },
-        },
-      });
-
-      const processedScores = rawStudentScores.map(processRawScore);
-      const scoreByRollNo = new Map(processedScores.map((s) => [s.rollNo, s]));
-
-      // ── Pre-compute rankings per class, per school, per district ──────────
-      // Group scores by class segment in roll number
-      const scoresByClass = new Map<string, { rollNo: string; pct: number }[]>();
-      for (const s of allRankingScores) {
-        if (!s.rollNo) continue;
-        const cls = s.rollNo.split("-")[3];
-        if (!cls) continue;
-        const arr = scoresByClass.get(cls) ?? [];
-        arr.push({ rollNo: s.rollNo, pct: Number(s.percentage) || 0 });
-        scoresByClass.set(cls, arr);
+      if (schoolList.length === 0) {
+        return NextResponse.json(
+          { message: "No results available for schools matching this name" },
+          { status: 404 }
+        );
       }
 
-      const rankMap = new Map<string, { school: { rank: number; totalParticipants: number }; district: { rank: number; totalParticipants: number }; overall: { rank: number; totalParticipants: number } }>();
-
-      for (const [, classScores] of Array.from(scoresByClass.entries())) {
-        // Overall ranking for this class
-        const overallSorted = [...classScores].sort((a, b) => b.pct - a.pct);
-        const overallRankByRoll = new Map<string, number>();
-        let rank = 1;
-        let prevPct: number | null = null;
-        overallSorted.forEach((s, i) => {
-          if (prevPct !== null && s.pct !== prevPct) rank = i + 1;
-          prevPct = s.pct;
-          overallRankByRoll.set(s.rollNo, rank);
-        });
-
-        const bySchool = new Map<string, { rollNo: string; pct: number }[]>();
-        const byDistrict = new Map<string, { rollNo: string; pct: number }[]>();
-        for (const s of classScores) {
-          const parts = s.rollNo.split("-");
-          const schoolSeg = parts[2]; const districtSeg = parts[1];
-          if (schoolSeg) { const a = bySchool.get(schoolSeg) ?? []; a.push(s); bySchool.set(schoolSeg, a); }
-          if (districtSeg) { const a = byDistrict.get(districtSeg) ?? []; a.push(s); byDistrict.set(districtSeg, a); }
-        }
-
-        const assignRanks = (group: { rollNo: string; pct: number }[]) => {
-          const sorted = [...group].sort((a, b) => b.pct - a.pct);
-          const map = new Map<string, number>();
-          let r = 1; let prev: number | null = null;
-          sorted.forEach((s, i) => {
-            if (prev !== null && s.pct !== prev) r = i + 1;
-            prev = s.pct;
-            map.set(s.rollNo, r);
-          });
-          return { map, total: group.length };
-        };
-
-        for (const s of classScores) {
-          const parts = s.rollNo.split("-");
-          const { map: schoolMap, total: schoolTotal } = assignRanks(bySchool.get(parts[2]) ?? []);
-          const { map: districtMap, total: districtTotal } = assignRanks(byDistrict.get(parts[1]) ?? []);
-          rankMap.set(s.rollNo, {
-            school: { rank: schoolMap.get(s.rollNo) ?? 0, totalParticipants: schoolTotal },
-            district: { rank: districtMap.get(s.rollNo) ?? 0, totalParticipants: districtTotal },
-            overall: { rank: overallRankByRoll.get(s.rollNo) ?? 0, totalParticipants: classScores.length },
-          });
-        }
-      }
-
-      // ── Build student results using pre-computed ranks ─────────────────────
-      const studentsByRegId = new Map<string, typeof allStudents>();
-      for (const s of allStudents) {
-        const arr = studentsByRegId.get(s.registrationId) ?? [];
-        arr.push(s);
-        studentsByRegId.set(s.registrationId, arr);
-      }
-
-      const schoolGroups: any[] = [];
-
-      for (const school of matchedSchools) {
-        if (holdSet.has(school.schoolId)) continue;
-        const regId = regMap.get(school.schoolId);
-        if (!regId) continue;
-
-        const students = studentsByRegId.get(regId) ?? [];
-        const validResults: any[] = [];
-
-        for (const studentInfo of students) {
-          const rollNumber = studentInfo.rollNumber;
-          const [year, districtCode, schoolId, classNum, serialNum, suffix] = rollNumber.split("-");
-          const schoolIntId = parseInt(schoolId, 10);
-
-          const studentScore = scoreByRollNo.get(rollNumber);
-          if (!studentScore) continue;
-
-          const scoreVal = Number(studentScore.score) || 0;
-          const totalMarks = Number(studentScore.totalMarks) || 0;
-          const storedPct = Number(studentScore.percentage) || 0;
-          const calcPct = totalMarks > 0 ? (scoreVal / totalMarks) * 100 : 0;
-          const isValid = Math.abs(calcPct - storedPct) < 0.01;
-          const missingQuestionsArray = getMissingQuestions(studentScore.description, studentInfo.class);
-
-          const rankings = rankMap.get(rollNumber) ?? null;
-
-          if (!isValid) {
-            validResults.push({
-              schoolId: schoolIntId, schoolName: school.schoolName, city: school.city, schoolAddress: school.schoolAddress,
-              student: { rollNumber, name: studentInfo.studentName, class: studentInfo.class, level: studentInfo.level, fatherName: studentInfo.fatherName },
-              totalScores: 1,
-              scores: [{ ...convertBigIntToNumber(studentScore), cRow1: null, cRow2: null, cRow3: null, cTotal: null, creditScore: null, description: null, missing: null, percentage: null, score: null, totalMarks: null, wrong: null, parsedRollNumber: { year, district: districtCode, school: schoolId, class: classNum, serialNum, suffix }, missingQuestionsCount: missingQuestionsArray, rankings: null, validationError: "Percentage mismatch detected" }],
-            });
-            continue;
-          }
-
-          validResults.push({
-            schoolId: schoolIntId, schoolName: school.schoolName, city: school.city, schoolAddress: school.schoolAddress,
-            student: { rollNumber, name: studentInfo.studentName, class: studentInfo.class, level: studentInfo.level, fatherName: studentInfo.fatherName },
-            totalScores: 1,
-            scores: [convertBigIntToNumber({ ...studentScore, rankings, parsedRollNumber: { year, district: districtCode, school: schoolId, class: classNum, serialNum, suffix }, missingQuestionsCount: missingQuestionsArray })],
-          });
-        }
-
-        if (validResults.length === 0) continue;
-        schoolGroups.push({ schoolId: school.schoolId, schoolName: school.schoolName, city: school.city, schoolAddress: school.schoolAddress, totalStudents: validResults.length, students: validResults });
-      }
-
-      if (schoolGroups.length === 0) {
-        return NextResponse.json({ message: "No results available for schools matching this name" }, { status: 404 });
-      }
-
-      return NextResponse.json({ searchType: "school", query, totalSchools: schoolGroups.length, schools: schoolGroups }, { status: 200 });
+      return NextResponse.json(
+        { searchType: "school", query, totalSchools: schoolList.length, schools: schoolList },
+        { status: 200 }
+      );
     }
 
     // 3b. Student name search
