@@ -166,7 +166,7 @@ const UserNavbar = () => {
               <Link
                 href="/user/active/contest"
                 className="block py-2 px-3 md:p-0 ">
-                Contest
+                Contests
               </Link>
             </li>
             {/* <li>

@@ -186,7 +186,7 @@ const AdminNavbar = () => {
                 <Link
                   href="/admin/contesttypes"
                   className="block py-2 px-3 md:p-0 ">
-                  Contest
+                  Contests
                 </Link>
               </li>
             )}
@@ -195,7 +195,7 @@ const AdminNavbar = () => {
                 <Link
                   href="/employee/contesttypes"
                   className="block py-2 px-3 md:p-0 ">
-                  Contest
+                  Contests
                 </Link>
               </li>
             )}
