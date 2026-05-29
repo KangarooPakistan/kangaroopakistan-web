@@ -385,67 +385,16 @@ export async function GET(
 
     // ── 3. Text search: check school name first, then student name ────────────
 
-    // 3a. School name search
-    const matchedSchool = await db.user.findFirst({
+    // 3a. School name search — find ALL schools matching the query
+    const matchedSchools = await db.user.findMany({
       where: {
         schoolName: { contains: query },
       },
       select: { schoolId: true, schoolName: true, schoolAddress: true, city: true },
     });
 
-    if (matchedSchool) {
-      // Hold check for this school in the active contest
-      const holdRecord = await db.resultHold.findUnique({
-        where: {
-          contestId_schoolId: {
-            contestId: activeContestId,
-            schoolId: matchedSchool.schoolId,
-          },
-        },
-      });
-      if (holdRecord?.hold) {
-        return NextResponse.json(
-          { message: "Results are not available for this school" },
-          { status: 404 }
-        );
-      }
-
-      // Find the registration for this school in the active contest
-      const registration = await db.registration.findFirst({
-        where: {
-          schoolId: matchedSchool.schoolId,
-          contestId: activeContestId,
-        },
-        select: { id: true },
-      });
-
-      if (!registration) {
-        return NextResponse.json(
-          { message: "School not registered in the current contest" },
-          { status: 404 }
-        );
-      }
-
-      // Get all students of this school in this contest
-      const students = await db.student.findMany({
-        where: { registrationId: registration.id },
-        select: {
-          rollNumber: true,
-          studentName: true,
-          fatherName: true,
-          class: true,
-          level: true,
-        },
-      });
-
-      if (students.length === 0) {
-        return NextResponse.json(
-          { message: "No students found for this school in the current contest" },
-          { status: 404 }
-        );
-      }
-
-      // Fetch all contest scores once (for ranking across all classes)
+    if (matchedSchools.length > 0) {
+      // Fetch all contest scores once for ranking
       const allContestScores = (
         await db.score.findMany({
           where: { contestId: activeContestId },
@@ -456,23 +405,63 @@ export async function GET(
         })
       ).map(processRawScore);
 
-      const results = await Promise.all(
-        students.map((s) =>
-          buildResultForRollNumber(s.rollNumber, activeContestId, allContestScores)
-        )
-      );
+      const schoolGroups: any[] = [];
 
-      const validResults = results.filter(Boolean);
+      for (const school of matchedSchools) {
+        // Hold check
+        const holdRecord = await db.resultHold.findUnique({
+          where: {
+            contestId_schoolId: {
+              contestId: activeContestId,
+              schoolId: school.schoolId,
+            },
+          },
+        });
+        if (holdRecord?.hold) continue;
+
+        const registration = await db.registration.findFirst({
+          where: { schoolId: school.schoolId, contestId: activeContestId },
+          select: { id: true },
+        });
+        if (!registration) continue;
+
+        const students = await db.student.findMany({
+          where: { registrationId: registration.id },
+          select: { rollNumber: true },
+        });
+
+        const results = await Promise.all(
+          students.map((s) =>
+            buildResultForRollNumber(s.rollNumber, activeContestId, allContestScores)
+          )
+        );
+
+        const validResults = results.filter(Boolean);
+        if (validResults.length === 0) continue;
+
+        schoolGroups.push({
+          schoolId: school.schoolId,
+          schoolName: school.schoolName,
+          city: school.city,
+          schoolAddress: school.schoolAddress,
+          totalStudents: validResults.length,
+          students: validResults,
+        });
+      }
+
+      if (schoolGroups.length === 0) {
+        return NextResponse.json(
+          { message: "No results available for schools matching this name" },
+          { status: 404 }
+        );
+      }
 
       return NextResponse.json(
         {
           searchType: "school",
-          schoolId: matchedSchool.schoolId,
-          schoolName: matchedSchool.schoolName,
-          city: matchedSchool.city,
-          schoolAddress: matchedSchool.schoolAddress,
-          totalStudents: validResults.length,
-          students: validResults,
+          query,
+          totalSchools: schoolGroups.length,
+          schools: schoolGroups,
         },
         { status: 200 }
       );
