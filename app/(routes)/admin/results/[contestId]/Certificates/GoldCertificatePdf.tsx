@@ -347,26 +347,26 @@ const wrapTextToLines = (
 const getAwardTemplatePath = ( //iklc
   awardLevel: string | null | undefined,
 ): string => {
-  if (!awardLevel) return "/templates/iklc/participation_award.pdf";
+  if (!awardLevel) return "/templates/ikmc/participation_award.pdf";
 
   const level = awardLevel.toUpperCase().replace(/\s+/g, "_");
   switch (level) {
     case "GOLD":
-      return "/templates/iklc/gold_award.pdf";
+      return "/templates/ikmc/gold_award.pdf";
     case "SILVER":
-      return "/templates/iklc/silver_award.pdf";
+      return "/templates/ikmc/silver_award.pdf";
     case "BRONZE":
-      return "/templates/iklc/bronze_award.pdf";
+      return "/templates/ikmc/bronze_award.pdf";
     case "THREE_STAR":
-      return "/templates/iklc/three_star_award.pdf";
+      return "/templates/ikmc/three_star_award.pdf";
     case "TWO_STAR":
-      return "/templates/iklc/two_star_award.pdf";
+      return "/templates/ikmc/two_star_award.pdf";
     case "ONE_STAR":
-      return "/templates/iklc/one_star_award.pdf";
+      return "/templates/ikmc/one_star_award.pdf";
     case "PARTICIPATION":
-      return "/templates/iklc/participation_award.pdf";
+      return "/templates/ikmc/participation_award.pdf";
     default:
-      return "/templates/iklc/participation_award.pdf";
+      return "/templates/ikmc/participation_award.pdf";
   }
 };
 
