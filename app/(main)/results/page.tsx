@@ -401,7 +401,7 @@ function StudentCard({
             )}
             {studentData.scores[0]?.awardLevel && (
               <div className="col-span-2 flex items-center gap-2">
-                <span className="text-gray-600 font-medium">Category: </span>
+                <span className="text-gray-600 font-medium">Award: </span>
                 <AwardBadge level={studentData.scores[0].awardLevel} />
               </div>
             )}
@@ -660,7 +660,7 @@ const StudentResultsPage = () => {
                 </div>
                 {singleResult.scores[0]?.awardLevel && (
                   <div className="col-span-2 flex items-center gap-2">
-                    <span className="text-gray-600 font-medium">Category: </span>
+                    <span className="text-gray-600 font-medium">Award: </span>
                     <AwardBadge level={singleResult.scores[0].awardLevel} />
                   </div>
                 )}
