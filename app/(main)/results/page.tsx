@@ -25,6 +25,7 @@ interface ScoreEntry {
   wrong: number;
   cRowTotal: number;
   totalMarks: number;
+  awardLevel?: string | null;
   parsedRollNumber?: {
     year: string;
     district: string;
@@ -118,6 +119,31 @@ function buildTransformedData(studentData: SingleStudentResult) {
   }));
 }
 
+// ─── AwardBadge ───────────────────────────────────────────────────────────────
+
+const AWARD_CONFIG: Record<string, { label: string; cls: string }> = {
+  "GOLD":          { label: "Gold Medal",               cls: "bg-yellow-400 text-blue-900" },
+  "SILVER":        { label: "Silver Medal",             cls: "bg-gray-400 text-white" },
+  "BRONZE":        { label: "Bronze Medal",             cls: "bg-orange-500 text-white" },
+  "THREE STAR":    { label: "Three Star Performance",   cls: "bg-indigo-600 text-white" },
+  "TWO STAR":      { label: "Two Star Performance",     cls: "bg-blue-500 text-white" },
+  "ONE STAR":      { label: "One Star Performance",     cls: "bg-blue-400 text-white" },
+  "PARTICIPATION": { label: "Participation Certificate","cls": "bg-green-500 text-white" },
+};
+
+function getAwardConfig(level: string) {
+  return AWARD_CONFIG[level.toUpperCase()] ?? { label: level, cls: "bg-gray-500 text-white" };
+}
+
+function AwardBadge({ level }: { level: string }) {
+  const { label, cls } = getAwardConfig(level);
+  return (
+    <span className={`inline-block text-xs font-semibold px-2 py-0.5 rounded ${cls}`}>
+      {label}
+    </span>
+  );
+}
+
 // ─── RankBadge ────────────────────────────────────────────────────────────────
 
 function RankBadge({ label, rank, total }: { label: string; rank: number; total: number }) {
@@ -135,12 +161,9 @@ function RankBadge({ label, rank, total }: { label: string; rank: number; total:
 function ScoreDetail({ score }: { score: ScoreEntry }) {
   return (
     <div className="mt-4 pt-4 border-t border-gray-100 space-y-3">
-      {/* Contest name + date */}
-      <div className="text-sm">
-        <span className="font-medium text-gray-900">{score.contest.name}</span>
-        {score.contest.contestDate && (
-          <span className="ml-2 text-gray-400">{score.contest.contestDate}</span>
-        )}
+      {/* Contest name */}
+      <div className="text-xl font-bold text-gray-900">
+        {score.contest.name}
       </div>
 
       {score.rankings ? (
@@ -327,9 +350,14 @@ function StudentCard({
           <p className="text-base font-semibold text-gray-900 truncate">
             {studentData.student.name}
           </p>
-          <p className="text-xs text-gray-400 font-mono truncate">
-            {studentData.student.rollNumber}
-          </p>
+          <div className="flex items-center gap-2 flex-wrap mt-0.5">
+            <p className="text-xs text-gray-400 font-mono truncate">
+              {studentData.student.rollNumber}
+            </p>
+            {studentData.scores[0]?.awardLevel && (
+              <AwardBadge level={studentData.scores[0].awardLevel} />
+            )}
+          </div>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0 ml-2">
           {!open && (
@@ -369,6 +397,12 @@ function StudentCard({
                   {studentData.schoolName}
                   {studentData.city ? `, ${studentData.city}` : ""}
                 </span>
+              </div>
+            )}
+            {studentData.scores[0]?.awardLevel && (
+              <div className="col-span-2 flex items-center gap-2">
+                <span className="text-gray-600 font-medium">Category: </span>
+                <AwardBadge level={studentData.scores[0].awardLevel} />
               </div>
             )}
           </div>
@@ -568,9 +602,14 @@ const StudentResultsPage = () => {
                 <h2 className="text-base font-semibold text-gray-900 truncate">
                   {singleResult.student.name}
                 </h2>
-                <p className="text-xs text-gray-400 font-mono">
-                  {singleResult.student.rollNumber}
-                </p>
+                <div className="flex items-center gap-2 flex-wrap mt-0.5">
+                  <p className="text-xs text-gray-400 font-mono">
+                    {singleResult.student.rollNumber}
+                  </p>
+                  {singleResult.scores[0]?.awardLevel && (
+                    <AwardBadge level={singleResult.scores[0].awardLevel} />
+                  )}
+                </div>
               </div>
               {hasValidRankings ? (
                 <button
@@ -619,6 +658,12 @@ const StudentResultsPage = () => {
                   <span className="text-gray-600 font-medium">School: </span>
                   <span className="text-gray-900">{singleResult.schoolName}</span>
                 </div>
+                {singleResult.scores[0]?.awardLevel && (
+                  <div className="col-span-2 flex items-center gap-2">
+                    <span className="text-gray-600 font-medium">Category: </span>
+                    <AwardBadge level={singleResult.scores[0].awardLevel} />
+                  </div>
+                )}
               </div>
 
               {singleResult.scores.map((score, i) => (

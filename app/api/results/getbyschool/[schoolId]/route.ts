@@ -226,7 +226,7 @@ export async function GET(
         city: schoolInfo?.city ?? null, schoolAddress: schoolInfo?.schoolAddress ?? null,
         student: { rollNumber, name: studentInfo.studentName, class: studentInfo.class, level: studentInfo.level, fatherName: studentInfo.fatherName },
         totalScores: 1,
-        scores: [convertBigIntToNumber({ ...studentScore, rankings, parsedRollNumber: { year, district: districtCode, school: schoolId, class: classNum, serialNum, suffix }, missingQuestionsCount: missingQuestionsArray })],
+        scores: [convertBigIntToNumber({ ...studentScore, awardLevel: studentScore.results?.[0]?.AwardLevel ?? null, rankings, parsedRollNumber: { year, district: districtCode, school: schoolId, class: classNum, serialNum, suffix }, missingQuestionsCount: missingQuestionsArray })],
       });
     }
 

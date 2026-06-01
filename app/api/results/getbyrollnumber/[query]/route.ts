@@ -238,6 +238,7 @@ async function buildResultForRollNumber(
 
   const processedScore = convertBigIntToNumber({
     ...studentScore,
+    awardLevel: studentScore.results?.[0]?.AwardLevel ?? null,
     student: {
       studentName: studentInfo.studentName,
       fatherName: studentInfo.fatherName,
