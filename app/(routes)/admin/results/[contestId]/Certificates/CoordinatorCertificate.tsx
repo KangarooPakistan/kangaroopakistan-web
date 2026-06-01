@@ -350,7 +350,7 @@ let coordinatorTemplateBytesCache: Uint8Array | null = null;
 const loadCertificateTemplate = async (): Promise<Uint8Array> => {
   if (coordinatorTemplateBytesCache) return coordinatorTemplateBytesCache;
 
-  const response = await fetch("/templates/iklc/coordinator_certificates.pdf");
+  const response = await fetch("/templates/ikmc/coordinator_certificates.pdf");
   if (!response.ok) {
     throw new Error("Failed to load certificate template");
   }
