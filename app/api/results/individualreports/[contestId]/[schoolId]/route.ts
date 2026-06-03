@@ -425,18 +425,6 @@ export async function GET(
       },
       { status: 200 }
     );
-
-    return NextResponse.json(
-      {
-        schoolId: schoolIntId,
-        schoolName: schoolInfo?.schoolName || null,
-        city: schoolInfo?.city || null,
-        schoolAddress: schoolInfo?.schoolAddress || null,
-        totalScores: schoolScores.length,
-        scores: processedScoresNew,
-      },
-      { status: 200 }
-    );
   } catch (error) {
     console.error("Error fetching scores:", error);
     return NextResponse.json(

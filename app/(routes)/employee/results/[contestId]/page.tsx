@@ -830,6 +830,96 @@ const Results = () => {
   const handleBack = () => {
     router.back();
   };
+  const handleExcelScores = async () => {
+    try {
+      setIsLoading(true);
+      const scoresAll = await axios.get(
+        `/api/results/getallscores/${params.contestId}/`,
+      );
+
+      // Process the scores to convert BigInt values to strings or numbers
+      const processedScores = scoresAll.data.data.map((score: any) => {
+        // Create a new object with processed values
+        return {
+          "Roll Number": score.rollNo || "N/A",
+          Score: score.score ? Number(score.score.toString()) : 0,
+          "Total Marks": score.totalMarks
+            ? Number(score.totalMarks.toString())
+            : 0,
+          Percentage: score.percentage
+            ? parseFloat(score.percentage.toString())
+            : 0,
+          "Row 1 Correct": score.cRow1 || 0,
+          "Row 2 Correct": score.cRow2 || 0,
+          "Row 3 Correct": score.cRow3 || 0,
+          "Total Correct": score.cTotal || 0,
+          "Credit Score": score.creditScore || 0,
+          "Wrong Answers": score.wrong || 0,
+          "Missing Answers": score.missing || 0,
+          Description: score.description || "",
+        };
+      });
+
+      // Create a new workbook
+      const workbook = XLSX.utils.book_new();
+
+      // Create a worksheet with the processed data
+      const worksheet = XLSX.utils.json_to_sheet(processedScores);
+
+      // Set column widths for better readability
+      const colWidths = [
+        { wch: 20 }, // Roll Number
+        { wch: 10 }, // Score
+        { wch: 12 }, // Total Marks
+        { wch: 12 }, // Percentage
+        { wch: 12 }, // Row 1 Correct
+        { wch: 12 }, // Row 2 Correct
+        { wch: 12 }, // Row 3 Correct
+        { wch: 12 }, // Total Correct
+        { wch: 12 }, // Credit Score
+        { wch: 12 }, // Wrong Answers
+        { wch: 12 }, // Missing Answers
+        { wch: 30 }, // Description
+      ];
+      worksheet["!cols"] = colWidths;
+
+      // Add the worksheet to the workbook
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Student Scores");
+
+      // Write the workbook to a file and trigger download
+      XLSX.writeFile(workbook, `Contest_${params.contestId}_Scores.xlsx`);
+
+      setIsLoading(false);
+      toast.success("🦄 Score data exported successfully", {
+        position: "bottom-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    } catch (error) {
+      console.error("Error exporting score data:", error);
+      setIsLoading(false);
+      toast.error(
+        `Failed to export score data: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+        {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        },
+      );
+    }
+  };
   return (
     <div className="container mx-auto py-10">
       <h1 className="text-3xl text-center my-3 font-bold text-purple-600">
@@ -847,6 +937,14 @@ const Results = () => {
             disabled={isLoading}
             onClick={handleBack}>
             Back
+          </Button>
+                    <Button
+            className=" font-medium text-[15px]  tracking-wide"
+            variant="default"
+            size="lg"
+            disabled={isLoading}
+            onClick={handleExcelScores}>
+            Download All Scores
           </Button>
           <Button
             className=" font-medium text-[15px]  tracking-wide"
