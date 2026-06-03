@@ -838,7 +838,13 @@ const Results = () => {
       );
 
       // Process the scores to convert BigInt values to strings or numbers
-      const processedScores = scoresAll.data.data.map((score: any) => {
+      // API returns a JSON string of scores grouped by class — parse and flatten
+      const groupedData = typeof scoresAll.data === "string"
+        ? JSON.parse(scoresAll.data)
+        : scoresAll.data;
+      const flatScores: any[] = Object.values(groupedData).flat();
+
+      const processedScores = flatScores.map((score: any) => {
         // Create a new object with processed values
         return {
           "Roll Number": score.rollNo || "N/A",
