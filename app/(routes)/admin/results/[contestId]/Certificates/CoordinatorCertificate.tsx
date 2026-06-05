@@ -470,7 +470,8 @@ export async function generateCoordinatorCertificate(
   );
 
   // Dynamic top position based on whether school name wraps to two lines
-  const baseTopPosition = schoolLines.length > 2 ? 290 : 305;
+  // const baseTopPosition = schoolLines.length > 2 ? 290 : 305;
+  const baseTopPosition = schoolLines.length > 2 ? 270 : 285;
   // Always use the same starting position since we always reserve space
   const topPosition = baseTopPosition;
   let baseY = height - topPosition;
