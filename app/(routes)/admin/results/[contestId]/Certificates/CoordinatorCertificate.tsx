@@ -131,12 +131,12 @@ const isSchoolNameArabic = (text: string): boolean => {
 // Process school name text (matching react-pdf logic)
 const processSchoolNameText = (schoolName: string): string => {
   return schoolName
+    .toUpperCase()
     .replace(/(\([^)]+\))/g, (match) => {
-      // Extract text inside parentheses, convert to uppercase, and keep parentheses
+      // Extract text inside parentheses, keep uppercase
       const innerText = match.slice(1, -1).toUpperCase();
       return `(${innerText})`;
-    })
-    .replace(/([^\(]+)(?=\s*\()/g, (match) => toTitleCase(match));
+    });
 };
 
 // Calculate font size for coordinator name (matching react-pdf SmartText logic)

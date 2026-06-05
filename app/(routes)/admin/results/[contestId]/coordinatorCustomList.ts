@@ -1371,7 +1371,12 @@ export const coordinatorCustomList: CoordinatorDetailsList = [
  {
   "schoolId": 1407,
   "schoolName": "FG PUBLIC MIDDLE SCHOOL CHAMANABAD",
-  "c_Name": "MEHRAN ALI SHAH, ZEENAT YASMIN"
+  "c_Name": "MEHRAN ALI SHAH"
+ },
+ {
+  "schoolId": 1492,
+  "schoolName": "FG PUBLIC SCHOOL NO.1(GIRLS) TAXILA CANTT.",
+  "c_Name": "SADIA TAHIRA"
  },
  {
   "schoolId": 1408,
@@ -1583,11 +1588,7 @@ export const coordinatorCustomList: CoordinatorDetailsList = [
   "schoolName": "BEACON ASKARI SCHOOL SYSTEM",
   "c_Name": "SYEDA SADAF KAZMI"
  },
- {
-  "schoolId": 1492,
-  "schoolName": "FG PUBLIC SCHOOL NO.1(GIRLS) TAXILA CANTT.",
-  "c_Name": "MRS SADIA TAHIRA"
- },
+ 
  {
   "schoolId": 1493,
   "schoolName": "DHAI EDUCATION SYSTEM",
@@ -4940,7 +4941,7 @@ export const principalCustomList: PrincipalDetailsList = [
   {
     "schoolId": 1724,
     "schoolName": "AMINA GIRLS HIGHER SECONDARY SCHOOL 21/ MPR LODHRAN  ",
-    "p_Name": "MEMO0NA IQBAL  ",
+    "p_Name": "MEMOONA IQBAL  ",
     
   },
   {
