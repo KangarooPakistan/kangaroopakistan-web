@@ -230,8 +230,21 @@ const validateScoreAndPercentage = (item: SchoolResultPdf) => {
   const score = parseFloat(item.score?.score);
   const percentage = parseFloat(item.percentage);
 
+  // Special case: school 896, year 26, suffix M — always show score as 20
+  const rollParts = item.rollNumber?.split("-") || [];
+  const rollYear = rollParts[0];
+  const rollSchool = rollParts[2]; // padded school ID
+  const rollSuffix = rollParts[5];
+  const isSchool896Year26M =
+    rollYear === "26" &&
+    parseInt(rollSchool, 10) === 896 &&
+    rollSuffix?.toUpperCase() === "M";
+
   // Check if values are valid numbers
   if (isNaN(classNum) || isNaN(score) || isNaN(percentage)) {
+    if (isSchool896Year26M) {
+      return { score: "20", percentage: item.percentage || "N/A" };
+    }
     return { score: "NIL", percentage: "NIL" };
   }
 
@@ -250,6 +263,10 @@ const validateScoreAndPercentage = (item: SchoolResultPdf) => {
       percentage: item.percentage || "N/A",
     };
   } else {
+    // Special override for school 896, year 26, suffix M
+    if (isSchool896Year26M) {
+      return { score: "20", percentage: item.percentage || "N/A" };
+    }
     return { score: "NIL", percentage: "NIL" };
   }
 };
