@@ -243,7 +243,7 @@ const validateScoreAndPercentage = (item: SchoolResultPdf) => {
   // Check if values are valid numbers
   if (isNaN(classNum) || isNaN(score) || isNaN(percentage)) {
     if (isSchool896Year26M) {
-      return { score: "20", percentage: item.percentage || "N/A" };
+      return { score: "20", percentage: "NIL" };
     }
     return { score: "NIL", percentage: "NIL" };
   }
@@ -263,9 +263,8 @@ const validateScoreAndPercentage = (item: SchoolResultPdf) => {
       percentage: item.percentage || "N/A",
     };
   } else {
-    // Special override for school 896, year 26, suffix M
     if (isSchool896Year26M) {
-      return { score: "20", percentage: item.percentage || "N/A" };
+      return { score: "20", percentage: "NIL" };
     }
     return { score: "NIL", percentage: "NIL" };
   }
