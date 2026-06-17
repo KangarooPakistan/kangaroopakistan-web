@@ -7,7 +7,14 @@ import { columns } from "./columns";
 import { Button } from "@/components/ui/button";
 import AwardsPdf from "../../../admin/results/[contestId]//AwardsPdf/AwardsPdf";
 import { utils, writeFile } from "xlsx";
-
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { pdf } from "@react-pdf/renderer";
 import { saveAs } from "file-saver";
 import { toast, ToastContainer } from "react-toastify";
@@ -16,6 +23,9 @@ import * as XLSX from "xlsx";
 
 import { ca } from "date-fns/locale";
 import QuestionStatsPdf from "../QuestionStats/QuestionStats";
+import { CertificateApiResponse } from "@/app/(routes)/admin/results/[contestId]/columns";
+import { generateStudentCertificates } from "@/app/(routes)/admin/results/[contestId]/Certificates/GoldCertificatePdf";
+import { Input } from "@/components/ui/input";
 
 export type Contest = {
   contestDate: string;
@@ -80,6 +90,15 @@ const Results = () => {
   const [result, setResult] = useState<Result[]>([]);
   const [questionStats, setQuestionStats] = useState<any>(null);
   const [contestName, setContestName] = useState("");
+  const [rollNumberInput, setRollNumberInput] = useState("");
+    const [isGeneratingRollCertificate, setIsGeneratingRollCertificate] =
+      useState(false);
+    const [isCertificateDialogOpen, setIsCertificateDialogOpen] = useState(false);
+    const [rollNumberStatus, setRollNumberStatus] = useState<{
+      type: "error" | "success";
+      message: string;
+    } | null>(null);
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -826,6 +845,102 @@ const Results = () => {
       });
     }
   };
+  
+    const handleRollNumberCertificate = async () => {
+      const normalizedRollNumber = rollNumberInput.trim().toUpperCase();
+      setRollNumberStatus(null);
+  
+      if (!normalizedRollNumber) {
+        setRollNumberStatus({
+          type: "error",
+          message: "Please enter a roll number",
+        });
+        return;
+      }
+  
+      const rollParts = normalizedRollNumber.split("-");
+      if (rollParts.length < 3) {
+        setRollNumberStatus({
+          type: "error",
+          message: "Invalid roll number format",
+        });
+        return;
+      }
+  
+      const schoolIdFromRoll = Number.parseInt(rollParts[2], 10);
+      if (Number.isNaN(schoolIdFromRoll)) {
+        setRollNumberStatus({
+          type: "error",
+          message: "Could not detect school ID from roll number",
+        });
+        return;
+      }
+  
+      setIsGeneratingRollCertificate(true);
+      try {
+        const response = await axios.get<CertificateApiResponse[]>(
+          `/api/results/certificates/${params.contestId}/${schoolIdFromRoll}`,
+        );
+  
+        const matchedStudent = response.data.find(
+          (student) =>
+            (student.rollNumber || "").trim().toUpperCase() ===
+            normalizedRollNumber,
+        );
+  
+        if (!matchedStudent) {
+          setRollNumberStatus({
+            type: "error",
+            message: "No certificate record found for this roll number",
+          });
+          return;
+        }
+  
+        if (!matchedStudent.rollNumber) {
+          setRollNumberStatus({
+            type: "error",
+            message: "Certificate record has invalid roll number",
+          });
+          return;
+        }
+  
+        const generatedCertificates = await generateStudentCertificates([
+          {
+            AwardLevel: matchedStudent.AwardLevel,
+            class: matchedStudent.class,
+            studentName: matchedStudent.studentName,
+            fatherName: matchedStudent.fatherName,
+            schoolName: matchedStudent.schoolName,
+            rollNumber: matchedStudent.rollNumber,
+          },
+        ]);
+  
+        const generatedCertificate = generatedCertificates[0];
+        if (!generatedCertificate?.blob) {
+          setRollNumberStatus({
+            type: "error",
+            message: "Failed to generate certificate PDF",
+          });
+          return;
+        }
+  
+        saveAs(generatedCertificate.blob, `${normalizedRollNumber}.pdf`);
+        setRollNumberStatus({
+          type: "success",
+          message: "Certificate downloaded successfully",
+        });
+      } catch (error: any) {
+        console.error("Error generating certificate by roll number:", error);
+        setRollNumberStatus({
+          type: "error",
+          message:
+            error.response?.data?.message ||
+            "Failed to fetch/generate certificate for this roll number",
+        });
+      } finally {
+        setIsGeneratingRollCertificate(false);
+      }
+    };
 
   const handleBack = () => {
     router.back();
@@ -1251,6 +1366,74 @@ const Results = () => {
           </Button>
         </div>
       </div>
+      <div className="mb-6 flex justify-center">
+        <Button
+          className="font-bold  bg-orange-600 text-[15px] md:text-[20px] tracking-wide md:p-6 md:py-6"
+          variant="default"
+          onClick={() => {
+            setRollNumberInput("");
+            setRollNumberStatus(null);
+            setIsCertificateDialogOpen(true);
+          }}>
+          Get Certificate By Roll Number
+        </Button>
+      </div>
+      <Dialog
+        open={isCertificateDialogOpen}
+        onOpenChange={(open) => {
+          setIsCertificateDialogOpen(open);
+          if (!open) {
+            setRollNumberStatus(null);
+          }
+        }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Get Certificate</DialogTitle>
+            <DialogDescription>
+              Enter roll number to download GoldCertificatePdf.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-3 py-2">
+            <Input
+              placeholder="Enter roll number"
+              value={rollNumberInput}
+              onChange={(e) => setRollNumberInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleRollNumberCertificate();
+                }
+              }}
+            />
+            {rollNumberStatus && (
+              <p
+                className={`text-sm ${
+                  rollNumberStatus.type === "error"
+                    ? "text-red-600"
+                    : "text-green-700"
+                }`}>
+                {rollNumberStatus.message}
+              </p>
+            )}
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setIsCertificateDialogOpen(false);
+                setRollNumberStatus(null);
+              }}>
+              Cancel
+            </Button>
+            <Button
+              disabled={isGeneratingRollCertificate}
+              onClick={handleRollNumberCertificate}>
+              {isGeneratingRollCertificate
+                ? "Generating Certificate..."
+                : "Download Certificate"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       <DataTable columns={columns} data={schoolData} />
     </div>
   );
