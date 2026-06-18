@@ -8,26 +8,18 @@ import { Prisma } from "@prisma/client";
  * Grants PARTICIPATION results to all registered students of a school who do
  * not already have a Score/Result record for this contest.
  *
- * Body:
- *   contestId    string  – the contest to update
- *   schoolId     number  – the school whose students should get participation
- *   proofImageUrl string – URL of the uploaded permission-proof image (required)
+ * Requires that a ResultProof already exists for the contest (checked server-side).
  *
- * The endpoint:
- *   1. Verifies proofImageUrl is provided (caller must upload to S3 first).
- *   2. Saves the proof as a ResultProof record linked to the contest.
- *   3. Loads the school's students from the Registration table.
- *   4. Skips any student whose rollNumber already has a Score for this contest.
- *   5. Creates Score rows (percentage = 0, all fields null) and then Result
- *      rows (AwardLevel = "PARTICIPATION") for the remaining students.
+ * Body:
+ *   contestId  string  – the contest to update
+ *   schoolId   number  – the school whose students should get participation
  */
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { contestId, schoolId, proofImageUrl } = body as {
+    const { contestId, schoolId } = body as {
       contestId?: string;
       schoolId?: number;
-      proofImageUrl?: string;
     };
 
     // ── Validate required fields ───────────────────────────────────────────
@@ -43,16 +35,6 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-    if (!proofImageUrl || proofImageUrl.trim() === "") {
-      return NextResponse.json(
-        {
-          success: false,
-          message:
-            "Permission proof is required. Please attach an image before granting participation.",
-        },
-        { status: 400 }
-      );
-    }
 
     // ── Verify contest exists ──────────────────────────────────────────────
     const contest = await db.contest.findUnique({ where: { id: contestId } });
@@ -63,13 +45,20 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // ── Save permission proof ──────────────────────────────────────────────
-    await db.resultProof.create({
-      data: {
-        imageUrl: proofImageUrl,
-        contestId,
-      },
+    // ── Verify permission proof has been uploaded ──────────────────────────
+    const proofCount = await db.resultProof.count({
+      where: { contestId },
     });
+    if (proofCount === 0) {
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "Permission proof has not been uploaded for this contest. Please upload it first.",
+        },
+        { status: 403 }
+      );
+    }
 
     // ── Load students for this school/contest ──────────────────────────────
     const registration = await db.registration.findUnique({
@@ -89,7 +78,7 @@ export async function POST(req: NextRequest) {
 
     const students = registration.students;
 
-    // ── Find students that already have a Score ────────────────────────────
+    // ── Skip students that already have a Score ────────────────────────────
     const existingScores = await db.score.findMany({
       where: { contestId },
       select: { rollNo: true },
