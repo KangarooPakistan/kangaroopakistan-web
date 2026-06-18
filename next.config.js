@@ -1,11 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Production optimizations (only applied in production, not with Turbopack)
-  ...(process.env.NODE_ENV === 'production' && {
-    compiler: {
-      removeConsole: true,
-    },
-  }),
+  // ...(process.env.NODE_ENV === 'production' && {
+  //   compiler: {
+  //     removeConsole: true,
+  //   },
+  // }),
 
   // Experimental features for Next.js 14.x
   experimental: {

@@ -29,6 +29,7 @@ const AllLabels: React.FC<AllLabelsProps> = ({ schoolDetails, contestName }) => 
 
   // Determine organization name based on contest name
   const getOrganizationName = (contestName?: string): string => {
+    console.log(contestName);
     return contestName?.toLowerCase().includes("mathematics") 
       ? "INNOVATIVE LEARNING" 
       : "INVENTIVE LEARNING";
