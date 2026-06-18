@@ -248,6 +248,11 @@ const validateScoreAndPercentage = (item: SchoolResultPdf) => {
     return { score: "NIL", percentage: "NIL" };
   }
 
+  // Score of 0 means no sheet was received — show NIL for both
+  if (score === 0) {
+    return { score: "NIL", percentage: "NIL" };
+  }
+
   // Determine total marks based on class
   const totalMarks = classNum >= 1 && classNum <= 4 ? 120 : 150;
 
