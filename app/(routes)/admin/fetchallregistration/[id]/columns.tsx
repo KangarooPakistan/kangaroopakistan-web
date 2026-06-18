@@ -707,175 +707,105 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration, hasPer
 
   return (
     <>
-      <div className="hidden md:block">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <CgMoreO className="text-[30px]" />
+      {/* ── Shared dropdown — used for both desktop and mobile ── */}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="h-8 w-8 p-0">
+            <span className="sr-only">Open menu</span>
+            <CgMoreO className="text-[30px]" />
+          </Button>
+        </DropdownMenuTrigger>
 
-              {/* <MoreHorizontal className="h-4 w-4" /> */}
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel className="border-y-2 border-solid">
-              Actions
-            </DropdownMenuLabel>
-            <DropdownMenuItem
-              className="border-y-2 border-solid"
-              onClick={handleView}>
-              View
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className="border-y-2 border-solid"
-              onClick={handleRegister}>
-              Register Students
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className="border-y-2 border-solid"
-              onClick={handleDownloadCheckList}>
-              Download CheckList
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={handleReceiptView}
-              className="border-y-2 border-solid">
-              View Receipts{" "}
-            </DropdownMenuItem>
+        <DropdownMenuContent
+          align="end"
+          className="max-h-[50vh] overflow-y-auto w-56">
 
-            <DropdownMenuItem
-              className="border-y-2 border-solid"
-              onClick={handleEmail}>
-              Send Email
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className="border-y-2 border-solid"
-              onClick={sendCorrectionEmail}>
-              Send Correction Email
-            </DropdownMenuItem>
-            {totalStudents > 0 ? (
-              Array.from({ length: Math.ceil(totalStudents / CHUNK_SIZE) }).map((_, i) => (
-                <DropdownMenuItem
-                  key={`answersheet-part-${i}`}
-                  className="border-y-2 border-solid"
-                  onClick={() => handleDownloadPdfPart(i)}>
-                  {i === 0 ? "Download Answer Sheet" : `Download Answer Sheet ${i + 1}`}
-                </DropdownMenuItem>
-              ))
-            ) : (
-              <DropdownMenuItem className="border-y-2 border-solid" disabled>
-                Download Answer Sheet
-              </DropdownMenuItem>
-            )}
-            <DropdownMenuItem
-              className="border-y-2 border-solid"
-              onClick={handleStudentDetails}>
-              Download Student Details
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className="border-y-2 border-solid"
-              onClick={handleAttendanceSheet}>
-              Download Attendance Sheet
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className="border-y-2 border-solid"
-              onClick={handleSendPaymentProofEmail}>
-              Send Payment Proof Email to this School
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className="border-y-2 border-solid"
-              onClick={handleSchoolDetails}>
-              View School Details
-            </DropdownMenuItem>
-            {hasPermission && (
+          {/* ── Navigation ── */}
+          <DropdownMenuLabel className="text-xs text-muted-foreground uppercase tracking-wider px-2 py-1">
+            Navigation
+          </DropdownMenuLabel>
+          <DropdownMenuItem onClick={handleView}>
+            View
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleRegister}>
+            Register Students
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleSchoolDetails}>
+            View School Details
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleReceiptView}>
+            View Receipts
+          </DropdownMenuItem>
+
+          <DropdownMenuSeparator />
+
+          {/* ── Downloads ── */}
+          <DropdownMenuLabel className="text-xs text-muted-foreground uppercase tracking-wider px-2 py-1">
+            Downloads
+          </DropdownMenuLabel>
+          <DropdownMenuItem onClick={handleDownloadCheckList}>
+            Download CheckList
+          </DropdownMenuItem>
+          {totalStudents > 0 ? (
+            Array.from({ length: Math.ceil(totalStudents / CHUNK_SIZE) }).map((_, i) => (
               <DropdownMenuItem
-                className="border-y-2 border-solid text-orange-600 font-medium"
+                key={`answersheet-part-${i}`}
+                onClick={() => handleDownloadPdfPart(i)}>
+                {i === 0 ? "Download Answer Sheet" : `Download Answer Sheet (Part ${i + 1})`}
+              </DropdownMenuItem>
+            ))
+          ) : (
+            <DropdownMenuItem disabled>
+              Download Answer Sheet
+            </DropdownMenuItem>
+          )}
+          <DropdownMenuItem onClick={handleStudentDetails}>
+            Download Student Details
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleAttendanceSheet}>
+            Download Attendance Sheet
+          </DropdownMenuItem>
+
+          <DropdownMenuSeparator />
+
+          {/* ── Emails ── */}
+          <DropdownMenuLabel className="text-xs text-muted-foreground uppercase tracking-wider px-2 py-1">
+            Emails
+          </DropdownMenuLabel>
+          <DropdownMenuItem onClick={handleEmail}>
+            Send Email
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={sendCorrectionEmail}>
+            Send Correction Email
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleSendPaymentProofEmail}>
+            Send Payment Proof Email
+          </DropdownMenuItem>
+
+          {/* ── Participation (only when permission uploaded) ── */}
+          {hasPermission && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuLabel className="text-xs text-orange-600 uppercase tracking-wider px-2 py-1">
+                Participation
+              </DropdownMenuLabel>
+              <DropdownMenuItem
+                className="text-orange-600 font-medium"
                 disabled={isGeneratingCerts}
                 onClick={handleDownloadParticipationCerts}>
                 {isGeneratingCerts
-                  ? "Generating Certs..."
-                  : "Download Participation Certificates"}
+                  ? "Generating…"
+                  : "Download Participation Certs"}
               </DropdownMenuItem>
-            )}
-            {hasPermission && (
               <DropdownMenuItem
-                className="border-y-2 border-solid text-orange-600 font-medium"
+                className="text-orange-600 font-medium"
                 onClick={handleGiveParticipation}>
                 Give Participation (No Scores)
               </DropdownMenuItem>
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-      <div className="md:hidden flex flex-wrap gap-2 py-2 ">
-        <Button className=" text-[11px]" size="sm" onClick={handleView}>
-          View
-        </Button>
-        <Button className="text-[11px]" size="sm" onClick={handleRegister}>
-          Register Students
-        </Button>
-        <Button
-          className="text-[11px]"
-          size="sm"
-          onClick={handleDownloadCheckList}>
-          Download CheckList
-        </Button>
-
-        <Button className="text-[11px]" size="sm" onClick={handleEmail}>
-          Send Email
-        </Button>
-        {totalStudents > 0 ? (
-          Array.from({ length: Math.ceil(totalStudents / CHUNK_SIZE) }).map((_, i) => (
-            <Button
-              key={`answersheet-part-mobile-${i}`}
-              className="text-[11px]"
-              size="sm"
-              onClick={() => handleDownloadPdfPart(i)}>
-              {i === 0 ? "Download Answer Sheet" : `Download Answer Sheet ${i + 1}`}
-            </Button>
-          ))
-        ) : (
-          <Button className="text-[11px]" size="sm" disabled>
-            Download Answer Sheet
-          </Button>
-        )}
-        <Button
-          size="sm"
-          className="text-[11px]"
-          onClick={handleStudentDetails}>
-          Download Student Details
-        </Button>
-        <Button
-          size="sm"
-          className="text-[11px]"
-          onClick={handleAttendanceSheet}>
-          Download Attendance Sheet
-        </Button>
-        <Button
-          size="sm"
-          className=" text-[11px]"
-          onClick={handleSchoolDetails}>
-          View School Details
-        </Button>
-        {hasPermission && (
-          <Button
-            size="sm"
-            className="text-[11px] text-orange-600 border-orange-400"
-            variant="outline"
-            disabled={isGeneratingCerts}
-            onClick={handleDownloadParticipationCerts}>
-            {isGeneratingCerts ? "Generating..." : "Participation Certs"}
-          </Button>
-        )}
-        {hasPermission && (
-          <Button
-            size="sm"
-            className="text-[11px] text-orange-600 border-orange-400"
-            variant="outline"
-            onClick={handleGiveParticipation}>
-            Give Participation
-          </Button>
-        )}
-      </div>
+            </>
+          )}
+        </DropdownMenuContent>
+      </DropdownMenu>
     </>
   );
 };
