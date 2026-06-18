@@ -569,7 +569,7 @@ const FetchAllRegistrations = () => {
   const handleDownloadAllLabel = async () => {
     console.log("kkr");
     try {
-      const blob = await pdf(<AllLabels schoolDetails={labelsData} />).toBlob();
+      const blob = await pdf(<AllLabels schoolDetails={labelsData} contestName={contestName} />).toBlob();
 
       const pdfName = `labelsForAll.pdf`;
       saveAs(blob, pdfName);
