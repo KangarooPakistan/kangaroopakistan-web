@@ -5,9 +5,10 @@ import { useParams, useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 
 import React, { useEffect, useRef, useState } from "react";
-import { Registration, columns, PaymentProof } from "./columns";
+import { Registration, columns, createColumns, PaymentProof } from "./columns";
 import { DataTable } from "./data-table";
 import { Button } from "@/components/ui/button";
+import { generateStudentCertificates } from "@/app/(routes)/admin/results/[contestId]/Certificates/GoldCertificatePdf";
 import { saveAs } from "file-saver";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -111,6 +112,7 @@ const FetchAllRegistrations = () => {
   const params = useParams();
   const { onOpen } = useModal();
   const [isLoading, setIsLoading] = useState(false);
+  const [isDownloadingParticipation, setIsDownloadingParticipation] = useState(false);
   const router = useRouter();
   const [contestId, setContestId] = useState("");
   const [regData, setRegData] = useState<Registration[]>([]);
@@ -133,6 +135,7 @@ const FetchAllRegistrations = () => {
   const [studentsForUtility, setStudentForUtility] = useState([]);
   const [contestName, setContestName] = useState("");
   const [showReceiptsModal, setShowReceiptsModal] = useState(false);
+  const [hasResultPermission, setHasResultPermission] = useState(false);
   const activeRequestController = useRef<AbortController | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -167,11 +170,17 @@ const FetchAllRegistrations = () => {
           `/api/users/contests/${registrations[0].contestId}`,
           { signal } // Add signal to this request too
         );
+        // Check if permission proof has been uploaded for this contest
+        const proofData = await axios.get(
+          `/api/users/contests/${registrations[0].contestId}/resultproof`,
+          { signal }
+        );
         setContestId(registrations[0].contestId);
         // Only proceed with state updates if the request hasn't been cancelled
         if (!signal.aborted) {
           setContestName(contestData.data.name);
           setContestCh(contestData.data.contestCh);
+          setHasResultPermission(proofData.data.hasProof === true);
           setTotalSchools(registrations.length);
 
           const totalPayments = registrations.reduce(
@@ -596,6 +605,89 @@ const FetchAllRegistrations = () => {
     setIsLoading(true);
 
     router.push(`/admin/results/${params.id}`);
+  };
+
+  const handleDownloadParticipationCertificates = async () => {
+    if (regData.length === 0) {
+      toast.error("No registered schools found.", { position: "top-right" });
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `This will generate participation certificates for all ${allStudents.length} registered students. This may take a few minutes. Continue?`
+    );
+    if (!confirmed) return;
+
+    try {
+      setIsDownloadingParticipation(true);
+
+      // Build StudentReportForCertificates array from regData (has schoolName per registration)
+      const studentsForCerts = regData.flatMap((reg: any) =>
+        (reg.students || []).map((s: any) => ({
+          studentName: s.studentName || "",
+          fatherName: s.fatherName || "",
+          schoolName: reg.schoolName || s.schoolName || "",
+          class: parseInt(s.class, 10) || 0,
+          rollNumber: s.rollNumber || "",
+          AwardLevel: "PARTICIPATION",
+        }))
+      );
+
+      if (studentsForCerts.length === 0) {
+        toast.error("No students found.", { position: "top-right" });
+        return;
+      }
+
+      toast.info(
+        `Generating ${studentsForCerts.length} participation certificates...`,
+        { position: "top-right", autoClose: 4000 }
+      );
+
+      const results = await generateStudentCertificates(studentsForCerts);
+
+      if (results.length === 0) {
+        toast.error("No certificates were generated. Check student data.", {
+          position: "top-right",
+        });
+        return;
+      }
+
+      // Bundle all into a ZIP
+      const zip = new JSZip();
+      results.forEach(({ blob, rollNumber, studentName }) => {
+        const safeName = (studentName || rollNumber || "student")
+          .replace(/[^a-z0-9_\- ]/gi, "_")
+          .trim();
+        zip.file(`${rollNumber}_${safeName}.pdf`, blob);
+      });
+
+      toast.info("Compressing certificates into ZIP...", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+
+      const zipBlob = await zip.generateAsync({
+        type: "blob",
+        compression: "DEFLATE",
+        compressionOptions: { level: 6 },
+      });
+
+      const fileName = `participation_certificates_${contestName.replace(/[^a-z0-9]/gi, "_")}_${new Date().toISOString().split("T")[0]}.zip`;
+      saveAs(zipBlob, fileName);
+
+      toast.success(
+        `✅ Downloaded ${results.length} participation certificates!`,
+        { position: "bottom-center", autoClose: 6000 }
+      );
+    } catch (error: any) {
+      console.error("Error generating participation certificates:", error);
+      toast.error(
+        "Failed to generate certificates: " + (error?.message || String(error)),
+        { position: "top-right", autoClose: 8000 }
+      );
+    } finally {
+      setIsDownloadingParticipation(false);
+    }
   };
   const handleAddResult = () => {
     setIsLoading(true);
@@ -1481,6 +1573,19 @@ const FetchAllRegistrations = () => {
             Upload Permission For Publishing Result
           </Button>
 
+          {/* {hasResultPermission && (
+            <Button
+              className=" font-medium text-[15px] tracking-wide bg-orange-600 hover:bg-orange-700 text-white"
+              variant="default"
+              size="lg"
+              disabled={isDownloadingParticipation || regData.length === 0}
+              onClick={handleDownloadParticipationCertificates}>
+              {isDownloadingParticipation
+                ? "Generating Certificates..."
+                : `Download Participation Certificates (${allStudents.length})`}
+            </Button>
+          )} */}
+
           <Button
             variant="default"
             size="lg"
@@ -1605,6 +1710,19 @@ const FetchAllRegistrations = () => {
             View Results
           </Button>
 
+          {hasResultPermission && (
+            <Button
+              className=" font-medium text-[11px] tracking-wide bg-orange-600 hover:bg-orange-700 text-white"
+              variant="default"
+              size="sm"
+              disabled={isDownloadingParticipation || regData.length === 0}
+              onClick={handleDownloadParticipationCertificates}>
+              {isDownloadingParticipation
+                ? "Generating..."
+                : `Participation Certs (${allStudents.length})`}
+            </Button>
+          )}
+
           <Button
             className=" font-medium text-[11px]  tracking-wide"
             variant="default"
@@ -1727,7 +1845,7 @@ const FetchAllRegistrations = () => {
           </div>
         )}
       </div>
-      <DataTable columns={columns} data={regData} />
+      <DataTable columns={createColumns(hasResultPermission)} data={regData} />
       <ReceiptsDownloadModal
         contestId={params.id as string}
         contestName={contestName}

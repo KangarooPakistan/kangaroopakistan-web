@@ -36,6 +36,9 @@ import { getSession } from "next-auth/react";
 import CheckList from "./CheckList";
 import AllLabels from "./AllLabels";
 import AttendanceSheet from "./AttendanceSheet";
+import { useModal } from "@/hooks/use-modal-store";
+import { generateStudentCertificates } from "@/app/(routes)/admin/results/[contestId]/Certificates/GoldCertificatePdf";
+import JSZip from "jszip";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -75,9 +78,10 @@ interface profileData {
 }
 
 type RegistrationProps = {
-  registration: Registration; // Use the Contest type here
+  registration: Registration;
+  hasPermission: boolean;
 };
-const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
+const RegistrationActions: React.FC<RegistrationProps> = ({ registration, hasPermission }) => {
   // Helpers (use 'any' to avoid type order issues)
   function extractClassAndSerial(rollNumber: string) {
     const parts = rollNumber.split("-");
@@ -94,10 +98,12 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
     });
   }
   const router = useRouter();
+  const { onOpen } = useModal();
   const [data, setData] = useState();
   const [totalStudents, setTotalStudents] = useState<number>(0);
   const [studentsCache, setStudentsCache] = useState<any[] | null>(null);
   const [profileCache, setProfileCache] = useState<profileData | null>(null);
+  const [isGeneratingCerts, setIsGeneratingCerts] = useState(false);
   const pdfInstanceRef = useRef<any | null>(null);
   useEffect(() => {
     const controller = new AbortController();
@@ -609,6 +615,96 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
       );
     }
   };
+
+  const handleDownloadParticipationCerts = async () => {
+    try {
+      setIsGeneratingCerts(true);
+
+      // Reuse cached students if available, otherwise fetch
+      let students = studentsCache;
+      if (!students) {
+        const response = await axios.get(
+          `/api/users/pdfdownload/${registration.id}`
+        );
+        students = sortStudentsByRollNumber(response.data as any[]);
+        setStudentsCache(students);
+        setTotalStudents((response.data as any[]).length);
+      }
+
+      if (!students || students.length === 0) {
+        toast.error("No students found for this school.", {
+          position: "top-right",
+        });
+        return;
+      }
+
+      toast.info(
+        `Generating ${students.length} participation certificates for ${registration.schoolName}...`,
+        { position: "top-right", autoClose: 4000 }
+      );
+
+      const studentsForCerts = students.map((s: any) => ({
+        studentName: s.studentName || "",
+        fatherName: s.fatherName || "",
+        schoolName: s.schoolName || registration.schoolName || "",
+        class: parseInt(s.class || s.studentClass || "0", 10) || 0,
+        rollNumber: s.rollNumber || "",
+        AwardLevel: "PARTICIPATION",
+      }));
+
+      const results = await generateStudentCertificates(studentsForCerts);
+
+      if (results.length === 0) {
+        toast.error("No certificates were generated.", {
+          position: "top-right",
+        });
+        return;
+      }
+
+      // Bundle into a ZIP named by school ID
+      const zip = new JSZip();
+      results.forEach(({ blob, rollNumber, studentName }) => {
+        const safeName = (studentName || rollNumber || "student")
+          .replace(/[^a-z0-9_\- ]/gi, "_")
+          .trim();
+        zip.file(`${rollNumber}_${safeName}.pdf`, blob);
+      });
+
+      const zipBlob = await zip.generateAsync({
+        type: "blob",
+        compression: "DEFLATE",
+        compressionOptions: { level: 6 },
+      });
+
+      saveAs(
+        zipBlob,
+        `participation_certs_${registration.schoolId}.zip`
+      );
+
+      toast.success(
+        `✅ Downloaded ${results.length} participation certificates for ${registration.schoolName}!`,
+        { position: "bottom-center", autoClose: 5000 }
+      );
+    } catch (error: any) {
+      console.error("Error generating participation certificates:", error);
+      toast.error(
+        "Failed to generate certificates: " +
+          (error?.message || String(error)),
+        { position: "top-right", autoClose: 6000 }
+      );
+    } finally {
+      setIsGeneratingCerts(false);
+    }
+  };
+
+  const handleGiveParticipation = () => {
+    onOpen("giveParticipation", {
+      contestId: registration.contestId,
+      schoolId: registration.schoolId,
+      schoolName: registration.schoolName,
+    });
+  };
+
   return (
     <>
       <div className="hidden md:block">
@@ -690,6 +786,23 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
               onClick={handleSchoolDetails}>
               View School Details
             </DropdownMenuItem>
+            {hasPermission && (
+              <DropdownMenuItem
+                className="border-y-2 border-solid text-orange-600 font-medium"
+                disabled={isGeneratingCerts}
+                onClick={handleDownloadParticipationCerts}>
+                {isGeneratingCerts
+                  ? "Generating Certs..."
+                  : "Download Participation Certificates"}
+              </DropdownMenuItem>
+            )}
+            {hasPermission && (
+              <DropdownMenuItem
+                className="border-y-2 border-solid text-orange-600 font-medium"
+                onClick={handleGiveParticipation}>
+                Give Participation (No Scores)
+              </DropdownMenuItem>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
@@ -743,63 +856,91 @@ const RegistrationActions: React.FC<RegistrationProps> = ({ registration }) => {
           onClick={handleSchoolDetails}>
           View School Details
         </Button>
+        {hasPermission && (
+          <Button
+            size="sm"
+            className="text-[11px] text-orange-600 border-orange-400"
+            variant="outline"
+            disabled={isGeneratingCerts}
+            onClick={handleDownloadParticipationCerts}>
+            {isGeneratingCerts ? "Generating..." : "Participation Certs"}
+          </Button>
+        )}
+        {hasPermission && (
+          <Button
+            size="sm"
+            className="text-[11px] text-orange-600 border-orange-400"
+            variant="outline"
+            onClick={handleGiveParticipation}>
+            Give Participation
+          </Button>
+        )}
       </div>
     </>
   );
 };
-export const columns: ColumnDef<Registration>[] = [
-  {
-    accessorKey: "schoolId",
-    filterFn: "equals",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          SchoolId
+export function createColumns(hasPermission: boolean): ColumnDef<Registration>[] {
+  return [
+    {
+      accessorKey: "schoolId",
+      filterFn: "equals",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+            SchoolId
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+    },
+    {
+      accessorKey: "schoolName",
+      header: "schoolName",
+    },
+    {
+      accessorKey: "email",
+      header: "email",
+    },
+    {
+      accessorKey: "studentsLength",
+      header: "Total Students",
+    },
+    {
+      accessorKey: "paymentProof", // This should match the key from your data
+      header: ({ column }) => (
+        <Button variant="ghost" onClick={() => column.toggleSorting()}>
+          Payment Proof
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
-      );
+      ),
+      sortingFn: "basic",
+      cell: ({ row }) => {
+        // Access the paymentProof property of the row data
+        const paymentProofs = row.original.paymentProof || [];
+        return paymentProofs.length > 0 ? (
+          <IoCheckmarkDoneCircle className="text-[30px] mx-auto text-center" />
+        ) : (
+          <BiSolidXCircle className="text-[30px] mx-auto text-center" />
+        );
+      },
     },
-  },
-  {
-    accessorKey: "schoolName",
-    header: "schoolName",
-  },
-  {
-    accessorKey: "email",
-    header: "email",
-  },
-  {
-    accessorKey: "studentsLength",
-    header: "Total Students",
-  },
-  {
-    accessorKey: "paymentProof", // This should match the key from your data
-    header: ({ column }) => (
-      <Button variant="ghost" onClick={() => column.toggleSorting()}>
-        Payment Proof
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-    sortingFn: "basic",
-    cell: ({ row }) => {
-      // Access the paymentProof property of the row data
-      const paymentProofs = row.original.paymentProof || []; // Fallback to an empty array if undefined
-      return paymentProofs.length > 0 ? (
-        <IoCheckmarkDoneCircle className="text-[30px] mx-auto text-center" />
-      ) : (
-        <BiSolidXCircle className="text-[30px] mx-auto text-center" />
-      );
+    {
+      accessorKey: "More Actions",
+      id: "actions",
+      cell: ({ row }) => (
+        <RegistrationActions
+          registration={row.original}
+          hasPermission={hasPermission}
+        />
+      ),
     },
-  },
+  ];
+}
 
-  {
-    accessorKey: "More Actions", // This should match the key from your data
-    id: "actions",
-    cell: ({ row }) => <RegistrationActions registration={row.original} />,
-  },
-];
+/** @deprecated Use createColumns(hasPermission) instead */
+export const columns = createColumns(false);
 
 const numColumns = 2; // Number of columns
 const optionWidth = `${100 / numColumns}%`; // Calculate the width of each option

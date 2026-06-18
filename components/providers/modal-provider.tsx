@@ -6,6 +6,7 @@ import DeleteStudent from "../modals/delete-student-modal";
 import DeleteSchool from "../modals/delete-school-modal";
 import UploadNotification from "../modals/upload-notification-image-modal";
 import AddResultModal from "../modals/add-result-modal";
+import GiveParticipationModal from "../modals/give-participation-modal";
 
 export const ModalProvider = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -21,6 +22,7 @@ export const ModalProvider = () => {
       <CreateContestTypeModal />
       <AddImageModal />
       <AddResultModal />
+      <GiveParticipationModal />
       <DeleteStudent />
       <DeleteSchool />
       <UploadNotification />

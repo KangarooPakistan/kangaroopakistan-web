@@ -3,6 +3,22 @@ import { db } from "@/app/lib/prisma";
 
 import transporter from "@/app/lib/emailTransporter";
 import { SendMailOptions } from "nodemailer";
+
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const proofs = await db.resultProof.findMany({
+      where: { contestId: params.id },
+      select: { id: true, imageUrl: true },
+    });
+    return NextResponse.json({ hasProof: proofs.length > 0, proofs });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
 export async function POST(request: Request) {
   try {
     const reqBody = await request.json();

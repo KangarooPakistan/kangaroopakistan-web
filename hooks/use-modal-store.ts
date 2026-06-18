@@ -7,12 +7,15 @@ export type ModalType =
   | "addResult"
   | "deleteStudent"
   | "deleteSchool"
-  | "upload-notification";
+  | "upload-notification"
+  | "giveParticipation";
 interface ModalData {
   registrationId?: string;
   contestId?: string;
   id?: number;
   currentUserEmail?: string | null;
+  schoolId?: number;
+  schoolName?: string;
 }
 
 interface ModalStore {
